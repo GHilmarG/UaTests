@@ -1,0 +1,4 @@
+ SSTREAM(uvh/supg) 	 time=        0.00000 	 dt=0.1 	 r=3.65406e-18 	 #it= 7 	 CPUsec=6.48209 
+ SSTREAM(uvh/supg) 	 time=        0.10000 	 dt=0.1 	 r=1.1863e-17 	 #it= 6 	 CPUsec=3.92507 
+ SSTREAM(uvh/supg) 	 time=        0.20000 	 dt=0.1 	 r=1.08751e-21 	 #it= 4 	 CPUsec=5.17246 
+ SSTREAM(uvh/supg) 	 time=        0.30000 	 dt=0.1 	 r=1.11266e-17 	 #it= 3 	 CPUsec=1.69875 

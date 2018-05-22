@@ -1,0 +1,26 @@
+classdef MultiLinearConstraints
+    
+    properties
+        
+        ubvbL=[];
+        ubvbRhs=[];
+        ubvbLambda=[];
+        
+        udvdL=[];
+        udvdRhs=[];
+        udvdLambda=[]; 
+        
+        hL=[];
+        hRhs=[];
+        hLambda=[];
+ 
+        ubvbTies=[];
+        udvdTies=[];
+        hTies=[];
+        
+        
+    end
+    
+    
+    
+end

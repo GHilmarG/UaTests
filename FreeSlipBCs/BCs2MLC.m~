@@ -1,0 +1,49 @@
+function MLC=BCs2MLC(MUA,BCs)
+
+MLC=MultiLinearConstraints;
+
+
+
+if numel(BCs.ubTiedNodeA) ~= numel(BCs.ubTiedNodeB) ; save TestSave ; error(' number of elements  in BCs.uTiedNodeA and BCs.uTiedNodeB  not the same ') ; end
+if numel(BCs.vbTiedNodeA) ~= numel(BCs.vbTiedNodeB) ; save TestSave ; error(' number of elements  in BCs.uTiedNodeA and BCs.uTiedNodeB not the same ') ; end
+
+% [----- BC
+% get rid of duplicate boundary conditions and just ignore extra BCs
+[ubFixedNodet,itemp]=unique(BCs.ubFixedNode) ; BCs.ubFixedValue=BCs.ubFixedValue(itemp);
+[vbFixedNodet,itemp]=unique(BCs.vbFixedNode) ; BCs.vbFixedValue=BCs.vbFixedValue(itemp);
+
+if numel(ubFixedNodet) ~= numel(BCs.ubFixedNode)  ; disp(' Duplicated Dirichlet BCs for u') ; end
+if numel(vbFixedNodet) ~= numel(BCs.vbFixedNode)  ; disp(' Duplicated Dirichlet BCs for v') ; end
+
+BCs.ubFixedNode=ubFixedNodet; BCs.vbFixedNode=vbFixedNodet;
+
+% velocity
+[ubvbL,ubvbRhs]=CreateLuv(MUA,BCs.ubFixedNode,BCs.ubFixedValue,BCs.vbFixedNode,BCs.vbFixedValue,BCs.ubTiedNodeA,BCs.ubTiedNodeB,BCs.vbTiedNodeA,BCs.vbTiedNodeB,BCs.ubvbFixedNormalNode,BCs.ubvbFixedNormalValue);
+ubvbLambda=ubvbRhs*0;
+
+[hL,hRhs]=createLh(MUA.Nnodes,BCs.hFixedNode,BCs.hFixedValue,BCs.hTiedNodeA,BCs.hTiedNodeB);
+hLambda=hRhs*0;
+
+
+%]
+
+
+MLC.ubvbTies=1 ; MLC.hTies=1 ;
+if isempty(BCs.ubTiedNodeA) && isempty(BCs.vbTiedNodeB) && isempty(BCs.ubvbFixedNormalNode) ; MLC.ubvbTies=0  ;end
+if isempty(BCs.hTiedNodeA) ; MLC.hTies=0 ; end
+
+
+if ~MLC.ubvbTies ;
+    [m,n]=size(ubvbL); if ~isequal(ubvbL*ubvbL',sparse(1:m,1:m,1)) ; save TestSave ; error(' ubvbL transpose(ubvbL) expected to be equal to the identity matrix, but is not!') ; end
+end
+
+if ~MLC.hTies
+    [m,n]=size(hL); if ~isequal(hL*hL',sparse(1:m,1:m,1)) ; save TestSave  ; error(' hL transpose(hL) expected to be equal to the identity matrix, but is not!') ; end
+end
+
+MLC.ubvbL=ubvbL ; MLC.ubvbRhs=ubvbRhs; MLC.ubvbLambda=ubvbLambda ;
+MLC.hL=hL; MLC.hRhs=hRhs; MLC.hLambda=hLambda;
+
+end
+
+

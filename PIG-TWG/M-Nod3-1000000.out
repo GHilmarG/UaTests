@@ -1,0 +1,38 @@
+
+                            < M A T L A B (R) >
+                  Copyright 1984-2017 The MathWorks, Inc.
+                   R2017a (9.2.0.538062) 64-bit (glnxa64)
+                             February 23, 2017
+
+ 
+To get started, type one of these: helpwin, helpdesk, or demo.
+For product information, visit www.mathworks.com.
+ 
+
+	Non-Degree Granting Education License -- for use at non-degree granting, nonprofit,
+	educational organizations only.  Not for government, commercial, or other organizational use.
+
+>> >> >> >> >> >> >> >> >>  On input UserVar=1000000.000000 
+
+ 
+ **************************     Úa version: 7 March 2017  ********************** 
+    Run starts at 15-Mar-2017 15:04:32  
+    Experiment: UaOpt-ConjGrad  
+    Inverse-modelling restart run.  
+ 	CtrlVar.Inverse.InvertFor='logAGlenlogC'
+	CtrlVar.Inverse.Regularize.Field='logAGlenlogC'
+	CtrlVar.Inverse.DataMisfit.GradientCalculation='Adjoint'
+   Running on: bslicea.nerc-bas.ac.uk
+ ***************************************************************************** 
+ 
+ Inverse run: loading restart file: IR-UaOpt-ConjGrad-MatlabOptimization-Nod3-I-Adjoint-Cga1-Cgs1000000-Aga1-Ags1000000-0-0-logAGlenlogC 	 {Error using load
+Unable to read file
+'IR-UaOpt-ConjGrad-MatlabOptimization-Nod3-I-Adjoint-Cga1-Cgs1000000-Aga1-Ags1000000-0-0-logAGlenlogC'.
+No such file or directory.
+Error in GetInputsForInverseRestartRun (line 7)
+load(CtrlVar.Inverse.NameOfRestartInputFile,...
+Error in Ua2D (line 100)
+            GetInputsForInverseRestartRun(UserVar,CtrlVar);
+Error in Ua (line 221)
+Ua2D(UserVar)} 
+>> 
