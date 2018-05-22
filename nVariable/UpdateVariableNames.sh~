@@ -1,0 +1,28 @@
+
+find   . -name '*.m' -print0 | xargs -0 sed -i 's/CtrlVar.Gmesh/CtrlVar.Gmsh/g'
+
+#find  ../../. -name '*.m' -print0 | xargs -0 sed -i 's/Experiment,CtrlVar,MUA/Experiment,CtrlVar,UserVar,MUA/g'
+#find   . -name '*.m' -print0 | xargs -0 sed -i 's/Experiment,CtrlVar,UserVar,MUA/Experiment,CtrlVar,MUA/g'
+#find  . -name '*.m' -print0 | xargs -0 sed -i 's/\[s,b,S,B,alpha\]/\[s,b,S,B,alpha,UserVar\]/g'
+
+#find  . -name '*.m' -print0 | xargs -0 sed -i 's/s,b,S,B,alpha/s,b,S,B,alpha,UserVar/g'
+
+
+
+#find ../ -name '*.m' -print0 | xargs -0 sed -i 's/CtrlVar.nTimeSteps/CtrlVar.TotalNumberOfForwardRunSteps/g'
+
+#find ../ -name '*.m' -print0 | xargs -0 sed -i 's/CtrlVar.BC/CtrlVar.PlotBCs/g'
+#find ../ -name '*.m' -print0 | xargs -0 sed -i 's/CtrlVar.plotnodes/CtrlVar.PlotNodes/g'
+#find ../ -name '*.m' -print0 | xargs -0 sed -i 's/CtrlVar.plotlabels/CtrlVar.PlotLabels/g'
+#find ../ -name '*.m' -print0 | xargs -0 sed -i 's/CtrlVar.dotransientplots/CtrlVar.doTransientPlots/g'
+#find ../ -name '*.m' -print0 | xargs -0 sed -i 's/CtrlVar.plotmesh/CtrlVar.PlotMesh/g'
+
+#find ../ -name '*.m' -print0 | xargs -0 sed -i 's/CtrlVar.GmeshInputFile/CtrlVar.GmeshFile/g'
+#find ../ -name '*.m' -print0 | xargs -0 sed -i 's/GmeshInputFile/GmeshFile/g'
+#find ../ -name '*.m' -print0 | xargs -0 sed -i 's/CtrlVar.MeshRefinement/CtrlVar.LocalMeshRefinement/g'
+
+
+
+
+
+
