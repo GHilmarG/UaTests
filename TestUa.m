@@ -37,8 +37,9 @@ cd MassBalanceFeedback ;   clear ; Ua ; cd ..
 
 cd MismipPlus ; clear ; Ua ; cd ..
 
-cd('mVariable') ;  clear ; Ua ; cd ..
+%cd PIG-TWG ; clear ; close all ; Ua ; cd ..
 
+cd('mVariable') ;  clear ; close all ; Ua ; cd ..
 
 cd('nVariable') ;  clear ; close all ; Ua ; cd ..
 
