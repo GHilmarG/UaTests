@@ -72,8 +72,8 @@ CtrlVar.MeshSizeIceShelves=CtrlVar.MeshSizeMax/10;
 CtrlVar.MeshSizeBoundary=CtrlVar.MeshSize;
 
 CtrlVar.MeshRefinementMethod='explicit:local:newest vertex bisection';   
-CtrlVar.MeshRefinementMethod='explicit:global';
-CtrlVar.InfoLevelAdaptiveMeshing=10;                                            
+%CtrlVar.MeshRefinementMethod='explicit:global';
+CtrlVar.InfoLevelAdaptiveMeshing=3;                                            
 CtrlVar.AdaptMeshInitial=1  ;       % remesh in first iteration (Itime=1)  even if mod(Itime,CtrlVar.AdaptMeshInterval)~=0.
 CtrlVar.AdaptMeshAndThenStop=1;    % if true, then mesh will be adapted but no further calculations performed
                                    % useful, for example, when trying out different remeshing options (then use CtrlVar.doAdaptMeshPlots=1 to get plots)
