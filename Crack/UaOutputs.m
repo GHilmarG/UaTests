@@ -129,6 +129,11 @@ if contains(plots,'-stresses-')
     N=20;
     I=1:N:MUA.Nnodes;
     
+    [X,Y]=ndgrid(linspace(min(x),max(x),20),linspace(min(y),max(y),20));
+    I=nearestNeighbor(MUA.TR,[X(:) Y(:)]);  % find nodes within computational grid closest to the regularly scape X and Y grid points.
+    
+    
+    
     scale=1e-3;
     PlotTensor(x(I)/CtrlVar.PlotXYscale,y(I)/CtrlVar.PlotXYscale,txx(I),txy(I),tyy(I),scale);
     hold on
