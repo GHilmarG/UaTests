@@ -40,7 +40,7 @@ if ~isempty(strfind(plots,'-plot-'))
     GLgeo=[]; xGL=[] ; yGL=[];
     %%
     
-    [exxb,eyyb,exyb]=CalcNodalStrainRates(CtrlVar,MUA,ub,vb);
+    [exxb,eyyb,exyb]=CalcHorizontalNodalStrainRates(CtrlVar,MUA,ub,vb);
     fig100=figure(100) ;
     fig100.Position=[50 50 figsWidth 3*figHeights];
     
