@@ -1,11 +1,12 @@
-function  UserVar=UaOutputs(UserVar,Outs)
+function  UserVar=UaOutputs(UserVar,CtrlVar,MUA,BCs,F,l,GF,InvStartValues,InvFinalValues,Priors,Meas,BCsAdjoint,RunInfo)
 
-[CtrlVar,MUA,time,s,b,h,S,B,ub,vb,ud,vd,dhdt,dsdt,dbdt,C,AGlen,m,n,rho,rhow,g,as,ab,GF,BCs,l]=Outs2Vars(Outs);
 
+v2struct(F);
+time=CtrlVar.time;
 
 plots='-plot-';
 
-if ~isempty(strfind(plots,'-save-'))
+if contains(plots,'-save-')
     
     % save data in files with running names
     % check if folder 'ResultsFiles' exists, if not create
@@ -23,13 +24,13 @@ if ~isempty(strfind(plots,'-save-'))
         FileName=sprintf('%s/%07i-Nodes%i-Ele%i-Tri%i-kH%i-%s.mat',...
             CtrlVar.Outputsdirectory,round(100*time),MUA.Nnodes,MUA.Nele,MUA.nod,1000*CtrlVar.kH,CtrlVar.Experiment);
         fprintf(' Saving data in %s \n',FileName)
-        save(FileName,'CtrlVar','MUA','time','s','b','S','B','h','ub','vb','C','dhdt','AGlen','m','n','rho','rhow','as','ab','GF')
+        save(FileName,'CtrlVar','UserVar','MUA','F','GF','BCs')
         
     end
     
 end
 
-if ~isempty(strfind(plots,'-plot-'))
+if contains(plots,'-plot-')
     
     figsWidth=1000 ; figHeights=300;
     GLgeo=[]; xGL=[] ; yGL=[];
