@@ -90,7 +90,7 @@ CtrlVar.RefineCriteria={'flotation'};
 CtrlVar.RefineCriteriaWeights=[1];                %  
   
 CtrlVar.AdaptMeshInterval=1;  % number of run-steps between mesh adaptation
-CtrlVar.AdaptMeshIterations=1;
+CtrlVar.AdaptMeshMaxIterations=1;
 
 CtrlVar.RefineDiracDeltaWidth=50;
 
