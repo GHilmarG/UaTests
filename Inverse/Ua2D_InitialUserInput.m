@@ -180,13 +180,6 @@ CtrlVar.GmshGeoFileAdditionalInputLines{1}='Periodic Line {1,2} = {3,4};';
 CtrlVar.AdaptMesh=0;
 CtrlVar.SaveAdaptMeshFileName='AdaptMeshFile';
 
-CtrlVar.RefineCriteria='effective strain rates';
-CtrlVar.RefineCriteriaFlotationLimit=NaN ;
-CtrlVar.RefineCriteriaWeights=1;
-%CtrlVar.RefineCriteria='thickness gradient';
-%CtrlVar.RefineCriteria={'flotation','thickness gradient'};
-CtrlVar.RefineDiracDeltaInvWidth=1000;
-
 
 
 %% plotting
