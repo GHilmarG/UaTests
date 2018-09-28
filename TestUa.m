@@ -16,7 +16,6 @@ cd FreeSlipBCs ;   clear ; close all ; Ua ; cd ..
 
 cd GaussPeak ;  clear ; Ua ; cd ..
 
-
 cd IceShelf ; clear ; Ua ; cd .. 
 
 cd('Inverse') ;  clear ; 
