@@ -13,13 +13,13 @@ xd=200e3; xu=-200e3 ; yl=200e3 ; yr=-200e3;
 MeshBoundaryCoordinates=[xu yr ; xd yr ; xd yl ; xu yl];
 MeshBoundaryCoordinates=flipud(MeshBoundaryCoordinates);
 %% Types of runs
-CtrlVar.DevelopmentVersion=1;  %
-CtrlVar.doInverseStep=1 ;
+CtrlVar.DevelopmentVersion=0;  %
+CtrlVar.InverseRun=1;  
 CtrlVar.TriNodes=3;
 
 
 %% Restart
-CtrlVar.Restart=0;  CtrlVar.WriteRestartFile=1;
+CtrlVar.Restart=1;  CtrlVar.WriteRestartFile=1;
 CtrlVar.NameOfRestartFiletoRead=['Nod',num2str(CtrlVar.TriNodes),'-iC-Restart.mat'];
 CtrlVar.NameOfRestartFiletoWrite=CtrlVar.NameOfRestartFiletoRead;
 

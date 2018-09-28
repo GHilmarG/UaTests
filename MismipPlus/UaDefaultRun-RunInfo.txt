@@ -1,2 +1,48 @@
- SSTREAM(uvh/supg) 	 time=        0.00000 	 dt=0.01 	 r=9.58501e-17 	 #it= 13 	 CPUsec=2.78705 
- SSTREAM(uvh/supg) 	 time=        0.01000 	 dt=0.01 	 r=8.63353e-16 	 #it= 11 	 CPUsec=3.42205 
+  t-dt-tCPU-it-itTotal-date-uvhAssembly-uvhSolution-WallTime , 0 , 0.01 , 06:17:26  ,  NaN , 0 , 27-Sep-2018 15:54:14 , 00:00:00 , 00:00:00 , 00:00:30 
+NR-STREAM(uv):  1/7  g=0.0003687049   , r/r0=0.9998668      ,  r0=1              , r=0.9998668      , du=Inf            , dl=Inf            , Assembly=1.535133 sec. Solution=1.067572 sec.
+ NR-STREAM(uv):  2/7  g=0.0007170015   , r/r0=0.9998282      ,  r0=0.9998668      , r=0.999695       , du=12.26877       , dl=7.63976        , Assembly=3.100715 sec. Solution=1.942106 sec.
+ NR-STREAM(uv):  3/6  g=0.001907421    , r/r0=0.9996473      ,  r0=0.999695       , r=0.9993424      , du=17.5667        , dl=8.728843       , Assembly=4.433713 sec. Solution=2.918752 sec.
+ NR-STREAM(uv):  4/5  g=0.005337363    , r/r0=0.9993149      ,  r0=0.9993424      , r=0.9986578      , du=19.73067       , dl=8.722444       , Assembly=5.798110 sec. Solution=3.738547 sec.
+ NR-STREAM(uv):  5/4  g=0.01389818     , r/r0=0.998248       ,  r0=0.9986578      , r=0.9969081      , du=19.68739       , dl=8.177843       , Assembly=7.290106 sec. Solution=4.790816 sec.
+ NR-STREAM(uv):  6/3  g=0.05           , r/r0=0.9995029      ,  r0=0.9969081      , r=0.9964125      , du=27.06541       , dl=10.94448       , Assembly=8.888247 sec. Solution=5.850852 sec.
+ NR-STREAM(uv):  7/2  g=0.1            , r/r0=0.8809126      ,  r0=0.9964125      , r=0.8777524      , du=1.275917       , dl=7.040499       , Assembly=10.457813 sec. Solution=7.078228 sec.
+ NR-STREAM(uv):  8/3  g=0.05           , r/r0=0.861843       ,  r0=0.8777524      , r=0.7564848      , du=1.363274       , dl=1.996656       , Assembly=12.167609 sec. Solution=8.556596 sec.
+ NR-STREAM(uv):  9/2  g=0.1            , r/r0=0.7648536      ,  r0=0.7564848      , r=0.5786001      , du=1.201939       , dl=2.27115        , Assembly=13.832399 sec. Solution=9.846007 sec.
+ NR-STREAM(uv): 10/1  g=0.2            , r/r0=0.6225036      ,  r0=0.5786001      , r=0.3601806      , du=1.407816       , dl=3.839156       , Assembly=15.373507 sec. Solution=10.993390 sec.
+ NR-STREAM(uv): 11/1  g=0.2            , r/r0=0.6334074      ,  r0=0.3601806      , r=0.228141       , du=0.8706463      , dl=1.267943       , Assembly=16.835568 sec. Solution=11.915054 sec.
+ NR-STREAM(uv): 12/0  g=1              , r/r0=0.1857451      ,  r0=0.228141       , r=0.04237609     , du=2.243577       , dl=3.126052       , Assembly=18.483403 sec. Solution=13.111966 sec.
+ NR-STREAM(uv): 13/0  g=1              , r/r0=0.05904611     ,  r0=0.04237609     , r=0.002502143    , du=1.804183       , dl=0.047164       , Assembly=20.159421 sec. Solution=14.257805 sec.
+ NR-STREAM(uv): 14/0  g=1              , r/r0=0.09091943     ,  r0=0.002502143    , r=0.0002274934   , du=1.052713       , dl=0.009655196    , Assembly=21.906845 sec. Solution=15.354501 sec.
+ NR-STREAM(uv): 15/0  g=1              , r/r0=0.2502743      ,  r0=0.0002274934   , r=5.693575e-05   , du=0.21588        , dl=0.003451419    , Assembly=23.402840 sec. Solution=16.666225 sec.
+ NR-STREAM(uv): 16/1  g=0.4030288      , r/r0=0.169685       ,  r0=5.693575e-05   , r=9.661144e-06   , du=0.02227492     , dl=0.0004739239   , Assembly=25.328032 sec. Solution=17.694949 sec.
+ NR-STREAM(uv): 17/0  g=1              , r/r0=0.3948325      ,  r0=9.661144e-06   , r=3.814534e-06   , du=0.03773252     , dl=0.0007810707   , Assembly=26.834386 sec. Solution=18.789678 sec.
+ NR-STREAM(uv): 18/0  g=1              , r/r0=0.1474093      ,  r0=3.814534e-06   , r=5.622977e-07   , du=0.003533384    , dl=5.812291e-05   , Assembly=28.580169 sec. Solution=20.116300 sec.
+ NR-STREAM(uv): 19/0  g=1              , r/r0=0.1990871      ,  r0=5.622977e-07   , r=1.119462e-07   , du=0.001251228    , dl=7.009662e-07   , Assembly=30.120362 sec. Solution=21.175460 sec.
+ NR-STREAM(uv): 20/0  g=1              , r/r0=0.119993       ,  r0=1.119462e-07   , r=1.343276e-08   , du=0.0005463317   , dl=1.828003e-07   , Assembly=32.098570 sec. Solution=22.663007 sec.
+ NR-STREAM(uv): 21/0  g=1              , r/r0=0.1477822      ,  r0=1.343276e-08   , r=1.985124e-09   , du=0.0002279579   , dl=9.357518e-08   , Assembly=34.062917 sec. Solution=24.133097 sec.
+ NR-STREAM(uv): 22/0  g=1              , r/r0=0.4416819      ,  r0=1.985124e-09   , r=8.767932e-10   , du=5.355667e-05   , dl=5.586858e-08   , Assembly=35.755754 sec. Solution=25.381832 sec.
+ NR-STREAM(uv): 23/1  g=0.591886       , r/r0=0.1345843      ,  r0=8.767932e-10   , r=1.180026e-10   , du=2.574246e-05   , dl=3.643669e-09   , Assembly=37.474890 sec. Solution=26.493203 sec.
+ NR-STREAM(uv): 24/1  g=0.4746631      , r/r0=0.1281954      ,  r0=1.180026e-10   , r=1.512739e-11   , du=4.438602e-06   , dl=1.211228e-09   , Assembly=39.107044 sec. Solution=27.498986 sec.
+ NR-STREAM(uv): 25/0  g=1              , r/r0=0.03244716     ,  r0=1.512739e-11   , r=4.908407e-13   , du=1.955213e-06   , dl=1.346285e-09   , Assembly=40.430426 sec. Solution=28.542277 sec.
+ NR-STREAM(uv): 26/0  g=1              , r/r0=0.001082293    ,  r0=4.908407e-13   , r=5.312335e-16   , du=2.51102e-07    , dl=8.318907e-12   , Assembly=42.065929 sec. Solution=29.372602 sec.
+  SSTREAM2dNR converged to given tolerance of 1e-15 with r=5.31234e-16 in 26 iterations.
+NR-STREAM(uvh):  1/0  g=1              , r/r0=1.001497e-05   ,  r0=0.0004227319   , r=4.233648e-09   , ruv=1.610331e-06   , rh=4.519053e-18   , du=0.03496187     , dh=0.0002229457   , dl=0.0005405716   , BCsNormuv=1.81401e-26 , BCsNormh=0  
+ NR-STREAM(uvh):  2/0  g=1              , r/r0=0.03064511     ,  r0=4.233648e-09   , r=1.297406e-10   , ruv=4.934877e-08   , rh=3.808832e-23   , du=0.004538978    , dh=2.806449e-06   , dl=7.449518e-07   , BCsNormuv=5.08158e-29 , BCsNormh=0  
+ NR-STREAM(uvh):  3/0  g=1              , r/r0=0.1690426      ,  r0=1.297406e-10   , r=2.193169e-11   , ruv=8.342042e-09   , rh=8.341555e-28   , du=0.0005940442   , dh=3.817258e-07   , dl=4.541324e-08   , BCsNormuv=2.34331e-30 , BCsNormh=0  
+ NR-STREAM(uvh):  4/1  g=0.6514636      , r/r0=0.1165261      ,  r0=2.193169e-11   , r=2.555615e-12   , ruv=9.72066e-10    , rh=3.326341e-28   , du=0.0004316894   , dh=2.636134e-07   , dl=1.600382e-08   , BCsNormuv=8.04491e-31 , BCsNormh=0  
+ NR-STREAM(uvh):  5/1  g=0.5686738      , r/r0=0.3780318      ,  r0=2.555615e-12   , r=9.661035e-13   , ruv=3.674718e-10   , rh=2.458547e-28   , du=4.716498e-05   , dh=1.712178e-08   , dl=3.637448e-09   , BCsNormuv=3.52611e-31 , BCsNormh=0  
+ NR-STREAM(uvh):  6/1  g=0.4            , r/r0=0.1146136      ,  r0=9.661035e-13   , r=1.107286e-13   , ruv=4.211727e-11   , rh=2.293092e-28   , du=2.137626e-05   , dh=9.072162e-09   , dl=2.189222e-09   , BCsNormuv=2.12122e-31 , BCsNormh=0  
+ NR-STREAM(uvh):  7/1  g=0.5460745      , r/r0=0.1390834      ,  r0=1.107286e-13   , r=1.540051e-14   , ruv=5.857813e-12   , rh=2.262695e-28   , du=1.331179e-05   , dh=5.812361e-09   , dl=8.069959e-10   , BCsNormuv=9.64411e-32 , BCsNormh=0  
+ NR-STREAM(uvh):  8/0  g=1              , r/r0=0.0003676632   ,  r0=1.540051e-14   , r=5.662201e-18   , ruv=2.153702e-15   , rh=2.339275e-28   , du=6.279387e-06   , dh=2.822135e-09   , dl=3.789414e-10   , BCsNormuv=7.36924e-33 , BCsNormh=0  
+  --->  SSTREAM(uvh/supg) 	 time=        0.00000 	 dt=0.01 	 r=5.6622e-18 	 #it= 8 	 CPUsec=46.401 
+  t-dt-tCPU-it-itTotal-date-uvhAssembly-uvhSolution-WallTime , 0.01 , 0.01 , 06:39:42  ,  8 , 8 , 27-Sep-2018 15:56:46 , 00:00:31 , 00:00:00 , 00:03:02 
+NR-STREAM(uvh):  1/0  g=1              , r/r0=0.0003855314   ,  r0=0.0009432358   , r=3.63647e-07    , ruv=0.0001368778   , rh=1.754913e-19   , du=0.07089263     , dh=3.246719e-05   , dl=Inf            , BCsNormuv=7.80604e-23 , BCsNormh=0  
+ NR-STREAM(uvh):  2/1  g=0.5414163      , r/r0=0.1297411      ,  r0=3.63647e-07    , r=4.717998e-08   , ruv=1.775868e-05   , rh=3.994537e-20   , du=0.02734179     , dh=2.30726e-05    , dl=0.0003271772   , BCsNormuv=3.57974e-23 , BCsNormh=0  
+ NR-STREAM(uvh):  3/1  g=0.6135046      , r/r0=0.1417698      ,  r0=4.717998e-08   , r=6.688697e-09   , ruv=2.517645e-06   , rh=6.015873e-21   , du=0.008894923    , dh=6.968261e-06   , dl=0.0001511513   , BCsNormuv=1.38354e-23 , BCsNormh=0  
+ NR-STREAM(uvh):  4/0  g=1              , r/r0=0.3752477      ,  r0=6.688697e-09   , r=2.509918e-09   , ruv=9.447405e-07   , rh=7.834114e-25   , du=0.003122617    , dh=1.636852e-06   , dl=5.869521e-05   , BCsNormuv=1.85412e-27 , BCsNormh=0  
+ NR-STREAM(uvh):  5/1  g=0.5046523      , r/r0=0.0861717      ,  r0=2.509918e-09   , r=2.162839e-10   , ruv=8.14099e-08    , rh=2.141908e-25   , du=0.001908251    , dh=2.075425e-06   , dl=2.584232e-07   , BCsNormuv=9.18518e-28 , BCsNormh=0  
+ NR-STREAM(uvh):  6/0  g=1              , r/r0=0.1307743      ,  r0=2.162839e-10   , r=2.828437e-11   , ruv=1.064632e-08   , rh=3.048414e-28   , du=0.0002558197   , dh=3.544165e-07   , dl=7.671871e-08   , BCsNormuv=5.32053e-30 , BCsNormh=0  
+ NR-STREAM(uvh):  7/0  g=1              , r/r0=0.02737499     ,  r0=2.828437e-11   , r=7.742844e-13   , ruv=2.914429e-10   , rh=2.825251e-28   , du=9.689628e-05   , dh=8.123741e-08   , dl=1.52415e-08    , BCsNormuv=2.78377e-31 , BCsNormh=0  
+ NR-STREAM(uvh):  8/0  g=1              , r/r0=0.005961597    ,  r0=7.742844e-13   , r=4.615972e-15   , ruv=1.737465e-12   , rh=2.401492e-28   , du=2.453706e-05   , dh=1.955417e-08   , dl=7.483458e-09   , BCsNormuv=1.30694e-31 , BCsNormh=0  
+ NR-STREAM(uvh):  9/0  g=1              , r/r0=5.438063e-05   ,  r0=4.615972e-15   , r=2.510194e-19   , ruv=9.448445e-17   , rh=2.509318e-28   , du=1.303959e-06   , dh=1.066416e-09   , dl=3.429623e-10   , BCsNormuv=4.39874e-33 , BCsNormh=0  
+  --->  SSTREAM(uvh/supg) 	 time=        0.01000 	 dt=0.01 	 r=2.51019e-19 	 #it= 9 	 CPUsec=68.1124 
