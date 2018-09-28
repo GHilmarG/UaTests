@@ -1,6 +1,7 @@
 function [UserVar,InvStartValues,Priors,Meas,BCsAdjoint,RunInfo]=DefineInputsForInverseRun(UserVar,CtrlVar,MUA,BCs,F,l,GF,InvStartValues,Priors,Meas,BCsAdjoint,RunInfo)
 
-
+narginchk(12,12) 
+nargoutchk(6,6)
 
 x=MUA.coordinates(:,1) ; y=MUA.coordinates(:,2);
 Lx=max(x)-min(x); Ly=max(y)-min(y);

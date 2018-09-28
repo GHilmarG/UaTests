@@ -13,11 +13,12 @@ Experiment=['MismipPlus-',UserVar.MisExperiment];
 %
 CtrlVar.TimeDependentRun=1; 
 CtrlVar.TotalNumberOfForwardRunSteps=2;
-CtrlVar.TotalTime=100;
+CtrlVar.TotalTime=10;
 CtrlVar.Restart=0;  
 CtrlVar.InfoLevelNonLinIt=1; 
 
 CtrlVar.dt=0.01; 
+%CtrlVar.dt=100; 
 CtrlVar.time=0; 
 
 CtrlVar.UaOutputsDt=0; % interval between calling UaOutputs. 0 implies call it at each and every run step.
@@ -41,7 +42,7 @@ CtrlVar.doRemeshPlots=1;
 CtrlVar.PlotXYscale=1000; 
 %%
 
-CtrlVar.TriNodes=3;
+CtrlVar.TriNodes=6;
 
 
 CtrlVar.NameOfRestartFiletoWrite=['Restart',Experiment,'.mat'];
