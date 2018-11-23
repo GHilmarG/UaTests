@@ -1,12 +1,10 @@
 
+function  [UserVar,AGlen,n]=DefineAGlenDistribution(UserVar,CtrlVar,MUA,time,s,b,h,S,B,rho,rhow,GF)
 
-function [AGlen,n]=DefineAGlenDistribution(Experiment,coordinates,connectivity,s,b,h,S,B,rho,rhow,Itime,time,CtrlVar)
 
+T=-100;  % Make the ice very very stiff
 
-Nnodes=length(coordinates);
-T=-100;
-
-AGlen=AGlenVersusTemp(T)+zeros(Nnodes,1) ;
+AGlen=AGlenVersusTemp(T);
 
 n=3 ;
 

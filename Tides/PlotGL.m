@@ -1,3 +1,4 @@
+%%
 M=importdata('dhdx-GL.dat');
 
 %I=find(M(:,1)<1/diy) ; n=numel(I) ; A=[ones(n,1) M(I,1)] ; sol=A\M(I,2); 
@@ -20,8 +21,9 @@ dL=TidalMigrationDistance(rho,rhow,dhdx,dsdx,dBdx,dS);
 [dL.neg dL.pos dL.neg-dL.pos]
 [max(M(:,2)) min(M(:,2)) max(M(:,2))-min(M(:,2))]
 
-
+%%
 %figure
+figure
 diy=365.15;
 M=importdata('dsdx-GL.dat');
 
