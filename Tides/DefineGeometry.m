@@ -1,22 +1,26 @@
 
-function [s,b,S,B,alpha]=DefineGeometry(Experiment,coordinates,CtrlVar,FieldsToBeDefined)
-
+function [UserVar,s,b,S,B,alpha]=DefineGeometry(UserVar,CtrlVar,MUA,time,FieldsToBeDefined)
+  
 % Defines model geometry
 
-x=coordinates(:,1); y=coordinates(:,2);
+x=MUA.coordinates(:,1); y=MUA.coordinates(:,2);
 alpha=0.;
 
 % surface/thickness slope/gradient: -gamma
 % bed slope: -beta
 Bgl=-1000; xgl=0; gamma=0.001; beta=0.01;
-[rho,rhow,g]=DefineDensities(Experiment,coordinates,[],[],[],[],[],[],[],[],CtrlVar);
+
+
+s=[] ; b=[] ; h=[] ; S=[] ; B=[] ; 
+[UserVar,rho,rhow,g]=DefineDensities(UserVar,CtrlVar,MUA,CtrlVar.time,s,b,h,S,B);
+
 S0=0*x;
 hgl=rhow*(S0-Bgl)/mean(rho) ;  % rho hgl= rhow*(S-B)
 sgl=Bgl+hgl;
 B=Bgl-beta*(x-xgl);
 %geo='s-B' ;
 %geo='B-dhdx';
-switch CtrlVar.geo
+switch UserVar.geo
     case 'dsdx'
         %% constant surface slope, constant bed slope, and GL at x=0
         
@@ -32,8 +36,8 @@ switch CtrlVar.geo
         
         S=S0;
         h=hgl-gamma*(x-xgl);
-        [b,s,h]=Calc_bs_From_hBS(h,S,B,rho,rhow,CtrlVar,coordinates);
         
+        [b,s,h,GF]=Calc_bs_From_hBS(CtrlVar,MUA,h,S,B,rho,rhow);
         
         
         
