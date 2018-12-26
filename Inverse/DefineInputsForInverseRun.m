@@ -66,20 +66,6 @@ Priors.b=F.b;
 Priors.S=F.S;
 Priors.B=F.B;
 
-Priors.Regularize.logC.gs=zeros(MUA.Nnodes,1)+1;
-Priors.Regularize.logC.ga=zeros(MUA.Nnodes,1)+1;
-Priors.Regularize.C.gs=zeros(MUA.Nnodes,1)+1;
-Priors.Regularize.C.ga=zeros(MUA.Nnodes,1)+1;
-
-
-Priors.Regularize.logAGlen.gs=zeros(MUA.Nnodes,1)+1;
-Priors.Regularize.logAGlen.ga=zeros(MUA.Nnodes,1)+1;
-Priors.Regularize.AGlen.gs=zeros(MUA.Nnodes,1)+1;
-Priors.Regularize.AGlen.ga=zeros(MUA.Nnodes,1)+1;
-
-
-
-
 [UserVar,Priors.C,Priors.m]=DefineSlipperyDistribution(UserVar,CtrlVar,MUA,CtrlVar.time,F.s,F.b,F.s-F.b,F.S,F.B,F.rho,F.rhow,GF);
 [UserVar,Priors.AGlen,Priors.n]=DefineAGlenDistribution(UserVar,CtrlVar,MUA,CtrlVar.time,F.s,F.b,F.s-F.b,F.S,F.B,F.rho,F.rhow,GF);
 
@@ -90,10 +76,10 @@ Priors.rho=F.rho;
 Priors.rhow=F.rhow;
 
 %% Define start values
-% I'm here setting starting values equal to priors.
-InvStartValues.C=Priors.C + 0.5* sin(xC*2*pi/Lx)*mean(Priors.C) ; 
+% 
+InvStartValues.C=Priors.C ; % + 0.5* sin(xC*2*pi/Lx)*mean(Priors.C) ; 
 InvStartValues.m=Priors.m;
-InvStartValues.AGlen=Priors.AGlen+0.5*sin(xA*2*pi/Lx)*mean(Priors.AGlen) ; 
+InvStartValues.AGlen=Priors.AGlen ;  % +0.5*sin(xA*2*pi/Lx)*mean(Priors.AGlen) ; 
 InvStartValues.n=Priors.n;
 
 
@@ -101,7 +87,7 @@ InvStartValues.n=Priors.n;
 
 fprintf(' Creating synthetic data for iC \n')
 
-CtrlVar.doDiagnostic=1;
+CtrlVar.doDiagnostic=1;  % this flag is then used when defining A and C to add a pertubation 
 [UserVar,F.C,F.m]=DefineSlipperyDistribution(UserVar,CtrlVar,MUA,CtrlVar.time,F.s,F.b,F.s-F.b,F.S,F.B,F.rho,F.rhow,GF);
 [UserVar,F.AGlen,F.n]=DefineAGlenDistribution(UserVar,CtrlVar,MUA,CtrlVar.time,F.s,F.b,F.s-F.b,F.S,F.B,F.rho,F.rhow,GF);
 [F.AGlen,F.n]=TestAGlenInputValues(CtrlVar,MUA,F.AGlen,F.n);
@@ -109,6 +95,12 @@ CtrlVar.doDiagnostic=1;
 
 
 [UserVar,RunInfo,F,l,Kuv,Ruv,Lubvb]= uv(UserVar,RunInfo,CtrlVar,MUA,BCs,F,l);
+
+CtrlVar.Tracer.SUPG.Use=1; CtrlVar.Tracer.SUPG.tau='tau2';
+[UserVar,hnew,lambda]=TracerConservationEquation(UserVar,CtrlVar,MUA,CtrlVar.dt,F.h,F.ub,F.vb,F.as+F.ab,F.ub,F.vb,F.as+F.ab,0,BCs);
+F.dhdt=(hnew-F.h)/CtrlVar.dt;
+
+
 
 Priors.TrueC=F.C;
 Priors.TrueAGlen=F.AGlen;
@@ -118,22 +110,22 @@ Priors.TrueAGlen=F.AGlen;
 %[UserVar,ub,vb,ud,vd,l,Kuv,Ruv,RunInfo,ubvbL]=uv(UserVar,CtrlVar,MUA,BCs,s,b,h,S,B,ub,vb,ud,vd,l,AGlen,C,n,m,alpha,rho,rhow,g,GF);
 Meas.us=F.ub ;
 Meas.vs=F.vb;
-Meas.ws=F.ub*0;
+Meas.dhdt=F.dhdt;
 
 VelScale=mean(F.ub);
 usError=1e-3*VelScale; 
 vsError=1e-3*VelScale  ; 
-wsError=1e-3*VelScale;
+dhdtError=std(F.dhdt)/10000; 
 
 Meas.usCov=sparse(1:MUA.Nnodes,1:MUA.Nnodes,usError.^2,MUA.Nnodes,MUA.Nnodes);
 Meas.vsCov=sparse(1:MUA.Nnodes,1:MUA.Nnodes,vsError.^2,MUA.Nnodes,MUA.Nnodes);
-Meas.wsCov=sparse(1:MUA.Nnodes,1:MUA.Nnodes,wsError.^2,MUA.Nnodes,MUA.Nnodes);
+Meas.dhdtCov=sparse(1:MUA.Nnodes,1:MUA.Nnodes,dhdtError.^2,MUA.Nnodes,MUA.Nnodes);
 
 % if add errors
 
 Meas.us=Meas.us+UserVar.AddDataErrors*usError.*randn(MUA.Nnodes,1);
 Meas.vs=Meas.vs+UserVar.AddDataErrors*vsError.*randn(MUA.Nnodes,1);
-Meas.ws=Meas.ws+UserVar.AddDataErrors*wsError.*randn(MUA.Nnodes,1);
+Meas.dhdt=Meas.dhdt+UserVar.AddDataErrors*dhdtError.*randn(MUA.Nnodes,1);
 
 
 

@@ -19,16 +19,17 @@ CtrlVar.TriNodes=3;
 
 
 %% Restart
-CtrlVar.Restart=1;  CtrlVar.WriteRestartFile=1;
+CtrlVar.Restart=0;  CtrlVar.WriteRestartFile=1;
 CtrlVar.NameOfRestartFiletoRead=['Nod',num2str(CtrlVar.TriNodes),'-iC-Restart.mat'];
 CtrlVar.NameOfRestartFiletoWrite=CtrlVar.NameOfRestartFiletoRead;
 
 
 %% Inverse   -inverse
+CtrlVar.Inverse.Measurements='-uv-dhdt-' ;   % {'-dhdt-,'-uv-dhdt-','-dhdt-'}
 
 CtrlVar.Inverse.MinimisationMethod='MatlabOptimization'; % {'MatlabOptimization','UaOptimization'}
 %CtrlVar.Inverse.MinimisationMethod='UaOptimization';
-CtrlVar.Inverse.Iterations=5;
+CtrlVar.Inverse.Iterations=100;
 CtrlVar.Inverse.InvertFor='logAGlenlogC' ; % {'C','logC','AGlen','logAGlen'}
 CtrlVar.CisElementBased=0;
 CtrlVar.AGlenisElementBased=0;
@@ -82,7 +83,7 @@ CtrlVar.Inverse.MatlabOptimisationParameters = optimoptions('fmincon',...
     'FunValCheck','off',...
     'MaxFunctionEvaluations',100000,...
     'MaxIterations',CtrlVar.Inverse.Iterations,...,...
-    'OptimalityTolerance',1e-2,...
+    'OptimalityTolerance',1e-10,...
     'OutputFcn',@fminuncOutfun,...
     'PlotFcn',{@optimplotfval,@optimplotstepsize},...
     'StepTolerance',1e-10,...
@@ -127,11 +128,11 @@ CtrlVar.Inverse.Regularize.Field=CtrlVar.Inverse.InvertFor;
 CtrlVar.Inverse.Regularize.C.gs=1;
 CtrlVar.Inverse.Regularize.C.ga=1;
 CtrlVar.Inverse.Regularize.logC.ga=1;
-CtrlVar.Inverse.Regularize.logC.gs=1 ;
+CtrlVar.Inverse.Regularize.logC.gs=10;
 CtrlVar.Inverse.Regularize.AGlen.gs=1;
 CtrlVar.Inverse.Regularize.AGlen.ga=1;
 CtrlVar.Inverse.Regularize.logAGlen.ga=1;
-CtrlVar.Inverse.Regularize.logAGlen.gs=1 ;
+CtrlVar.Inverse.Regularize.logAGlen.gs=1000 ;
 
 
 
@@ -171,8 +172,8 @@ CtrlVar.SaveInitialMeshFileName='NewMeshFile.mat';
 
 CtrlVar.MeshSize=10e3;
 CtrlVar.MeshSize=50e3;
-CtrlVar.MeshSize=20e3;
-%CtrlVar.MeshSize=2.5e3;   % used in forward model
+%CtrlVar.MeshSize=20e3;
+%CtrlVar.MeshSize=2.5e3;   
 CtrlVar.MeshSizeMin=0.1*CtrlVar.MeshSize;    % min element size
 CtrlVar.MeshSizeMax=CtrlVar.MeshSize;
 
