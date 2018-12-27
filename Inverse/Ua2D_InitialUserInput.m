@@ -1,6 +1,8 @@
 function [UserVar,CtrlVar,MeshBoundaryCoordinates]=Ua2D_InitialUserInput(UserVar,CtrlVar)
 
-
+%
+% Klear ; UserVar.RunType='IceStream' ; Ua(UserVar)
+%
 
 if ~isfield(UserVar,'RunType')
     UserVar.RunType='IceShelf';   %  either 'IceStream' or  'IceShelf'
@@ -113,13 +115,16 @@ CtrlVar.Inverse.AdjointGradientPreMultiplier='I'; % {'I','M'}
 
 % Testing adjoint parameters, start:
 CtrlVar.Inverse.TestAdjoint.isTrue=0; % If true then perform a brute force calculation 
-                                      % of the directinal derivative of the objective function.  
-CtrlVar.Inverse.TestAdjoint.FiniteDifferenceType='fourth-order' ; % {'central','forward','fourth order'}
+                                      % of the dirctional derivative of the objective function.  
+CtrlVar.Inverse.TestAdjoint.FiniteDifferenceType='fourth-order' ; % {'first-order','second-order','fourth-order'}
+                                                 
 CtrlVar.Inverse.TestAdjoint.FiniteDifferenceStepSize=1e-8 ;
-CtrlVar.Inverse.TestAdjoint.iRange=[] ;  % range of nodes/elements over which brute force gradient is to be calculated.
+CtrlVar.Inverse.TestAdjoint.iRange=[100:120] ;  % range of parameters over which brute force gradient is to be calculated.
                                          % if left empty, values are calulated for every node/element within the mesh. 
-                                         % If set to for example [1,10,45] values are calculated for these three
-                                         % nodes/elements.
+                                         % If set to for example [1,10,45]
+                                         % values are calculated for these
+                                         % parameters
+                                        
 % end, testing adjoint parameters. 
                                                     
 UserVar.AddDataErrors=0;

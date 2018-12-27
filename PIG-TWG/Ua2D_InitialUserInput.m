@@ -13,7 +13,7 @@ end
 clearvars UserVar
 
 UserVar.RunType='UaOpt-ConjGrad';
-UserVar.RunType='TestingMeshOptions';
+%UserVar.RunType='TestingMeshOptions';
 UserVar.InterpolantsDirectory='../Interpolants/PIG-TWG';
 
 
@@ -25,7 +25,7 @@ switch UserVar.RunType
         
         CtrlVar.TimeDependentRun=0;  % {0|1} if true (i.e. set to 1) then the run is a forward transient one, if not
         CtrlVar.InverseRun=1;
-        CtrlVar.Restart=1;
+        CtrlVar.Restart=0;
         CtrlVar.ReadInitialMesh=1;
         CtrlVar.AdaptMesh=0;
         UserVar.Slipperiness.ReadFromFile=0;  
@@ -153,15 +153,15 @@ UserVar.AGlen.FileName='AGlen-Estimate.mat';
 %% Inverse
 
 
-CtrlVar.Inverse.Iterations=1000;
-
+CtrlVar.Inverse.Iterations=10;
+CtrlVar.Inverse.Measurements='-uv-dhdt-' ;   % {'-uv-,'-uv-dhdt-','-dhdt-'}
 
 % Testing adjoint parameters, start:
 CtrlVar.Inverse.TestAdjoint.isTrue=0; % If true then perform a brute force calculation
 % of the directional derivative of the objective function.
 CtrlVar.Inverse.TestAdjoint.FiniteDifferenceType='second-order' ;
 CtrlVar.Inverse.TestAdjoint.FiniteDifferenceStepSize=1e-8 ;
-CtrlVar.Inverse.TestAdjoint.iRange=[1000:2000] ;  % range of nodes/elements over which brute force gradient is to be calculated.
+CtrlVar.Inverse.TestAdjoint.iRange=[1000:1010] ;  % range of nodes/elements over which brute force gradient is to be calculated.
 % if left empty, values are calulated for every node/element within the mesh.
 % If set to for example [1,10,45] values are calculated for these three
 % nodes/elements.

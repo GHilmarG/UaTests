@@ -20,12 +20,14 @@ Err=double(FerrMeas(MUA.coordinates(:,1),MUA.coordinates(:,2)));
 
 MissingData=isnan(Meas.us) | isnan(Meas.vs) | isnan(Err) | (Err==0);
 Meas.us(MissingData)=0 ;  Meas.vs(MissingData)=0 ; Err(MissingData)=1e10;
+usError=Err ; vsError=Err ; 
 
+Meas.dhdt=zeros(MUA.Nnodes,1);                % here assuming dhdt=0 as measured, 
+dhdtError=zeros(MUA.Nnodes,1)+10;           % with significant errors 
 
-usError=Err ; vsError=Err ; wsError=usError*0+1e10;
 Meas.usCov=sparse(1:MUA.Nnodes,1:MUA.Nnodes,usError.^2,MUA.Nnodes,MUA.Nnodes);
 Meas.vsCov=sparse(1:MUA.Nnodes,1:MUA.Nnodes,vsError.^2,MUA.Nnodes,MUA.Nnodes);
-Meas.wsCov=sparse(1:MUA.Nnodes,1:MUA.Nnodes,wsError.^2,MUA.Nnodes,MUA.Nnodes);
+Meas.dhdtCov=sparse(1:MUA.Nnodes,1:MUA.Nnodes,dhdtError.^2,MUA.Nnodes,MUA.Nnodes);
 
 %% Define Start Values of Inversion
 
