@@ -12,7 +12,9 @@ end
 
 %C=C.*(1+10*Hi(y,x,0,0,1e4,1e4,1));
 
-if CtrlVar.doDiagnostic
+if UserVar.Inverse.CreateSyntData==2 && UserVar.Inverse.SynthData.Pert=="-C-" 
+    
+    fprintf(' Creating C pertubation for the generation of synthetic measurements.\n') 
     
     switch lower(UserVar.RunType)
         

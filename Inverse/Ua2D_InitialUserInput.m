@@ -8,6 +8,10 @@ if ~isfield(UserVar,'RunType')
     UserVar.RunType='IceShelf';   %  either 'IceStream' or  'IceShelf'
 end
 
+UserVar.Inverse.SynthData.Pert="-b-" ; 
+UserVar.Inverse.CreateSyntData=1;  % This field 
+
+%%
 
 CtrlVar.doplots=1;
 
@@ -21,7 +25,7 @@ CtrlVar.TriNodes=3;
 
 
 %% Restart
-CtrlVar.Restart=0;  CtrlVar.WriteRestartFile=1;
+CtrlVar.Restart=1;  CtrlVar.WriteRestartFile=1;
 CtrlVar.NameOfRestartFiletoRead=['Nod',num2str(CtrlVar.TriNodes),'-iC-Restart.mat'];
 CtrlVar.NameOfRestartFiletoWrite=CtrlVar.NameOfRestartFiletoRead;
 
@@ -31,8 +35,8 @@ CtrlVar.Inverse.Measurements='-uv-dhdt-' ;   % {'-dhdt-,'-uv-dhdt-','-dhdt-'}
 
 CtrlVar.Inverse.MinimisationMethod='MatlabOptimization'; % {'MatlabOptimization','UaOptimization'}
 %CtrlVar.Inverse.MinimisationMethod='UaOptimization';
-CtrlVar.Inverse.Iterations=100;
-CtrlVar.Inverse.InvertFor='logAGlenlogC' ; % {'C','logC','AGlen','logAGlen'}
+CtrlVar.Inverse.Iterations=2500;
+CtrlVar.Inverse.InvertFor='-b-' ; % {'-C-','-logC-','-AGlen-','-logAGlen-'}
 CtrlVar.CisElementBased=0;
 CtrlVar.AGlenisElementBased=0;
 CtrlVar.Inverse.CalcGradI=true;  
@@ -119,7 +123,7 @@ CtrlVar.Inverse.TestAdjoint.isTrue=0; % If true then perform a brute force calcu
 CtrlVar.Inverse.TestAdjoint.FiniteDifferenceType='fourth-order' ; % {'first-order','second-order','fourth-order'}
                                                  
 CtrlVar.Inverse.TestAdjoint.FiniteDifferenceStepSize=1e-8 ;
-CtrlVar.Inverse.TestAdjoint.iRange=[100:120] ;  % range of parameters over which brute force gradient is to be calculated.
+CtrlVar.Inverse.TestAdjoint.iRange=[200:220] ;  % range of parameters over which brute force gradient is to be calculated.
                                          % if left empty, values are calulated for every node/element within the mesh. 
                                          % If set to for example [1,10,45]
                                          % values are calculated for these
@@ -130,8 +134,13 @@ CtrlVar.Inverse.TestAdjoint.iRange=[100:120] ;  % range of parameters over which
 UserVar.AddDataErrors=0;
 
 CtrlVar.Inverse.Regularize.Field=CtrlVar.Inverse.InvertFor;
+
+CtrlVar.Inverse.Regularize.b.gs=1;
+CtrlVar.Inverse.Regularize.b.ga=0;
+
 CtrlVar.Inverse.Regularize.C.gs=1;
 CtrlVar.Inverse.Regularize.C.ga=1;
+
 CtrlVar.Inverse.Regularize.logC.ga=1;
 CtrlVar.Inverse.Regularize.logC.gs=10;
 CtrlVar.Inverse.Regularize.AGlen.gs=1;
@@ -145,7 +154,7 @@ CtrlVar.Inverse.Regularize.logAGlen.gs=1000 ;
 CtrlVar.Inverse.DataMisfit.HessianEstimate='0'; % {'0','I','MassMatrix'}
 
 CtrlVar.Inverse.DataMisfit.Multiplier=1;
-CtrlVar.Inverse.Regularize.Multiplier=1;
+CtrlVar.Inverse.Regularize.Multiplier=0;
 
 CtrlVar.Inverse.DataMisfit.FunctionEvaluation='integral';
 CtrlVar.MUA.MassMatrix=1;

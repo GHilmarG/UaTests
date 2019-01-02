@@ -12,7 +12,11 @@ else
     AGlen=AGlen+zeros(MUA.Nnodes,1);
 end
 
-if CtrlVar.doDiagnostic
+
+if UserVar.Inverse.CreateSyntData==2 && UserVar.Inverse.SynthData.Pert=="-A-" 
+    
+    fprintf(' Creating A pertubation for the generation of synthetic measurements.\n')
+    
     
     switch lower(UserVar.RunType)
         
