@@ -2,7 +2,7 @@ function [UserVar,CtrlVar,MeshBoundaryCoordinates]=Ua2D_InitialUserInput(UserVar
 
 
 %%
-UserVar.MisExperiment='ice0';  % This I use in DefineMassBalance
+UserVar.MisExperiment='Calving';  % This I use in DefineMassBalance
 UserVar.Outputsdirectory='ResultsFiles'; % This I use in UaOutputs
 UserVar.MassBalanceCase='ice0';
 %%
@@ -11,15 +11,15 @@ CtrlVar.Experiment=['MismipPlus-',UserVar.MisExperiment];
 %% Types of run
 %
 CtrlVar.TimeDependentRun=1; 
-CtrlVar.TotalNumberOfForwardRunSteps=10;
-CtrlVar.TotalTime=100;
+CtrlVar.TotalNumberOfForwardRunSteps=10000000;
+CtrlVar.TotalTime=1000;
 CtrlVar.Restart=0;  
 CtrlVar.InfoLevelNonLinIt=1; 
 
 CtrlVar.dt=0.01; 
 CtrlVar.time=0; 
 
-CtrlVar.UaOutputsDt=0; % interval between calling UaOutputs. 0 implies call it at each and every run step.
+CtrlVar.UaOutputsDt=0.1; % interval between calling UaOutputs. 0 implies call it at each and every run step.
                        % setting CtrlVar.UaOutputsDt=1; causes UaOutputs to be called every 1 years.
                        % This is a more reasonable value once all looks OK.
 
@@ -32,7 +32,7 @@ CtrlVar.ReadInitialMesh=0;    % if true then read FE mesh (i.e the MUA variable)
 CtrlVar.ReadInitialMeshFileName='AdaptMesh.mat';
 CtrlVar.SaveInitialMeshFileName='NewMeshFile.mat';
 %% Plotting options
-CtrlVar.doplots=1;
+CtrlVar.doplots=0;
 CtrlVar.PlotMesh=1; 
 CtrlVar.PlotBCs=0;
 CtrlVar.WhenPlottingMesh_PlotMeshBoundaryCoordinatesToo=1;
@@ -50,7 +50,7 @@ CtrlVar.NameOfRestartFiletoRead=CtrlVar.NameOfRestartFiletoWrite;
 
 
 %% adapt mesh
-CtrlVar.InfoLevelAdaptiveMeshing=100;
+CtrlVar.InfoLevelAdaptiveMeshing=1;
 CtrlVar.doAdaptMeshPlots=0; 
 CtrlVar.MeshGenerator='gmsh';  % possible values: {mesh2d|gmsh}
 
@@ -81,7 +81,7 @@ CtrlVar.MeshRefinementMethod='explicit:local:newest vertex bisection';    % can 
                                                    % 'explicit:local:red-green'
                                                    % 'explicit:local:newest vertex bisection';
 %  
-CtrlVar.SaveAdaptMeshFileName='AdaptMesh.mat'; 
+CtrlVar.SaveAdaptMeshFileName=[] ; % 'AdaptMesh.mat'; 
 
 
 

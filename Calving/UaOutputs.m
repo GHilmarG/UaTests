@@ -1,5 +1,7 @@
 function UserVar=UaOutputs(UserVar,CtrlVar,MUA,BCs,F,l,GF,InvStartValues,InvFinalValues,Priors,Meas,BCsAdjoint,RunInfo)
 
+persistent VideoFlowline
+
 v2struct(F);
 time=CtrlVar.time;
 
@@ -65,6 +67,12 @@ if contains(plots,'-plot-')
     end
     
     if contains(plots,'-flowline-')
+        
+        if isempty(VideoFlowline)
+            VideoFlowline=VideoWriter('Flowline.mp4') ;
+            open(VideoFlowline)
+        end
+        
         x=MUA.coordinates(:,1);
         y=MUA.coordinates(:,2);
         
@@ -90,7 +98,14 @@ if contains(plots,'-plot-')
         title(sprintf('t=%g',time))
         hold off
         
-    end
+        frame=getframe(gcf) ;
+        writeVideo(VideoFlowline,frame)
+        
+         if contains(CtrlVar.UaOutputsInfostring,'Last call')
+             close(VideoFlowline)
+         end
+        
+        
     
     if contains(plots,'-mesh-')
         
