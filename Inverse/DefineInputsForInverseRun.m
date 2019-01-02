@@ -81,31 +81,31 @@ InvStartValues.C=Priors.C ; % + 0.5* sin(xC*2*pi/Lx)*mean(Priors.C) ;
 InvStartValues.m=Priors.m;
 InvStartValues.AGlen=Priors.AGlen ;  % +0.5*sin(xA*2*pi/Lx)*mean(Priors.AGlen) ; 
 InvStartValues.n=Priors.n;
+InvStartValues.b=Priors.b ; 
 
 
 %% Define measurements and measurement errors
 
-fprintf(' Creating synthetic data for iC \n')
+fprintf(' Creating synthetic data. \n')
 
-CtrlVar.doDiagnostic=1;  % this flag is then used when defining A and C to add a pertubation 
+if UserVar.Inverse.CreateSyntData==1
+    UserVar.Inverse.CreateSyntData=2;
+end
+[UserVar,F.s,F.b,F.S,F.B,F.alpha]=DefineGeometry(UserVar,CtrlVar,MUA,CtrlVar.time);
 [UserVar,F.C,F.m]=DefineSlipperyDistribution(UserVar,CtrlVar,MUA,CtrlVar.time,F.s,F.b,F.s-F.b,F.S,F.B,F.rho,F.rhow,GF);
 [UserVar,F.AGlen,F.n]=DefineAGlenDistribution(UserVar,CtrlVar,MUA,CtrlVar.time,F.s,F.b,F.s-F.b,F.S,F.B,F.rho,F.rhow,GF);
-[F.AGlen,F.n]=TestAGlenInputValues(CtrlVar,MUA,F.AGlen,F.n);
-[F.C,F.m]=TestSlipperinessInputValues(CtrlVar,MUA,F.C,F.m);
-
+UserVar.Inverse.CreateSyntData=1;
 
 [UserVar,RunInfo,F,l,Kuv,Ruv,Lubvb]= uv(UserVar,RunInfo,CtrlVar,MUA,BCs,F,l);
-
-CtrlVar.Tracer.SUPG.Use=1; CtrlVar.Tracer.SUPG.tau='tau2';
-[UserVar,hnew,lambda]=TracerConservationEquation(UserVar,CtrlVar,MUA,CtrlVar.dt,F.h,F.ub,F.vb,F.as+F.ab,F.ub,F.vb,F.as+F.ab,0,BCs);
-F.dhdt=(hnew-F.h)/CtrlVar.dt;
-
-
+[UserVar,F.dhdt]=dhdtExplicit(UserVar,CtrlVar,MUA,F) ;
 
 Priors.TrueC=F.C;
 Priors.TrueAGlen=F.AGlen;
+Priors.Trueb=F.b;
 
-
+%if UserVar.Inverse.SynthData.Pert=="-b-"
+%    InvStartValues.b=(F.b+Priors.b)/2 ; 
+%end
 
 %[UserVar,ub,vb,ud,vd,l,Kuv,Ruv,RunInfo,ubvbL]=uv(UserVar,CtrlVar,MUA,BCs,s,b,h,S,B,ub,vb,ud,vd,l,AGlen,C,n,m,alpha,rho,rhow,g,GF);
 Meas.us=F.ub ;

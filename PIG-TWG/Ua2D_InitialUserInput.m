@@ -12,17 +12,17 @@ end
 
 clearvars UserVar
 
-UserVar.RunType='UaOpt-ConjGrad';
+CtrlVar.Inverse.Measurements="-dhdt-" ;  
+UserVar.RunType="Inversion";
 %UserVar.RunType='TestingMeshOptions';
-UserVar.InterpolantsDirectory='../Interpolants/PIG-TWG';
+UserVar.InterpolantsDirectory="../Interpolants/PIG-TWG";
 
 
 CtrlVar.Experiment=UserVar.RunType;
 
-switch UserVar.RunType
-    
-    case 'UaOpt-ConjGrad'
-        
+if contains(UserVar.RunType,"Inversion")
+
+        UserVar.RunType=UserVar.RunType+CtrlVar.Inverse.Measurements;
         CtrlVar.TimeDependentRun=0;  % {0|1} if true (i.e. set to 1) then the run is a forward transient one, if not
         CtrlVar.InverseRun=1;
         CtrlVar.Restart=0;
@@ -31,7 +31,8 @@ switch UserVar.RunType
         UserVar.Slipperiness.ReadFromFile=0;  
         UserVar.AGlen.ReadFromFile=0;
         
-    case 'TestingMeshOptions'
+elseif contains(UserVar.RunType,"TestingMeshOptions")
+    
         
         CtrlVar.TimeDependentRun=0;  % {0|1} if true (i.e. set to 1) then the run is a forward transient one, if not
         CtrlVar.InverseRun=0;
@@ -40,6 +41,8 @@ switch UserVar.RunType
         CtrlVar.AdaptMesh=1;
         UserVar.Slipperiness.ReadFromFile=1;
         UserVar.AGlen.ReadFromFile=1;
+else
+    error('hm?')
 end
 
 CtrlVar.dt=0.01;
@@ -154,8 +157,11 @@ UserVar.AGlen.FileName='AGlen-Estimate.mat';
 
 
 CtrlVar.Inverse.Iterations=10;
-CtrlVar.Inverse.Measurements='-uv-dhdt-' ;   % {'-uv-,'-uv-dhdt-','-dhdt-'}
 
+
+
+
+    
 % Testing adjoint parameters, start:
 CtrlVar.Inverse.TestAdjoint.isTrue=0; % If true then perform a brute force calculation
 % of the directional derivative of the objective function.
