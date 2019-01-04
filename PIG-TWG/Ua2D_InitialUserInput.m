@@ -12,7 +12,7 @@ end
 
 clearvars UserVar
 
-CtrlVar.Inverse.Measurements="-dhdt-" ;  
+
 UserVar.RunType="Inversion";
 %UserVar.RunType='TestingMeshOptions';
 UserVar.InterpolantsDirectory="../Interpolants/PIG-TWG";
@@ -156,19 +156,20 @@ UserVar.AGlen.FileName='AGlen-Estimate.mat';
 %% Inverse
 
 
-CtrlVar.Inverse.Iterations=10;
-
-
+CtrlVar.Inverse.Iterations=3;
+CtrlVar.Inverse.Measurements="-uv-" ;  
+CtrlVar.Inverse.InvertFor="-b-" ; % {'C','logC','AGlen','logAGlen'}
 
 
     
 % Testing adjoint parameters, start:
-CtrlVar.Inverse.TestAdjoint.isTrue=0; % If true then perform a brute force calculation
+CtrlVar.Inverse.TestAdjoint.isTrue=1; % If true then perform a brute force calculation
 % of the directional derivative of the objective function.
-CtrlVar.Inverse.TestAdjoint.FiniteDifferenceType='second-order' ;
-CtrlVar.Inverse.TestAdjoint.FiniteDifferenceStepSize=1e-8 ;
-CtrlVar.Inverse.TestAdjoint.iRange=[1000:1010] ;  % range of nodes/elements over which brute force gradient is to be calculated.
-% if left empty, values are calulated for every node/element within the mesh.
+CtrlVar.Inverse.TestAdjoint.FiniteDifferenceType='fourth-order' ;
+CtrlVar.Inverse.TestAdjoint.FiniteDifferenceStepSize=1e-3 ;
+CtrlVar.Inverse.TestAdjoint.iRange=[2000:2220] ;  % range of nodes/elements over which brute force gradient is to be calculated.
+CtrlVar.Inverse.TestAdjoint.iRange=[2000:2020] ;  % range of nodes/elements over which brute force gradient is to be calculated.
+% if left empty, values are calculated for every node/element within the mesh.
 % If set to for example [1,10,45] values are calculated for these three
 % nodes/elements.
 % end, testing adjoint parameters.
@@ -178,7 +179,7 @@ CtrlVar.Inverse.MinimisationMethod='MatlabOptimization';
 %CtrlVar.Inverse.MinimisationMethod='UaOptimization';
 CtrlVar.Inverse.GradientUpgradeMethod='ConjGrad' ; %{'SteepestDecent','ConjGrad'}
 
-CtrlVar.Inverse.InvertFor='logAGlenlogC' ; % {'C','logC','AGlen','logAGlen'}
+
 CtrlVar.Inverse.Regularize.Field=CtrlVar.Inverse.InvertFor;
 
 CtrlVar.Inverse.DataMisfit.GradientCalculation='Adjoint' ; % {'Adjoint','FixPointC'}
@@ -212,7 +213,8 @@ CtrlVar.Inverse.Regularize.AGlen.ga=1;
 CtrlVar.Inverse.Regularize.logAGlen.ga=ga;
 CtrlVar.Inverse.Regularize.logAGlen.gs=gs;
 
-
+CtrlVar.Inverse.Regularize.AGlen.bs=0;
+CtrlVar.Inverse.Regularize.AGlen.ba=0;
 
 
 CtrlVar.Inverse.DataMisfit.HessianEstimate='0'; % {'0','I','MassMatrix'}

@@ -4,7 +4,7 @@ function [UserVar,InvStartValues,Priors,Meas,BCsAdjoint,RunInfo]=DefineInputsFor
 persistent FuMeas FvMeas FerrMeas
 
 
-%% get measurments and define error covariance matrices
+%% get measurements and define error covariance matrices
 if isempty(FuMeas)
     locdir=pwd;
     cd(UserVar.InterpolantsDirectory)
@@ -23,7 +23,7 @@ Meas.us(MissingData)=0 ;  Meas.vs(MissingData)=0 ; Err(MissingData)=1e10;
 usError=Err ; vsError=Err ; 
 
 Meas.dhdt=zeros(MUA.Nnodes,1);                % here assuming dhdt=0 as measured, 
-dhdtError=zeros(MUA.Nnodes,1)+10;           % with significant errors 
+dhdtError=zeros(MUA.Nnodes,1)+10;             % with significant errors 
 
 Meas.usCov=sparse(1:MUA.Nnodes,1:MUA.Nnodes,usError.^2,MUA.Nnodes,MUA.Nnodes);
 Meas.vsCov=sparse(1:MUA.Nnodes,1:MUA.Nnodes,vsError.^2,MUA.Nnodes,MUA.Nnodes);
@@ -33,6 +33,8 @@ Meas.dhdtCov=sparse(1:MUA.Nnodes,1:MUA.Nnodes,dhdtError.^2,MUA.Nnodes,MUA.Nnodes
 
 [UserVar,InvStartValues.C,InvStartValues.m]=DefineSlipperyDistribution(UserVar,CtrlVar,MUA,CtrlVar.time,F.s,F.b,F.s-F.b,F.S,F.B,F.rho,F.rhow,GF);
 [UserVar,InvStartValues.AGlen,InvStartValues.n]=DefineAGlenDistribution(UserVar,CtrlVar,MUA,CtrlVar.time,F.s,F.b,F.s-F.b,F.S,F.B,F.rho,F.rhow,GF);
+
+InvStartValues.b=F.b;  
 
 listingCC=dir('CC.mat') ; listingCA=dir('CAGlen.mat') ;
 

@@ -62,7 +62,11 @@ Priors.CovAGlen=CAGlen;
 Priors.CovC=CC;
 
 Priors.s=F.s;
+
 Priors.b=F.b;
+Priors.bmin=-1e10;
+Priors.bmax=F.s;
+
 Priors.S=F.S;
 Priors.B=F.B;
 

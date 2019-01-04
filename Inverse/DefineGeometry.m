@@ -11,7 +11,7 @@ switch lower(UserVar.RunType)
         B=b ;
         s=hmean+b;
         
-        alpha=0.01 ;
+        alpha=0.001;
         
     case 'iceshelf'
         
