@@ -12,6 +12,8 @@ end
 
 clearvars UserVar
 
+CtrlVar.kH=100;
+CtrlVar.NLtol=1e-20;
 
 UserVar.RunType="Inversion";
 %UserVar.RunType='TestingMeshOptions';
@@ -168,7 +170,8 @@ CtrlVar.Inverse.TestAdjoint.isTrue=1; % If true then perform a brute force calcu
 CtrlVar.Inverse.TestAdjoint.FiniteDifferenceType='fourth-order' ;
 CtrlVar.Inverse.TestAdjoint.FiniteDifferenceStepSize=1e-3 ;
 CtrlVar.Inverse.TestAdjoint.iRange=[2000:2220] ;  % range of nodes/elements over which brute force gradient is to be calculated.
-CtrlVar.Inverse.TestAdjoint.iRange=[2000:2020] ;  % range of nodes/elements over which brute force gradient is to be calculated.
+CtrlVar.Inverse.TestAdjoint.iRange=[2200:2220] ;  % range of nodes/elements over which brute force gradient is to be calculated.
+%CtrlVar.Inverse.TestAdjoint.iRange=[2200:2205] ;  % range of nodes/elements over which brute force gradient is to be calculated.
 % if left empty, values are calculated for every node/element within the mesh.
 % If set to for example [1,10,45] values are calculated for these three
 % nodes/elements.
@@ -229,7 +232,7 @@ CtrlVar.MUA.StiffnessMatrix=1;
 %%
 CtrlVar.ThicknessConstraints=0;
 CtrlVar.ResetThicknessToMinThickness=1;  % change this later on
-CtrlVar.ThickMin=50;
+CtrlVar.ThickMin=1;
 
 %%
 filename=sprintf('IR-%s-%s-Nod%i-%s-%s-Cga%i-Cgs%i-Aga%i-Ags%i-%i-%i-%s',...

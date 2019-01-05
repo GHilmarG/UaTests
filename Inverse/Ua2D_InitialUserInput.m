@@ -8,7 +8,7 @@ if ~isfield(UserVar,'RunType')
     UserVar.RunType='IceShelf';   %  either 'IceStream' or  'IceShelf'
 end
 
-UserVar.Inverse.SynthData.Pert="-b-" ; %  {"-b-","-C-","-A-"}
+UserVar.Inverse.SynthData.Pert="-C-" ; %  {"-b-","-C-","-A-"}
 UserVar.Inverse.CreateSyntData=1;  % This field 
 
 %%
