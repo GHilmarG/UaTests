@@ -168,9 +168,10 @@ CtrlVar.Inverse.InvertFor="-b-" ; % {'C','logC','AGlen','logAGlen'}
 CtrlVar.Inverse.TestAdjoint.isTrue=1; % If true then perform a brute force calculation
 % of the directional derivative of the objective function.
 CtrlVar.Inverse.TestAdjoint.FiniteDifferenceType='fourth-order' ;
-CtrlVar.Inverse.TestAdjoint.FiniteDifferenceStepSize=1e-3 ;
+CtrlVar.Inverse.TestAdjoint.FiniteDifferenceStepSize=1e-5 ;
+
 CtrlVar.Inverse.TestAdjoint.iRange=[2000:2220] ;  % range of nodes/elements over which brute force gradient is to be calculated.
-CtrlVar.Inverse.TestAdjoint.iRange=[2200:2220] ;  % range of nodes/elements over which brute force gradient is to be calculated.
+%CtrlVar.Inverse.TestAdjoint.iRange=[2200:2220] ;  % range of nodes/elements over which brute force gradient is to be calculated.
 %CtrlVar.Inverse.TestAdjoint.iRange=[2200:2205] ;  % range of nodes/elements over which brute force gradient is to be calculated.
 % if left empty, values are calculated for every node/element within the mesh.
 % If set to for example [1,10,45] values are calculated for these three
