@@ -38,5 +38,6 @@ rhow=1030; g=9.81/1000;
 
 rho=Fr(MUA.coordinates(:,1),MUA.coordinates(:,2));
 
+rho=900; 
 
 end
