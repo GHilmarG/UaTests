@@ -119,7 +119,7 @@ Meas.dhdt=F.dhdt;
 VelScale=mean(F.ub);
 usError=1e-3*VelScale; 
 vsError=1e-3*VelScale  ; 
-dhdtError=std(F.dhdt)/10000; 
+dhdtError=1;
 
 Meas.usCov=sparse(1:MUA.Nnodes,1:MUA.Nnodes,usError.^2,MUA.Nnodes,MUA.Nnodes);
 Meas.vsCov=sparse(1:MUA.Nnodes,1:MUA.Nnodes,vsError.^2,MUA.Nnodes,MUA.Nnodes);

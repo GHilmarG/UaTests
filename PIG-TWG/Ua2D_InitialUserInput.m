@@ -160,7 +160,7 @@ UserVar.AGlen.FileName='AGlen-Estimate.mat';
 
 CtrlVar.Inverse.Iterations=3;
 CtrlVar.Inverse.Measurements="-uv-" ;  
-CtrlVar.Inverse.InvertFor="-b-" ; % {'C','logC','AGlen','logAGlen'}
+CtrlVar.Inverse.InvertFor="-B-" ; % {'C','logC','AGlen','logAGlen'}
 
 
     
@@ -172,7 +172,7 @@ CtrlVar.Inverse.TestAdjoint.FiniteDifferenceStepSize=1e-5 ;
 
 CtrlVar.Inverse.TestAdjoint.iRange=[2000:2220] ;  % range of nodes/elements over which brute force gradient is to be calculated.
 %CtrlVar.Inverse.TestAdjoint.iRange=[2200:2220] ;  % range of nodes/elements over which brute force gradient is to be calculated.
-%CtrlVar.Inverse.TestAdjoint.iRange=[2200:2205] ;  % range of nodes/elements over which brute force gradient is to be calculated.
+CtrlVar.Inverse.TestAdjoint.iRange=[2200:2205] ;  % range of nodes/elements over which brute force gradient is to be calculated.
 % if left empty, values are calculated for every node/element within the mesh.
 % If set to for example [1,10,45] values are calculated for these three
 % nodes/elements.
