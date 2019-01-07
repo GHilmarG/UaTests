@@ -44,5 +44,25 @@ if UserVar.Inverse.CreateSyntData==2 && UserVar.Inverse.SynthData.Pert=="-b-"
 end
 
 
+switch lower(UserVar.RunType)
+    
+    case 'icestream'
+
+        B=b ;
+        
+    case 'iceshelf'
+
+        B=b-1e10;
+
+        
+end
+
+
+
+
+
+
+
+
 end
 

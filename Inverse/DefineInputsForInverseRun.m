@@ -67,8 +67,12 @@ Priors.b=F.b;
 Priors.bmin=-1e10;
 Priors.bmax=F.s;
 
+
+
 Priors.S=F.S;
 Priors.B=F.B;
+Priors.Bmin=-1e10;
+Priors.Bmax=1e10;
 
 [UserVar,Priors.C,Priors.m]=DefineSlipperyDistribution(UserVar,CtrlVar,MUA,CtrlVar.time,F.s,F.b,F.s-F.b,F.S,F.B,F.rho,F.rhow,GF);
 [UserVar,Priors.AGlen,Priors.n]=DefineAGlenDistribution(UserVar,CtrlVar,MUA,CtrlVar.time,F.s,F.b,F.s-F.b,F.S,F.B,F.rho,F.rhow,GF);
@@ -86,6 +90,7 @@ InvStartValues.m=Priors.m;
 InvStartValues.AGlen=Priors.AGlen ;  % +0.5*sin(xA*2*pi/Lx)*mean(Priors.AGlen) ; 
 InvStartValues.n=Priors.n;
 InvStartValues.b=Priors.b ; 
+InvStartValues.B=Priors.B ; 
 
 
 %% Define measurements and measurement errors
