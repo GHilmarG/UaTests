@@ -65,7 +65,7 @@ CtrlVar.Inverse.TestAdjoint.isTrue=1; % If true then perform a brute force calcu
                                       % of the dirctional derivative of the objective function.  
 CtrlVar.Inverse.TestAdjoint.FiniteDifferenceType='fourth-order' ; % {'first-order','second-order','fourth-order'}
                                                  
-CtrlVar.Inverse.TestAdjoint.FiniteDifferenceStepSize=1e-1 ;
+CtrlVar.Inverse.TestAdjoint.FiniteDifferenceStepSize=1e-6 ;
 CtrlVar.Inverse.TestAdjoint.iRange=[200:220] ;  % range of parameters over which brute force gradient is to be calculated.
                                          % if left empty, values are calulated for every node/element within the mesh. 
                                          % If set to for example [1,10,45]
