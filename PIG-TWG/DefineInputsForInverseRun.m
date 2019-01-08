@@ -35,6 +35,7 @@ Meas.dhdtCov=sparse(1:MUA.Nnodes,1:MUA.Nnodes,dhdtError.^2,MUA.Nnodes,MUA.Nnodes
 [UserVar,InvStartValues.AGlen,InvStartValues.n]=DefineAGlenDistribution(UserVar,CtrlVar,MUA,CtrlVar.time,F.s,F.b,F.s-F.b,F.S,F.B,F.rho,F.rhow,GF);
 
 InvStartValues.b=F.b;  
+InvStartValues.B=F.B;  
 
 listingCC=dir('CC.mat') ; listingCA=dir('CAGlen.mat') ;
 
@@ -89,8 +90,16 @@ end
 %% Define Priors
 Priors.s=F.s;
 Priors.b=F.b;
+Priors.bmin=-1e10;
+Priors.bmax=1e10;
+
+
 Priors.S=F.S;
 Priors.B=F.B;
+Priors.Bmin=-1e10;
+Priors.Bmax=1e10;
+
+
 Priors.AGlen=AGlenVersusTemp(-10);
 Priors.n=3;
 Priors.m=3; ub=10 ; tau=80 ; % units meters, year , kPa

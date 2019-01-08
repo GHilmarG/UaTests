@@ -11,7 +11,7 @@ switch lower(UserVar.RunType)
         B=b ;
         s=hmean+b;
         
-        alpha=0.001;
+        alpha=0.01;
         
     case 'iceshelf'
         
@@ -22,6 +22,27 @@ switch lower(UserVar.RunType)
         s=hmean+b;
         
         alpha=0 ;
+        
+    case 'icestream+iceshelf'
+        
+        beta=0.01;
+        hmean=1000;
+        B0=500;
+        
+        x=MUA.coordinates(:,1);
+        y=MUA.coordinates(:,2);
+        
+        
+        B=B0-beta*x ;
+        b=B; 
+        S=B*0;
+        s=hmean+b;
+        
+        alpha=0 ;
+        
+        [b,s,h,GF]=Calc_bs_From_hBS(CtrlVar,MUA,s-b,S,B,900,1030);
+        
+        
         
 end
 
@@ -34,10 +55,10 @@ if UserVar.Inverse.CreateSyntData==2 && UserVar.Inverse.SynthData.Pert=="-b-"
     y=MUA.coordinates(:,2);
     
     sx=20e3 ; sy=20e3;
-    db=hmean/10;
+    db=hmean/2;
     bpert=db*exp(-(x.*x/sx^2+y.*y./sy^2));
     b=b+bpert ;
-    B=b;
+    B=B+bpert; 
     
     
     
@@ -56,11 +77,6 @@ switch lower(UserVar.RunType)
 
         
 end
-
-
-
-
-
 
 
 

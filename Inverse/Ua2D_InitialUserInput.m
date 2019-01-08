@@ -5,13 +5,18 @@ function [UserVar,CtrlVar,MeshBoundaryCoordinates]=Ua2D_InitialUserInput(UserVar
 %
 
 if ~isfield(UserVar,'RunType')
-    UserVar.RunType='IceShelf';   %  either 'IceStream' or  'IceShelf'
+    UserVar.RunType='IceStream+IceShelf';   %  either 'IceStream' or  'IceShelf'
+    %UserVar.RunType='IceShelf';   %  either 'IceStream' or  'IceShelf'
 end
 
 UserVar.Inverse.SynthData.Pert="-b-" ; %  {"-b-","-C-","-A-"}
 UserVar.Inverse.CreateSyntData=1;  % This field 
 
 %%
+CtrlVar.nip=6;
+CtrlVar.niph=6;
+CtrlVar.kH=10;
+CtrlVar.NLtol=1e-15; % tolerance for the square of the norm of the residual error
 
 CtrlVar.doplots=1;
 
@@ -24,7 +29,7 @@ CtrlVar.TriNodes=3;
 
 
 %% Restart
-CtrlVar.Restart=0;  CtrlVar.WriteRestartFile=1;
+CtrlVar.Restart=1;  CtrlVar.WriteRestartFile=1;
 CtrlVar.NameOfRestartFiletoRead=['Nod',num2str(CtrlVar.TriNodes),'-iC-Restart.mat'];
 CtrlVar.NameOfRestartFiletoWrite=CtrlVar.NameOfRestartFiletoRead;
 
@@ -34,7 +39,7 @@ CtrlVar.Inverse.Measurements='-uv-dhdt-' ;   % {'-dhdt-,'-uv-dhdt-','-dhdt-'}
 
 CtrlVar.Inverse.MinimisationMethod='MatlabOptimization'; % {'MatlabOptimization','UaOptimization'}
 %CtrlVar.Inverse.MinimisationMethod='UaOptimization';
-CtrlVar.Inverse.Iterations=1;
+CtrlVar.Inverse.Iterations=2000;
 CtrlVar.Inverse.InvertFor='-B-' ; % {'-C-','-logC-','-AGlen-','-logAGlen-'}
 
 
@@ -61,12 +66,12 @@ CtrlVar.Inverse.AdjointGradientPreMultiplier='I'; % {'I','M'}
 
 %CtrlVar.EpsZero=1e-16;
 % Testing adjoint parameters, start:
-CtrlVar.Inverse.TestAdjoint.isTrue=1; % If true then perform a brute force calculation 
+CtrlVar.Inverse.TestAdjoint.isTrue=0; % If true then perform a brute force calculation 
                                       % of the dirctional derivative of the objective function.  
 CtrlVar.Inverse.TestAdjoint.FiniteDifferenceType='fourth-order' ; % {'first-order','second-order','fourth-order'}
                                                  
-CtrlVar.Inverse.TestAdjoint.FiniteDifferenceStepSize=1e-6 ;
-CtrlVar.Inverse.TestAdjoint.iRange=[200:220] ;  % range of parameters over which brute force gradient is to be calculated.
+CtrlVar.Inverse.TestAdjoint.FiniteDifferenceStepSize=1e-5 ;
+%CtrlVar.Inverse.TestAdjoint.iRange=[200:220] ;  % range of parameters over which brute force gradient is to be calculated.
                                          % if left empty, values are calulated for every node/element within the mesh. 
                                          % If set to for example [1,10,45]
                                          % values are calculated for these
@@ -81,6 +86,10 @@ CtrlVar.Inverse.Regularize.Field=CtrlVar.Inverse.InvertFor;
 CtrlVar.Inverse.Regularize.b.gs=1;
 CtrlVar.Inverse.Regularize.b.ga=0;
 
+CtrlVar.Inverse.Regularize.B.gs=1e3;
+CtrlVar.Inverse.Regularize.B.ga=0;
+
+
 CtrlVar.Inverse.Regularize.C.gs=1;
 CtrlVar.Inverse.Regularize.C.ga=1;
 
@@ -89,7 +98,7 @@ CtrlVar.Inverse.Regularize.logC.gs=10;
 CtrlVar.Inverse.Regularize.AGlen.gs=1;
 CtrlVar.Inverse.Regularize.AGlen.ga=1;
 CtrlVar.Inverse.Regularize.logAGlen.ga=1;
-CtrlVar.Inverse.Regularize.logAGlen.gs=1000 ;
+CtrlVar.Inverse.Regularize.logAGlen.gs=10000 ;
 
 
 CtrlVar.Inverse.DataMisfit.HessianEstimate='0'; % {'0','I','MassMatrix'}

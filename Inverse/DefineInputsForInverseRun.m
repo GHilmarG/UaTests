@@ -24,7 +24,7 @@ end
 
 %% Define boundary conditions of adjoint problem
 % Generally there is nothing that needs to be done here.
-% 
+%
 % If BCsAdjoint is not modified, then Ua will define the BCs of the adjoint
 % problem based on the BCs of the forward problem.
 %
@@ -32,9 +32,12 @@ end
 % model
 
 
-
+% BCsAdjoint.ubFixedNode=MUA.Boundary.Nodes;
+% BCsAdjoint.vbFixedNode=MUA.Boundary.Nodes;
+% BCsAdjoint.ubFixedValue=BCsAdjoint.ubFixedNode*0;
+% BCsAdjoint.vbFixedValue=BCsAdjoint.vbFixedNode*0;
 %%  Covariance matrices of priors
-% 
+%
 if CtrlVar.AGlenisElementBased
     CAGlen=sparse(1:MUA.Nele,1:MUA.Nele,1,MUA.Nele,MUA.Nele);
 else
@@ -65,14 +68,14 @@ Priors.s=F.s;
 
 Priors.b=F.b;
 Priors.bmin=-1e10;
-Priors.bmax=F.s;
+Priors.bmax=F.s-10;
 
 
 
 Priors.S=F.S;
 Priors.B=F.B;
 Priors.Bmin=-1e10;
-Priors.Bmax=1e10;
+Priors.Bmax=F.s-10;
 
 [UserVar,Priors.C,Priors.m]=DefineSlipperyDistribution(UserVar,CtrlVar,MUA,CtrlVar.time,F.s,F.b,F.s-F.b,F.S,F.B,F.rho,F.rhow,GF);
 [UserVar,Priors.AGlen,Priors.n]=DefineAGlenDistribution(UserVar,CtrlVar,MUA,CtrlVar.time,F.s,F.b,F.s-F.b,F.S,F.B,F.rho,F.rhow,GF);
