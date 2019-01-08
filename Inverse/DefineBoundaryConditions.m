@@ -51,8 +51,11 @@ switch lower(UserVar.RunType)
         BCs.vbTiedNodeA=[nodesu;nodesl]; BCs.vbTiedNodeB=[nodesd;nodesr];
         BCs.hTiedNodeA=[nodesu;nodesl]; BCs.hTiedNodeB=[nodesd;nodesr];
         
-    case 'iceshelf'
+    case {'iceshelf','icestream+iceshelf'}
         
+        %
+        % Fixed up, left and right, but not along downflow side
+        %
         BCs.ubFixedNode=nodesu;  BCs.ubFixedValue=BCs.ubFixedNode*0;
         BCs.vbFixedNode=[nodesu;nodesl;nodesr];  BCs.vbFixedValue=BCs.vbFixedNode*0;
         
