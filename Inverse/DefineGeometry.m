@@ -34,6 +34,10 @@ switch lower(UserVar.RunType)
         
         
         B=B0-beta*x ;
+        
+        Ly=max(y)-min(y);
+        B=B+0.25*hmean*cos(4*pi*y/Ly);
+        
         b=B; 
         S=B*0;
         s=hmean+b;
@@ -54,12 +58,30 @@ if UserVar.Inverse.CreateSyntData==2 && UserVar.Inverse.SynthData.Pert=="-b-"
     x=MUA.coordinates(:,1) ;
     y=MUA.coordinates(:,2);
     
-    sx=20e3 ; sy=20e3;
-    db=hmean/2;
-    bpert=db*exp(-(x.*x/sx^2+y.*y./sy^2));
+    dbType='circ' ;
+    switch dbType
+        case 'Gauss'
+            
+            sx=20e3 ; sy=20e3;
+            db=hmean/2;
+            bpert=db*exp(-(x.*x/sx^2+y.*y./sy^2));
+            
+        case 'circ'
+            
+            R=sqrt(x.*x+y.*y) ;
+            I=R<10e3 ;
+            bpert=b*0;
+            bpert(I)=hmean/2;
+            
+    end
     b=b+bpert ;
-    B=B+bpert; 
+    B=B+bpert;
     
+    
+    
+    
+    
+    figure ; Plot_sbB(CtrlVar,MUA,s,b,B) ; title(' with perturbation ' )
     
     
 end

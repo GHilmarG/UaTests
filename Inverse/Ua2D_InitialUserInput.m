@@ -6,15 +6,15 @@ function [UserVar,CtrlVar,MeshBoundaryCoordinates]=Ua2D_InitialUserInput(UserVar
 
 if ~isfield(UserVar,'RunType')
     UserVar.RunType='IceStream+IceShelf';   %  either 'IceStream' or  'IceShelf'
-    %UserVar.RunType='IceShelf';   %  either 'IceStream' or  'IceShelf'
+    %UserVar.RunType='IceStream';   %  either 'IceStream' or  'IceShelf'
 end
 
 UserVar.Inverse.SynthData.Pert="-b-" ; %  {"-b-","-C-","-A-"}
 UserVar.Inverse.CreateSyntData=1;  % This field 
 
 %%
-CtrlVar.nip=6;
-CtrlVar.niph=6;
+%CtrlVar.nip=16;
+%CtrlVar.niph=16;
 CtrlVar.kH=10;
 CtrlVar.NLtol=1e-15; % tolerance for the square of the norm of the residual error
 
@@ -25,17 +25,17 @@ MeshBoundaryCoordinates=[xu yr ; xd yr ; xd yl ; xu yl];
 MeshBoundaryCoordinates=flipud(MeshBoundaryCoordinates);
 %% Types of runs
 CtrlVar.InverseRun=1;  
-CtrlVar.TriNodes=3;
+CtrlVar.TriNodes=10;
 
 
 %% Restart
-CtrlVar.Restart=1;  CtrlVar.WriteRestartFile=1;
+CtrlVar.Restart=0;  CtrlVar.WriteRestartFile=1;
 CtrlVar.NameOfRestartFiletoRead=['Nod',num2str(CtrlVar.TriNodes),'-iC-Restart.mat'];
 CtrlVar.NameOfRestartFiletoWrite=CtrlVar.NameOfRestartFiletoRead;
 
 
 %% Inverse   -inverse
-CtrlVar.Inverse.Measurements='-uv-dhdt-' ;   % {'-dhdt-,'-uv-dhdt-','-dhdt-'}
+CtrlVar.Inverse.Measurements='-uv-' ;   % {'-dhdt-,'-uv-dhdt-','-dhdt-'}
 
 CtrlVar.Inverse.MinimisationMethod='MatlabOptimization'; % {'MatlabOptimization','UaOptimization'}
 %CtrlVar.Inverse.MinimisationMethod='UaOptimization';
@@ -66,11 +66,11 @@ CtrlVar.Inverse.AdjointGradientPreMultiplier='I'; % {'I','M'}
 
 %CtrlVar.EpsZero=1e-16;
 % Testing adjoint parameters, start:
-CtrlVar.Inverse.TestAdjoint.isTrue=0; % If true then perform a brute force calculation 
+CtrlVar.Inverse.TestAdjoint.isTrue=1; % If true then perform a brute force calculation 
                                       % of the dirctional derivative of the objective function.  
 CtrlVar.Inverse.TestAdjoint.FiniteDifferenceType='fourth-order' ; % {'first-order','second-order','fourth-order'}
                                                  
-CtrlVar.Inverse.TestAdjoint.FiniteDifferenceStepSize=1e-5 ;
+CtrlVar.Inverse.TestAdjoint.FiniteDifferenceStepSize=1e-8 ;
 %CtrlVar.Inverse.TestAdjoint.iRange=[200:220] ;  % range of parameters over which brute force gradient is to be calculated.
                                          % if left empty, values are calulated for every node/element within the mesh. 
                                          % If set to for example [1,10,45]
@@ -123,6 +123,7 @@ CtrlVar.ReadInitialMesh=1;    % if true then read FE mesh (i.e the MUA variable)
 
 if CtrlVar.Inverse.TestAdjoint.isTrue
     CtrlVar.ReadInitialMeshFileName='UniformMesh';
+    %CtrlVar.ReadInitialMeshFileName='AdaptMeshFile10k';
 else
     CtrlVar.ReadInitialMeshFileName='AdaptMeshFile10k';
 end
