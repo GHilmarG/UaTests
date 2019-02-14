@@ -64,18 +64,15 @@ end
 Priors.CovAGlen=CAGlen;
 Priors.CovC=CC;
 
-Priors.s=F.s;
 
-Priors.b=F.b;
-Priors.bmin=-1e10;
-Priors.bmax=F.s-10;
-
-
-
-Priors.S=F.S;
 Priors.B=F.B;
-Priors.Bmin=-1e10;
-Priors.Bmax=F.s-10;
+Priors.Bmin=F.B-1000 ;  
+Priors.Bmax=F.s-5 ;
+
+%Priors.Bmin=F.B-10000 ;  
+%Priors.Bmax=F.s+10000 ;
+
+
 
 [UserVar,Priors.C,Priors.m]=DefineSlipperyDistribution(UserVar,CtrlVar,MUA,CtrlVar.time,F.s,F.b,F.s-F.b,F.S,F.B,F.rho,F.rhow,GF);
 [UserVar,Priors.AGlen,Priors.n]=DefineAGlenDistribution(UserVar,CtrlVar,MUA,CtrlVar.time,F.s,F.b,F.s-F.b,F.S,F.B,F.rho,F.rhow,GF);
@@ -90,44 +87,48 @@ Priors.rhow=F.rhow;
 % 
 InvStartValues.C=Priors.C ; % + 0.5* sin(xC*2*pi/Lx)*mean(Priors.C) ; 
 InvStartValues.m=Priors.m;
+
 InvStartValues.AGlen=Priors.AGlen ;  % +0.5*sin(xA*2*pi/Lx)*mean(Priors.AGlen) ; 
 InvStartValues.n=Priors.n;
-InvStartValues.b=Priors.b ; 
-InvStartValues.B=Priors.B ; 
+
+InvStartValues.B=Priors.B  ; % + 0.1*mean(F.h)*sin(x*2*pi/Lx) ; 
+
 
 
 %% Define measurements and measurement errors
 
 fprintf(' Creating synthetic data. \n')
 
+
 if UserVar.Inverse.CreateSyntData==1
     UserVar.Inverse.CreateSyntData=2;
 end
+
 [UserVar,F.s,F.b,F.S,F.B,F.alpha]=DefineGeometry(UserVar,CtrlVar,MUA,CtrlVar.time);
 [UserVar,F.C,F.m]=DefineSlipperyDistribution(UserVar,CtrlVar,MUA,CtrlVar.time,F.s,F.b,F.s-F.b,F.S,F.B,F.rho,F.rhow,GF);
 [UserVar,F.AGlen,F.n]=DefineAGlenDistribution(UserVar,CtrlVar,MUA,CtrlVar.time,F.s,F.b,F.s-F.b,F.S,F.B,F.rho,F.rhow,GF);
 UserVar.Inverse.CreateSyntData=1;
 
 [UserVar,RunInfo,F,l,Kuv,Ruv,Lubvb]= uv(UserVar,RunInfo,CtrlVar,MUA,BCs,F,l);
-[UserVar,F.dhdt]=dhdtExplicit(UserVar,CtrlVar,MUA,F) ;
+[UserVar,F.dhdt]=dhdtExplicit(UserVar,CtrlVar,MUA,F,BCs) ;
 
 Priors.TrueC=F.C;
 Priors.TrueAGlen=F.AGlen;
-Priors.Trueb=F.b;
+Priors.TrueB=F.B;
 
-%if UserVar.Inverse.SynthData.Pert=="-b-"
-%    InvStartValues.b=(F.b+Priors.b)/2 ; 
-%end
-
-%[UserVar,ub,vb,ud,vd,l,Kuv,Ruv,RunInfo,ubvbL]=uv(UserVar,CtrlVar,MUA,BCs,s,b,h,S,B,ub,vb,ud,vd,l,AGlen,C,n,m,alpha,rho,rhow,g,GF);
+Meas.s=F.s ;
 Meas.us=F.ub ;
 Meas.vs=F.vb;
 Meas.dhdt=F.dhdt;
 
-VelScale=mean(F.ub);
-usError=1e-3*VelScale; 
-vsError=1e-3*VelScale  ; 
-dhdtError=1;
+VelScale=max(F.ub)-min(F.ub);
+% dhdtScale=(max(Meas.dhdt)-min(Meas.dhdt));  % this might not be a good idea if Meas.dhdt=0 everywhere
+dhdtScale=1 ; 
+
+
+usError=UserVar.uError;
+vsError=UserVar.uError;
+dhdtError=UserVar.dhdtError;
 
 Meas.usCov=sparse(1:MUA.Nnodes,1:MUA.Nnodes,usError.^2,MUA.Nnodes,MUA.Nnodes);
 Meas.vsCov=sparse(1:MUA.Nnodes,1:MUA.Nnodes,vsError.^2,MUA.Nnodes,MUA.Nnodes);

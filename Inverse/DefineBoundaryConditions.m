@@ -49,7 +49,11 @@ switch lower(UserVar.RunType)
         
         BCs.ubTiedNodeA=[nodesu;nodesl]; BCs.ubTiedNodeB=[nodesd;nodesr];
         BCs.vbTiedNodeA=[nodesu;nodesl]; BCs.vbTiedNodeB=[nodesd;nodesr];
-        BCs.hTiedNodeA=[nodesu;nodesl]; BCs.hTiedNodeB=[nodesd;nodesr];
+        
+        BCs.dhdtTiedNodeA=[nodesu;nodesd;nodesl;nodesr];    BCs.dhdtTiedNodeB=[nodesd;nodesu;nodesr;nodesl];
+        
+        %BCs.dhdtFixedNode=[nodesu] ;   BCs.dhdtFixedValue=BCs.dhdtFixedNode*0;
+        
         
     case {'iceshelf','icestream+iceshelf'}
         
@@ -59,9 +63,20 @@ switch lower(UserVar.RunType)
         BCs.ubFixedNode=nodesu;  BCs.ubFixedValue=BCs.ubFixedNode*0;
         BCs.vbFixedNode=[nodesu;nodesl;nodesr];  BCs.vbFixedValue=BCs.vbFixedNode*0;
         
+        BCs.dhdtTiedNodeA=[nodesl;nodesr]; BCs.dhdtTiedNodeB=[nodesl;nodesr];
+        BCs.dhdtFixedNode=nodesu;  BCs.dhdtFixedValue=BCs.dhdtFixedNode*0;
+        
+    case  'valley'
+        
+        BCs.ubFixedNode=MUA.Boundary.Nodes ;   BCs.ubFixedValue=BCs.ubFixedNode*0;
+        BCs.vbFixedNode=MUA.Boundary.Nodes ;   BCs.vbFixedValue=BCs.vbFixedNode*0;
+%        BCs.dhdtFixedNode=MUA.Boundary.Nodes ;   BCs.dhdtFixedValue=BCs.dhdtFixedNode*0;
+        
+        
+        
     otherwise
-
-            error(' which case')
+        
+        error(' which case')
 end
 
 

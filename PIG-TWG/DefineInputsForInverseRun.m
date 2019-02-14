@@ -24,6 +24,9 @@ usError=Err ; vsError=Err ;
 
 Meas.dhdt=zeros(MUA.Nnodes,1);                % here assuming dhdt=0 as measured, 
 dhdtError=zeros(MUA.Nnodes,1)+10;             % with significant errors 
+x=MUA.coordinates(:,1);  y=MUA.coordinates(:,2); 
+I=x>-1700e3 & x < -1300e3 & y>-550e3 & y < -50e3 ; 
+dhdtError(I)=1 ;  dhdtError(~I)=100 ; 
 
 Meas.usCov=sparse(1:MUA.Nnodes,1:MUA.Nnodes,usError.^2,MUA.Nnodes,MUA.Nnodes);
 Meas.vsCov=sparse(1:MUA.Nnodes,1:MUA.Nnodes,vsError.^2,MUA.Nnodes,MUA.Nnodes);
