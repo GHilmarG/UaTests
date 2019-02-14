@@ -1,6 +1,7 @@
 
 function [UserVar,s,b,S,B,alpha]=DefineGeometry(UserVar,CtrlVar,MUA,time,FieldsToBeDefined)
 
+
 switch lower(UserVar.RunType)
     
     case 'icestream'
@@ -38,7 +39,7 @@ switch lower(UserVar.RunType)
         Ly=max(y)-min(y);
         B=B+0.25*hmean*cos(4*pi*y/Ly);
         
-        b=B; 
+        b=B;
         S=B*0;
         s=hmean+b;
         
@@ -48,39 +49,55 @@ switch lower(UserVar.RunType)
         
         
         
+    case 'valley'
+        
+      
+        [s,b,B,S]=Valley(UserVar,CtrlVar,MUA,false) ;
+        
+        alpha=0;
+        
+     
 end
 
-if UserVar.Inverse.CreateSyntData==2 && UserVar.Inverse.SynthData.Pert=="-b-"
+if UserVar.Inverse.CreateSyntData==2 && UserVar.Inverse.SynthData.Pert=="-B-"
     
-    fprintf(' Creating b pertubation for the generation of synthetic measurements.\n')
+    fprintf(' Creating B pertubation for the generation of synthetic measurements.\n')
     
     
     x=MUA.coordinates(:,1) ;
     y=MUA.coordinates(:,2);
     
-    dbType='circ' ;
-    switch dbType
-        case 'Gauss'
+    %dbType='Gauss' ;
+    
+    
+    switch lower(UserVar.Inverse.Syntdata.GeoPerturbation)
+        
+        case 'gauss'
             
             sx=20e3 ; sy=20e3;
             db=hmean/2;
             bpert=db*exp(-(x.*x/sx^2+y.*y./sy^2));
+            b=b+bpert ;
+            B=B+bpert;
             
         case 'circ'
             
             R=sqrt(x.*x+y.*y) ;
-            I=R<10e3 ;
+            I=R<50e3 ;
             bpert=b*0;
             bpert(I)=hmean/2;
+            b=b+bpert ;
+            B=B+bpert;
+            
+        case 'valley'
+
+          
+            [s,b,B,S]=Valley(UserVar,CtrlVar,MUA,true) ;
+            
+            
             
     end
-    b=b+bpert ;
-    B=B+bpert;
-    
-    
-    
-    
-    
+
     figure ; Plot_sbB(CtrlVar,MUA,s,b,B) ; title(' with perturbation ' )
     
     
@@ -90,13 +107,13 @@ end
 switch lower(UserVar.RunType)
     
     case 'icestream'
-
+        
         B=b ;
         
     case 'iceshelf'
-
+        
         B=b-1e10;
-
+        
         
 end
 

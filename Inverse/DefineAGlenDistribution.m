@@ -13,7 +13,7 @@ else
 end
 
 
-if UserVar.Inverse.CreateSyntData==2 && UserVar.Inverse.SynthData.Pert=="-A-" 
+if UserVar.Inverse.CreateSyntData==2 && contains(UserVar.Inverse.SynthData.Pert,"-A-") 
     
     fprintf(' Creating A pertubation for the generation of synthetic measurements.\n')
     
@@ -32,7 +32,7 @@ if UserVar.Inverse.CreateSyntData==2 && UserVar.Inverse.SynthData.Pert=="-A-"
             end
             
             sx=10e3 ; sy=10e3;
-            AGlen=AGlen.*(1+0.1*exp(-(x.*x/sx^2+y.*y./sy^2)));
+            AGlen=AGlen.*(1+100*exp(-(x.*x/sx^2+y.*y./sy^2)));
             
         %case 'icestream'
             

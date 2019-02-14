@@ -1,20 +1,20 @@
 function [UserVar,CtrlVar,MeshBoundaryCoordinates]=Ua2D_InitialUserInput(UserVar,CtrlVar)
 
+% UserVar.Measurements="-uv-" ; juv=batch('Ua','Pool',8,'CaptureDiary',true);
+%
+%
+% UserVar.Measurements="-uv-dhdt-" ; UserVar.InvertFor="-logA-logC-"; UserVar.doplots=0 ; Ua(UserVar) 
+% UserVar.Measurements="-uv-" ; UserVar.InvertFor="-logA-logC-"; UserVar.doplots=0 ; Ua(UserVar) 
+% 
 
-if isempty(UserVar)
-    gs=1 ;   % do 1, 10 , 100, 1000 , 10e3 ; 100e3 ; 1e6  ; 10e6
-    ga=1;
-elseif isnumeric(UserVar)
-    fprintf(' On input UserVar=%f \n',UserVar)
-    gs=UserVar ; 
-    ga=1;
-end
 
-clearvars UserVar
+gs=1 ;   % do 1, 10 , 100, 1000 , 10e3 ; 100e3 ; 1e6  ; 10e6
+ga=1;
 
 CtrlVar.kH=100;
 CtrlVar.NLtol=1e-20;
-
+CtrlVar.Parallel.isTest=false; 
+%CtrlVar.Parallel.uvAssembly.spmd.nWorkers=12 ; 
 UserVar.RunType="Inversion";
 %UserVar.RunType='TestingMeshOptions';
 UserVar.InterpolantsDirectory="../Interpolants/PIG-TWG";
@@ -24,10 +24,10 @@ CtrlVar.Experiment=UserVar.RunType;
 
 if contains(UserVar.RunType,"Inversion")
 
-        UserVar.RunType=UserVar.RunType+CtrlVar.Inverse.Measurements;
+        UserVar.RunType=UserVar.RunType;
         CtrlVar.TimeDependentRun=0;  % {0|1} if true (i.e. set to 1) then the run is a forward transient one, if not
         CtrlVar.InverseRun=1;
-        CtrlVar.Restart=0;
+        CtrlVar.Restart=1;
         CtrlVar.ReadInitialMesh=1;
         CtrlVar.AdaptMesh=0;
         UserVar.Slipperiness.ReadFromFile=0;  
@@ -63,12 +63,16 @@ end
 
 
 %%
-CtrlVar.doplots=1;
+if isfield(UserVar,'doplots')
+    CtrlVar.doplots=UserVar.doplots;
+else
+    CtrlVar.doplots=1;
+end
 CtrlVar.PlotOceanLakeNodes=0;
 CtrlVar.PlotMesh=0;  CtrlVar.PlotBCs=1 ;
-%% Meshing 
+%% Meshing
 
-CtrlVar.GmshMeshingAlgorithm=8; 
+CtrlVar.GmshMeshingAlgorithm=8;
 CtrlVar.MeshSizeMax=20e3;
 CtrlVar.MeshSize=CtrlVar.MeshSizeMax/2;
 CtrlVar.MeshSizeMin=CtrlVar.MeshSizeMax/20;
@@ -158,21 +162,31 @@ UserVar.AGlen.FileName='AGlen-Estimate.mat';
 %% Inverse
 
 
-CtrlVar.Inverse.Iterations=3;
-CtrlVar.Inverse.Measurements="-uv-" ;  
-CtrlVar.Inverse.InvertFor="-B-" ; % {'C','logC','AGlen','logAGlen'}
+CtrlVar.Inverse.Iterations=1000;
 
+if isfield(UserVar,'Measurements')
+    CtrlVar.Inverse.Measurements=UserVar.Measurements ; 
+else
+    CtrlVar.Inverse.Measurements="-dhdt-" ;
+    
+end
+
+if isfield(UserVar,'InvertFor')
+    CtrlVar.Inverse.InvertFor=UserVar.InvertFor ;
+else
+    CtrlVar.Inverse.InvertFor="-logC-" ; % {'-B-','-C-,'-logC-','-A-','-logA-'}
+end
 
     
 % Testing adjoint parameters, start:
-CtrlVar.Inverse.TestAdjoint.isTrue=1; % If true then perform a brute force calculation
+CtrlVar.Inverse.TestAdjoint.isTrue=0; % If true then perform a brute force calculation
 % of the directional derivative of the objective function.
 CtrlVar.Inverse.TestAdjoint.FiniteDifferenceType='fourth-order' ;
-CtrlVar.Inverse.TestAdjoint.FiniteDifferenceStepSize=1e-3 ;
+CtrlVar.Inverse.TestAdjoint.FiniteDifferenceStepSize=1e-6 ;
 
 CtrlVar.Inverse.TestAdjoint.iRange=[2000:3000] ;  % range of nodes/elements over which brute force gradient is to be calculated.
 % CtrlVar.Inverse.TestAdjoint.iRange=[2000:2220] ;  % range of nodes/elements over which brute force gradient is to be calculated.
-CtrlVar.Inverse.TestAdjoint.iRange=[2200:2220] ;  % range of nodes/elements over which brute force gradient is to be calculated.
+% CtrlVar.Inverse.TestAdjoint.iRange=[2200:2220] ;  % range of nodes/elements over which brute force gradient is to be calculated.
 % CtrlVar.Inverse.TestAdjoint.iRange=[2200:2205] ;  % range of nodes/elements over which brute force gradient is to be calculated.
 % if left empty, values are calculated for every node/element within the mesh.
 % If set to for example [1,10,45] values are calculated for these three
@@ -237,8 +251,9 @@ CtrlVar.ResetThicknessToMinThickness=1;  % change this later on
 CtrlVar.ThickMin=1;
 
 %%
-filename=sprintf('IR-%s-%s-Nod%i-%s-%s-Cga%i-Cgs%i-Aga%i-Ags%i-%i-%i-%s',...
+filename=sprintf('IR-%s-Meas%s-%s-Nod%i-%s-%s-Cga%i-Cgs%i-Aga%i-Ags%i-%i-%i-%s',...
     UserVar.RunType,...
+    CtrlVar.Inverse.Measurements,...
     CtrlVar.Inverse.MinimisationMethod,...
     CtrlVar.TriNodes,...
     CtrlVar.Inverse.AdjointGradientPreMultiplier,...
