@@ -3,22 +3,22 @@ function  UserVar=UaOutputs(UserVar,CtrlVar,MUA,BCs,F,l,GF,InvStartValues,InvFin
 v2struct(F);
 
 
-
-switch CtrlVar.UaOutputsInfostring
-    
-    case 'Start of Inverse Run'
+if CtrlVar.InverseRun
+    switch CtrlVar.UaOutputsInfostring
         
-        plots='-meas-';
-        
-    otherwise
-        
-        return;
-        
+        case 'Start of Inverse Run'
+            
+            plots='-meas-';
+            
+        otherwise
+            
+            return;
+            
+    end
 end
 
 
-
-%plots='-sbB-udvd-ubvb-ub-';
+plots='-sbB-ubvb-ub-';
 
 TRI=[];
 x=MUA.coordinates(:,1);  y=MUA.coordinates(:,2);
@@ -58,7 +58,7 @@ if contains(plots,'-sbB-')
     colorbar ; title(colorbar,'(m)')
     hold on
     
-    title(sprintf('sbB at t=%#5.1g ',time))
+    title(sprintf('sbB at t=%#5.1g ',CtrlVar.time))
     axis equal ; tt=daspect ; daspect([mean(tt(1)+tt(2)) mean(tt(1)+tt(2)) tt(3)*CtrlVar.PlotXYscale]); axis tight
     hold off
 end
@@ -104,7 +104,7 @@ if contains(plots,'-udvd-')
     %CtrlVar.VelColorMap='hot';
     QuiverColorGHG(x(1:N:end),y(1:N:end),ud(1:N:end),vd(1:N:end),CtrlVar);
     hold on
-    title(sprintf('(ud,vd) t=%-g ',time)) ; xlabel('xps (km)') ; ylabel('yps (km)')
+    title(sprintf('(ud,vd) t=%-g ',CtrlVar.time)) ; xlabel('xps (km)') ; ylabel('yps (km)')
     axis equal tight
     
 end

@@ -4,6 +4,10 @@ function [UserVar,C,m]=DefineSlipperyDistribution(UserVar,CtrlVar,MUA,time,s,b,h
 %m=3 ;  C=1/20^m+zeros(Nnodes,1); % m=3 , 1 m/a and basal shear stress of 20 kPa
 m=3 ;
 
+%
+% 
+%
+
 if CtrlVar.CisElementBased
     C=zeros(MUA.Nele,1)+1/20^m;
 else
@@ -12,7 +16,9 @@ end
 
 %C=C.*(1+10*Hi(y,x,0,0,1e4,1e4,1));
 
-if CtrlVar.doDiagnostic
+if UserVar.Inverse.CreateSyntData==2 && contains(UserVar.Inverse.SynthData.Pert,"-C-") 
+    
+    fprintf(' Creating C pertubation for the generation of synthetic measurements.\n') 
     
     switch lower(UserVar.RunType)
         
