@@ -10,10 +10,11 @@ if ~isfield(UserVar,'RunType')
     UserVar.RunType='IceStream';   UserVar.Inverse.Syntdata.GeoPerturbation='gauss';
     % UserVar.RunType='IceShelf';   %  either 'IceStream' or  'IceShelf'
     
-    UserVar.Inverse.Syntdata.GeoPerturbation='valley'; UserVar.RunType='valley';  UserVar.vShift=-1000 ; % UserVar.vShift=-4000 ; % This generates a synthetic valley shaped b geometry
-    
-    
-    % For vShift=0 there is no grounding-line within the domain
+    UserVar.Inverse.Syntdata.GeoPerturbation='valley'; 
+    UserVar.RunType='valley';  
+    UserVar.vShift=1000 ; % UserVar.vShift=-4000 ; % This generates a synthetic valley shaped b geometry
+    % For vShift=0 there is no grounding-line within the domain, but it is exactly
+    % at the edge. 
     % for vShift=-2000 , for example, the grounding line is within the domain
     
 end
@@ -30,8 +31,14 @@ UserVar.Inverse.CreateSyntData=1;  % This field
 %CtrlVar.niph=37;
 CtrlVar.kH=10;
 CtrlVar.NLtol=1e-15; % tolerance for the square of the norm of the residual error
-CtrlVar.doplots=1;
 
+%%
+CtrlVar.doplots=1;
+CtrlVar.Plot.Units.xDistance="(km)" ; 
+CtrlVar.Plot.Units.yDistance="(km)" ; 
+CtrlVar.Plot.Units.zDistance="(m)" ; 
+
+%%
 xd=200e3; xu=-200e3 ; yl=200e3 ; yr=-200e3;
 MeshBoundaryCoordinates=[xu yr ; xd yr ; xd yl ; xu yl];
 MeshBoundaryCoordinates=flipud(MeshBoundaryCoordinates);
@@ -51,7 +58,7 @@ CtrlVar.Inverse.Measurements='-uv-dhdt-' ;   % {'-dhdt-,'-uv-dhdt-','-dhdt-'}
 
 CtrlVar.Inverse.MinimisationMethod='MatlabOptimization'; % {'MatlabOptimization','UaOptimization'}
 %CtrlVar.Inverse.MinimisationMethod='UaOptimization';
-CtrlVar.Inverse.Iterations=100;
+CtrlVar.Inverse.Iterations=10;
 CtrlVar.Inverse.InvertFor='-B-' ; % {'-C-','-logC-','-AGlen-','-logAGlen-'}
 CtrlVar.Inverse.OnlyModifyBedUpstreamOfGL=false ;
 
@@ -59,15 +66,6 @@ CtrlVar.Inverse.OnlyModifyBedUpstreamOfGL=false ;
 CtrlVar.Inverse.DataMisfit.GradientCalculation='Adjoint' ; % {'Adjoint','FixPoint'
 %CtrlVar.Inverse.DataMisfit.GradientCalculation='-FixPoint-' ; % {'Adjoint','FixPoint'}
 CtrlVar.Inverse.AdjointGradientPreMultiplier="I"; % {"I","M"}
-
-% UaOptimization parameters, start :
-CtrlVar.Inverse.GradientUpgradeMethod='conjgrad' ; %{'SteepestDecent','conjgrad'}
-CtrlVar.ConjugatedGradientsUpdate='HS'; % (FR|PR|HS|DY)
-CtrlVar.Inverse.InitialLineSearchStepSize=[];
-CtrlVar.Inverse.MinimumAbsoluteLineSearchStepSize=1e-20; % minimum step size in backtracking
-CtrlVar.Inverse.MinimumRelativelLineSearchStepSize=1e-5; % minimum fractional step size relative to initial step size
-CtrlVar.Inverse.MaximumNumberOfLineSeachSteps=50;
-% end, UaOptimization parameters
 
 
 CtrlVar.Inverse.InfoLevel=1;  % Set to 1 to get some basic information,
@@ -95,7 +93,7 @@ end
 CtrlVar.Inverse.InfoLevel=1;
 %CtrlVar.EpsZero=1e-16;
 % Testing adjoint parameters, start:
-CtrlVar.Inverse.TestAdjoint.isTrue=1; % If true then perform a brute force calculation
+CtrlVar.Inverse.TestAdjoint.isTrue=0; % If true then perform a brute force calculation
 % of the dirctional derivative of the objective function.
 CtrlVar.Inverse.TestAdjoint.FiniteDifferenceType='central-fourth-order' ; % {'forward-first-order','central-second-order','central-fourth-order'}
 

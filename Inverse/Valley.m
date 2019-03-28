@@ -13,11 +13,19 @@ s=s0-(x-min(x))*beta ;
 
 if pert
     
-    h0=500 ; xc=min(x)+(max(x)-min(x))/2 ;  yc=min(y)+(max(y)-min(y))/2 ;
+    h0=500 ; 
+    xc=min(x)+(max(x)-min(x))/2 ;  
+    yc=min(y)+(max(y)-min(y))/2 ;
     wx=lx/10 ; wy=ly/30 ;
-    h=h0- ( ((x-xc)/wx).^4 +  (( y-yc)/wy).^4 ) ;
-    h(h<10)=10;
     
+    h=h0- ( ((x-xc)/wx).^4 +  (( y-yc)/wy).^4 ) ;
+    
+    
+    % add a ridge
+    % ridge=h0/2-1e-7*(x-xc).^2 ; ridge(ridge<0)=0 ; h=h-ridge; 
+    
+    
+    h(h<10)=10;
 else
     
     %
