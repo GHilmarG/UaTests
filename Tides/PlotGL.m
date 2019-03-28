@@ -1,5 +1,5 @@
 %%
-M=importdata('dhdx-GL.dat');
+M=importdata('dsdx-GL.dat');
 
 %I=find(M(:,1)<1/diy) ; n=numel(I) ; A=[ones(n,1) M(I,1)] ; sol=A\M(I,2); 
 %M(:,2)=M(:,2)-sol(1)-sol(2)*M(:,1);

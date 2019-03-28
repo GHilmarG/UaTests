@@ -12,11 +12,15 @@ else
     AGlen=AGlen+zeros(MUA.Nnodes,1);
 end
 
-if CtrlVar.doDiagnostic
+
+if UserVar.Inverse.CreateSyntData==2 && contains(UserVar.Inverse.SynthData.Pert,"-A-") 
     
-    switch lower(UserVar.RunType)
+    fprintf(' Creating A pertubation for the generation of synthetic measurements.\n')
+    
+    
+    %switch lower(UserVar.RunType)
         
-        case 'iceshelf'
+        %case 'iceshelf'
             
             
             x=MUA.coordinates(:,1) ;
@@ -30,9 +34,9 @@ if CtrlVar.doDiagnostic
             sx=10e3 ; sy=10e3;
             AGlen=AGlen.*(1+100*exp(-(x.*x/sx^2+y.*y./sy^2)));
             
-        case 'icestream'
+        %case 'icestream'
             
-    end
+    %end
 end
 
 
