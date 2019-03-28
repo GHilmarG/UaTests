@@ -1,69 +1,69 @@
-  t-dt-tCPU-it-itTotal-date-uvhAssembly-uvhSolution-WallTime , 0 , 0.01 , 01:03:10  ,  NaN , 0 , 23-Nov-2018 11:30:49 , 00:00:00 , 00:00:00 , 00:00:01 
-NR-STREAM(uv):  1/1  g=1.5            , r/r0=0.9835626      ,  r0=1              , r=0.9835626      , du=Inf            , dl= , Assembly=0.200936 sec. Solution=0.044893 sec.
- NR-STREAM(uv):  2/0  g=1              , r/r0=0.0429153      ,  r0=0.9835626      , r=0.04220988     , du=515.7589       , dl= , Assembly=0.404348 sec. Solution=0.087405 sec.
- NR-STREAM(uv):  3/0  g=1              , r/r0=0.02746433     ,  r0=0.04220988     , r=0.001159266    , du=13.03012       , dl= , Assembly=0.609232 sec. Solution=0.127368 sec.
- NR-STREAM(uv):  4/0  g=1              , r/r0=0.0687647      ,  r0=0.001159266    , r=7.971661e-05   , du=10.13825       , dl= , Assembly=0.813251 sec. Solution=0.167537 sec.
- NR-STREAM(uv):  5/0  g=1              , r/r0=0.3285937      ,  r0=7.971661e-05   , r=2.619437e-05   , du=1.199254       , dl= , Assembly=1.019831 sec. Solution=0.208570 sec.
- NR-STREAM(uv):  6/1  g=0.4807321      , r/r0=0.1426232      ,  r0=2.619437e-05   , r=3.735924e-06   , du=0.1698355      , dl= , Assembly=1.223940 sec. Solution=0.249322 sec.
- NR-STREAM(uv):  7/1  g=0.4828427      , r/r0=0.2298166      ,  r0=3.735924e-06   , r=8.585772e-07   , du=0.04542344     , dl= , Assembly=1.428001 sec. Solution=0.289291 sec.
- NR-STREAM(uv):  8/1  g=0.5140889      , r/r0=0.2702906      ,  r0=8.585772e-07   , r=2.320654e-07   , du=0.02514413     , dl= , Assembly=1.631594 sec. Solution=0.329372 sec.
- NR-STREAM(uv):  9/1  g=0.5624374      , r/r0=0.260611       ,  r0=2.320654e-07   , r=6.047878e-08   , du=0.01342055     , dl= , Assembly=1.835877 sec. Solution=0.369660 sec.
- NR-STREAM(uv): 10/1  g=0.5059526      , r/r0=0.2471284      ,  r0=6.047878e-08   , r=1.494603e-08   , du=0.005295309    , dl= , Assembly=2.043339 sec. Solution=0.410260 sec.
- NR-STREAM(uv): 11/1  g=0.6031331      , r/r0=0.2477034      ,  r0=1.494603e-08   , r=3.702181e-09   , du=0.003121376    , dl= , Assembly=2.251801 sec. Solution=0.452884 sec.
- NR-STREAM(uv): 12/1  g=0.5415566      , r/r0=0.2577591      ,  r0=3.702181e-09   , r=9.542711e-10   , du=0.001112983    , dl= , Assembly=2.458937 sec. Solution=0.493262 sec.
- NR-STREAM(uv): 13/1  g=0.5834306      , r/r0=0.2364754      ,  r0=9.542711e-10   , r=2.256616e-10   , du=0.000549801    , dl= , Assembly=2.666239 sec. Solution=0.533533 sec.
- NR-STREAM(uv): 14/1  g=0.5624943      , r/r0=0.1372193      ,  r0=2.256616e-10   , r=3.096512e-11   , du=0.0002208348   , dl= , Assembly=2.873693 sec. Solution=0.573934 sec.
- NR-STREAM(uv): 15/0  g=1              , r/r0=0.0314159      ,  r0=3.096512e-11   , r=9.727973e-13   , du=0.0001717716   , dl= , Assembly=3.082294 sec. Solution=0.614501 sec.
- NR-STREAM(uv): 16/0  g=1              , r/r0=0.001716282    ,  r0=9.727973e-13   , r=1.669595e-15   , du=2.003058e-07   , dl= , Assembly=3.288956 sec. Solution=0.655025 sec.
- NR-STREAM(uv): 17/0  g=1              , r/r0=1.557801e-05   ,  r0=1.669595e-15   , r=2.600896e-20   , du=1.215056e-08   , dl= , Assembly=3.496610 sec. Solution=0.695376 sec.
+  t-dt-tCPU-it-itTotal-date-uvhAssembly-uvhSolution-WallTime , 0 , 0.01 , 03:17:30  ,  NaN , 0 , 12-Mar-2019 15:22:02 , 00:00:00 , 00:00:00 , 00:00:00 
+NR-STREAM(uv):  1/1  g=1.5            , r/r0=0.9835626      ,  r0=1              , r=0.9835626      , du=Inf            , dl= , Assembly=0.344152 sec. Solution=0.046123 sec.
+ NR-STREAM(uv):  2/0  g=1              , r/r0=0.0429153      ,  r0=0.9835626      , r=0.04220988     , du=515.7589       , dl= , Assembly=0.686195 sec. Solution=0.090669 sec.
+ NR-STREAM(uv):  3/0  g=1              , r/r0=0.02746433     ,  r0=0.04220988     , r=0.001159266    , du=13.03012       , dl= , Assembly=1.029246 sec. Solution=0.133491 sec.
+ NR-STREAM(uv):  4/0  g=1              , r/r0=0.0687647      ,  r0=0.001159266    , r=7.971661e-05   , du=10.13825       , dl= , Assembly=1.370851 sec. Solution=0.178649 sec.
+ NR-STREAM(uv):  5/0  g=1              , r/r0=0.3285937      ,  r0=7.971661e-05   , r=2.619437e-05   , du=1.199254       , dl= , Assembly=1.712424 sec. Solution=0.222459 sec.
+ NR-STREAM(uv):  6/1  g=0.4807321      , r/r0=0.1426232      ,  r0=2.619437e-05   , r=3.735924e-06   , du=0.1698355      , dl= , Assembly=2.055737 sec. Solution=0.264305 sec.
+ NR-STREAM(uv):  7/1  g=0.4828427      , r/r0=0.2298166      ,  r0=3.735924e-06   , r=8.585772e-07   , du=0.04542344     , dl= , Assembly=2.398770 sec. Solution=0.336015 sec.
+ NR-STREAM(uv):  8/1  g=0.5140889      , r/r0=0.2702906      ,  r0=8.585772e-07   , r=2.320654e-07   , du=0.02514413     , dl= , Assembly=2.737893 sec. Solution=0.378249 sec.
+ NR-STREAM(uv):  9/1  g=0.5624374      , r/r0=0.260611       ,  r0=2.320654e-07   , r=6.047878e-08   , du=0.01342055     , dl= , Assembly=3.080619 sec. Solution=0.421675 sec.
+ NR-STREAM(uv): 10/1  g=0.5059526      , r/r0=0.2471284      ,  r0=6.047878e-08   , r=1.494603e-08   , du=0.005295309    , dl= , Assembly=3.423727 sec. Solution=0.464256 sec.
+ NR-STREAM(uv): 11/1  g=0.6031331      , r/r0=0.2477034      ,  r0=1.494603e-08   , r=3.702181e-09   , du=0.003121376    , dl= , Assembly=3.768312 sec. Solution=0.506989 sec.
+ NR-STREAM(uv): 12/1  g=0.5415566      , r/r0=0.2577591      ,  r0=3.702181e-09   , r=9.542711e-10   , du=0.001112983    , dl= , Assembly=4.111471 sec. Solution=0.549119 sec.
+ NR-STREAM(uv): 13/1  g=0.5834306      , r/r0=0.2364754      ,  r0=9.542711e-10   , r=2.256616e-10   , du=0.000549801    , dl= , Assembly=4.454659 sec. Solution=0.592342 sec.
+ NR-STREAM(uv): 14/1  g=0.5624943      , r/r0=0.1372193      ,  r0=2.256616e-10   , r=3.096512e-11   , du=0.0002208348   , dl= , Assembly=4.791638 sec. Solution=0.634445 sec.
+ NR-STREAM(uv): 15/0  g=1              , r/r0=0.0314159      ,  r0=3.096512e-11   , r=9.727973e-13   , du=0.0001717716   , dl= , Assembly=5.115435 sec. Solution=0.675794 sec.
+ NR-STREAM(uv): 16/0  g=1              , r/r0=0.001716282    ,  r0=9.727973e-13   , r=1.669595e-15   , du=2.003058e-07   , dl= , Assembly=5.441667 sec. Solution=0.718168 sec.
+ NR-STREAM(uv): 17/0  g=1              , r/r0=1.557801e-05   ,  r0=1.669595e-15   , r=2.600896e-20   , du=1.215056e-08   , dl= , Assembly=5.767493 sec. Solution=0.760683 sec.
   SSTREAM2dNR converged to given tolerance of 1e-15 with r=2.6009e-20 in 17 iterations.
 NR-STREAM(uvh):  1/0  g=1              , r/r0=1.258576e-14   ,  r0=0.03261302     , r=4.104595e-16   , ruv=3.295366e-13   , rh=7.316243e-18   , du=0.09596233     , dh=0.002419497    , dl=0              , BCsNormuv=0 , BCsNormh=0  
  NR-STREAM(uvh):  2/0  g=1              , r/r0=1.795453e-06   ,  r0=4.104595e-16   , r=7.369608e-22   , ruv=6.023917e-19   , rh=6.310887e-30   , du=0.0001202945   , dh=1.701849e-09   , dl=0              , BCsNormuv=0 , BCsNormh=0  
-  --->  SSTREAM(uvh/supg) 	 time=        0.00000 	 dt=0.01 	 r=7.36961e-22 	 #it= 2 	 CPUsec=1.66528 
-  t-dt-tCPU-it-itTotal-date-uvhAssembly-uvhSolution-WallTime , 0.01 , 0.01 , 01:05:15  ,  2 , 2 , 23-Nov-2018 11:30:58 , 00:00:01 , 00:00:00 , 00:00:09 
+  --->  SSTREAM(uvh/supg) 	 time=        0.00000 	 dt=0.01 	 r=7.36961e-22 	 #it= 2 	 CPUsec=2.31538 
+  t-dt-tCPU-it-itTotal-date-uvhAssembly-uvhSolution-WallTime , 0.01 , 0.01 , 03:20:26  ,  2 , 2 , 12-Mar-2019 15:22:16 , 00:00:01 , 00:00:00 , 00:00:14 
 NR-STREAM(uvh):  1/0  g=1              , r/r0=1.131048e-10   ,  r0=2.089597e-10   , r=2.363434e-20   , ruv=1.935168e-17   , rh=7.247602e-30   , du=0.0002618264   , dh=1.152035e-06   , dl=0              , BCsNormuv=0 , BCsNormh=0  
-  --->  SSTREAM(uvh/supg) 	 time=        0.01000 	 dt=0.01 	 r=2.36343e-20 	 #it= 1 	 CPUsec=0.843533 
-  t-dt-tCPU-it-itTotal-date-uvhAssembly-uvhSolution-WallTime , 0.02 , 0.01 , 01:05:26  ,  1 , 1 , 23-Nov-2018 11:30:59 , 00:00:01 , 00:00:00 , 00:00:10 
+  --->  SSTREAM(uvh/supg) 	 time=        0.01000 	 dt=0.01 	 r=2.36343e-20 	 #it= 1 	 CPUsec=1.20312 
+  t-dt-tCPU-it-itTotal-date-uvhAssembly-uvhSolution-WallTime , 0.02 , 0.01 , 03:20:43  ,  1 , 1 , 12-Mar-2019 15:22:17 , 00:00:02 , 00:00:00 , 00:00:15 
 NR-STREAM(uvh):  1/0  g=1              , r/r0=2.527146e-10   ,  r0=2.089495e-10   , r=5.28046e-20    , ruv=4.330993e-17   , rh=7.227527e-30   , du=0.0002620127   , dh=1.147309e-06   , dl=0              , BCsNormuv=0 , BCsNormh=0  
-  --->  SSTREAM(uvh/supg) 	 time=        0.02000 	 dt=0.01 	 r=5.28046e-20 	 #it= 1 	 CPUsec=0.879209 
-  t-dt-tCPU-it-itTotal-date-uvhAssembly-uvhSolution-WallTime , 0.03 , 0.01 , 01:05:38  ,  1 , 1 , 23-Nov-2018 11:31:00 , 00:00:02 , 00:00:00 , 00:00:11 
+  --->  SSTREAM(uvh/supg) 	 time=        0.02000 	 dt=0.01 	 r=5.28046e-20 	 #it= 1 	 CPUsec=1.27732 
+  t-dt-tCPU-it-itTotal-date-uvhAssembly-uvhSolution-WallTime , 0.03 , 0.01 , 03:21:02  ,  1 , 1 , 12-Mar-2019 15:22:18 , 00:00:03 , 00:00:00 , 00:00:17 
 NR-STREAM(uvh):  1/0  g=1              , r/r0=3.326121e-10   ,  r0=2.0894e-10     , r=6.949597e-20   , ruv=5.709736e-17   , rh=7.334405e-30   , du=0.0002622007   , dh=1.14259e-06    , dl=0              , BCsNormuv=0 , BCsNormh=0  
-  --->  SSTREAM(uvh/supg) 	 time=        0.03000 	 dt=0.01 	 r=6.9496e-20 	 #it= 1 	 CPUsec=0.878405 
-  t-dt-tCPU-it-itTotal-date-uvhAssembly-uvhSolution-WallTime , 0.04 , 0.01 , 01:05:50  ,  1 , 1 , 23-Nov-2018 11:31:01 , 00:00:02 , 00:00:00 , 00:00:12 
+  --->  SSTREAM(uvh/supg) 	 time=        0.03000 	 dt=0.01 	 r=6.9496e-20 	 #it= 1 	 CPUsec=1.21173 
+  t-dt-tCPU-it-itTotal-date-uvhAssembly-uvhSolution-WallTime , 0.04 , 0.01 , 03:21:16  ,  1 , 1 , 12-Mar-2019 15:22:20 , 00:00:04 , 00:00:00 , 00:00:18 
 NR-STREAM(uvh):  1/0  g=1              , r/r0=4.527499e-10   ,  r0=2.08931e-10    , r=9.459347e-20   , ruv=7.784993e-17   , rh=7.116555e-30   , du=0.0002623908   , dh=1.13788e-06    , dl=0              , BCsNormuv=0 , BCsNormh=0  
-  --->  SSTREAM(uvh/supg) 	 time=        0.04000 	 dt=0.01 	 r=9.45935e-20 	 #it= 1 	 CPUsec=0.854728 
-  t-dt-tCPU-it-itTotal-date-uvhAssembly-uvhSolution-WallTime , 0.05 , 0.01 , 01:06:02  ,  1 , 1 , 23-Nov-2018 11:31:02 , 00:00:03 , 00:00:00 , 00:00:13 
+  --->  SSTREAM(uvh/supg) 	 time=        0.04000 	 dt=0.01 	 r=9.45935e-20 	 #it= 1 	 CPUsec=1.19331 
+  t-dt-tCPU-it-itTotal-date-uvhAssembly-uvhSolution-WallTime , 0.05 , 0.01 , 03:21:33  ,  1 , 1 , 12-Mar-2019 15:22:21 , 00:00:05 , 00:00:00 , 00:00:19 
 NR-STREAM(uvh):  1/0  g=1              , r/r0=1.420056e-09   ,  r0=2.089226e-10   , r=2.966819e-19   , ruv=2.445844e-16   , rh=7.02002e-30    , du=0.0002625828   , dh=1.133178e-06   , dl=0              , BCsNormuv=0 , BCsNormh=0  
-  --->  SSTREAM(uvh/supg) 	 time=        0.05000 	 dt=0.01 	 r=2.96682e-19 	 #it= 1 	 CPUsec=0.859978 
-  t-dt-tCPU-it-itTotal-date-uvhAssembly-uvhSolution-WallTime , 0.06 , 0.02 , 01:06:15  ,  1 , 1 , 23-Nov-2018 11:31:03 , 00:00:04 , 00:00:00 , 00:00:14 
+  --->  SSTREAM(uvh/supg) 	 time=        0.05000 	 dt=0.01 	 r=2.96682e-19 	 #it= 1 	 CPUsec=1.19298 
+  t-dt-tCPU-it-itTotal-date-uvhAssembly-uvhSolution-WallTime , 0.06 , 0.02 , 03:21:47  ,  1 , 1 , 12-Mar-2019 15:22:22 , 00:00:06 , 00:00:00 , 00:00:20 
 NR-STREAM(uvh):  1/0  g=1              , r/r0=1.641803e-08   ,  r0=6.31216e-10    , r=1.036332e-17   , ruv=1.190188e-14   , rh=2.442833e-28   , du=0.0007969545   , dh=3.555177e-06   , dl=0              , BCsNormuv=0 , BCsNormh=0  
-  --->  SSTREAM(uvh/supg) 	 time=        0.06000 	 dt=0.02 	 r=1.03633e-17 	 #it= 1 	 CPUsec=0.872111 
-  t-dt-tCPU-it-itTotal-date-uvhAssembly-uvhSolution-WallTime , 0.08 , 0.02 , 01:06:27  ,  1 , 1 , 23-Nov-2018 11:31:04 , 00:00:04 , 00:00:00 , 00:00:15 
+  --->  SSTREAM(uvh/supg) 	 time=        0.06000 	 dt=0.02 	 r=1.03633e-17 	 #it= 1 	 CPUsec=1.19923 
+  t-dt-tCPU-it-itTotal-date-uvhAssembly-uvhSolution-WallTime , 0.08 , 0.02 , 03:22:04  ,  1 , 1 , 12-Mar-2019 15:22:24 , 00:00:07 , 00:00:00 , 00:00:22 
 NR-STREAM(uvh):  1/0  g=1              , r/r0=4.515374e-09   ,  r0=2.402981e-09   , r=1.085036e-17   , ruv=1.250432e-14   , rh=5.342026e-28   , du=0.001054715    , dh=4.486721e-06   , dl=0              , BCsNormuv=0 , BCsNormh=0  
-  --->  SSTREAM(uvh/supg) 	 time=        0.08000 	 dt=0.02 	 r=1.08504e-17 	 #it= 1 	 CPUsec=0.844799 
-  t-dt-tCPU-it-itTotal-date-uvhAssembly-uvhSolution-WallTime , 0.1 , 0.02 , 01:06:40  ,  1 , 1 , 23-Nov-2018 11:31:05 , 00:00:05 , 00:00:00 , 00:00:16 
+  --->  SSTREAM(uvh/supg) 	 time=        0.08000 	 dt=0.02 	 r=1.08504e-17 	 #it= 1 	 CPUsec=1.19112 
+  t-dt-tCPU-it-itTotal-date-uvhAssembly-uvhSolution-WallTime , 0.1 , 0.02 , 03:22:18  ,  1 , 1 , 12-Mar-2019 15:22:25 , 00:00:08 , 00:00:00 , 00:00:23 
 NR-STREAM(uvh):  1/0  g=1              , r/r0=1.971563e-09   ,  r0=2.402742e-09   , r=4.737157e-18   , ruv=5.478141e-15   , rh=5.145255e-28   , du=0.001056327    , dh=4.449342e-06   , dl=0              , BCsNormuv=0 , BCsNormh=0  
-  --->  SSTREAM(uvh/supg) 	 time=        0.10000 	 dt=0.02 	 r=4.73716e-18 	 #it= 1 	 CPUsec=0.848428 
-  t-dt-tCPU-it-itTotal-date-uvhAssembly-uvhSolution-WallTime , 0.12 , 0.02 , 01:06:49  ,  1 , 1 , 23-Nov-2018 11:31:05 , 00:00:05 , 00:00:00 , 00:00:17 
+  --->  SSTREAM(uvh/supg) 	 time=        0.10000 	 dt=0.02 	 r=4.73716e-18 	 #it= 1 	 CPUsec=1.19459 
+  t-dt-tCPU-it-itTotal-date-uvhAssembly-uvhSolution-WallTime , 0.12 , 0.02 , 03:22:31  ,  1 , 1 , 12-Mar-2019 15:22:26 , 00:00:09 , 00:00:00 , 00:00:24 
 NR-STREAM(uvh):  1/0  g=1              , r/r0=1.757365e-08   ,  r0=2.402532e-09   , r=4.222125e-17   , ruv=4.899436e-14   , rh=4.974167e-28   , du=0.001057969    , dh=4.412082e-06   , dl=0              , BCsNormuv=0 , BCsNormh=0  
-  --->  SSTREAM(uvh/supg) 	 time=        0.12000 	 dt=0.02 	 r=4.22213e-17 	 #it= 1 	 CPUsec=0.842305 
-  t-dt-tCPU-it-itTotal-date-uvhAssembly-uvhSolution-WallTime , 0.14 , 0.02 , 01:07:02  ,  1 , 1 , 23-Nov-2018 11:31:06 , 00:00:06 , 00:00:00 , 00:00:18 
+  --->  SSTREAM(uvh/supg) 	 time=        0.12000 	 dt=0.02 	 r=4.22213e-17 	 #it= 1 	 CPUsec=1.19905 
+  t-dt-tCPU-it-itTotal-date-uvhAssembly-uvhSolution-WallTime , 0.14 , 0.02 , 03:22:47  ,  1 , 1 , 12-Mar-2019 15:22:27 , 00:00:09 , 00:00:00 , 00:00:25 
 NR-STREAM(uvh):  1/0  g=1              , r/r0=9.850035e-08   ,  r0=2.402348e-09   , r=2.366321e-16   , ruv=2.755423e-13   , rh=4.793457e-28   , du=0.001059644    , dh=4.374941e-06   , dl=0              , BCsNormuv=0 , BCsNormh=0  
-  --->  SSTREAM(uvh/supg) 	 time=        0.14000 	 dt=0.02 	 r=2.36632e-16 	 #it= 1 	 CPUsec=0.841805 
-  t-dt-tCPU-it-itTotal-date-uvhAssembly-uvhSolution-WallTime , 0.16 , 0.02 , 01:07:13  ,  1 , 1 , 23-Nov-2018 11:31:07 , 00:00:06 , 00:00:00 , 00:00:18 
+  --->  SSTREAM(uvh/supg) 	 time=        0.14000 	 dt=0.02 	 r=2.36632e-16 	 #it= 1 	 CPUsec=1.20401 
+  t-dt-tCPU-it-itTotal-date-uvhAssembly-uvhSolution-WallTime , 0.16 , 0.02 , 03:23:02  ,  1 , 1 , 12-Mar-2019 15:22:29 , 00:00:10 , 00:00:00 , 00:00:27 
 NR-STREAM(uvh):  1/0  g=1              , r/r0=7.339842e-07   ,  r0=2.402197e-09   , r=1.763175e-15   , ruv=2.060202e-12   , rh=4.630763e-28   , du=0.001061349    , dh=4.337914e-06   , dl=0              , BCsNormuv=0 , BCsNormh=0  
  NR-STREAM(uvh):  2/0  g=1              , r/r0=0.05882819     ,  r0=1.763175e-15   , r=1.037244e-16   , ruv=1.211979e-13   , rh=4.08676e-30    , du=2.064059e-06   , dh=6.007004e-12   , dl=0              , BCsNormuv=0 , BCsNormh=0  
-  --->  SSTREAM(uvh/supg) 	 time=        0.16000 	 dt=0.02 	 r=1.03724e-16 	 #it= 2 	 CPUsec=1.6214 
-  t-dt-tCPU-it-itTotal-date-uvhAssembly-uvhSolution-WallTime , 0.18 , 0.04 , 01:07:35  ,  2 , 2 , 23-Nov-2018 11:31:09 , 00:00:07 , 00:00:00 , 00:00:20 
+  --->  SSTREAM(uvh/supg) 	 time=        0.16000 	 dt=0.02 	 r=1.03724e-16 	 #it= 2 	 CPUsec=2.2466 
+  t-dt-tCPU-it-itTotal-date-uvhAssembly-uvhSolution-WallTime , 0.18 , 0.04 , 03:23:32  ,  2 , 2 , 12-Mar-2019 15:22:31 , 00:00:12 , 00:00:00 , 00:00:29 
 NR-STREAM(uvh):  1/0  g=1              , r/r0=2.198347e-06   ,  r0=5.894357e-09   , r=1.295784e-14   , ruv=2.587681e-11   , rh=1.188473e-25   , du=0.003228629    , dh=1.359983e-05   , dl=0              , BCsNormuv=0 , BCsNormh=0  
  NR-STREAM(uvh):  2/1  g=0.4            , r/r0=0.233647       ,  r0=1.295784e-14   , r=3.02756e-15    , ruv=6.04604e-12    , rh=4.278913e-26   , du=5.471194e-06   , dh=2.530423e-11   , dl=0              , BCsNormuv=0 , BCsNormh=0  
  NR-STREAM(uvh):  3/1  g=0.4            , r/r0=0.2314209      ,  r0=3.02756e-15    , r=7.006407e-16   , ruv=1.39918e-12    , rh=1.540632e-26   , du=1.417465e-06   , dh=6.012232e-12   , dl=0              , BCsNormuv=0 , BCsNormh=0  
-  --->  SSTREAM(uvh/supg) 	 time=        0.18000 	 dt=0.04 	 r=7.00641e-16 	 #it= 3 	 CPUsec=2.55226 
-  t-dt-tCPU-it-itTotal-date-uvhAssembly-uvhSolution-WallTime , 0.22 , 0.04 , 01:08:08  ,  3 , 3 , 23-Nov-2018 11:31:12 , 00:00:09 , 00:00:00 , 00:00:23 
+  --->  SSTREAM(uvh/supg) 	 time=        0.18000 	 dt=0.04 	 r=7.00641e-16 	 #it= 3 	 CPUsec=3.62241 
+  t-dt-tCPU-it-itTotal-date-uvhAssembly-uvhSolution-WallTime , 0.22 , 0.04 , 03:24:17  ,  3 , 3 , 12-Mar-2019 15:22:35 , 00:00:15 , 00:00:00 , 00:00:33 
 NR-STREAM(uvh):  1/0  g=1              , r/r0=2.923921e-07   ,  r0=2.25548e-08    , r=6.594845e-15   , ruv=1.32626e-11    , rh=2.480201e-25   , du=0.0042833      , dh=1.699065e-05   , dl=0              , BCsNormuv=0 , BCsNormh=0  
  NR-STREAM(uvh):  2/0  g=1              , r/r0=0.1525271      ,  r0=6.594845e-15   , r=1.005892e-15   , ruv=2.022905e-12   , rh=2.608427e-30   , du=9.064349e-07   , dh=6.798978e-12   , dl=0              , BCsNormuv=0 , BCsNormh=0  
  NR-STREAM(uvh):  3/0  g=1              , r/r0=0.07021452     ,  r0=1.005892e-15   , r=7.062824e-17   , ruv=1.420373e-13   , rh=2.364707e-30   , du=2.761137e-07   , dh=8.791572e-13   , dl=0              , BCsNormuv=0 , BCsNormh=0  
-  --->  SSTREAM(uvh/supg) 	 time=        0.22000 	 dt=0.04 	 r=7.06282e-17 	 #it= 3 	 CPUsec=2.35785 
-  t-dt-tCPU-it-itTotal-date-uvhAssembly-uvhSolution-WallTime , 0.26 , 0.04 , 01:08:39  ,  3 , 3 , 23-Nov-2018 11:31:14 , 00:00:11 , 00:00:00 , 00:00:25 
+  --->  SSTREAM(uvh/supg) 	 time=        0.22000 	 dt=0.04 	 r=7.06282e-17 	 #it= 3 	 CPUsec=3.2818 
+  t-dt-tCPU-it-itTotal-date-uvhAssembly-uvhSolution-WallTime , 0.26 , 0.04 , 03:24:59  ,  3 , 3 , 12-Mar-2019 15:22:38 , 00:00:17 , 00:00:00 , 00:00:36 
 NR-STREAM(uvh):  1/0  g=1              , r/r0=9.494317e-09   ,  r0=2.255122e-08   , r=2.141084e-16   , ruv=4.336146e-13   , rh=2.306743e-25   , du=0.004298143    , dh=1.669771e-05   , dl=0              , BCsNormuv=0 , BCsNormh=0  
-  --->  SSTREAM(uvh/supg) 	 time=        0.26000 	 dt=0.04 	 r=2.14108e-16 	 #it= 1 	 CPUsec=0.825929 
+  --->  SSTREAM(uvh/supg) 	 time=        0.26000 	 dt=0.04 	 r=2.14108e-16 	 #it= 1 	 CPUsec=1.17896 
