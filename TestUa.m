@@ -6,7 +6,7 @@ cd 1dIceStream ; clear  ; Ua ; cd ..
 
 cd Cone ;   clear  ; Ua ; cd ..
 
-% cd Cones ;   clear  ; Ua ; cd ..
+%cd Cones ;   clear  ; Ua ; cd ..
 
 cd Crack ; clear ; close all ; Ua ; cd ..
 
