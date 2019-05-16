@@ -4,6 +4,8 @@ function [UserVar,CtrlVar,MeshBoundaryCoordinates]=Ua2D_InitialUserInput(UserVar
 % Klear ; UserVar.RunType='IceStream' ; Ua(UserVar)
 %
 
+UserVar.Inverse.Syntdata.GeoPerturbation='Gauss';
+
 if ~isfield(UserVar,'RunType')
     UserVar.RunType='IceStream+IceShelf';   %  either 'IceStream' or  'IceShelf'
     %UserVar.RunType='Channel';   %  either 'IceStream' or  'IceShelf'
