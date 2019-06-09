@@ -2,11 +2,11 @@ cd 1dIceShelf ; clear ; Ua ; cd ..
 
 cd 1dIceStream ; clear  ; Ua ; cd ..
 
-cd ChhotaShigri ; clear ; close all ; Ua ; cd ..
+% cd ChhotaShigri ; clear ; close all ; Ua ; cd ..
 
 cd Cone ;   clear  ; Ua ; cd ..
 
-% cd Cones ;   clear  ; Ua ; cd ..
+%cd Cones ;   clear  ; Ua ; cd ..
 
 cd Crack ; clear ; close all ; Ua ; cd ..
 
