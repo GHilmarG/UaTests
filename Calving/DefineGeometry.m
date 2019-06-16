@@ -59,9 +59,10 @@ if time< eps
     h0=1000-1000/640e3*x;
     s=b+h0;
 else
-    Draft=F.h.*(1-F.rho/F.rhow);
-    b=[] ;
-    s=[] ;
+    %Draft=F.h.*(1-F.rho/F.rhow);
+    b=F.b ;
+    s=F.s ;
+
 end
 
 
