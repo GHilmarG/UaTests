@@ -222,8 +222,9 @@ CtrlVar.ThicknessConstraintsItMax=5  ;
 xd=640e3; xu=0e3 ; yr=0 ; yl=80e3 ;  
 MeshBoundaryCoordinates=[xu yr ; xu yl ; xd yl ; xd yr];
 
-%%
+%% Thinks that I´m testing and that are specifically realted to ideas around implementing calving 
 CtrlVar.GeometricalVarsDefinedEachTransienRunStepByDefineGeometry="sb";
- 
+CtrlVar.ManuallyDeactivateElements=true ; 
+CtrlVar.doAdaptMeshPlots=true; 
 end
 >>>>>>> development

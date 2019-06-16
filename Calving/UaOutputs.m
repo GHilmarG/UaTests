@@ -132,6 +132,7 @@ v2struct(F);
 time=CtrlVar.time;
 
 plots='-plot-flowline-mapplane-';
+plots='-plot-mapplane-';
 
 if contains(plots,'-save-')
     
@@ -163,9 +164,14 @@ if contains(plots,'-plot-')
     GLgeo=[]; xGL=[] ; yGL=[];
     %%
     if contains(plots,'-mapplane-')
-        fig100=figure(100) ;
-        fig100.Position=[50 50 figsWidth 3*figHeights];
+        
+        FigureName='map plane view'; Position=[50 50 figsWidth 3*figHeights];
+        fig100=FindOrCreateFigure(FigureName,Position) ;
+       
+        
+        
         subplot(4,1,1)
+        hold off
         PlotMeshScalarVariable(CtrlVar,MUA,h); title(sprintf('h at t=%g',time))
         hold on
         [xGL,yGL,GLgeo]=PlotGroundingLines(CtrlVar,MUA,GF,GLgeo,xGL,yGL);
@@ -173,17 +179,20 @@ if contains(plots,'-plot-')
         
         
         subplot(4,1,2)
+        hold off
         QuiverColorGHG(MUA.coordinates(:,1),MUA.coordinates(:,2),ub,vb,CtrlVar);
         hold on
         [xGL,yGL,GLgeo]=PlotGroundingLines(CtrlVar,MUA,GF,GLgeo,xGL,yGL);
         hold off
         
         subplot(4,1,3)
+        hold off
         PlotMeshScalarVariable(CtrlVar,MUA,dhdt);   title(sprintf('dhdt at t=%g',time))
         hold on
         [xGL,yGL,GLgeo]=PlotGroundingLines(CtrlVar,MUA,GF,GLgeo,xGL,yGL);
         
         subplot(4,1,4)
+        hold off
         PlotMeshScalarVariable(CtrlVar,MUA,ab);   title(sprintf('ab at t=%g',time))
         hold on
         
@@ -193,6 +202,10 @@ if contains(plots,'-plot-')
     end
     
     if contains(plots,'-flowline-')
+        
+        FigureName='flowline';
+        fig200=FindOrCreateFigure(FigureName) ;
+        
         x=MUA.coordinates(:,1);
         y=MUA.coordinates(:,2);
         
@@ -208,7 +221,7 @@ if contains(plots,'-plot-')
         BProfile=MismBed(xProfile,yCentre);
         
         
-        fig200=figure(200);
+     
         fig200.Position=[1200 50 figsWidth 2*figHeights];
         
         plot(xProfile/1000,sProfile,'b')
