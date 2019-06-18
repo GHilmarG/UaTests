@@ -31,10 +31,24 @@ function [UserVar,ElementsToBeDeactivated]=...
 
 
 fprintf(' DefineElementsToDeactivate \n')
-[GF,GLgeo,GLnodes,GLele]=IceSheetIceShelves(CtrlVar,MUA,GF); 
+[GF,GLgeo,GLnodes,GLele]=IceSheetIceShelves(CtrlVar,MUA,GF);
 
 
-ElementsToBeDeactivated=GF.ElementsDownstreamOfGroundingLines & (MUA.xEle>400e3) ; 
+CutOff=1e10;
+
+if contains(UserVar.RunType,"-ManuallyDeactivateElements-")
+    
+    if CtrlVar.time < 0.1
+        CutOff=400e3;  % t < 0.1
+    elseif CtrlVar.time < 0.2
+        CutOff=500e3;  % 0.1 <= t <0.2
+    else
+        CutOff=300e3;  % t >= 0.2
+    end
+    
+end
+
+ElementsToBeDeactivated=GF.ElementsDownstreamOfGroundingLines & (MUA.xEle>CutOff) ;
 
 
 

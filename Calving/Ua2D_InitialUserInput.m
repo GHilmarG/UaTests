@@ -2,6 +2,9 @@
 function [UserVar,CtrlVar,MeshBoundaryCoordinates]=Ua2D_InitialUserInput(UserVar,CtrlVar)
 
 
+UserVar.RunType="-ManuallyDeactivateElements-ManuallyModifyThickness-";
+UserVar.RunType="-ManuallyModifyThickness-";
+
 %%
 UserVar.MisExperiment='ice0';  % This I use in DefineMassBalance
 UserVar.Outputsdirectory='ResultsFiles'; % This I use in UaOutputs
@@ -12,7 +15,7 @@ CtrlVar.Experiment=['MismipPlus-',UserVar.MisExperiment];
 %% Types of run
 %
 CtrlVar.TimeDependentRun=1; 
-CtrlVar.TotalNumberOfForwardRunSteps=10;
+CtrlVar.TotalNumberOfForwardRunSteps=50;
 CtrlVar.TotalTime=100;
 CtrlVar.Restart=0;  
 CtrlVar.InfoLevelNonLinIt=1; 
@@ -35,7 +38,7 @@ CtrlVar.SaveInitialMeshFileName='NewMeshFile.mat';
 %% Plotting options
 CtrlVar.doplots=1;
 CtrlVar.PlotMesh=1; 
-CtrlVar.PlotBCs=0;
+CtrlVar.PlotBCs=1;
 CtrlVar.WhenPlottingMesh_PlotMeshBoundaryCoordinatesToo=1;
 
 CtrlVar.PlotXYscale=1000; 
@@ -51,8 +54,8 @@ CtrlVar.NameOfRestartFiletoRead=CtrlVar.NameOfRestartFiletoWrite;
 
 
 %% adapt mesh
-CtrlVar.InfoLevelAdaptiveMeshing=100;
-CtrlVar.doAdaptMeshPlots=0; 
+
+
 CtrlVar.MeshGenerator='gmsh';  % possible values: {mesh2d|gmsh}
 
 CtrlVar.GmshMeshingAlgorithm=8;     % see gmsh manual
@@ -92,7 +95,7 @@ CtrlVar.AdaptMeshAndThenStop=0;    % if true, then mesh will be adapted but no f
 
 
 CtrlVar.AdaptMeshInterval=1;  % number of run-steps between mesh adaptation
-CtrlVar.MeshAdapt.GLrange=[20000 5000 ; 5000 500];
+CtrlVar.MeshAdapt.GLrange=[20000 5000 ; 5000 2000];
 %CtrlVar.MeshAdapt.GLrange=[20000 5000 ];
 
 
@@ -110,9 +113,9 @@ CtrlVar.ThicknessConstraintsItMax=5  ;
 xd=640e3; xu=0e3 ; yr=0 ; yl=80e3 ;  
 MeshBoundaryCoordinates=[xu yr ; xu yl ; xd yl ; xd yr];
 
-%% Thinks that I´m testing and that are specifically realted to ideas around implementing calving 
+%% Things that I´m testing and that are specifically realted to ideas around implementing calving 
 CtrlVar.GeometricalVarsDefinedEachTransienRunStepByDefineGeometry="sb";
 CtrlVar.ManuallyDeactivateElements=true ; 
-CtrlVar.doAdaptMeshPlots=true; 
+CtrlVar.doAdaptMeshPlots=true; CtrlVar.InfoLevelAdaptiveMeshing=10;
 end
 
