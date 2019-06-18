@@ -33,6 +33,13 @@ function [UserVar,ElementsToBeDeactivated]=...
 fprintf(' DefineElementsToDeactivate \n')
 [GF,GLgeo,GLnodes,GLele]=IceSheetIceShelves(CtrlVar,MUA,GF); 
 
-ElementsToBeDeactivated=GF.ElementsDownstreamOfGroundingLines; 
+
+ElementsToBeDeactivated=GF.ElementsDownstreamOfGroundingLines & (MUA.xEle>400e3) ; 
+
+
+
+
+
+
 
 end
