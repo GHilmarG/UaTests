@@ -93,11 +93,13 @@ CtrlVar.AdaptMeshAndThenStop=0;    % if true, then mesh will be adapted but no f
 
 CtrlVar.AdaptMeshInterval=1;  % number of run-steps between mesh adaptation
 CtrlVar.MeshAdapt.GLrange=[20000 5000 ; 5000 500];
-CtrlVar.MeshAdapt.GLrange=[20000 5000 ];
+%CtrlVar.MeshAdapt.GLrange=[20000 5000 ];
 
 
 
-%% Pos. thickness constraints
+%% Pos. thickness constr
+
+
 CtrlVar.ThickMin=1; % minimum allowed thickness without (potentially) doing something about it
 CtrlVar.ResetThicknessToMinThickness=0;  % if true, thickness values less than ThickMin will be set to ThickMin
 CtrlVar.ThicknessConstraints=1  ;        % if true, min thickness is enforced using active set method
