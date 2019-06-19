@@ -114,10 +114,13 @@ xd=640e3; xu=0e3 ; yr=0 ; yl=80e3 ;
 MeshBoundaryCoordinates=[xu yr ; xu yl ; xd yl ; xd yr];
 
 %% Things that I´m testing and that are specifically realted to ideas around implementing calving
-CtrlVar.GeometricalVarsDefinedEachTransienRunStepByDefineGeometry="sb";
+%CtrlVar.GeometricalVarsDefinedEachTransienRunStepByDefineGeometry="sb";
 CtrlVar.ManuallyDeactivateElements=true ;
 CtrlVar.doAdaptMeshPlots=1; CtrlVar.InfoLevelAdaptiveMeshing=100;
 CtrlVar.doplots=1;
+CtrlVar.AdaptMesh=1;         
 
+%%
+CtrlVar.AdaptMeshUntilChangeInNumberOfElementsLessThan=100;
 end
 
