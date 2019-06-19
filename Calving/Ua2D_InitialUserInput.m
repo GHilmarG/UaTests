@@ -4,7 +4,7 @@ function [UserVar,CtrlVar,MeshBoundaryCoordinates]=Ua2D_InitialUserInput(UserVar
 
 UserVar.RunType="-ManuallyDeactivateElements-ManuallyModifyThickness-";
 UserVar.RunType="-ManuallyModifyThickness-";
-% UserVar.RunType="-ManuallyDeactivateElements-";
+UserVar.RunType="-ManuallyDeactivateElements-";
 
 %%
 UserVar.MisExperiment='ice0';  % This I use in DefineMassBalance
