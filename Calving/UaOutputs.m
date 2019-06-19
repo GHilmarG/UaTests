@@ -1,10 +1,13 @@
 
 function UserVar=UaOutputs(UserVar,CtrlVar,MUA,BCs,F,l,GF,InvStartValues,InvFinalValues,Priors,Meas,BCsAdjoint,RunInfo)
 
+
+
 v2struct(F);
 time=CtrlVar.time;
 
 plots='-plot-flowline-mapplane-';
+plots='-plot-mapplane-flowline-';
 plots='-plot-mapplane-';
 
 if contains(plots,'-save-')
@@ -94,14 +97,12 @@ if contains(plots,'-plot-')
         BProfile=MismBed(xProfile,yCentre);
         
         
-     
-        fig200.Position=[1200 50 figsWidth 2*figHeights];
-        
         plot(xProfile/1000,sProfile,'b')
         hold on
         plot(xProfile/1000,bProfile,'b')
         plot(xProfile/1000,BProfile,'k')
-        title(sprintf('t=%g',time))
+        title(sprintf('Profile along the medial line at t=%g',time))
+        xlabel('x (km)') ; ylabel('z (m)')
         hold off
         
     end
