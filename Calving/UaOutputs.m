@@ -8,7 +8,7 @@ time=CtrlVar.time;
 
 plots='-plot-flowline-mapplane-';
 plots='-plot-mapplane-flowline-';
-plots='-plot-mapplane-';
+%plots='-plot-mapplane-';
 
 if contains(plots,'-save-')
     

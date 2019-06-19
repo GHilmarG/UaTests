@@ -4,7 +4,7 @@ function [UserVar,CtrlVar,MeshBoundaryCoordinates]=Ua2D_InitialUserInput(UserVar
 
 UserVar.RunType="-ManuallyDeactivateElements-ManuallyModifyThickness-";
 UserVar.RunType="-ManuallyModifyThickness-";
-UserVar.RunType="-ManuallyDeactivateElements-";
+% UserVar.RunType="-ManuallyDeactivateElements-";
 
 %%
 UserVar.MisExperiment='ice0';  % This I use in DefineMassBalance
@@ -113,10 +113,10 @@ CtrlVar.ThicknessConstraintsItMax=5  ;
 xd=640e3; xu=0e3 ; yr=0 ; yl=80e3 ;  
 MeshBoundaryCoordinates=[xu yr ; xu yl ; xd yl ; xd yr];
 
-%% Things that I´m testing and that are specifically realted to ideas around implementing calving
+%% Things that I´m testing and that are specifically  to ideas around implementing calving
 CtrlVar.GeometricalVarsDefinedEachTransienRunStepByDefineGeometry="sb";
 CtrlVar.ManuallyDeactivateElements=true ;
-CtrlVar.doAdaptMeshPlots=1; CtrlVar.InfoLevelAdaptiveMeshing=100;
+CtrlVar.doAdaptMeshPlots=1; CtrlVar.InfoLevelAdaptiveMeshing=10;
 CtrlVar.doplots=1;
 
 end
