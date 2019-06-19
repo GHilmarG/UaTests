@@ -17,7 +17,7 @@ if contains(FieldsToBeDefined,"b") ||  contains(FieldsToBeDefined,"s")
     if contains(UserVar.RunType,"-ManuallyModifyThickness-")
         
         if ~isempty(F.GF)
-            if CtrlVar.time < 0.01
+            if CtrlVar.CurrentRunStepNumber==2
                 
                 F.GF=IceSheetIceShelves(CtrlVar,MUA,F.GF);
                 CutOff=400e3;
@@ -33,7 +33,7 @@ end
 
 
 % initial def for s and b at start of run
-if time < eps
+if CtrlVar.CurrentRunStepNumber<=1
     b=B;
     h0=1000-1000/640e3*x;
     s=b+h0;
