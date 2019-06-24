@@ -2,9 +2,11 @@
 function [UserVar,CtrlVar,MeshBoundaryCoordinates]=Ua2D_InitialUserInput(UserVar,CtrlVar)
 
 
-UserVar.RunType="-ManuallyDeactivateElements-ManuallyModifyThickness-";
-UserVar.RunType="-ManuallyModifyThickness-";
-UserVar.RunType="-ManuallyDeactivateElements-";
+if isempty(UserVar)
+    UserVar.RunType="-ManuallyDeactivateElements-ManuallyModifyThickness-";
+    UserVar.RunType="-ManuallyModifyThickness-";
+    %UserVar.RunType="-ManuallyDeactivateElements-";
+end
 
 %%
 UserVar.MisExperiment='ice0';  % This I use in DefineMassBalance
@@ -16,7 +18,7 @@ CtrlVar.Experiment=['MismipPlus-',UserVar.MisExperiment];
 %% Types of run
 %
 CtrlVar.TimeDependentRun=1; 
-CtrlVar.TotalNumberOfForwardRunSteps=50;
+CtrlVar.TotalNumberOfForwardRunSteps=25;
 CtrlVar.TotalTime=100;
 CtrlVar.Restart=0;  
 CtrlVar.InfoLevelNonLinIt=1; 
@@ -114,13 +116,25 @@ xd=640e3; xu=0e3 ; yr=0 ; yl=80e3 ;
 MeshBoundaryCoordinates=[xu yr ; xu yl ; xd yl ; xd yr];
 
 %% Things that I´m testing and that are specifically realted to ideas around implementing calving
-%CtrlVar.GeometricalVarsDefinedEachTransienRunStepByDefineGeometry="sb";
-CtrlVar.ManuallyDeactivateElements=true ;
+
+if contains(UserVar.RunType,"-ManuallyDeactivateElements-")
+    CtrlVar.ManuallyDeactivateElements=1 ;
+else
+    CtrlVar.ManuallyDeactivateElements=1 ;
+    
+end
+
+if contains(UserVar.RunType,"-ManuallyModifyThickness-")
+    CtrlVar.GeometricalVarsDefinedEachTransienRunStepByDefineGeometry="sb";
+else
+    CtrlVar.GeometricalVarsDefinedEachTransienRunStepByDefineGeometry="";
+end
+
+
 CtrlVar.doAdaptMeshPlots=1; CtrlVar.InfoLevelAdaptiveMeshing=100;
 CtrlVar.doplots=1;
 CtrlVar.AdaptMesh=1;         
+CtrlVar.AdaptMeshUntilChangeInNumberOfElementsLessThan=5;
 
-%%
-CtrlVar.AdaptMeshUntilChangeInNumberOfElementsLessThan=100;
 end
 
