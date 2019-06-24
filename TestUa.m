@@ -2,6 +2,9 @@ cd 1dIceShelf ; clear ; Ua ; cd ..
 
 cd 1dIceStream ; clear  ; Ua ; cd ..
 
+cd Calving ; UserVar.RunType="-ManuallyModifyThickness-"; Ua(UserVar)  ; cd ..
+
+cd Calving ; UserVar.RunType="-ManuallyDeactivateElements-"; Ua(UserVar) ; cd ..
 % cd ChhotaShigri ; clear ; close all ; Ua ; cd ..
 
 cd Cone ;   clear  ; Ua ; cd ..
