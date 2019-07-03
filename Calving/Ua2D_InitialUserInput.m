@@ -36,8 +36,8 @@ CtrlVar.WriteRestartFile=1;
 %% Reading in mesh
 CtrlVar.ReadInitialMesh=0;    % if true then read FE mesh (i.e the MUA variable) directly from a .mat file
                               % unless the adaptive meshing option is used, no further meshing is done.
-CtrlVar.ReadInitialMeshFileName='AdaptMesh.mat';
-CtrlVar.SaveInitialMeshFileName='NewMeshFile.mat';
+% CtrlVar.ReadInitialMeshFileName='AdaptMesh.mat';
+% CtrlVar.SaveInitialMeshFileName='NewMeshFile.mat';
 %% Plotting options
 CtrlVar.PlotMesh=1; 
 CtrlVar.PlotBCs=1;
