@@ -21,19 +21,22 @@ CtrlVar.ResetTimeStep=1;                 % 1 if time step should be reset to dt 
 
 CtrlVar.FlowApproximation='SSTREAM' ;  % 'SSTREAM'|'SSHEET'|'Hybrid'
 CtrlVar.TimeDependentRun=1 ; CtrlVar.AdaptiveTimeStepping=1 ; 
-time=0 ; dt=1; CtrlVar.TotalNumberOfForwardRunSteps=1; CtrlVar.TotalTime=1000 ;
-CtrlVar.Restart=1;  CtrlVar.WriteRestartFile=0;
-CtrlVar.TriNodes=6 ; 
+time=0 ; dt=1; CtrlVar.TotalNumberOfForwardRunSteps=1000; CtrlVar.TotalTime=10000 ;
+CtrlVar.Restart=0;  
+CtrlVar.WriteRestartFile=1;
+CtrlVar.TriNodes=10 ; 
 xd=100e3; xu=-100e3 ; yl=100e3 ; yr=-100e3;
 MeshBoundaryCoordinates=flipud([xu yr ; xd yr ; xd yl ; xu yl]);
 
 CtrlVar.InfoLevelLinSolve=1;
 CtrlVar.PlotXYscale=1000;
 
-CtrlVar.ThicknessConstraintsInfoLevel=100 ;
-CtrlVar.ThicknessConstraintsItMax=10  ;     % maximum number of active-set iterations.
 CtrlVar.ThickMin=0;
 
+CtrlVar.ThicknessConstraintsInfoLevel=100 ;
+CtrlVar.ThicknessConstraintsItMax=10  ;     % maximum number of active-set iterations.
+
+CtrlVar.MUA.MassMatrix=true;
 CtrlVar.ThicknessConstraints=1;
 
 CtrlVar.ReadInitialMesh=1;    % if true then read FE mesh (coordinates, connectivity) directly from a .mat file 
