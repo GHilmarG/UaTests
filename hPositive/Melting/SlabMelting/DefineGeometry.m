@@ -20,7 +20,7 @@ switch CtrlVar.Experiment
     
     case 'GaussMelting'
         
-        s=b+CtrlVar.ThickMin;
+        s=b+2+CtrlVar.ThickMin;
         
     case 'UniformMelting'
         

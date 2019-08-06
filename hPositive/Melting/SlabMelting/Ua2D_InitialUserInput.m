@@ -20,11 +20,14 @@ CtrlVar.Experiment='GaussMelting';
 CtrlVar.ResetTimeStep=1;                 % 1 if time step should be reset to dt given in the Ua2D_InitialUserInputFile
 
 CtrlVar.FlowApproximation='SSTREAM' ;  % 'SSTREAM'|'SSHEET'|'Hybrid'
-CtrlVar.TimeDependentRun=1 ; CtrlVar.AdaptiveTimeStepping=1 ; 
-time=0 ; dt=1; CtrlVar.TotalNumberOfForwardRunSteps=1000; CtrlVar.TotalTime=10000 ;
+
+CtrlVar.time= 0 ; CtrlVar.dt=1;
+CtrlVar.TimeDependentRun=1 ; CtrlVar.AdaptiveTimeStepping=0 ; 
+CtrlVar.TotalNumberOfForwardRunSteps=1000; CtrlVar.TotalTime=1000 ;
+
 CtrlVar.Restart=0;  
 CtrlVar.WriteRestartFile=1;
-CtrlVar.TriNodes=10 ; 
+CtrlVar.TriNodes=10 ; CtrlVar.RedefineReactions=1; 
 xd=100e3; xu=-100e3 ; yl=100e3 ; yr=-100e3;
 MeshBoundaryCoordinates=flipud([xu yr ; xd yr ; xd yl ; xu yl]);
 

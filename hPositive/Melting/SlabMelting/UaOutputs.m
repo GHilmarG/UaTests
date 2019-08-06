@@ -32,8 +32,8 @@ if contains(plots,'-R-')
     MLC=BCs2MLC(MUA,BCs) ;
     Reactions=CalculateReactions(MLC,l);
     figReactions=FindOrCreateFigure('Reactions') ; % ,Position); 
-    clf(figReactions)
-    figReactions=PlotReactions2(CtrlVar,MUA,Reactions,figReactions);
+    clf(figReactions) 
+    figReactions=PlotReactions(CtrlVar,MUA,Reactions,figReactions);
     
     
     if ~isempty(Reactions.h)
