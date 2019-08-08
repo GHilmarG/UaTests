@@ -19,20 +19,22 @@ if contains(plots,'-h-')
     
     figh=FindOrCreateFigure('h') ; % ,Position); 
     clf(figh)
-    PlotMeshScalarVariable(CtrlVar,MUA,F.h)
+    [~,cbar]=PlotMeshScalarVariable(CtrlVar,MUA,F.h);
     hold on 
     plot(x(I)/CtrlVar.PlotXYscale,y(I)/CtrlVar.PlotXYscale,'ro');
     plot(x(BCs.hPosNode)/CtrlVar.PlotXYscale,y(BCs.hPosNode)/CtrlVar.PlotXYscale,'*w');
     hold on ; PlotMuaMesh(CtrlVar,MUA)
-    
+    title(cbar,'h (m)')  
 end
 
 if contains(plots,'-R-')
     
-    MLC=BCs2MLC(MUA,BCs) ;
+    MLC=BCs2MLC(CtrlVar,MUA,BCs) ;
     Reactions=CalculateReactions(MLC,l);
     figReactions=FindOrCreateFigure('Reactions') ; % ,Position); 
     clf(figReactions) 
+    
+    
     figReactions=PlotReactions(CtrlVar,MUA,Reactions,figReactions);
     
     
@@ -69,7 +71,7 @@ end
 % save data in files with running names
 % check if folder 'ResultsFiles' exists, if not create
 
-if strcmp(CtrlVar.UaOutputsInfostring,'First call ') && exist('ResultsFiles','dir')~=7 ;
+if strcmp(CtrlVar.UaOutputsInfostring,'First call ') && exist('ResultsFiles','dir')~=7 
     mkdir('ResultsFiles') ;
 end
 
@@ -191,7 +193,7 @@ if contains(plots,'-as-')
     title('Surface mass balance, a_s (m/yr)')
     xlabel('x (km)') ; ylabel('y (km)')
     axis equal tight
-    title(cbar,'(m/yr)')  
+    
     %%
     
 end
