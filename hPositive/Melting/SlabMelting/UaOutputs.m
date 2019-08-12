@@ -29,8 +29,8 @@ end
 
 if contains(plots,'-R-')
     
-    MLC=BCs2MLC(CtrlVar,MUA,BCs) ;
-    Reactions=CalculateReactions(MLC,l);
+    
+    Reactions=CalculateReactions(CtrlVar,MUA,BCs,l);
     figReactions=FindOrCreateFigure('Reactions') ; % ,Position); 
     clf(figReactions) 
     
@@ -40,11 +40,12 @@ if contains(plots,'-R-')
     
     if ~isempty(Reactions.h)
         %M=MassMatrix2D1dof(MUA);
-        MeshIndependentReactions=MUA.M\Reactions.h;
+       
         figReactions2=FindOrCreateFigure('Reactions2') ;%  ,Position); 
-        PlotMeshScalarVariable(CtrlVar,MUA,MeshIndependentReactions./F.rho);
-        title(sprintf("%s","M\\Reactions.h/rho")) ; xlabel('x (km)') ; ylabel('y (km)') 
+        PlotMeshScalarVariable(CtrlVar,MUA,Reactions.h./F.rho);
+        title(sprintf("%s","Reactions.h/rho")) ; xlabel('x (km)') ; ylabel('y (km)') 
     end
+    
 end
 
 
