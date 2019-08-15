@@ -23,14 +23,14 @@ CtrlVar.FlowApproximation='SSTREAM' ;  % 'SSTREAM'|'SSHEET'|'Hybrid'
 
 CtrlVar.time= 0 ; CtrlVar.dt=1;
 CtrlVar.TimeDependentRun=1 ; CtrlVar.AdaptiveTimeStepping=0 ; 
-CtrlVar.TotalNumberOfForwardRunSteps=1000; CtrlVar.TotalTime=100 ;
+CtrlVar.TotalNumberOfForwardRunSteps=5; CtrlVar.TotalTime=100 ;
 
 CtrlVar.Restart=0;  
 CtrlVar.WriteRestartFile=1;
 CtrlVar.TriNodes=10 ; 
 
-CtrlVar.RedefineReactions=0;
-CtrlVar.LinFEbasis=true;  % test parameter, do not change
+
+CtrlVar.LinFEbasis=false;  % test parameter, do not change
 
 
 xd=100e3; xu=-100e3 ; yl=100e3 ; yr=-100e3;

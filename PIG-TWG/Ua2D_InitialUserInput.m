@@ -1,3 +1,4 @@
+
 function [UserVar,CtrlVar,MeshBoundaryCoordinates]=Ua2D_InitialUserInput(UserVar,CtrlVar)
 
 % UserVar.Measurements="-uv-" ; juv=batch('Ua','Pool',8,'CaptureDiary',true);
@@ -27,7 +28,7 @@ if contains(UserVar.RunType,"Inversion")
         UserVar.RunType=UserVar.RunType;
         CtrlVar.TimeDependentRun=0;  % {0|1} if true (i.e. set to 1) then the run is a forward transient one, if not
         CtrlVar.InverseRun=1;
-        CtrlVar.Restart=1;
+        CtrlVar.Restart=0;
         CtrlVar.ReadInitialMesh=1;
         CtrlVar.AdaptMesh=0;
         UserVar.Slipperiness.ReadFromFile=0;  
