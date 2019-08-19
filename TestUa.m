@@ -1,15 +1,32 @@
 
 % 
-% results = runtests('TestUa.m')
-% table(results)
+% results = runtests('TestUa.m') ; table(results)
+% 
+
+
 
 function tests = TestUa
-    %f=localfunctions ; 
-    f={@testCrack};
-    f={@testCalvingModifyThickness};
+    
+    
+    f={@setupOnce,@testCrack,@teardownOnce};
+    f={@setupOnce,@testCalvingManuallyDeactivateElements,@teardownOnce};
+    
+    % f={@testCalvingModifyThickness};
+     f=localfunctions ;
+    
     
     tests = functiontests(f);
 end
+
+function setupOnce(testCase)
+    close all
+end
+
+
+function teardownOnce(testCase)
+    close all
+end
+
 
 function testCrack(testCase)
     
@@ -60,12 +77,20 @@ function testCalvingModifyThickness(testCase)
     
 end
 
-% 
-% cd Calving ; UserVar.RunType="-ManuallyModifyThickness-"; Ua(UserVar)  ; cd ..
-% 
-% cd Calving ; UserVar.RunType="-ManuallyDeactivateElements-"; Ua(UserVar) ; cd ..
-% % cd ChhotaShigri ; clear ; close all ; Ua ; cd ..
-% 
+
+function testCalvingManuallyDeactivateElements(testCase)
+    
+    cd Calving ;
+    UserVar.RunType="-ManuallyDeactivateElements-";
+    UserVar=Ua(UserVar) ;
+    cd ..
+    actSolution= UserVar.Test.Norm.actValue ;
+    expSolution = 40277.0242978501 ;
+    verifyEqual(testCase,actSolution,expSolution,'AbsTol',1e-6)
+    
+end
+
+
 % cd Cone ;   clear  ; Ua ; cd ..
 % 
 % %cd Cones ;   clear  ; Ua ; cd ..
