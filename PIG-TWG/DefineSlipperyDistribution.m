@@ -5,7 +5,7 @@ persistent FC
 if ~UserVar.Slipperiness.ReadFromFile
     
     
-    m=3;
+    m=UserVar.m;
     ub=10 ; tau=80 ; % units meters, year , kPa
     C0=ub/tau^m;
     C=C0;
@@ -15,18 +15,21 @@ else
     
     
     if isempty(FC)
-        fprintf('DefineSlipperyDistribution: loading file: %-s ',UserVar.Slipperiness.FileName)
-        load(UserVar.Slipperiness.FileName,'C','m','xC','yC')
-        fprintf(' done \n')
-        FC=scatteredInterpolant(xC,yC,C);
+        
+        if isfile(UserVar.CFile)
+            fprintf('DefineSlipperyDistribution: loading file: %-s ',UserVar.CFile)
+            load(UserVar.CFile,'FC')
+            fprintf(' done \n')
+        else
+            % create a FC file
+            load('C-Estimate.mat','C','xC','yC')
+            FC=scatteredInterpolant(xC,yC,C); 
+            save(UserVar.CFile,'FC')
+        end
     end
     
-    x=MUA.coordinates(:,1);
-    y=MUA.coordinates(:,2);
-    
-    C=FC(x,y);
-    
-    m=3;
+    C=FC(MUA.coordinates(:,1),MUA.coordinates(:,2));
+    m=UserVar.m;
     
     
 end
