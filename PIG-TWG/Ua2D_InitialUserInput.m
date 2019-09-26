@@ -17,7 +17,7 @@ if isempty(UserVar) || ~isfield(UserVar,'RunType')
 end
 
 if isempty(UserVar) || ~isfield(UserVar,'m')
-    UserVar.m=8;
+    UserVar.m=9;
 end
 
 %%
