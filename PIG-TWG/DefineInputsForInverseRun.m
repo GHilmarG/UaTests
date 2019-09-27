@@ -44,7 +44,8 @@ Priors.C=C0;
 Priors.rho=F.rho;
 Priors.rhow=F.rhow;
 
-
+%%
+ 
 
 
 %% Covariance of prior (if using Bayesian Regularisation)
