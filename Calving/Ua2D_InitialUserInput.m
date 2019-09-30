@@ -2,9 +2,11 @@
 function [UserVar,CtrlVar,MeshBoundaryCoordinates]=Ua2D_InitialUserInput(UserVar,CtrlVar)
 
 
-UserVar.RunType="-ManuallyDeactivateElements-ManuallyModifyThickness-";
-UserVar.RunType="-ManuallyModifyThickness-";
-UserVar.RunType="-ManuallyDeactivateElements-";
+if isempty(UserVar)
+    UserVar.RunType="-ManuallyDeactivateElements-ManuallyModifyThickness-";
+    UserVar.RunType="-ManuallyModifyThickness-";
+    %UserVar.RunType="-ManuallyDeactivateElements-";
+end
 
 %%
 UserVar.MisExperiment='ice0';  % This I use in DefineMassBalance
@@ -16,7 +18,7 @@ CtrlVar.Experiment=['MismipPlus-',UserVar.MisExperiment];
 %% Types of run
 %
 CtrlVar.TimeDependentRun=1; 
-CtrlVar.TotalNumberOfForwardRunSteps=50;
+CtrlVar.TotalNumberOfForwardRunSteps=25;
 CtrlVar.TotalTime=100;
 CtrlVar.Restart=0;  
 CtrlVar.InfoLevelNonLinIt=1; 
@@ -34,8 +36,8 @@ CtrlVar.WriteRestartFile=1;
 %% Reading in mesh
 CtrlVar.ReadInitialMesh=0;    % if true then read FE mesh (i.e the MUA variable) directly from a .mat file
                               % unless the adaptive meshing option is used, no further meshing is done.
-CtrlVar.ReadInitialMeshFileName='AdaptMesh.mat';
-CtrlVar.SaveInitialMeshFileName='NewMeshFile.mat';
+% CtrlVar.ReadInitialMeshFileName='AdaptMesh.mat';
+% CtrlVar.SaveInitialMeshFileName='NewMeshFile.mat';
 %% Plotting options
 CtrlVar.PlotMesh=1; 
 CtrlVar.PlotBCs=1;
@@ -98,7 +100,12 @@ CtrlVar.AdaptMeshInterval=1;  % number of run-steps between mesh adaptation
 CtrlVar.MeshAdapt.GLrange=[20000 5000 ; 5000 2000];
 %CtrlVar.MeshAdapt.GLrange=[20000 5000 ];
 
+<<<<<<< HEAD
+=======
 
+>>>>>>> alpha
+
+%% Pos. thickness constr
 
 %% Pos. thickness constr
 
@@ -113,6 +120,7 @@ CtrlVar.ThicknessConstraintsItMax=5  ;
 xd=640e3; xu=0e3 ; yr=0 ; yl=80e3 ;  
 MeshBoundaryCoordinates=[xu yr ; xu yl ; xd yl ; xd yr];
 
+<<<<<<< HEAD
 %% Things that I´m testing and that are specifically  to ideas around implementing calving
 CtrlVar.GeometricalVarsDefinedEachTransienRunStepByDefineGeometry="sb";
 CtrlVar.ManuallyDeactivateElements=true ;
@@ -121,3 +129,28 @@ CtrlVar.doplots=1;
 
 end
 
+=======
+%% Things that I´m testing and that are specifically realted to ideas around implementing calving
+
+if contains(UserVar.RunType,"-ManuallyDeactivateElements-")
+    CtrlVar.ManuallyDeactivateElements=1 ;
+else
+    CtrlVar.ManuallyDeactivateElements=1 ;
+    
+end
+
+if contains(UserVar.RunType,"-ManuallyModifyThickness-")
+    CtrlVar.GeometricalVarsDefinedEachTransienRunStepByDefineGeometry="sb";
+else
+    CtrlVar.GeometricalVarsDefinedEachTransienRunStepByDefineGeometry="";
+end
+
+
+CtrlVar.doAdaptMeshPlots=1; CtrlVar.InfoLevelAdaptiveMeshing=100;
+CtrlVar.doplots=1;
+CtrlVar.AdaptMesh=1;         
+CtrlVar.AdaptMeshUntilChangeInNumberOfElementsLessThan=5;
+
+end
+
+>>>>>>> alpha

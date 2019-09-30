@@ -13,17 +13,25 @@ if ~UserVar.AGlen.ReadFromFile
 else
     
     if isempty(FA)
-        fprintf('DefineSlipperyDistribution: loading file: %-s ',UserVar.AGlen.FileName)
-        load(UserVar.AGlen.FileName,'AGlen','n','xA','yA')
-        fprintf(' done \n')
-        FA=scatteredInterpolant(xA,yA,AGlen);
+        
+        if isfile(UserVar.AFile)
+            
+            fprintf('DefineSlipperyDistribution: loading file: %-s ',UserVar.AFile)
+            load(UserVar.AFile,'FA')
+            fprintf(' done \n')
+            
+        else
+            
+            load('AGlen-Estimate.mat','AGlen','xA','yA')
+            FA=scatteredInterpolant(xA,yA,AGlen);
+            save(UserVar.AFile,'FA')
+            
+        end
+        
     end
     
-    x=MUA.coordinates(:,1);
-    y=MUA.coordinates(:,2);
+    AGlen=FA(MUA.coordinates(:,1),MUA.coordinates(:,2));
     
-    AGlen=FA(x,y);
-
     n=3;
     
 end
