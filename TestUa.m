@@ -12,8 +12,9 @@ function tests = TestUa
     f={@setupOnce,@testCalvingManuallyDeactivateElements,@teardownOnce};
     
     % f={@testCalvingModifyThickness};
-     f=localfunctions ;
-    
+    f=localfunctions ;
+    %f={@setupOnce,@testGaussPeak,@teardownOnce};
+    f={@setupOnce,@testMassBalanceFeedback,@teardownOnce};
     
     tests = functiontests(f);
 end
@@ -72,7 +73,7 @@ function testCalvingModifyThickness(testCase)
     UserVar=Ua(UserVar) ;
     cd ..
     actSolution= UserVar.Test.Norm.actValue ;
-    expSolution = 33552.4222224353 ;
+    expSolution = UserVar.Test.Norm.expValue ;
     verifyEqual(testCase,actSolution,expSolution,'AbsTol',1e-6)
     
 end
@@ -87,6 +88,47 @@ function testCalvingManuallyDeactivateElements(testCase)
     actSolution= UserVar.Test.Norm.actValue ;
     expSolution = 40277.0242978501 ;
     verifyEqual(testCase,actSolution,expSolution,'AbsTol',1e-6)
+    
+end
+
+
+function testFreeSlipBCs(testCase)
+    
+    cd FreeSlipBCs ;
+    UserVar.RunType=[];
+    UserVar=Ua(UserVar) ;
+    cd ..
+    actSolution= UserVar.Test.Norm.actValue ;
+    expSolution = UserVar.Test.Norm.expValue ;
+    verifyEqual(testCase,actSolution,expSolution,'AbsTol',1e-6)
+    
+end
+
+
+
+function testGaussPeak(testCase)
+    
+    cd GaussPeak ;
+    UserVar.RunType=[];
+    UserVar=Ua(UserVar) ;
+    cd ..
+    actSolution= UserVar.Test.Norm.actValue ;
+    expSolution = UserVar.Test.Norm.expValue ;
+    verifyEqual(testCase,actSolution,expSolution,'AbsTol',1e-6)
+    
+end
+
+
+
+function testMassBalanceFeedback(testCase)
+    
+    cd MassBalanceFeedback;
+    UserVar.RunType=[];
+    UserVar=Ua(UserVar) ;
+    cd ..
+    actSolution= UserVar.Test.Norm.actValue ;
+    expSolution = UserVar.Test.Norm.expValue ;
+    verifyEqual(testCase,actSolution,expSolution,'AbsTol',1e-2)
     
 end
 
