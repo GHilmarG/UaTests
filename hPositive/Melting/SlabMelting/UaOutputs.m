@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 function UserVar=UaOutputs(UserVar,CtrlVar,MUA,BCs,F,l,GF,InvStartValues,InvFinalValues,Priors,Meas,BCsAdjoint,RunInfo);
 
 
@@ -31,11 +32,63 @@ if contains(plots,'-R-')
         PlotMeshScalarVariable(CtrlVar,MUA,MeshIndependentReactions);
         title('MeshIndependent')
     end
+=======
+function UserVar=UaOutputs(UserVar,CtrlVar,MUA,BCs,F,l,GF,InvStartValues,InvFinalValues,Priors,Meas,BCsAdjoint,RunInfo)
+
+return
+
+%save TestSaveUaOutputs
+
+
+switch lower(CtrlVar.FlowApproximation)
+    case 'sstream'
+        plots='-sbB-ubvb-BCs-R-as-V(t)-h-';
+    case'ssheet'
+        plots='-sbB-udvd-BCs-R-as-';
+end
+
+TRI=[];
+x=MUA.coordinates(:,1);  y=MUA.coordinates(:,2);
+I=F.h<=CtrlVar.ThickMin;
+
+if contains(plots,'-h-')
+    
+    figh=FindOrCreateFigure('h') ; % ,Position); 
+    clf(figh)
+    [~,cbar]=PlotMeshScalarVariable(CtrlVar,MUA,F.h);
+    hold on 
+    plot(x(I)/CtrlVar.PlotXYscale,y(I)/CtrlVar.PlotXYscale,'ro');
+    plot(x(BCs.hPosNode)/CtrlVar.PlotXYscale,y(BCs.hPosNode)/CtrlVar.PlotXYscale,'*w');
+    hold on ; PlotMuaMesh(CtrlVar,MUA)
+    title(cbar,'h (m)')  
+end
+
+if contains(plots,'-R-')
+    
+    
+    Reactions=CalculateReactions(CtrlVar,MUA,BCs,l);
+    figReactions=FindOrCreateFigure('Reactions') ; % ,Position); 
+    clf(figReactions) 
+    
+    
+    figReactions=PlotReactions(CtrlVar,MUA,Reactions,figReactions);
+    
+    
+    if ~isempty(Reactions.h)
+        %M=MassMatrix2D1dof(MUA);
+       
+        figReactions2=FindOrCreateFigure('Reactions2') ;%  ,Position); 
+        PlotMeshScalarVariable(CtrlVar,MUA,Reactions.h./F.rho);
+        title(sprintf("%s","Reactions.h/rho")) ; xlabel('x (km)') ; ylabel('y (km)') 
+    end
+    
+>>>>>>> alpha
 end
 
 
 [TotalIceVolume,ElementIceVolume]=CalcIceVolume(CtrlVar,MUA,F.h);
 
+<<<<<<< HEAD
 TRI=[];
 x=MUA.coordinates(:,1);  y=MUA.coordinates(:,2);
 I=F.h<=CtrlVar.ThickMin;
@@ -49,12 +102,22 @@ if contains(plots,'-mesh-')
     end
     
     figure(1)
+=======
+
+
+if contains(plots,'-mesh-')
+    
+    
+    figMesh=FindOrCreateFigure('Mesh') ; % 
+
+>>>>>>> alpha
     CtrlVar.PlotNodes=1; CtrlVar.PlotLabels=0;
     PlotFEmesh(MUA.coordinates,MUA.connectivity,CtrlVar)
     hold on
     plot(x(I)/CtrlVar.PlotXYscale,y(I)/CtrlVar.PlotXYscale,'ro');
 end
 
+<<<<<<< HEAD
 if ~isempty(strfind(plots,'-BCs-'))
     if isempty(FigBCs)
         FigBCs=figure; hold off
@@ -65,18 +128,30 @@ if ~isempty(strfind(plots,'-BCs-'))
             FigBCs=figure; hold off
         end
     end
+=======
+if contains(plots,'-BCs-')
+    figBCs=FindOrCreateFigure('BCs') ; 
+>>>>>>> alpha
     hold off ;  PlotBoundaryConditions(CtrlVar,MUA,BCs);
 end
 
 % save data in files with running names
 % check if folder 'ResultsFiles' exists, if not create
 
+<<<<<<< HEAD
 if strcmp(CtrlVar.UaOutputsInfostring,'First call ') && exist('ResultsFiles','dir')~=7 ;
+=======
+if strcmp(CtrlVar.UaOutputsInfostring,'First call ') && exist('ResultsFiles','dir')~=7 
+>>>>>>> alpha
     mkdir('ResultsFiles') ;
 end
 
 if strcmp(CtrlVar.UaOutputsInfostring,'Last call')==0
+<<<<<<< HEAD
     if ~isempty(strfind(plots,'-save-'))
+=======
+    if contains(plots,'-save-')
+>>>>>>> alpha
         %FileName=['ResultsFiles/',sprintf('%07i',round(100*time)),'-TransPlots-',CtrlVar.Experiment]; good for transient runs
         
         FileName=['ResultsFiles/',sprintf('%07i',CtrlVar.UaOutputsCounter),'-TransPlots-',CtrlVar.Experiment];
@@ -92,6 +167,7 @@ end
 
 
 if contains(plots,'-sbB-')
+<<<<<<< HEAD
     
     if isempty(FigsbB)
         FigsbB=figure; hold off
@@ -103,6 +179,10 @@ if contains(plots,'-sbB-')
         end
     end
 
+=======
+    figsbB=FindOrCreateFigure('sbB') ; 
+    clf(figsbB)
+>>>>>>> alpha
     if isempty(TRI) ;  TRI = delaunay(x,y); end
     
     %trisurf(TRI,x/CtrlVar.PlotXYscale,y/CtrlVar.PlotXYscale,b,'EdgeColor','none') ;
@@ -124,6 +204,7 @@ if contains(plots,'-sbB-')
     hold off
 end
 
+<<<<<<< HEAD
 
 if contains(plots,'-ubvb-')
     % plotting horizontal velocities
@@ -138,6 +219,20 @@ if contains(plots,'-ubvb-')
             Figubvb=figure; hold off
         end
     end
+=======
+if contains(plots,'-V(t)-')
+    figV=FindOrCreateFigure('V(t)') ;
+    hold on
+    plot(CtrlVar.time,TotalIceVolume,'or') ;
+    xlabel('time (yr)') ; ylabel('Ice Volume (m^3)') 
+end
+
+
+if contains(plots,'-ubvb-')
+    
+    figubvb=FindOrCreateFigure('ubvb') ; 
+    
+>>>>>>> alpha
     
     PlotFEmesh(MUA.coordinates,MUA.connectivity,CtrlVar)
     hold on
@@ -147,7 +242,11 @@ if contains(plots,'-ubvb-')
     CtrlVar.VelPlotIntervalSpacing='log10';
     [cbar,uvPlotScale,QuiverHandel]=QuiverColorGHG(x(1:N:end),y(1:N:end),F.ub(1:N:end),F.vb(1:N:end),CtrlVar);
     hold on
+<<<<<<< HEAD
     title(sprintf('(ub,vb) t=%-g ',CtrlVar.time)) ; xlabel('xps (km)') ; ylabel('yps (km)')
+=======
+    title(sprintf('(ub,vb) t=%-g  - circles where F.h<=CtrlVar.ThickMin=%f',CtrlVar.time,CtrlVar.ThickMin )) ; xlabel('x (km)') ; ylabel('y (km)')
+>>>>>>> alpha
     axis equal
     
     hold on
@@ -157,7 +256,11 @@ if contains(plots,'-ubvb-')
     
 end
 
+<<<<<<< HEAD
 if ~isempty(strfind(plots,'-udvd-'))
+=======
+if contains(plots,'-udvd-')
+>>>>>>> alpha
     % plotting horizontal velocities
     if isempty(Figudvd)
         Figudvd=figure; hold off
@@ -176,24 +279,37 @@ if ~isempty(strfind(plots,'-udvd-'))
     %CtrlVar.VelColorMap='hot';
     QuiverColorGHG(x(1:N:end),y(1:N:end),ud(1:N:end),vd(1:N:end),CtrlVar);
     hold on
+<<<<<<< HEAD
     title(sprintf('(ud,vd) t=%-g ',time)) ; xlabel('xps (km)') ; ylabel('yps (km)')
+=======
+    title(sprintf('(ud,vd) t=%-g ',time)) ; xlabel('x (km)') ; ylabel('y (km)')
+>>>>>>> alpha
     axis equal tight
     
 end
 
 %%
+<<<<<<< HEAD
 if ~isempty(strfind(plots,'-speed-'))
+=======
+if contains(plots,'-speed-')
+>>>>>>> alpha
     %%
     figure
     speed=sqrt(ub.*ub+vb.*vb);
     PlotNodalBasedQuantities(MUA.connectivity,MUA.coordinates,speed,CtrlVar)    ;
+<<<<<<< HEAD
     title(sprintf('speed t=%-g ',time)) ; xlabel('xps (km)') ; ylabel('yps (km)')
+=======
+    title(sprintf('speed t=%-g ',time)) ; xlabel('x (km)') ; ylabel('y (km)')
+>>>>>>> alpha
     axis equal tight
     %%
     
 end
 %%
 
+<<<<<<< HEAD
 if ~isempty(strfind(plots,'-as-'))
     %%
     figure
@@ -202,6 +318,19 @@ if ~isempty(strfind(plots,'-as-'))
     
     title(sprintf('as t=%-g ',time)) ; xlabel('xps (km)') ; ylabel('yps (km)')
     axis equal tight
+=======
+if contains(plots,'-as-')
+    %%
+    figas=FindOrCreateFigure('as') ; 
+    clf(figas)
+    [~,cbar]=PlotMeshScalarVariable(CtrlVar,MUA,F.as);
+    
+    title(sprintf('as t=%-g ',CtrlVar.time)) ; 
+    title('Surface mass balance, a_s (m/yr)')
+    xlabel('x (km)') ; ylabel('y (km)')
+    axis equal tight
+    
+>>>>>>> alpha
     %%
     
 end
@@ -224,7 +353,11 @@ if contains(plots,'-e-')
     
 end
 
+<<<<<<< HEAD
 if ~isempty(strfind(plots,'-flux gradients-'))
+=======
+if contains(plots,'-flux gradients-')
+>>>>>>> alpha
     % plotting effectiv strain rates
     
     qx=rho.*h.*ub;
@@ -245,7 +378,11 @@ end
 
 
 
+<<<<<<< HEAD
 if ~isempty(strfind(plots,'-ub-'))
+=======
+if contains(plots,'-ub-')
+>>>>>>> alpha
     
     figure
     [FigHandle,ColorbarHandel,tri]=PlotNodalBasedQuantities(MUA.connectivity,MUA.coordinates,ub,CtrlVar)    ;

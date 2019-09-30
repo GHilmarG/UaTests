@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 rsync --delete --recursive --verbose --times  ./*.m  /cygdrive/h/OneDrive/Public/Ua/Source
 rsync --delete --recursive --verbose --times  ./*.xml  /cygdrive/h/OneDrive/Public/Ua/Source
 rsync --delete --recursive --verbose --times  ./html/*  /cygdrive/h/OneDrive/Public/Ua/Source/html
@@ -8,3 +9,15 @@ rsync --delete --recursive --verbose --times  ./html/*  /cygdrive/h/OneDrive/Pub
 
 
 
+=======
+rsync --delete --recursive --verbose --times  ./*.m  /cygdrive/h/OneDrive/Public/Ua/Source
+rsync --delete --recursive --verbose --times  ./*.xml  /cygdrive/h/OneDrive/Public/Ua/Source
+rsync --delete --recursive --verbose --times  ./html/*  /cygdrive/h/OneDrive/Public/Ua/Source/html
+
+# To send all files use:
+# rsync --delete --recursive --verbose --times  ./*.m  /cygdrive/h/OneDrive/Ua/Source/CurrentStableVersion
+# Them rm .git as the permissions on git cause problems with OneDrive sync
+
+
+
+>>>>>>> alpha

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
  SSTREAM(uvh/supg) 	 time=        1.00000 	 dt=1 	 r=9.18564e-17 	 #it= 8 	 CPUsec=7.92323 
  SSTREAM(uvh/supg) 	 time=        1.00000 	 dt=1 	 r=2.02483e-20 	 #it= 1 	 CPUsec=0.827969 
  SSTREAM(uvh/supg) 	 time=        1.00000 	 dt=1 	 r=2.86499e-23 	 #it= 1 	 CPUsec=0.835946 
@@ -150,3 +151,22 @@
  SSTREAM(uvh/supg) 	 time=        1.00000 	 dt=1 	 r=2.74541e-34 	 #it= 2 	 CPUsec=0.744926 
  SSTREAM(uvh/supg) 	 time=        1.00000 	 dt=1 	 r=2.99787e-34 	 #it= 2 	 CPUsec=0.774746 
  SSTREAM(uvh/supg) 	 time=        1.00000 	 dt=1 	 r=3.22038e-34 	 #it= 2 	 CPUsec=0.794181 
+=======
+  t-dt-tCPU-it-itTotal-date-uvhAssembly-uvhSolution-WallTime , 0 , 1 , 02:28:53  ,  NaN , 0 , 15-Aug-2019 14:04:05 , 00:00:00 , 00:00:00 , 00:00:01 
+NR-STREAM(uv):  1/0  g=1              , r/r0=NaN            ,  r0=0              , r=0              , du=0              , dl=NaN            , Assembly=0.381821 sec. Solution=0.124112 sec.
+  SSTREAM2dNR converged to given tolerance of 1e-15 with r=0 in 1 iterations.
+NR-STREAM(uvh):  1/0  g=1              , r/r0=5.622108e-33   ,  r0=0.005854323    , r=3.291363e-35   , ruv=1.801166e-85   , rh=3.291363e-35   , du=0              , dh=7.905584e-23   , dl=2.204395e+26   , BCsNormuv=0 , BCsNormh=6.21833e-21  
+  --->  SSTREAM(uvh/supg) 	 time=        0.00000 	 dt=1 	 r=3.29136e-35 	 #it= 1 	 CPUsec=1.46089 
+  t-dt-tCPU-it-itTotal-date-uvhAssembly-uvhSolution-WallTime , 1 , 1 , 02:29:01  ,  1 , 1 , 15-Aug-2019 14:04:08 , 00:00:01 , 00:00:00 , 00:00:04 
+NR-STREAM(uvh):  1/0  g=1              , r/r0=1.202917e-127  ,  r0=3.291363e-35   , r=3.959237e-162  , ruv=3.037224e-149  , rh=0              , du=0              , dh=5.409398e-39   , dl=7.498071e-17   , BCsNormuv=0 , BCsNormh=4.2549e-37  
+  --->  SSTREAM(uvh/supg) 	 time=        1.00000 	 dt=1 	 r=3.95924e-162 	 #it= 1 	 CPUsec=1.10254 
+  t-dt-tCPU-it-itTotal-date-uvhAssembly-uvhSolution-WallTime , 2 , 1 , 02:29:05  ,  1 , 1 , 15-Aug-2019 14:04:09 , 00:00:01 , 00:00:00 , 00:00:05 
+NR-STREAM(uvh):  1/0  g=1              , r/r0=NaN            ,  r0=0              , r=0              , ruv=0              , rh=0              , du=0              , dh=0              , dl=0              , BCsNormuv=0 , BCsNormh=0  
+  --->  SSTREAM(uvh/supg) 	 time=        2.00000 	 dt=1 	 r=0 	 #it= 1 	 CPUsec=1.0645 
+  t-dt-tCPU-it-itTotal-date-uvhAssembly-uvhSolution-WallTime , 3 , 1 , 02:29:10  ,  1 , 1 , 15-Aug-2019 14:04:10 , 00:00:02 , 00:00:00 , 00:00:07 
+NR-STREAM(uvh):  1/0  g=1              , r/r0=NaN            ,  r0=0              , r=0              , ruv=0              , rh=0              , du=0              , dh=0              , dl=0              , BCsNormuv=0 , BCsNormh=0  
+  --->  SSTREAM(uvh/supg) 	 time=        3.00000 	 dt=1 	 r=0 	 #it= 1 	 CPUsec=1.15029 
+  t-dt-tCPU-it-itTotal-date-uvhAssembly-uvhSolution-WallTime , 4 , 1 , 02:29:15  ,  1 , 1 , 15-Aug-2019 14:04:11 , 00:00:03 , 00:00:00 , 00:00:08 
+NR-STREAM(uvh):  1/0  g=1              , r/r0=NaN            ,  r0=0              , r=0              , ruv=0              , rh=0              , du=0              , dh=0              , dl=0              , BCsNormuv=0 , BCsNormh=0  
+  --->  SSTREAM(uvh/supg) 	 time=        4.00000 	 dt=1 	 r=0 	 #it= 1 	 CPUsec=1.08476 
+>>>>>>> alpha

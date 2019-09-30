@@ -60,7 +60,11 @@ CtrlVar.NameOfRestartFiletoWrite='iA-Restart.mat';
 %% Mesh generation and remeshing parameters
 
 CtrlVar.meshgeneration=1; 
+<<<<<<< HEAD
 CtrlVar.TriNodes=6 ;  % {3|6|10}  number of nodes per element
+=======
+CtrlVar.TriNodes=3 ;  % {3|6|10}  number of nodes per element
+>>>>>>> alpha
 CtrlVar.MeshSize=Width/10;
 CtrlVar.MeshSizeMin=0.01*CtrlVar.MeshSize;
 CtrlVar.MeshSizeMax=CtrlVar.MeshSize;
@@ -124,7 +128,11 @@ CtrlVar.doplots=0;          % if true then plotting during runs by Ua are allowe
 CtrlVar.ThickMin=1; % minimum allowed thickness without (potentially) doing something about it
 CtrlVar.ResetThicknessToMinThickness=0;  % if true, thickness values less than ThickMin will be set to ThickMin
 CtrlVar.ThicknessConstraints=1  ;        % if true, min thickness is enforced using active set method
+<<<<<<< HEAD
 CtrlVar.ThicknessConstraintsItMax=2500  ;
+=======
+CtrlVar.ThicknessConstraintsItMax=10  ;
+>>>>>>> alpha
 
 CtrlVar.UaOutputsDt=20;
 

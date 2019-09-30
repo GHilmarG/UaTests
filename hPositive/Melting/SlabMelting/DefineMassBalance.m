@@ -11,7 +11,11 @@ switch CtrlVar.Experiment
     
     case 'GaussMelting'
         
+<<<<<<< HEAD
         if time<20
+=======
+        if time<200e10
+>>>>>>> alpha
             ampl=-1;
             %ampl=-10*(max(y)-y)/(max(y)-min(y));
             sigma_x=25000 ; sigma_y=25000;

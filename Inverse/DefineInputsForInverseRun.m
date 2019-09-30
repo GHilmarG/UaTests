@@ -61,6 +61,11 @@ else
     end
 end
 
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> alpha
 Priors.CovAGlen=CAGlen;
 Priors.CovC=CC;
 
