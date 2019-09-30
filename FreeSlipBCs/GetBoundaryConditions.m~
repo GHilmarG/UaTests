@@ -1,0 +1,52 @@
+
+function [BCs,MLC]=GetBoundaryConditions(Experiment,CtrlVar,MUA,BCs,MLC,time,s,b,h,S,B,ub,vb,ud,vd,GF)
+
+if isempty(BCs)
+    BCs=BoundaryConditions;
+end
+
+if isempty(MLC)
+    MLC=MultiLinearConstraints;
+end
+
+listing=dir('DefineBCs.m') ;
+
+if numel(listing)==0
+    
+    fprintf(' Using DefineB to define boundary conditions \n')
+    BCs=DefineBoundaryConditions(Experiment,CtrlVar,MUA,BCs,time,s,b,h,S,B,ub,vb,ud,vd,GF);
+    
+else
+    
+    fprintf(' Using DefineBCs to define boundary conditions \n')
+    [ubFixedNode,ubFixedValue,vbFixedNode,vbFixedValue,...
+        ubTiedNodeA,ubTiedNodeB,vbTiedNodeA,vbTiedNodeB,...
+        hFixedNode,hFixedValue,hTiedNodeA,hTiedNodeB,...
+        ubvbFixedNormalNode,ubvbFixedNormalValue]=...
+        DefineBCs(Experiment,CtrlVar,MUA,time,s,b,h,S,B,ub,vb,ud,vd,GF);
+    
+    BCs.ubFixedNode=ubFixedNode;
+    BCs.ubFixedValue=ubFixedValue;
+    BCs.vbFixedNode=vbFixedNode;
+    BCs.vbFixedValue=vbFixedValue;
+    BCs.ubTiedNodeA=ubTiedNodeA;
+    BCs.ubTiedNodeB=ubTiedNodeB;
+    BCs.vbTiedNodeA=vbTiedNodeA;
+    BCs.vbTiedNodeB=vbTiedNodeB;
+    BCs.hFixedNode=hFixedNode;
+    BCs.hFixedValue=hFixedValue;
+    BCs.hTiedNodeA=hTiedNodeA;
+    BCs.hTiedNodeB=hTiedNodeB;
+    BCs.ubvbFixedNormalNode=ubvbFixedNormalNode;
+    BCs.ubvbFixedNormalValue=ubvbFixedNormalValue;
+    
+end
+
+MLC=BCs2MLC(MUA,BCs,MLC);
+
+end
+
+
+
+
+

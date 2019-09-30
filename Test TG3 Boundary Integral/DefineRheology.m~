@@ -1,0 +1,20 @@
+function [AGlen,n,C,m,rho,rhow,g]=DefineRheology(Experiment,coordinates,CtrlVar)
+   
+    % units: kPa, m , a
+    
+    rho=900 ; rhow=1030; g=9.81/1000;
+
+	m=3 ; n=3 ; 
+
+    Nnodes=length(coordinates);
+	AGlenEx1=[4.6416e-24,2.1544e-24,1e-24,4.6416e-25,2.1544e-25,1e-25,4.6416e-26,2.1544e-26,1e-26]; AGlenEx1=AGlenEx1*1e9*365.25*24*60*60;
+	AGlen=AGlenEx1(1)+zeros(Nnodes,1) ; 
+	C0=7.624e6^(-m)*1000^m*365.25*24*60*60; 
+	C=C0+zeros(Nnodes,1);
+
+
+    
+    
+    
+   
+end
