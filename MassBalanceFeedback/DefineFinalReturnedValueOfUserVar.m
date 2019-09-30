@@ -1,4 +1,4 @@
-function UserVar=DefineFinalReturnedValueOfUserVar(UserVar,CtrlVar,MUA,BCs,F,l,InvStartValues,InvFinalValues,Priors,Meas,BCsAdjoint,RunInfo);
+function UserVar=DefineFinalReturnedValueOfUserVar(UserVar,CtrlVar,MUA,BCs,F,l,InvStartValues,InvFinalValues,Priors,Meas,BCsAdjoint,RunInfo)
 
 %% 
 %
@@ -10,6 +10,8 @@ function UserVar=DefineFinalReturnedValueOfUserVar(UserVar,CtrlVar,MUA,BCs,F,l,I
 % 
 %
 
-UserVar.Test.Norm=norm(F.ub+F.vb);
+UserVar.Test.Norm.actValue=mean(F.h);
+UserVar.Test.Norm.expValue=27.2055141419782;
+
 
 end
