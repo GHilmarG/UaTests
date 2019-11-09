@@ -45,8 +45,6 @@ Priors.rho=F.rho;
 Priors.rhow=F.rhow;
 
 
-
-
 %% Covariance of prior (if using Bayesian Regularisation)
 % listingCC=dir('CC.mat') ; listingCA=dir('CAGlen.mat') ;
 %

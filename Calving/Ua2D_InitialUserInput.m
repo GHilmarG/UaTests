@@ -5,7 +5,7 @@ function [UserVar,CtrlVar,MeshBoundaryCoordinates]=Ua2D_InitialUserInput(UserVar
 if isempty(UserVar)
     UserVar.RunType="-ManuallyDeactivateElements-ManuallyModifyThickness-";
     UserVar.RunType="-ManuallyModifyThickness-";
-    %UserVar.RunType="-ManuallyDeactivateElements-";
+    UserVar.RunType="-ManuallyDeactivateElements-";
 end
 
 %%
