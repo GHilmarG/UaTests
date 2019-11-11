@@ -12,13 +12,12 @@ function tests = TestUa
     
     f={@setupOnce,@testCrack,@teardownOnce};
     f={@setupOnce,@testCalvingManuallyDeactivateElements,@teardownOnce};
-
-    
     
     %f={@setupOnce,@testGaussPeak,@teardownOnce};
     %f={@setupOnce,@testMassBalanceFeedback,@teardownOnce};
-    f={@testCalvingModifyThickness};
-    %f=localfunctions ;  % all tests
+    % f={@testCrack};
+    
+    f=localfunctions ;  % all tests
     
     tests = functiontests(f);
 end
@@ -40,7 +39,7 @@ function testCrack(testCase)
     UserVar=Ua(UserVar) ;
     cd ..
     actSolution= UserVar.Test.Norm.actValue ;
-    expSolution = UserVar.Test.Norm.expValue ;
+    expSolution = 5034.37163446407;
     verifyEqual(testCase,actSolution,expSolution,'AbsTol',1e-6)
     
 end
