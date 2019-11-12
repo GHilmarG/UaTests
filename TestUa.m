@@ -15,9 +15,10 @@ function tests = TestUa
     
     %f={@setupOnce,@testGaussPeak,@teardownOnce};
     %f={@setupOnce,@testMassBalanceFeedback,@teardownOnce};
-    % f={@testCrack};
+    % f={@testPIGmeshing};
     
     f=localfunctions ;  % all tests
+    
     
     tests = functiontests(f);
 end
@@ -29,6 +30,43 @@ end
 
 function teardownOnce(testCase)
     close all
+end
+
+
+function testPIGmeshing(testCase)
+    
+    cd PIG-TWG\
+    UserVar.RunType='TestingMeshOptions'; 
+    UserVar=Ua(UserVar) ;
+    cd ..
+    actSolution= UserVar.Test.Norm.actValue ;
+    expSolution = 56024.4217889207;
+    verifyEqual(testCase,actSolution,expSolution,'AbsTol',1e-2)
+    
+end
+
+function testPIGdiagnostic(testCase)
+    
+    cd PIG-TWG\
+    UserVar.RunType='Forward-Diagnostic'; 
+    UserVar=Ua(UserVar) ;
+    cd ..
+    actSolution= UserVar.Test.Norm.actValue ;
+    expSolution = 95982.7181182457;
+    verifyEqual(testCase,actSolution,expSolution,'AbsTol',1e-2)
+    
+end
+
+function testPIGtransient(testCase)
+    
+    cd PIG-TWG\
+    UserVar.RunType='Forward-Transient';
+    UserVar=Ua(UserVar) ;
+    cd ..
+    actSolution= UserVar.Test.Norm.actValue ;
+    expSolution = 94704.6045393781;
+    verifyEqual(testCase,actSolution,expSolution,'AbsTol',1e-2)
+    
 end
 
 
