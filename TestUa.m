@@ -15,10 +15,12 @@ function tests = TestUa
     
     %f={@setupOnce,@testGaussPeak,@teardownOnce};
     %f={@setupOnce,@testMassBalanceFeedback,@teardownOnce};
-    % f={@testPIGmeshing};
+    f={@testPIGmeshing};
+    
     
     f=localfunctions ;  % all tests
     
+    f={@testPIGtransient};
     
     tests = functiontests(f);
 end
@@ -40,6 +42,7 @@ function testPIGmeshing(testCase)
     UserVar=Ua(UserVar) ;
     cd ..
     actSolution= UserVar.Test.Norm.actValue ;
+    % 42368.9157216889   laptop 17 Nov
     expSolution = 56024.4217889207;
     verifyEqual(testCase,actSolution,expSolution,'AbsTol',1e-2)
     
@@ -61,10 +64,12 @@ function testPIGtransient(testCase)
     
     cd PIG-TWG\
     UserVar.RunType='Forward-Transient';
+    
     UserVar=Ua(UserVar) ;
     cd ..
     actSolution= UserVar.Test.Norm.actValue ;
     expSolution = 94704.6045393781;
+    %  79053.6666394987 % home laptop, 17 Nov, 2019
     verifyEqual(testCase,actSolution,expSolution,'AbsTol',1e-2)
     
 end
