@@ -88,7 +88,7 @@ switch UserVar.RunType
         CtrlVar.Restart=0;
         CtrlVar.InfoLevelNonLinIt=1;
         UserVar.Slipperiness.ReadFromFile=1;
-        UserVar.AGlen.ReadFromFile=0;
+        UserVar.AGlen.ReadFromFile=1;
         CtrlVar.ReadInitialMesh=1;
         CtrlVar.AdaptMesh=0;
         
@@ -99,7 +99,7 @@ switch UserVar.RunType
         CtrlVar.Restart=0;
         CtrlVar.InfoLevelNonLinIt=1;
         UserVar.Slipperiness.ReadFromFile=1;
-        UserVar.AGlen.ReadFromFile=0;
+        UserVar.AGlen.ReadFromFile=1;
         CtrlVar.ReadInitialMesh=1;
         CtrlVar.AdaptMesh=0;
         
@@ -110,6 +110,7 @@ switch UserVar.RunType
         CtrlVar.Restart=0;
         CtrlVar.ReadInitialMesh=0;
         CtrlVar.AdaptMesh=1;
+        UserVar.Slipperiness.ReadFromFile=1;
         UserVar.Slipperiness.ReadFromFile=1;
         UserVar.AGlen.ReadFromFile=1;
         CtrlVar.AdaptMesh=1;
