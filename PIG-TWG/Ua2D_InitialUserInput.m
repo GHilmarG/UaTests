@@ -64,7 +64,7 @@ switch UserVar.RunType
         CtrlVar.AdaptMesh=0;
         
         CtrlVar.Inverse.Iterations=1;
-        CtrlVar.Inverse.InvertFor='logAGlenlogC' ; % {'C','logC','AGlen','logAGlen'}
+        CtrlVar.Inverse.InvertFor='logA-logC' ; % '-logAGlen-logC-' ; % {'-C-','-logC-','-AGlen-','-logAGlen-'}
         CtrlVar.Inverse.Regularize.Field=CtrlVar.Inverse.InvertFor;
         
         if contains(UserVar.RunType,'FixPoint')
@@ -256,6 +256,9 @@ CtrlVar.Inverse.Regularize.C.ga=1;
 CtrlVar.Inverse.Regularize.logC.ga=1;
 CtrlVar.Inverse.Regularize.logC.gs=1e3 ;
 
+CtrlVar.Inverse.Regularize.logC.ga=0;  % testing for Budd
+CtrlVar.Inverse.Regularize.logC.gs=0 ; % testing for Budd
+
 CtrlVar.Inverse.Regularize.AGlen.gs=1;
 CtrlVar.Inverse.Regularize.AGlen.ga=1;
 CtrlVar.Inverse.Regularize.logAGlen.ga=1;
@@ -267,7 +270,12 @@ CtrlVar.ThicknessConstraints=0;
 CtrlVar.ResetThicknessToMinThickness=1;  % change this later on
 CtrlVar.ThickMin=50;
 
-%%
+%% Filenames
+
+CtrlVar.NameOfFileForSavingSlipperinessEstimate="C-Estimate"+CtrlVar.SlidingLaw+".mat";
+CtrlVar.NameOfFileForSavingAGlenEstimate="AGlen-Estimate.mat";
+
+
 filename=sprintf('IR-%s-%s-Nod%i-%s-%s-Cga%f-Cgs%f-Aga%f-Ags%f-m%i-%s',...
     UserVar.RunType,...
     CtrlVar.Inverse.MinimisationMethod,...
