@@ -55,7 +55,7 @@ switch UserVar.RunType
         CtrlVar.Restart=0;
         
         CtrlVar.InfoLevelNonLinIt=0;
-        CtrlVar.Inverse.InfoLevel=10;
+        CtrlVar.Inverse.InfoLevel=1;
         CtrlVar.InfoLevel=0;
         
         UserVar.Slipperiness.ReadFromFile=0;
@@ -257,7 +257,7 @@ CtrlVar.Inverse.Regularize.logC.ga=1;
 CtrlVar.Inverse.Regularize.logC.gs=1e3 ;
 
 CtrlVar.Inverse.Regularize.logC.ga=0;  % testing for Budd
-CtrlVar.Inverse.Regularize.logC.gs=0 ; % testing for Budd
+CtrlVar.Inverse.Regularize.logC.gs=1e3 ; % testing for Budd
 
 CtrlVar.Inverse.Regularize.AGlen.gs=1;
 CtrlVar.Inverse.Regularize.AGlen.ga=1;
