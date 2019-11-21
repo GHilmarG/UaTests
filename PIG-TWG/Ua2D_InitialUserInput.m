@@ -11,7 +11,7 @@ if isempty(UserVar) || ~isfield(UserVar,'RunType')
     % UserVar.RunType='Inverse-SteepestDesent';
     UserVar.RunType='Inverse-ConjGrad-FixPoint';
     % UserVar.RunType='Inverse-MatOpt-FixPoint';
-    % UserVar.RunType='Forward-Diagnostic';
+    UserVar.RunType='Forward-Diagnostic';
     % UserVar.RunType='Forward-Transient';
     % UserVar.RunType='TestingMeshOptions';
 end
@@ -55,7 +55,7 @@ switch UserVar.RunType
         CtrlVar.Restart=0;
         
         CtrlVar.InfoLevelNonLinIt=0;
-        CtrlVar.Inverse.InfoLevel=10;
+        CtrlVar.Inverse.InfoLevel=1;
         CtrlVar.InfoLevel=0;
         
         UserVar.Slipperiness.ReadFromFile=0;
@@ -64,7 +64,7 @@ switch UserVar.RunType
         CtrlVar.AdaptMesh=0;
         
         CtrlVar.Inverse.Iterations=1;
-        CtrlVar.Inverse.InvertFor='logAGlenlogC' ; % {'C','logC','AGlen','logAGlen'}
+        CtrlVar.Inverse.InvertFor='logA-logC' ; % '-logAGlen-logC-' ; % {'-C-','-logC-','-AGlen-','-logAGlen-'}
         CtrlVar.Inverse.Regularize.Field=CtrlVar.Inverse.InvertFor;
         
         if contains(UserVar.RunType,'FixPoint')
@@ -88,7 +88,7 @@ switch UserVar.RunType
         CtrlVar.Restart=0;
         CtrlVar.InfoLevelNonLinIt=1;
         UserVar.Slipperiness.ReadFromFile=1;
-        UserVar.AGlen.ReadFromFile=0;
+        UserVar.AGlen.ReadFromFile=1;
         CtrlVar.ReadInitialMesh=1;
         CtrlVar.AdaptMesh=0;
         
@@ -96,10 +96,10 @@ switch UserVar.RunType
                
         CtrlVar.InverseRun=0;
         CtrlVar.TimeDependentRun=0;
-        CtrlVar.Restart=1;
+        CtrlVar.Restart=0;
         CtrlVar.InfoLevelNonLinIt=1;
         UserVar.Slipperiness.ReadFromFile=1;
-        UserVar.AGlen.ReadFromFile=0;
+        UserVar.AGlen.ReadFromFile=1;
         CtrlVar.ReadInitialMesh=1;
         CtrlVar.AdaptMesh=0;
         
@@ -111,10 +111,11 @@ switch UserVar.RunType
         CtrlVar.ReadInitialMesh=0;
         CtrlVar.AdaptMesh=1;
         UserVar.Slipperiness.ReadFromFile=1;
+        UserVar.Slipperiness.ReadFromFile=1;
         UserVar.AGlen.ReadFromFile=1;
         CtrlVar.AdaptMesh=1;
         CtrlVar.AdaptMeshInitial=1  ;       % remesh in first iteration (Itime=1)  even if mod(Itime,CtrlVar.AdaptMeshInterval)~=0.
-        CtrlVar.AdaptMeshAndThenStop=1;    % if true, then mesh will be adapted but no further calculations performed
+        CtrlVar.AdaptMeshAndThenStop=0;    % if true, then mesh will be adapted but no further calculations performed
         % useful, for example, when trying out different remeshing options (then use CtrlVar.doAdaptMeshPlots=1 to get plots)
         CtrlVar.InfoLevelAdaptiveMeshing=10;
 end
@@ -161,8 +162,6 @@ UserVar.MeshSizeIceShelves=CtrlVar.MeshSizeMax/5;
 MeshBoundaryCoordinates=CreateMeshBoundaryCoordinatesForPIGandTWG(CtrlVar);
                                          
 CtrlVar.AdaptMeshInitial=1  ;       % remesh in first iteration (Itime=1)  even if mod(Itime,CtrlVar.AdaptMeshInterval)~=0.
-CtrlVar.AdaptMeshAndThenStop=1;    % if true, then mesh will be adapted but no further calculations performed
-                                   % useful, for example, when trying out different remeshing options (then use CtrlVar.doAdaptMeshPlots=1 to get plots)
 CtrlVar.AdaptMeshMaxIterations=5;
 CtrlVar.SaveAdaptMeshFileName='MeshFileAdapt';    %  file name for saving adapt mesh. If left empty, no file is written
 CtrlVar.AdaptMeshInterval=1 ; % remesh whenever mod(Itime,CtrlVar.AdaptMeshInterval)==0
@@ -257,6 +256,9 @@ CtrlVar.Inverse.Regularize.C.ga=1;
 CtrlVar.Inverse.Regularize.logC.ga=1;
 CtrlVar.Inverse.Regularize.logC.gs=1e3 ;
 
+CtrlVar.Inverse.Regularize.logC.ga=0;  % testing for Budd
+CtrlVar.Inverse.Regularize.logC.gs=1e3 ; % testing for Budd
+
 CtrlVar.Inverse.Regularize.AGlen.gs=1;
 CtrlVar.Inverse.Regularize.AGlen.ga=1;
 CtrlVar.Inverse.Regularize.logAGlen.ga=1;
@@ -268,7 +270,12 @@ CtrlVar.ThicknessConstraints=0;
 CtrlVar.ResetThicknessToMinThickness=1;  % change this later on
 CtrlVar.ThickMin=50;
 
-%%
+%% Filenames
+
+CtrlVar.NameOfFileForSavingSlipperinessEstimate="C-Estimate"+CtrlVar.SlidingLaw+".mat";
+CtrlVar.NameOfFileForSavingAGlenEstimate="AGlen-Estimate.mat";
+
+
 filename=sprintf('IR-%s-%s-Nod%i-%s-%s-Cga%f-Cgs%f-Aga%f-Ags%f-m%i-%s',...
     UserVar.RunType,...
     CtrlVar.Inverse.MinimisationMethod,...
