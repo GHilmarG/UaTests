@@ -1,2 +1,0 @@
-max(h) 158.459 	 min(h) 0 	 max(dhdt) 4.40288 	 min(dhdt) -1.28667 	 mean(dhdt) 1.16933 	 median(dhdt) 0.269618 	 rms(h) 0.250415 	 h(max(dhdt)) 83.5582 h(min(dhdt)) 34.3071
-max(h) 158.459 	 min(h) 0 	 max(dhdt) 4.40288 	 min(dhdt) -1.28667 	 mean(dhdt) 1.16933 	 median(dhdt) 0.269618 	 rms(h) 0.250415 	 h(max(dhdt)) 83.5582 h(min(dhdt)) 34.3071
