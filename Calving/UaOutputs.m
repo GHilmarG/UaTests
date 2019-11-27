@@ -43,7 +43,7 @@ if contains(plots,'-plot-')
         
         FigureName='map plane view'; Position=[50 50 figsWidth 3*figHeights];
         fig100=FindOrCreateFigure(FigureName,Position) ;
-       
+        clf(fig100) 
         
         
         subplot(4,1,1)
@@ -81,6 +81,7 @@ if contains(plots,'-plot-')
         
         FigureName='flowline';
         fig200=FindOrCreateFigure(FigureName) ;
+        clf(fig200) 
         
         x=MUA.coordinates(:,1);
         y=MUA.coordinates(:,2);

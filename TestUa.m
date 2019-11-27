@@ -1,5 +1,7 @@
 
+
 % (alpha) 
+
 % results = runtests('TestUa.m') ; table(results)
 % 
 
@@ -11,11 +13,14 @@ function tests = TestUa
     f={@setupOnce,@testCrack,@teardownOnce};
     f={@setupOnce,@testCalvingManuallyDeactivateElements,@teardownOnce};
     
+    %f={@setupOnce,@testGaussPeak,@teardownOnce};
+    %f={@setupOnce,@testMassBalanceFeedback,@teardownOnce};
+    f={@testPIGmeshing};
     
-    f=localfunctions ;
-    % f={@setupOnce,@testGaussPeak,@teardownOnce};
-    % f={@setupOnce,@testMassBalanceFeedback,@teardownOnce};
-    % f={@testCalvingModifyThickness};
+    
+    f=localfunctions ;  % all tests
+    
+    f={@testPIGtransient};
     
     tests = functiontests(f);
 end
@@ -30,6 +35,46 @@ function teardownOnce(testCase)
 end
 
 
+function testPIGmeshing(testCase)
+    
+    cd PIG-TWG\
+    UserVar.RunType='TestingMeshOptions'; 
+    UserVar=Ua(UserVar) ;
+    cd ..
+    actSolution= UserVar.Test.Norm.actValue ;
+    % 42368.9157216889   laptop 17 Nov
+    expSolution = 56024.4217889207;
+    verifyEqual(testCase,actSolution,expSolution,'AbsTol',1e-2)
+    
+end
+
+function testPIGdiagnostic(testCase)
+    
+    cd PIG-TWG\
+    UserVar.RunType='Forward-Diagnostic'; 
+    UserVar=Ua(UserVar) ;
+    cd ..
+    actSolution= UserVar.Test.Norm.actValue ;
+    expSolution = 95982.7181182457;
+    verifyEqual(testCase,actSolution,expSolution,'AbsTol',1e-2)
+    
+end
+
+function testPIGtransient(testCase)
+    
+    cd PIG-TWG\
+    UserVar.RunType='Forward-Transient';
+    
+    UserVar=Ua(UserVar) ;
+    cd ..
+    actSolution= UserVar.Test.Norm.actValue ;
+    expSolution = 94704.6045393781;
+    %  79053.6666394987 % home laptop, 17 Nov, 2019
+    verifyEqual(testCase,actSolution,expSolution,'AbsTol',1e-2)
+    
+end
+
+
 function testCrack(testCase)
     
     cd Crack
@@ -37,7 +82,7 @@ function testCrack(testCase)
     UserVar=Ua(UserVar) ;
     cd ..
     actSolution= UserVar.Test.Norm.actValue ;
-    expSolution = UserVar.Test.Norm.expValue ;
+    expSolution = 5034.37163446407;
     verifyEqual(testCase,actSolution,expSolution,'AbsTol',1e-6)
     
 end
@@ -74,7 +119,7 @@ function testCalvingModifyThickness(testCase)
     UserVar=Ua(UserVar) ;
     cd ..
     actSolution= UserVar.Test.Norm.actValue ;
-    expSolution = 33552.4222224353;
+    expSolution = 33552.4222224353 ;
     verifyEqual(testCase,actSolution,expSolution,'AbsTol',1e-6)
     
 end
