@@ -7,7 +7,7 @@ function [UserVar,s,b,S,B,alpha]=DefineGeometry(UserVar,CtrlVar,MUA,time,FieldsT
     
     alpha=0.0; hmean=1000; Bmean=-800 ;
     
-    ampl_b=-8*hmean; sigma_bx=2.5e3 ; sigma_by=2.5e3;
+    ampl_b=-20*hmean; sigma_bx=2.5e3 ; sigma_by=2.5e3;
     
     Deltab=ampl_b*exp(-((x/sigma_bx).^2+(y/sigma_by).^2));
     Deltab=Deltab-mean(Deltab);
@@ -17,5 +17,7 @@ function [UserVar,s,b,S,B,alpha]=DefineGeometry(UserVar,CtrlVar,MUA,time,FieldsT
     b=B;
     s=Bmean+hmean;    % surface is flat
     
+    rho=900+zeros(MUA.Nnodes,1) ; rhow=1030; 
+    b=Calc_bh_From_sBS(CtrlVar,MUA,s,B,S,rho,rhow,[],b) ;
     
 end

@@ -10,9 +10,10 @@ function [UserVar,CtrlVar,MeshBoundaryCoordinates]=Ua2D_InitialUserInput(UserVar
     CtrlVar.Restart=0;  
     
 
+    CtrlVar.MapOldToNew.Test=true; 
     
     CtrlVar.time=0 ; 
-    CtrlVar.dt=1;
+    CtrlVar.dt=1e-6;
     CtrlVar.TotalNumberOfForwardRunSteps=5;
     
     CtrlVar.FlowApproximation='SSTREAM';   % 'hybrid'
