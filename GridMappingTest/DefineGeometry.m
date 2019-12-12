@@ -18,6 +18,6 @@ function [UserVar,s,b,S,B,alpha]=DefineGeometry(UserVar,CtrlVar,MUA,time,FieldsT
     s=Bmean+hmean;    % surface is flat
     
     rho=900+zeros(MUA.Nnodes,1) ; rhow=1030; 
-    b=Calc_bh_From_sBS(CtrlVar,MUA,s,B,S,rho,rhow,[],b) ;
+    b=Calc_bh_From_sBS(CtrlVar,MUA,s,B,S,rho,rhow) ;
     
 end
