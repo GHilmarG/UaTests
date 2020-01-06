@@ -5,3 +5,8 @@
 *.mat
 *.txt
 *.sh
+*.avi
+*.geo
+*.msh
+*.pos
+*.asv
