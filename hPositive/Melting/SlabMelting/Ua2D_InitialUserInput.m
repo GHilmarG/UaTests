@@ -19,7 +19,7 @@ CtrlVar.Experiment='GaussMelting';
 %Experiment='UniformMelting';
 CtrlVar.ResetTimeStep=1;                 % 1 if time step should be reset to dt given in the Ua2D_InitialUserInputFile
 
-CtrlVar.FlowApproximation='SSTREAM' ;  % 'SSTREAM'|'SSHEET'|'Hybrid'
+
 
 CtrlVar.time= 0 ; CtrlVar.dt=1;
 CtrlVar.TimeDependentRun=1 ; CtrlVar.AdaptiveTimeStepping=0 ; 
@@ -47,7 +47,7 @@ CtrlVar.ThicknessConstraintsItMax=10  ;     % maximum number of active-set itera
 CtrlVar.MUA.MassMatrix=true;
 CtrlVar.ThicknessConstraints=1;
 
-CtrlVar.ReadInitialMesh=1;    % if true then read FE mesh (coordinates, connectivity) directly from a .mat file 
+CtrlVar.ReadInitialMesh=0;    % if true then read FE mesh (coordinates, connectivity) directly from a .mat file 
                               % unless the adaptive meshing option is used, no further meshing is done.
 CtrlVar.ReadInitialMeshFileName='MeshFile.mat'; CtrlVar.SaveInitialMeshFileName='MeshFile.mat';
 CtrlVar.ReadInitialMeshFileName='LocallyRefinedMesh.mat'; CtrlVar.SaveInitialMeshFileName='LocallyRefinedMesh.mat';
