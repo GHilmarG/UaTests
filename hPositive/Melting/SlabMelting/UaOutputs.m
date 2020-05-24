@@ -7,7 +7,7 @@ function UserVar=UaOutputs(UserVar,CtrlVar,MUA,BCs,F,l,GF,InvStartValues,InvFina
 
 switch lower(CtrlVar.FlowApproximation)
     case 'sstream'
-        plots='-sbB-ubvb-BCs-R-V(t)-save-';
+        plots='-save-';
     case'ssheet'
         plots='-sbB-udvd-BCs-R-as-';
 end
@@ -104,7 +104,7 @@ if contains(plots,'-sbB-')
     trisurf(TRI,x/CtrlVar.PlotXYscale,y/CtrlVar.PlotXYscale,F.s-F.b,100*F.s+100,'EdgeColor','none') ; hold on
     
     
-    plot3(x(I)/CtrlVar.PlotXYscale,y(I)/CtrlVar.PlotXYscale,F.s(I),'ro');
+    % plot3(x(I)/CtrlVar.PlotXYscale,y(I)/CtrlVar.PlotXYscale,F.s(I),'ro');
     
     view(45,25); lightangle(-45,10) ; lighting phong ;
     xlabel('y (km)') ; ylabel('x (km)') ; zlabel('ice thickness (m)') ;

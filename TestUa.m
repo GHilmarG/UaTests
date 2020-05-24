@@ -5,7 +5,7 @@
 % results = runtests('TestUa.m') ; table(results)
 % 
 
-
+% To do: All calving test need to be redefined and made including the LSF approach
 
 function tests = TestUa
     
@@ -20,6 +20,10 @@ function tests = TestUa
     
     f=localfunctions ;  % all tests
     
+    f={@test1dIceShelf} ;                   % results = runtests('TestUa.m') ; table(results)
+    f={@test1dIceStream} ;                  % results = runtests('TestUa.m') ; table(results)
+    f={@testCalvingModifyThickness} ;        % results = runtests('TestUa.m') ; table(results)
+    f={@testFreeSlipBCs,@testGaussPeak,@testMassBalanceFeedback} ;        % results = runtests('TestUa.m') ; table(results)
     % f={@testPIGtransient};
     
     tests = functiontests(f);
@@ -95,7 +99,7 @@ function test1dIceShelf(testCase)
     cd ..
     actSolution= UserVar.Test.Norm.actValue ;
     expSolution = UserVar.Test.Norm.expValue ;
-    verifyEqual(testCase,actSolution,expSolution,'AbsTol',1e-6)
+    verifyEqual(testCase,actSolution,expSolution,'RelTol',1e-6)
     
 end
 
@@ -108,7 +112,7 @@ function test1dIceStream(testCase)
     cd ..
     actSolution= UserVar.Test.Norm.actValue ;
     expSolution = UserVar.Test.Norm.expValue ;
-    verifyEqual(testCase,actSolution,expSolution,'AbsTol',1e-6)
+    verifyEqual(testCase,actSolution,expSolution,'RelTol',1e-6)
     
 end
 

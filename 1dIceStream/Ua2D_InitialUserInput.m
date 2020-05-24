@@ -11,21 +11,15 @@ MeshBoundaryCoordinates=flipud([xu yr ; xd yr ; xd yl ; xu yl]);
 CtrlVar.TimeDependentRun=1;
 CtrlVar.time=0 ;
 CtrlVar.dt=0.01;
-CtrlVar.TotalNumberOfForwardRunSteps=50;
+CtrlVar.TotalNumberOfForwardRunSteps=20;
 CtrlVar.AdaptiveTimeStepping=1 ;
 CtrlVar.TotalTime=10;
 CtrlVar.ThicknessConstraints=0;
-CtrlVar.FlowApproximation='SSTREAM' ;  % 'SSTREAM'|'SSHEET'|'Hybrid'
-
-
-CtrlVar.Implicituvh=1;     
 
 
 %% Solver
-CtrlVar.NLtol=1e-15; % this is the square of the error, i.e. not root-mean-square error
 CtrlVar.InfoLevelNonLinIt=1;
-CtrlVar.InfoLevel=10;
-CtrlVar.LineSeachAllowedToUseExtrapolation=1;
+
 
 %% Restart
 CtrlVar.Restart=0;  CtrlVar.WriteRestartFile=1;
@@ -45,12 +39,12 @@ CtrlVar.MaxNumberOfElements=25000;
 
 %% for adaptive meshing
 CtrlVar.AdaptMesh=1; CtrlVar.ReadInitialMesh=0;  
-CtrlVar.AdaptMesh=0; CtrlVar.ReadInitialMesh=1;  
+% CtrlVar.AdaptMesh=0; CtrlVar.ReadInitialMesh=1;  
                             
 CtrlVar.ReadInitialMeshFileName="InitialMeshFile.mat";
 CtrlVar.SaveAdaptMeshFileName="AdaptMeshFile.mat"; 
 
-CtrlVar.AdaptMeshAndThenStop=1;  
+CtrlVar.AdaptMeshAndThenStop=0;  
 CtrlVar.GmshMeshingAlgorithm=8;     % see gmsh manual
 
 CtrlVar.AdaptMeshInitial=1  ; % remesh in first run-step irrespecitivy of the value of AdaptMeshInterval

@@ -3,7 +3,7 @@ function UserVar=UaOutputs(UserVar,CtrlVar,MUA,BCs,F,l,GF,InvStartValues,InvFina
 
 
 
-v2struct(F);
+
 time=CtrlVar.time;
 
 plots='-plot-flowline-mapplane-';

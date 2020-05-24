@@ -37,20 +37,11 @@ CtrlVar.Experiment="MismipPlus-"+"MB"+UserVar.MassBalanceCase+"-CW"+UserVar.Calv
 %% Types of run
 %
 CtrlVar.TimeDependentRun=1; 
-CtrlVar.InfoLevelNonLinIt=1; 
 
-%% [--------------  Testing residuals definition 
-CtrlVar.TimeDependentRun=1;  % testing  
-CtrlVar.TotalNumberOfForwardRunSteps=50000; CtrlVar.TotalTime=5000;
-CtrlVar.InfoLevelNonLinIt=1;
+
+
+
 CtrlVar.doplots=1;
-CtrlVar.uvCostFunction="Work Residuals" ; % ["Work","Increments"] 
-CtrlVar.uvhCostFunction="Work Residuals" ; % ["Work","Increments"] 
-CtrlVar.AdaptiveTimeStepping=1 ; CtrlVar.ATSTargetIterations=6; 
-CtrlVar.Restart=0;  
-CtrlVar.NLtol=1e-10; % tolerance for the square of the norm of the residual error
-%% ---------- ] 
-
 CtrlVar.dt=0.01; 
 CtrlVar.time=0; 
 
