@@ -12,42 +12,49 @@ function [UserVar,CtrlVar,MeshBoundaryCoordinates]=Ua2D_InitialUserInput(UserVar
 if isempty(UserVar)
     UserVar.RunType="-ManuallyDeactivateElements-ManuallyModifyThickness-";
     UserVar.RunType="-ManuallyModifyThickness-";  
-    UserVar.RunType="-Calving-1dAnalyticalIceShelf-"; 
+    UserVar.RunType="-Calving-1dAnalyticalIceShelf-"; CtrlVar.doplots=0;
+    UserVar.RunType="-1dAnalyticalIceShelf-"; CtrlVar.doplots=0;
     
-    
-    CtrlVar.LevelSetMethod=0; 
+
     CtrlVar.AdaptiveTimeStepping=1 ; 
     CtrlVar.LevelSetMethodReinitializeInterval=10;
-    CtrlVar.LevelSetMethodAutomaticallyDeactivateElements=1; 
-    CtrlVar.LevelSetMethodAutomaticallyDeactivateElementsThreshold=-100e3; 
-    CtrlVar.doAdaptMeshPlots=1;
-    CtrlVar.InfoLevelAdaptiveMeshing=100;
+    CtrlVar.UaOutputsDt=1;
 end
 
 
+if contains(UserVar.RunType,"-1dAnalyticalIceShelf-")
+    
+    CtrlVar.doplots=0;
+    CtrlVar.LevelSetMethod=0;
+    CtrlVar.TotalNumberOfForwardRunSteps=inf;
+    CtrlVar.TotalTime=10; 
+    UserVar.Plots="-plot-flowline-";
+    
+end
+
+
+CtrlVar.InfoLevelNonLinIt=1; CtrlVar.uvhMinimisationQuantity="Force Residuals";
 %%
-UserVar.MisExperiment='ice0';  % This I use in DefineMassBalance
+
 UserVar.Outputsdirectory='ResultsFiles'; % This I use in UaOutputs
 UserVar.MassBalanceCase='ice0';
 
 UserVar.CalvingDeltaWidth=30e3 ; 
 %%
 
-CtrlVar.Experiment="MismipPlus-"+"MB"+UserVar.MassBalanceCase+"-CW"+UserVar.CalvingDeltaWidth; 
+CtrlVar.Experiment="Ex"+UserVar.RunType+"-MB"+UserVar.MassBalanceCase+"-CW"+UserVar.CalvingDeltaWidth; 
+CtrlVar.Experiment=replace("--","-",CtrlVar.Experiment);
+
 %% Types of run
 %
 CtrlVar.TimeDependentRun=1; 
 
 
-
-
-CtrlVar.doplots=1;
 CtrlVar.dt=0.01; 
 CtrlVar.time=0; 
 
-CtrlVar.UaOutputsDt=1; % interval between calling UaOutputs. 0 implies call it at each and every run step.
-                       % setting CtrlVar.UaOutputsDt=1; causes UaOutputs to be called every 1 years.
-                       % This is a more reasonable value once all looks OK.
+
+
 
 CtrlVar.ATStimeStepTarget=1;
 CtrlVar.WriteRestartFile=1;

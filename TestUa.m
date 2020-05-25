@@ -24,6 +24,7 @@ function tests = TestUa
     f={@test1dIceStream} ;                  % results = runtests('TestUa.m') ; table(results)
     f={@testCalvingModifyThickness} ;        % results = runtests('TestUa.m') ; table(results)
     f={@testFreeSlipBCs,@testGaussPeak,@testMassBalanceFeedback} ;        % results = runtests('TestUa.m') ; table(results)
+    f={@testCalvingAnalyticalIceShelf};
     % f={@testPIGtransient};
     
     tests = functiontests(f);
@@ -115,6 +116,20 @@ function test1dIceStream(testCase)
     verifyEqual(testCase,actSolution,expSolution,'RelTol',1e-6)
     
 end
+
+function testCalvingAnalyticalIceShelf(testCase)
+    
+    cd Calving ;
+    UserVar.RunType="Test-1dAnalyticalIceShelf-";
+    UserVar=Ua(UserVar) ;
+    cd ..
+    actSolution= UserVar.Test.Norm.actValue ;
+    expSolution = 258690.495608992; 
+    verifyEqual(testCase,actSolution,expSolution,'RelTol',1e-6)
+    
+end
+
+
 
 function testCalvingModifyThickness(testCase)
     

@@ -71,7 +71,7 @@ function [UserVar,s,b,S,B,alpha]=DefineGeometry(UserVar,CtrlVar,MUA,time,FieldsT
             %
             %
             %
-            h0=300;
+            h0=1000;  % make sure this is consistent with BCs!
             s=zeros(MUA.Nnodes,1);
             b=s-h0;
             
