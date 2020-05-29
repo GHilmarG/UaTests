@@ -49,6 +49,14 @@ as=zeros(MUA.Nnodes,1)+0.3;
 %Tzd=T0*(b-B)/zref;
 %ab=rho*cw*Gt*uH.*Tzd/rhofw/L;
 
+
+if contains(UserVar.RunType,"-1dAnalyticalIceShelf-")
+    as=0.3;
+    ab=0;
+    return
+end
+
+
 switch UserVar.MassBalanceCase
     
     case 'ice0'

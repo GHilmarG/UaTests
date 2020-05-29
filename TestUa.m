@@ -5,21 +5,26 @@
 % results = runtests('TestUa.m') ; table(results)
 % 
 
-
+% To do: All calving test need to be redefined and made including the LSF approach
 
 function tests = TestUa
     
     
     f={@setupOnce,@testCrack,@teardownOnce};
-    f={@setupOnce,@testCalvingManuallyDeactivateElements,@teardownOnce};
+    %f={@setupOnce,@testCalvingManuallyDeactivateElements,@teardownOnce};
     
     %f={@setupOnce,@testGaussPeak,@teardownOnce};
     %f={@setupOnce,@testMassBalanceFeedback,@teardownOnce};
-    f={@testPIGmeshing};
+    % f={@testPIGmeshing};
     
     
-    f=localfunctions ;  % all tests
+    % f=localfunctions ;  % all tests
     
+    % f={@test1dIceShelf} ;                   % results = runtests('TestUa.m') ; table(results)
+    % f={@test1dIceStream} ;                  % results = runtests('TestUa.m') ; table(results)
+    % f={@testCalvingModifyThickness} ;        % results = runtests('TestUa.m') ; table(results)
+    % f={@testFreeSlipBCs,@testGaussPeak,@testMassBalanceFeedback} ;        % results = runtests('TestUa.m') ; table(results)
+    % f={@testCalvingAnalyticalIceShelf};
     % f={@testPIGtransient};
     
     tests = functiontests(f);
@@ -83,7 +88,7 @@ function testCrack(testCase)
     cd ..
     actSolution= UserVar.Test.Norm.actValue ;
     expSolution = 5034.37163446407;
-    verifyEqual(testCase,actSolution,expSolution,'AbsTol',1e-6)
+    verifyEqual(testCase,actSolution,expSolution,'RelTol',1e-6)
     
 end
 
@@ -95,7 +100,7 @@ function test1dIceShelf(testCase)
     cd ..
     actSolution= UserVar.Test.Norm.actValue ;
     expSolution = UserVar.Test.Norm.expValue ;
-    verifyEqual(testCase,actSolution,expSolution,'AbsTol',1e-6)
+    verifyEqual(testCase,actSolution,expSolution,'RelTol',1e-2)
     
 end
 
@@ -108,9 +113,23 @@ function test1dIceStream(testCase)
     cd ..
     actSolution= UserVar.Test.Norm.actValue ;
     expSolution = UserVar.Test.Norm.expValue ;
-    verifyEqual(testCase,actSolution,expSolution,'AbsTol',1e-6)
+    verifyEqual(testCase,actSolution,expSolution,'RelTol',1e-6)
     
 end
+
+function testCalvingAnalyticalIceShelf(testCase)
+    
+    cd Calving ;
+    UserVar.RunType="Test-1dAnalyticalIceShelf-";
+    UserVar=Ua(UserVar) ;
+    cd ..
+    actSolution= UserVar.Test.Norm.actValue ;
+    expSolution = 258690.495608992 ; 
+    verifyEqual(testCase,actSolution,expSolution,'RelTol',1e-3)
+    
+end
+
+
 
 function testCalvingModifyThickness(testCase)
     

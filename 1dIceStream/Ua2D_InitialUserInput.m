@@ -2,7 +2,7 @@
 function [UserVar,CtrlVar,MeshBoundaryCoordinates]=Ua2D_InitialUserInput(UserVar,CtrlVar)
 
 CtrlVar.Experiment='Test1dIceStream';
-CtrlVar.doplots=1; CtrlVar.doRemeshPlots=1;
+CtrlVar.doplots=0; CtrlVar.doRemeshPlots=1;
 
 xd=100e3; xu=-100e3 ; yl=10e3 ; yr=-10e3;
 MeshBoundaryCoordinates=flipud([xu yr ; xd yr ; xd yl ; xu yl]);
@@ -11,29 +11,15 @@ MeshBoundaryCoordinates=flipud([xu yr ; xd yr ; xd yl ; xu yl]);
 CtrlVar.TimeDependentRun=1;
 CtrlVar.time=0 ;
 CtrlVar.dt=0.01;
-CtrlVar.TotalNumberOfForwardRunSteps=5;
+CtrlVar.TotalNumberOfForwardRunSteps=20;
 CtrlVar.AdaptiveTimeStepping=1 ;
 CtrlVar.TotalTime=10;
 CtrlVar.ThicknessConstraints=0;
-CtrlVar.FlowApproximation='SSTREAM' ;  % 'SSTREAM'|'SSHEET'|'Hybrid'
 
 
-CtrlVar.Implicituvh=0;      CtrlVar.TG3=0;
-CtrlVar.uvhTimeSteppingMethod='theta';  % theta | tg3 | supg
-CtrlVar.uvhTimeSteppingMethod='supg';  % theta | tg3 | supg
-CtrlVar.SUPG.beta0=0.5 ; CtrlVar.SUPG.beta1=0.0 ;
-CtrlVar.theta=0.5;
-
-%CtrlVar.uvhTimeSteppingMethod='tg3';  CtrlVar.TG3=1 ; % theta | tg3 | supg
-%CtrlVar.uvhTimeSteppingMethod='shocks';
-
-
-%CtrlVar.SpeedZero=1e-10;
 %% Solver
-CtrlVar.NLtol=1e-15; % this is the square of the error, i.e. not root-mean-square error
 CtrlVar.InfoLevelNonLinIt=1;
-CtrlVar.InfoLevel=10;
-CtrlVar.LineSeachAllowedToUseExtrapolation=1;
+
 
 %% Restart
 CtrlVar.Restart=0;  CtrlVar.WriteRestartFile=1;
@@ -52,7 +38,13 @@ CtrlVar.MeshSizeMax=CtrlVar.MeshSize;
 CtrlVar.MaxNumberOfElements=25000;
 
 %% for adaptive meshing
-CtrlVar.AdaptMesh=1;
+CtrlVar.AdaptMesh=1; CtrlVar.ReadInitialMesh=0;  
+% CtrlVar.AdaptMesh=0; CtrlVar.ReadInitialMesh=1;  
+                            
+CtrlVar.ReadInitialMeshFileName="InitialMeshFile.mat";
+CtrlVar.SaveAdaptMeshFileName="AdaptMeshFile.mat"; 
+
+CtrlVar.AdaptMeshAndThenStop=0;  
 CtrlVar.GmshMeshingAlgorithm=8;     % see gmsh manual
 
 CtrlVar.AdaptMeshInitial=1  ; % remesh in first run-step irrespecitivy of the value of AdaptMeshInterval
@@ -89,6 +81,11 @@ CtrlVar.ExplicitMeshRefinementCriteria(I).Use=true;
 CtrlVar.PlotLabels=0 ; CtrlVar.PlotMesh=1; CtrlVar.PlotBCs=1;
 CtrlVar.PlotXYscale=1000;     % used to scale x and y axis of some of the figures, only used for plotting purposes
 
+%%
+
+CtrlVar.NameOfRestartFiletoWrite=sprintf("Ua2D_Restartfile-%i-%s-%s-.mat",...
+    CtrlVar.Implicituvh,CtrlVar.uvhImplicitTimeSteppingMethod,CtrlVar.uvhSemiImplicitTimeSteppingMethod);
+CtrlVar.NameOfRestartFiletoRead='Ua2D_Restartfile.mat';
 
 
 end

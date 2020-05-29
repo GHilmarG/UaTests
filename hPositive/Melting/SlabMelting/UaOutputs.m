@@ -1,13 +1,13 @@
 function UserVar=UaOutputs(UserVar,CtrlVar,MUA,BCs,F,l,GF,InvStartValues,InvFinalValues,Priors,Meas,BCsAdjoint,RunInfo)
 
-return
+% return
 
 %save TestSaveUaOutputs
 
 
 switch lower(CtrlVar.FlowApproximation)
     case 'sstream'
-        plots='-sbB-ubvb-BCs-R-as-V(t)-h-';
+        plots='-save-';
     case'ssheet'
         plots='-sbB-udvd-BCs-R-as-';
 end
@@ -15,6 +15,17 @@ end
 TRI=[];
 x=MUA.coordinates(:,1);  y=MUA.coordinates(:,2);
 I=F.h<=CtrlVar.ThickMin;
+
+
+if contains(plots,'-save-')
+          
+        FileName=sprintf("Results/%07i-%s.mat",round(100*CtrlVar.time),CtrlVar.Experiment);
+        fprintf(' Saving data in %s \n',FileName)
+        save(FileName,'CtrlVar','MUA','F','BCs','l')
+  
+end
+
+
 
 if contains(plots,'-h-')
     
@@ -24,7 +35,7 @@ if contains(plots,'-h-')
     hold on 
     plot(x(I)/CtrlVar.PlotXYscale,y(I)/CtrlVar.PlotXYscale,'ro');
     plot(x(BCs.hPosNode)/CtrlVar.PlotXYscale,y(BCs.hPosNode)/CtrlVar.PlotXYscale,'*w');
-    hold on ; PlotMuaMesh(CtrlVar,MUA)
+    hold on ; PlotMuaMesh(CtrlVar,MUA);
     title(cbar,'h (m)')  
 end
 
@@ -43,7 +54,8 @@ if contains(plots,'-R-')
         %M=MassMatrix2D1dof(MUA);
        
         figReactions2=FindOrCreateFigure('Reactions2') ;%  ,Position); 
-        PlotMeshScalarVariable(CtrlVar,MUA,Reactions.h./F.rho);
+        [~,cbar]=PlotMeshScalarVariable(CtrlVar,MUA,Reactions.h./F.rho);
+        title(cbar,'(m/yr)')
         title(sprintf("%s","Reactions.h/rho")) ; xlabel('x (km)') ; ylabel('y (km)') 
     end
     
@@ -60,7 +72,7 @@ if contains(plots,'-mesh-')
     figMesh=FindOrCreateFigure('Mesh') ; % 
 
     CtrlVar.PlotNodes=1; CtrlVar.PlotLabels=0;
-    PlotFEmesh(MUA.coordinates,MUA.connectivity,CtrlVar)
+    PlotFEmesh(MUA.coordinates,MUA.connectivity,CtrlVar); 
     hold on
     plot(x(I)/CtrlVar.PlotXYscale,y(I)/CtrlVar.PlotXYscale,'ro');
 end
@@ -77,17 +89,6 @@ if strcmp(CtrlVar.UaOutputsInfostring,'First call ') && exist('ResultsFiles','di
     mkdir('ResultsFiles') ;
 end
 
-if strcmp(CtrlVar.UaOutputsInfostring,'Last call')==0
-    if contains(plots,'-save-')
-        %FileName=['ResultsFiles/',sprintf('%07i',round(100*time)),'-TransPlots-',CtrlVar.Experiment]; good for transient runs
-        
-        FileName=['ResultsFiles/',sprintf('%07i',CtrlVar.UaOutputsCounter),'-TransPlots-',CtrlVar.Experiment];
-        
-        fprintf(' Saving data in %s \n',FileName)
-        save(FileName,'CtrlVar','MUA','time','s','b','S','B','h','u','v','dhdt','dsdt','dbdt','C','AGlen','m','n','rho','rhow','as','ab','GF')
-        
-    end
-end
 
 % only do plots at end of run
 %if ~strcmp(CtrlVar.UaOutputsInfostring,'Last call') ; return ; end
@@ -99,20 +100,22 @@ if contains(plots,'-sbB-')
     if isempty(TRI) ;  TRI = delaunay(x,y); end
     
     %trisurf(TRI,x/CtrlVar.PlotXYscale,y/CtrlVar.PlotXYscale,b,'EdgeColor','none') ;
-    trisurf(TRI,x/CtrlVar.PlotXYscale,y/CtrlVar.PlotXYscale,F.B,500,'EdgeColor','none') ; hold on
-    trisurf(TRI,x/CtrlVar.PlotXYscale,y/CtrlVar.PlotXYscale,F.s,F.s+100,'EdgeColor','none') ; hold on
+    %trisurf(TRI,x/CtrlVar.PlotXYscale,y/CtrlVar.PlotXYscale,F.B,500,'EdgeColor','none') ; hold on
+    trisurf(TRI,x/CtrlVar.PlotXYscale,y/CtrlVar.PlotXYscale,F.s-F.b,100*F.s+100,'EdgeColor','none') ; hold on
     
     
-    plot3(x(I)/CtrlVar.PlotXYscale,y(I)/CtrlVar.PlotXYscale,F.s(I),'ro');
+    % plot3(x(I)/CtrlVar.PlotXYscale,y(I)/CtrlVar.PlotXYscale,F.s(I),'ro');
     
-    view(45,5); lightangle(-45,10) ; lighting phong ;
-    xlabel('y (km)') ; ylabel('x (km)') ; zlabel('z (m)') ;
+    view(45,25); lightangle(-45,10) ; lighting phong ;
+    xlabel('y (km)') ; ylabel('x (km)') ; zlabel('ice thickness (m)') ;
     %colorbar ; title(colorbar,'(m)')
+    colormap(othercolor('RdYlBu_11b',2000))
     hold on
     
     nThickConstraints=numel(find(I));
     title(sprintf('t=%5.1f (a) | Volume=%#-12.7g (m^3) | #%i',CtrlVar.time,TotalIceVolume,nThickConstraints))
     axis normal
+    zlim([0 110])
     %axis equal ; tt=daspect ; daspect([mean(tt(1)+tt(2)) mean(tt(1)+tt(2)) tt(3)*CtrlVar.PlotXYscale/80]); axis tight
     hold off
 end
@@ -120,8 +123,18 @@ end
 if contains(plots,'-V(t)-')
     figV=FindOrCreateFigure('V(t)') ;
     hold on
-    plot(CtrlVar.time,TotalIceVolume,'or') ;
-    xlabel('time (yr)') ; ylabel('Ice Volume (m^3)') 
+    
+    yyaxis left
+    plot(CtrlVar.time,TotalIceVolume,'o') ;
+    ylabel('Ice Volume (m^3)') 
+    
+    
+    rDist=(MUA.coordinates(:,1).^2+MUA.coordinates(:,2).^2);
+    [temp,I]=min(rDist); 
+    hCentre=F.s(I)-F.b(I);
+    yyaxis right
+    plot(CtrlVar.time,hCentre,'^k') ;
+    xlabel('time (yr)') ; 
 end
 
 
@@ -130,7 +143,7 @@ if contains(plots,'-ubvb-')
     figubvb=FindOrCreateFigure('ubvb') ; 
     
     
-    PlotFEmesh(MUA.coordinates,MUA.connectivity,CtrlVar)
+    PlotFEmesh(MUA.coordinates,MUA.connectivity,CtrlVar);
     hold on
     N=1;
     speed=sqrt(F.ub.*F.ub+F.vb.*F.vb);
@@ -194,6 +207,7 @@ if contains(plots,'-as-')
     title(sprintf('as t=%-g ',CtrlVar.time)) ; 
     title('Surface mass balance, a_s (m/yr)')
     xlabel('x (km)') ; ylabel('y (km)')
+    title(cbar,'(m/yr)')
     axis equal tight
     
     %%

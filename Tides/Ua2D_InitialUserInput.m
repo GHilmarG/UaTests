@@ -71,7 +71,7 @@ CtrlVar.AdaptMeshRunStepInterval=1;
 CtrlVar.MeshAdapt.GLrange=[5000 5*CtrlVar.MeshSizeMin ; 2000 2*CtrlVar.MeshSizeMin ; 500 CtrlVar.MeshSizeMin];
 
 %% plotting
-CtrlVar.doplots=1;       % 
+CtrlVar.doplots=0;       % 
 CtrlVar.doRemeshPlots=1; %  
 CtrlVar.PlotLabels=0 ; CtrlVar.PlotMesh=1; CtrlVar.PlotBCs=0;
 CtrlVar.PlotXYscale=1000;     % used to scale x and y axis of some of the figures, only used for plotting purposes
