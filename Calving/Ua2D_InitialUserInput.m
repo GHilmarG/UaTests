@@ -12,8 +12,8 @@ function [UserVar,CtrlVar,MeshBoundaryCoordinates]=Ua2D_InitialUserInput(UserVar
 if isempty(UserVar)
     UserVar.RunType="-ManuallyDeactivateElements-ManuallyModifyThickness-";
     UserVar.RunType="-ManuallyModifyThickness-";  
-    UserVar.RunType="-Calving-1dAnalyticalIceShelf-"; CtrlVar.doplots=0;
     UserVar.RunType="-1dAnalyticalIceShelf-"; CtrlVar.doplots=0;
+    UserVar.RunType="-Calving-1dAnalyticalIceShelf-"; CtrlVar.doplots=0;
     
 
     CtrlVar.AdaptiveTimeStepping=1 ; 
@@ -21,17 +21,27 @@ if isempty(UserVar)
     CtrlVar.UaOutputsDt=1;
 end
 
+CtrlVar.dt=0.01; 
 
 if contains(UserVar.RunType,"-1dAnalyticalIceShelf-")
+    
     
     CtrlVar.doplots=0;
     CtrlVar.LevelSetMethod=0;
     CtrlVar.TotalNumberOfForwardRunSteps=inf;
-    CtrlVar.TotalTime=10; 
+    CtrlVar.TotalTime=100;
     UserVar.Plots="-plot-flowline-";
-    
+    if contains(UserVar.RunType,"Test-")
+        CtrlVar.TotalTime=10;
+    end
+    CtrlVar.UaOutputsDt=1;
 end
 
+if contains(UserVar.RunType,"-Calving-")
+   CtrlVar.LevelSetMethod=1; 
+   CtrlVar.UaOutputsDt=0;  % because I'm testing
+   CtrlVar.dt=1e-5; 
+end
 
 CtrlVar.InfoLevelNonLinIt=1; CtrlVar.uvhMinimisationQuantity="Force Residuals";
 %%
@@ -43,14 +53,14 @@ UserVar.CalvingDeltaWidth=30e3 ;
 %%
 
 CtrlVar.Experiment="Ex"+UserVar.RunType+"-MB"+UserVar.MassBalanceCase+"-CW"+UserVar.CalvingDeltaWidth; 
-CtrlVar.Experiment=replace("--","-",CtrlVar.Experiment);
+CtrlVar.Experiment=replace(CtrlVar.Experiment,"--","-");
 
 %% Types of run
 %
 CtrlVar.TimeDependentRun=1; 
 
 
-CtrlVar.dt=0.01; 
+
 CtrlVar.time=0; 
 
 

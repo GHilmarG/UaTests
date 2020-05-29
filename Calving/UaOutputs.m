@@ -5,7 +5,7 @@ function UserVar=UaOutputs(UserVar,CtrlVar,MUA,BCs,F,l,GF,InvStartValues,InvFina
     if ~isfield(UserVar,'Plots')
         
         plots='-plot-flowline-mapplane-';
-        plots='-plot-mapplane-flowline-';ots='-plot-mapplane-save-speedcalving-';
+        plots='-plot-mapplane-flowline-';
         plots='-plot-flowline-save-';
     else
         
@@ -158,13 +158,13 @@ function UserVar=UaOutputs(UserVar,CtrlVar,MUA,BCs,F,l,GF,InvStartValues,InvFina
             bProfile=F.b(Iy);
             BProfile=F.B(Iy);
             uProfile=F.ub(Iy) ;
-            if ~isempty(F.c)
+            if isfield(F,'c') && ~isempty(F.c)
                 cProfile=F.c(Iy);
                 cProfile=cProfile(Ix);
             end
-            if ~isempty(F.LSF)
+            if isfield(F,'LSF') && ~isempty(F.LSF)
                 LSFProfile=F.LSF(Iy);
-                LSFProfile=LSFProfile(Is);
+                LSFProfile=LSFProfile(Ix);
             end
             GFProfile=F.GF.node(Iy);
             
