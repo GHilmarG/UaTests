@@ -14,13 +14,15 @@ if isempty(UserVar)
     UserVar.RunType="-ManuallyModifyThickness-";  
     UserVar.RunType="-1dAnalyticalIceShelf-"; CtrlVar.doplots=0;
     UserVar.RunType="-Calving-1dAnalyticalIceShelf-"; CtrlVar.doplots=0;
-    
+    UserVar.RunType="-TravellingFront-1dAnalyticalIceShelf-"; CtrlVar.doplots=0;
 
     CtrlVar.AdaptiveTimeStepping=1 ; 
     CtrlVar.LevelSetMethodReinitializeInterval=10;
     CtrlVar.UaOutputsDt=1;
 end
 
+
+CtrlVar.AdaptMesh=1;         
 CtrlVar.dt=0.01; 
 
 if contains(UserVar.RunType,"-1dAnalyticalIceShelf-")
@@ -29,7 +31,7 @@ if contains(UserVar.RunType,"-1dAnalyticalIceShelf-")
     CtrlVar.doplots=0;
     CtrlVar.LevelSetMethod=0;
     CtrlVar.TotalNumberOfForwardRunSteps=inf;
-    CtrlVar.TotalTime=100;
+    CtrlVar.TotalTime=500;
     UserVar.Plots="-plot-flowline-";
     if contains(UserVar.RunType,"Test-")
         CtrlVar.TotalTime=10;
@@ -40,8 +42,23 @@ end
 if contains(UserVar.RunType,"-Calving-")
    CtrlVar.LevelSetMethod=1; 
    CtrlVar.UaOutputsDt=0;  % because I'm testing
-   CtrlVar.dt=1e-5; 
+   CtrlVar.dt=1e-3; 
+   CtrlVar.AdaptMesh=0;         
+   CtrlVar.doplots=1;
 end
+
+if contains(UserVar.RunType,"-TravellingFront-")
+    % Here I set a 'calving front' within the domain to see how it evolves with time.
+   CtrlVar.LevelSetMethod=0; 
+   CtrlVar.UaOutputsDt=0;  % because I'm testing
+   CtrlVar.dt=1e-3; 
+   CtrlVar.AdaptMesh=0;         
+   CtrlVar.doplots=1;
+   CtrlVar.UaOutputsDt=1;     UserVar.Plots="-plot-flowline-save-";
+end
+
+
+
 
 CtrlVar.InfoLevelNonLinIt=1; CtrlVar.uvhMinimisationQuantity="Force Residuals";
 %%
@@ -49,23 +66,14 @@ CtrlVar.InfoLevelNonLinIt=1; CtrlVar.uvhMinimisationQuantity="Force Residuals";
 UserVar.Outputsdirectory='ResultsFiles'; % This I use in UaOutputs
 UserVar.MassBalanceCase='ice0';
 
-UserVar.CalvingDeltaWidth=30e3 ; 
 %%
 
-CtrlVar.Experiment="Ex"+UserVar.RunType+"-MB"+UserVar.MassBalanceCase+"-CW"+UserVar.CalvingDeltaWidth; 
-CtrlVar.Experiment=replace(CtrlVar.Experiment,"--","-");
+
 
 %% Types of run
 %
 CtrlVar.TimeDependentRun=1; 
-
-
-
 CtrlVar.time=0; 
-
-
-
-
 CtrlVar.ATStimeStepTarget=1;
 CtrlVar.WriteRestartFile=1;
 
@@ -85,17 +93,10 @@ CtrlVar.PlotXYscale=1000;
 CtrlVar.TriNodes=3;
 
 
-CtrlVar.NameOfRestartFiletoWrite="Restart"+CtrlVar.Experiment+".mat";
-CtrlVar.NameOfRestartFiletoRead=CtrlVar.NameOfRestartFiletoWrite;
-
-
-
-
 %% adapt mesh
 
 
 CtrlVar.MeshGenerator='gmsh';  % possible values: {mesh2d|gmsh}
-
 CtrlVar.GmshMeshingAlgorithm=8;     % see gmsh manual
                                     % 1=MeshAdapt
                                     % 2=Automatic
@@ -115,7 +116,7 @@ CtrlVar.MeshSizeMin=0.01*CtrlVar.MeshSize;     % min element size
 
 CtrlVar.MaxNumberOfElements=250e3;           % max number of elements. If #elements larger then CtrlMeshSize/min/max are changed
 
-CtrlVar.AdaptMesh=1;         
+
 CtrlVar.AdaptMeshMaxIterations=10;  % Number of adapt mesh iterations within each run-step.
 CtrlVar.MeshRefinementMethod='explicit:local:newest vertex bisection';    % can have any of these values:
                                                    % 'explicit:global' 
@@ -127,7 +128,6 @@ CtrlVar.SaveAdaptMeshFileName=[] ; % no file written if left empty "AdaptMesh"+C
 
 
 
-CtrlVar.AdaptMeshInitial=1 ;       % if true, then a remeshing will always be performed at the inital step
 CtrlVar.AdaptMeshAndThenStop=0;    % if true, then mesh will be adapted but no further calculations performed
                                    % usefull, for example, when trying out different remeshing options (then use CtrlVar.doRemeshPlots=1 to get plots)
 
@@ -181,9 +181,16 @@ else
 end
 
 
-
-CtrlVar.AdaptMesh=1;         
 CtrlVar.AdaptMeshUntilChangeInNumberOfElementsLessThan=5;
+
+%% Experiment and file name
+
+CtrlVar.Experiment="Ex"+UserVar.RunType+"-MB"+UserVar.MassBalanceCase; 
+CtrlVar.Experiment=replace(CtrlVar.Experiment,"--","-");
+CtrlVar.NameOfRestartFiletoWrite="Restart"+CtrlVar.Experiment+".mat";
+CtrlVar.NameOfRestartFiletoRead=CtrlVar.NameOfRestartFiletoWrite;
+
+
 
 end
 

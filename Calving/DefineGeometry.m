@@ -75,6 +75,16 @@ function [UserVar,s,b,S,B,alpha]=DefineGeometry(UserVar,CtrlVar,MUA,time,FieldsT
             s=zeros(MUA.Nnodes,1);
             b=s-h0;
             
+            if contains(UserVar.RunType,"-TravellingFront-")
+                xc=93.1e3;
+                I=MUA.coordinates(:,1)>xc ;
+                h=s-b;
+                h(I)=2 ;
+                b=s-h; 
+                
+            end
+            
+            
         else
             
             % h0=1000-1000/640e3*x;
