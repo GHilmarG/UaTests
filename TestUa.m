@@ -120,7 +120,7 @@ end
 function testCalvingAnalyticalIceShelf(testCase)
     
     cd Calving ;
-    UserVar.RunType="Test-1dAnalyticalIceShelf-";
+    
     UserVar=Ua(UserVar) ;
     cd ..
     actSolution= UserVar.Test.Norm.actValue ;

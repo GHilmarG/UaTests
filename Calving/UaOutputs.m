@@ -126,7 +126,7 @@ function UserVar=UaOutputs(UserVar,CtrlVar,MUA,BCs,F,l,GF,InvStartValues,InvFina
         end
         
         
-        if contains(plots,'-flowline-')
+        if contains(plots,'-flowline-')  || contains(plots,"-plot-Calving1dIceShelf-")
             %%
             
             if exist('CtrlVarInRestartFile','var') && ~exist('CtrlVar','var')
@@ -144,10 +144,6 @@ function UserVar=UaOutputs(UserVar,CtrlVar,MUA,BCs,F,l,GF,InvStartValues,InvFina
             fig=FindOrCreateFigure(FigureName) ;
             clf(fig);
             
-            
-            
-            
-            
             % point selection
             Iy=abs(MUA.coordinates(:,2)-yProfile)< 1000 ;
             
@@ -161,12 +157,16 @@ function UserVar=UaOutputs(UserVar,CtrlVar,MUA,BCs,F,l,GF,InvStartValues,InvFina
             if isfield(F,'c') && ~isempty(F.c)
                 cProfile=F.c(Iy);
                 cProfile=cProfile(Ix);
+            else
+                cProfile=[];
             end
             if isfield(F,'LSF') && ~isempty(F.LSF)
                 LSFProfile=F.LSF(Iy);
                 LSFProfile=LSFProfile(Ix);
+            else
+                LSFProfile=[] ;
             end
-            GFProfile=F.GF.node(Iy);
+            
             
             
             
@@ -191,25 +191,83 @@ function UserVar=UaOutputs(UserVar,CtrlVar,MUA,BCs,F,l,GF,InvStartValues,InvFina
             hold on
             plot(xProfile/1000,bProfile,'g-o')
             
-            plot(x/1000,s,'b-','LineWidth',2)
-            plot(x/1000,b,'g-','LineWidth',2)
-            % plot(xProfile/1000,BProfile,'k-o')
+            if contains(UserVar.RunType,"-1dAnalyticalIceShelf-")
+                plot(x/1000,s,'b-','LineWidth',2)
+                plot(x/1000,b,'g-','LineWidth',2)
+                % plot(xProfile/1000,BProfile,'k-o')
+            end
             ylabel('$z$ (m)','interpreter','latex')
+            
+            
             yyaxis right
             
             %  plot(xProfile/1000,LSFProfile>0,'r-+')
             %  plot(xProfile/1000,GFProfile,'g-o')
+            
+            
             plot(xProfile/1000,uProfile,'r-o')
             hold on
-            plot(x/1000,u,'r-','LineWidth',2)
+            
+            if contains(UserVar.RunType,"-1dAnalyticalIceShelf-")
+                plot(x/1000,u,'r-','LineWidth',2)
+            end
+            
+            if contains(plots,"-plot-Calving1dIceShelf-")  && ~isempty(cProfile)
+                ugl=300; hgl=1000; xgl=0;
+                [s,b,u,x]=AnalyticalOneDimentionalIceShelf(CtrlVar,MUA,F,hgl,ugl,xgl);
+                plot(xProfile/1000,cProfile,'-k')
+                plot(x/1000,u,'r','LineWidth',2)
+            end
+            
+            CompareWithAnalyticalVelocities=true;
+            if CompareWithAnalyticalVelocities
+                A=AGlenVersusTemp(-10); a=0.3 ; n=3 ; rho=910; rhow=1030 ; g=9.81/1000; hgl=1000; xgl=0; ugl=300;
+                [s,b,u]=AnalyticalOneDimentionalIceShelf(CtrlVar,MUA,[],hgl,ugl,xgl,MUA.coordinates(:,1),A,n,rho,rhow,a,g);
+                
+                if ~isempty(F.LSF)
+                    Mask=F.LSF>0 ;
+                else
+                    Mask=u*0+1;
+                end
+                FERMSE=FE_RootMeanSquareError(u.*Mask,F.ub.*Mask,MUA.M,u.*Mask);
+                fprintf(' Finite-Element Root-Mean-Square-Deviation between u analytical and numerical is %g \n',FERMSE)
+            end
+
+
             ylabel('$u$ (m/a)','interpreter','latex')
-            ylim([round(ceil(min(u)),2,'significant') round(ceil(max(u)),2,'significant')]) ;
+            
+            if contains(UserVar.RunType,"-1dAnalyticalIceShelf-")
+                ylim([round(ceil(min(u)),2,'significant') round(ceil(max(u)),2,'significant')]) ;
+            end
+            
             title(sprintf('Profile along the medial line at t=%g',CtrlVar.time))
             xlabel('$x$ (km)','interpreter','latex') ;
-            legend('$s$ numerical','$b$ numerical','$s$ analytical ','$b$ analytical','$u$ numerical','$u$ analytical',...
-                'interpreter','latex','location','east')
+            
+            if contains(UserVar.RunType,"-1dAnalyticalIceShelf-")
+                legend('$s$ numerical','$b$ numerical','$s$ analytical ','$b$ analytical','$u$ numerical','$u$ analytical',...
+                    'interpreter','latex','location','east')
+            end
+            
             hold off
             
+            if isfield(F,'LSF') && ~isempty(F.LSF)
+                FigureName='LSF profile';
+                fig=FindOrCreateFigure(FigureName) ;
+                clf(fig);
+                yyaxis left
+                plot(xProfile/1000,LSFProfile/1000,'b-o')
+                xlabel('$x$ (km)','interpreter','latex') ;
+                ylabel('LSF (km)','interpreter','latex') ;
+                yyaxis right
+                plot(xProfile/1000,sProfile-bProfile,'r-o')
+                ylabel('ice thickness (m)','interpreter','latex') ;
+                ax=gca;
+                ax.XAxisLocation = 'origin';
+                title(sprintf('Profile along the medial line at t=%g',CtrlVar.time))
+            end
+            
+
+
             
         end
         

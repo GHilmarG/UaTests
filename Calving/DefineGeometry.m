@@ -6,71 +6,29 @@ function [UserVar,s,b,S,B,alpha]=DefineGeometry(UserVar,CtrlVar,MUA,time,FieldsT
     x=MUA.coordinates(:,1); y=MUA.coordinates(:,2);
     alpha=0.;
     
-    if contains(UserVar.RunType,"-1dAnalyticalIceShelf-")
-        B=zeros(MUA.Nnodes,1)-1e5;
-    else
-        B=MismBed(x,y);
-    end
     
-    S=B*0;
-    s=[];
-    b=[];
-    
-    
-    if contains(FieldsToBeDefined,"b") ||  contains(FieldsToBeDefined,"s")
-        s=F.s ;
-        b=F.b ;
+    switch UserVar.InitialGeometry
         
-        
-        if contains(UserVar.RunType,"-ManuallyModifyThickness-")
+        case "-1dAnalyticalIceShelf-"
             
+            ugl=300 ; xgl=0; hgl=1000;
             
-            if CtrlVar.LevelSetMethod  && ~isempty(F.LSF)
-                
-                if CtrlVar.CurrentRunStepNumber>=2   % allow a few run steps before starting to modify geometry
-                    
-                    hMin=CtrlVar.ThickMin+1 ;
-                    
-                    if numel(F.LSF) ~= MUA.Nnodes
-                        error('wrong dimentions ' )
-                    end
-                    
-                    Mask=CalcMeshMask(CtrlVar,MUA,F.LSF,0); 
-                    s(Mask.NodesOut)=b(Mask.NodesOut)+hMin;
-                    
-                end
-                
-            else
-                
-                
-                if ~isempty(F.GF)
-                    if CtrlVar.CurrentRunStepNumber==2
-                        
-                        if ~isfield(CtrlVar.GF,"NodesDownstreamOfGroundingLines")
-                            F.GF=IceSheetIceShelves(CtrlVar,MUA,F.GF);
-                        end
-                        
-                        CutOff=400e3;
-                        I=F.GF.NodesDownstreamOfGroundingLines & x> CutOff ;
-                        hMin=CtrlVar.ThickMin+1 ;
-                        s(I)=b(I)+hMin;
-                        
-                    end
-                    
-                end
+            if isempty(F.AGlen)
+                [UserVar,F.AGlen,F.n]=DefineAGlenDistribution(UserVar,CtrlVar,MUA) ;
             end
-        end
-    end
-    
-    % initial def for s and b at start of run
-    if CtrlVar.CurrentRunStepNumber<=1
-        
-        
-        if contains(UserVar.RunType,"-1dAnalyticalIceShelf-")
+            if isempty(F.rho)
+                [UserVar,F.rho,F.rhow,F.g]=DefineDensities(UserVar,CtrlVar,MUA);
+            end
+            if isempty(F.as)
+                [UserVar,F.as,F.ab]=DefineMassBalance(UserVar,CtrlVar,MUA);
+            end
             
-            %
-            %
-            %
+            [s,b]=AnalyticalOneDimentionalIceShelf(CtrlVar,MUA,F,hgl,ugl,xgl,MUA.coordinates(:,1));
+            B=zeros(MUA.Nnodes,1)-1e5;
+            S=zeros(MUA.Nnodes,1) ;
+            
+        case "-Constant-" % "Mismip3"  "Constant" ;
+            
             h0=1000;  % make sure this is consistent with BCs!
             s=zeros(MUA.Nnodes,1);
             b=s-h0;
@@ -80,18 +38,19 @@ function [UserVar,s,b,S,B,alpha]=DefineGeometry(UserVar,CtrlVar,MUA,time,FieldsT
                 I=MUA.coordinates(:,1)>xc ;
                 h=s-b;
                 h(I)=2 ;
-                b=s-h; 
+                b=s-h;
                 
             end
+            B=zeros(MUA.Nnodes,1)-1e5;
+            S=zeros(MUA.Nnodes,1) ;
             
-            
-        else
-            
-            % h0=1000-1000/640e3*x;
-            % s=b+h0;
-            
+        case "-MismipPlus-" % "Mismip3"  "Constant" ;
+
+            B=MismBed(x,y);
+            S=B*0;
             fprintf(' The geometry is initialised based on a previously obtained steady-state solutions. \n')
             switch CtrlVar.SlidingLaw
+                
                 case "Tsai"
                     load('MismipPlusThicknessInterpolants','FsTsai','FbTsai')
                     s=FsTsai(x,y) ;
@@ -102,11 +61,6 @@ function [UserVar,s,b,S,B,alpha]=DefineGeometry(UserVar,CtrlVar,MUA,time,FieldsT
                     b=FbWeertman(x,y) ;
             end
             
-        end
     end
-    
-    %   h=s-b ; h(h<CtrlVar.ThickMin)=CtrlVar.ThickMin ;
-    %   s=b+h ;
-    
     
 end

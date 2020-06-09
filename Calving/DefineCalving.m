@@ -1,43 +1,39 @@
-function [UserVar,LSF,BCsLevelSet,CalvingRate]=DefineCalving(UserVar,CtrlVar,MUA,BCs,BCsLevelSet,F)
+function [UserVar,LSF,CalvingRate]=DefineCalving(UserVar,CtrlVar,MUA,F,BCs)
     
-   
+    
     LSF=F.LSF ;
     
-    if CtrlVar.CurrentRunStepNumber< 2
-
-        xc=93.1e3; 
+    if CtrlVar.CurrentRunStepNumber< 2  % initialize the Level-Set-Field
+        
+        xc=200e3;  % this is the initial calving front
         LSF=xc-MUA.coordinates(:,1) ;
         % figure ; plot(CalvingFront(:,1)/1000,CalvingFront(:,2)/1000,'-o'); axis equal
     end
     
+    q=-2;
+    k=86322275.9814533 ;
     
-    if CtrlVar.time<0.5
-        CalvingRate=zeros(MUA.Nnodes,1); % always define the calving rate
-    else
-
-        q=-2; 
-        % k=u(350km)/h(350km)^q ; 
-        k=86992392.1760846; 
-        CalvingRate=k*F.h.^q;
+    switch UserVar.Calving
         
-        CalvingRate=CalvingRate(:) ;
-        CalvingRate=CalvingRate.*(1-F.GF.node) ;
-  
+        case "Function of analytical thickness"
+            % First for testing, define calving rate as a function of the analytical thickness
+            % profile.
+            A=AGlenVersusTemp(-10); a=0.3 ; n=3 ; rho=910; rhow=1030 ; g=9.81/1000; hgl=1000; xgl=0; ugl=300;
+            [s,b]=AnalyticalOneDimentionalIceShelf(CtrlVar,MUA,[],hgl,ugl,xgl,MUA.coordinates(:,1),A,n,rho,rhow,a,g);
+            h=s-b;
+            
+            
+            CalvingRate=k*h.^q;
+            
+        case "Function of numerical thickness"
+            
+            CalvingRate=k*F.h.^q;
+            % The issue is that this goes to infinity with h to zero. 
+            % 
+            CalvingRate(CalvingRate>2000)=2000; 
     end
     
-    
-    
- 
-    
-    
-%     Delta = DiracDelta(1/UserVar.CalvingDeltaWidth,LSF,0) ; 
-%     Delta=Delta/max(Delta) ; 
-%     
-%     CalvingRate=CalvingRate.*Delta;
-%     
-    %%
-    % fig=FindOrCreateFigure('LSF in Define Calving') ; 
-    % PlotMeshScalarVariable(CtrlVar,MUA,LSF) ; 
-    
-    %%
+    CalvingRate=CalvingRate(:) ;
+    CalvingRate=CalvingRate.*(1-F.GF.node) ;
+
 end

@@ -9,12 +9,13 @@ function [UserVar,CtrlVar,MeshBoundaryCoordinates]=Ua2D_InitialUserInput(UserVar
 
 
 
+
 if isempty(UserVar)
     UserVar.RunType="-ManuallyDeactivateElements-ManuallyModifyThickness-";
     UserVar.RunType="-ManuallyModifyThickness-";  
     UserVar.RunType="-1dAnalyticalIceShelf-"; CtrlVar.doplots=0;
-    UserVar.RunType="-Calving-1dAnalyticalIceShelf-"; CtrlVar.doplots=0;
-    UserVar.RunType="-TravellingFront-1dAnalyticalIceShelf-"; CtrlVar.doplots=0;
+    UserVar.RunType="-Calving-1dIceShelf-CalvingAnalytical-"; CtrlVar.doplots=0;
+    %UserVar.RunType="-TravellingFront-1dAnalyticalIceShelf-"; CtrlVar.doplots=0;
 
     CtrlVar.AdaptiveTimeStepping=1 ; 
     CtrlVar.LevelSetMethodReinitializeInterval=10;
@@ -24,10 +25,13 @@ end
 
 CtrlVar.AdaptMesh=1;         
 CtrlVar.dt=0.01; 
+CtrlVar.TriNodes=3;
+UserVar.InitialGeometry="-MismipPlus-" ;  % default  
+CtrlVar.AdaptMeshMaxIterations=1;  % Number of adapt mesh iterations within each run-step.
 
 if contains(UserVar.RunType,"-1dAnalyticalIceShelf-")
     
-    
+    UserVar.InitialGeometry="-Constant-" ; 
     CtrlVar.doplots=0;
     CtrlVar.LevelSetMethod=0;
     CtrlVar.TotalNumberOfForwardRunSteps=inf;
@@ -39,22 +43,48 @@ if contains(UserVar.RunType,"-1dAnalyticalIceShelf-")
     CtrlVar.UaOutputsDt=1;
 end
 
-if contains(UserVar.RunType,"-Calving-")
-   CtrlVar.LevelSetMethod=1; 
-   CtrlVar.UaOutputsDt=0;  % because I'm testing
-   CtrlVar.dt=1e-3; 
-   CtrlVar.AdaptMesh=0;         
-   CtrlVar.doplots=1;
+if contains(UserVar.RunType,"-Calving-1dIceShelf-")
+    UserVar.InitialGeometry="-1dAnalyticalIceShelf-" ;
+    CtrlVar.LevelSetMethod=1;
+    CtrlVar.UaOutputsDt=1;  % because I'm testing
+    CtrlVar.dt=1e-3;
+    CtrlVar.AdaptMesh=1;
+    CtrlVar.doplots=0; CtrlVar.LevelSetInfoLevel=1;
+    CtrlVar.uvh.SUPG.tau="taus" ;
+    CtrlVar.ATSdtMin=1e-2;
+    CtrlVar.TotalTime=4000;
+    CtrlVar.TotalNumberOfForwardRunSteps=inf;
+    UserVar.Plots="-Calving1dIceShelf-";
+    UserVar.Plots="-save-";
+    CtrlVar.AdaptMeshMaxIterations=20;  % Number of adapt mesh iterations within each run-step.
+    CtrlVar.AdaptMeshUntilChangeInNumberOfElementsLessThan=20;
+    CtrlVar.TriNodes=6;
+    
+    CtrlVar.Restart=0;
+    CtrlVar.LevelSetFAB=true ;
+    CtrlVar.LevelSetReinitializeTimeInterval=inf;
+    
+    if contains(UserVar.RunType,"-Calving-1dIceShelf-CalvingNumerical-")
+        UserVar.Calving="Function of numerical thickness" ; % "Function of analytical thickness" ;
+    elseif contains(UserVar.RunType,"-Calving-1dIceShelf-CalvingAnalytical-")
+        UserVar.Calving="Function of analytical thickness" ; % "Function of analytical thickness" ;
+    else
+        error('asfd')
+    end
 end
 
 if contains(UserVar.RunType,"-TravellingFront-")
     % Here I set a 'calving front' within the domain to see how it evolves with time.
-   CtrlVar.LevelSetMethod=0; 
-   CtrlVar.UaOutputsDt=0;  % because I'm testing
-   CtrlVar.dt=1e-3; 
-   CtrlVar.AdaptMesh=0;         
-   CtrlVar.doplots=1;
-   CtrlVar.UaOutputsDt=1;     UserVar.Plots="-plot-flowline-save-";
+    UserVar.InitialGeometry="-Constant-" ;
+    CtrlVar.LevelSetMethod=0;
+    CtrlVar.dt=1e-3;
+    CtrlVar.AdaptMesh=1;
+    CtrlVar.doplots=1;
+    CtrlVar.UaOutputsDt=0.1;     UserVar.Plots="-plot-flowline-";
+    CtrlVar.TotalTime=201;
+    CtrlVar.uvh.SUPG.tau="tau2" ; % {'tau1','tau2','taus','taut'}  % taus works fine!  tau2 is the default
+    CtrlVar.ResetTimeStep=1; CtrlVar.ATSdtMin=1e-3;
+    CtrlVar.Restart=1;
 end
 
 
@@ -74,7 +104,7 @@ UserVar.MassBalanceCase='ice0';
 %
 CtrlVar.TimeDependentRun=1; 
 CtrlVar.time=0; 
-CtrlVar.ATStimeStepTarget=1;
+CtrlVar.ATSdtMax=1;
 CtrlVar.WriteRestartFile=1;
 
 %% Reading in mesh
@@ -85,18 +115,18 @@ CtrlVar.ReadInitialMesh=0;    % if true then read FE mesh (i.e the MUA variable)
 %% Plotting options
 CtrlVar.PlotMesh=1; 
 CtrlVar.PlotBCs=1;
-CtrlVar.WhenPlottingMesh_PlotMeshBoundaryCoordinatesToo=1;
+CtrlVar.WhenPlottingMesh_PlotMeshBoundaryCoordinatesToo=0;
 
 CtrlVar.PlotXYscale=1000; 
 %%
 
-CtrlVar.TriNodes=3;
+
 
 
 %% adapt mesh
 
 
-CtrlVar.MeshGenerator='gmsh';  % possible values: {mesh2d|gmsh}
+CtrlVar.MeshGenerator='mesh2d'   ;   % 'gmsh';  % possible values: {mesh2d|gmsh}
 CtrlVar.GmshMeshingAlgorithm=8;     % see gmsh manual
                                     % 1=MeshAdapt
                                     % 2=Automatic
@@ -117,7 +147,9 @@ CtrlVar.MeshSizeMin=0.01*CtrlVar.MeshSize;     % min element size
 CtrlVar.MaxNumberOfElements=250e3;           % max number of elements. If #elements larger then CtrlMeshSize/min/max are changed
 
 
-CtrlVar.AdaptMeshMaxIterations=10;  % Number of adapt mesh iterations within each run-step.
+
+CtrlVar.AdaptMeshRunStepInterval=1;  % number of run-steps between mesh adaptation
+
 CtrlVar.MeshRefinementMethod='explicit:local:newest vertex bisection';    % can have any of these values:
                                                    % 'explicit:global' 
                                                    % 'explicit:local'
@@ -132,7 +164,7 @@ CtrlVar.AdaptMeshAndThenStop=0;    % if true, then mesh will be adapted but no f
                                    % usefull, for example, when trying out different remeshing options (then use CtrlVar.doRemeshPlots=1 to get plots)
 
 
-CtrlVar.AdaptMeshInterval=1;  % number of run-steps between mesh adaptation
+
 CtrlVar.MeshAdapt.GLrange=[20000 5000 ; 5000 2000];
 %CtrlVar.MeshAdapt.GLrange=[20000 5000 ];
 CtrlVar.MeshAdapt.CFrange=[10000 2000];
@@ -142,7 +174,7 @@ CtrlVar.ExplicitMeshRefinementCriteria(I).Name='effective strain rates gradient'
 CtrlVar.ExplicitMeshRefinementCriteria(I).Scale=0.001/1000;
 CtrlVar.ExplicitMeshRefinementCriteria(I).EleMin=[];
 CtrlVar.ExplicitMeshRefinementCriteria(I).EleMax=[];
-CtrlVar.ExplicitMeshRefinementCriteria(I).p=[];
+CtrlVar.ExplicitMeshRefinementCriteria(I).p=1;
 CtrlVar.ExplicitMeshRefinementCriteria(I).InfoLevel=1;
 CtrlVar.ExplicitMeshRefinementCriteria(I).Use=true;
 
@@ -158,8 +190,8 @@ CtrlVar.ThicknessConstraintsItMax=5  ;
 
 %%
 
-if contains(UserVar.RunType,"-Calving-1dAnalyticalIceShelf-")
-    xd=640e3; xu=0e3 ; yr=-20e3 ; yl=20e3 ;
+if contains(UserVar.RunType,"-Calving-1dIceShelf-") 
+    xd=640e3; xu=0e3 ; yr=-10e3 ; yl=10e3 ;
 else
     xd=640e3; xu=0e3 ; yr=0 ; yl=80e3 ;
 end
@@ -185,7 +217,7 @@ CtrlVar.AdaptMeshUntilChangeInNumberOfElementsLessThan=5;
 
 %% Experiment and file name
 
-CtrlVar.Experiment="Ex"+UserVar.RunType+"-MB"+UserVar.MassBalanceCase; 
+CtrlVar.Experiment="Ex"+UserVar.RunType+"-MB"+UserVar.MassBalanceCase+"-SUPG"+CtrlVar.uvh.SUPG.tau+"-Adapt"+num2str(CtrlVar.AdaptMesh);         
 CtrlVar.Experiment=replace(CtrlVar.Experiment,"--","-");
 CtrlVar.NameOfRestartFiletoWrite="Restart"+CtrlVar.Experiment+".mat";
 CtrlVar.NameOfRestartFiletoRead=CtrlVar.NameOfRestartFiletoWrite;
