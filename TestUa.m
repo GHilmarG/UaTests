@@ -23,7 +23,7 @@ function tests = TestUa
     % f={@test1dIceShelf} ;                   % results = runtests('TestUa.m') ; table(results)
     % f={@test1dIceStream} ;                  % results = runtests('TestUa.m') ; table(results)
     % f={@testCalvingModifyThickness} ;        % results = runtests('TestUa.m') ; table(results)
-    % f={@testFreeSlipBCs,@testGaussPeak,@testMassBalanceFeedback} ;        % results = runtests('TestUa.m') ; table(results)
+    f={@testFreeSlipBCs,@testGaussPeak,@testMassBalanceFeedback} ;        % results = runtests('TestUa.m') ; table(results)
     % f={@testCalvingAnalyticalIceShelf};
     % f={@testPIGtransient};
     
@@ -75,7 +75,7 @@ function testPIGtransient(testCase)
     actSolution= UserVar.Test.Norm.actValue ;
     expSolution = 94704.6045393781;
     %  79053.6666394987 % home laptop, 17 Nov, 2019
-    verifyEqual(testCase,actSolution,expSolution,'AbsTol',1e-2)
+    verifyEqual(testCase,actSolution,expSolution,'RelTol',1e-2)
     
 end
 
@@ -165,7 +165,7 @@ function testFreeSlipBCs(testCase)
     cd ..
     actSolution= UserVar.Test.Norm.actValue ;
     expSolution = UserVar.Test.Norm.expValue ;
-    verifyEqual(testCase,actSolution,expSolution,'AbsTol',1e-6)
+    verifyEqual(testCase,actSolution,expSolution,'RelTol',1e-6)
     
 end
 
