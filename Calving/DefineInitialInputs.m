@@ -48,7 +48,7 @@ if contains(UserVar.RunType,"-LevelSetWithMeltFeedback-1dIceShelf-")
     CtrlVar.AdaptMeshUntilChangeInNumberOfElementsLessThan=20;
     CtrlVar.TriNodes=3;
     
-    CtrlVar.Restart=1;
+    CtrlVar.Restart=0;
  
     UserVar.Calving="Function of analytical thickness" ; % "Function of analytical thickness" ;
     
