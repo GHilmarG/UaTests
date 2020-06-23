@@ -1,5 +1,5 @@
 
-function [UserVar,CtrlVar,MeshBoundaryCoordinates]=Ua2D_InitialUserInput(UserVar,CtrlVar)
+function [UserVar,CtrlVar,MeshBoundaryCoordinates]=DefineInitialInputs(UserVar,CtrlVar)
 
 
 %%
@@ -15,7 +15,8 @@ if isempty(UserVar)
     UserVar.RunType="-ManuallyModifyThickness-";  
     UserVar.RunType="-1dAnalyticalIceShelf-"; CtrlVar.doplots=0;
     
-    UserVar.RunType="-Calving-1dIceShelf-CalvingAnalytical-MeltFeedback-"; CtrlVar.doplots=0;
+    UserVar.RunType="-MeltFeedback-1dIceShelf-"; CtrlVar.doplots=0;
+    UserVar.RunType="-LevelSetWithMeltFeedback-1dIceShelf-"; CtrlVar.doplots=0;
     %UserVar.RunType="-TravellingFront-1dAnalyticalIceShelf-"; CtrlVar.doplots=0;
 
     CtrlVar.AdaptiveTimeStepping=1 ; 
@@ -29,6 +30,56 @@ CtrlVar.dt=0.01;
 CtrlVar.TriNodes=3;
 UserVar.InitialGeometry="-MismipPlus-" ;  % default  
 CtrlVar.AdaptMeshMaxIterations=1;  % Number of adapt mesh iterations within each run-step.
+
+if contains(UserVar.RunType,"-LevelSetWithMeltFeedback-1dIceShelf-")
+    UserVar.InitialGeometry="-1dAnalyticalIceShelf-" ;
+    CtrlVar.LevelSetMethod=1;
+    CtrlVar.DefineOutputsDt=1;  % because I'm testing
+    CtrlVar.dt=1e-3;
+    CtrlVar.AdaptMesh=1;
+    CtrlVar.doplots=0; CtrlVar.LevelSetInfoLevel=0;
+    CtrlVar.uvh.SUPG.tau="taus" ;
+    CtrlVar.ATSdtMin=1e-2;
+    CtrlVar.TotalTime=2000;
+    CtrlVar.TotalNumberOfForwardRunSteps=inf;
+    UserVar.Plots="-save-" ; % plot-Calving1dIceShelf-";
+    % UserVar.Plots="-save-";
+    CtrlVar.AdaptMeshMaxIterations=20;  % Number of adapt mesh iterations within each run-step.
+    CtrlVar.AdaptMeshUntilChangeInNumberOfElementsLessThan=20;
+    CtrlVar.TriNodes=3;
+    
+    CtrlVar.Restart=1;
+ 
+    UserVar.Calving="Function of analytical thickness" ; % "Function of analytical thickness" ;
+    
+end
+
+
+
+if contains(UserVar.RunType,"-MeltFeedback-1dIceShelf-")
+    UserVar.InitialGeometry="-1dAnalyticalIceShelf-" ;
+    CtrlVar.MassBalanceGeometryFeedback=3;
+    CtrlVar.LevelSetMethod=0;
+    CtrlVar.DefineOutputsDt=0;  % because I'm testing
+    CtrlVar.dt=1e-3;
+    CtrlVar.AdaptMesh=1;
+    CtrlVar.doplots=0; CtrlVar.LevelSetInfoLevel=0;
+    CtrlVar.uvh.SUPG.tau="taus" ;
+    CtrlVar.ATSdtMin=1e-2;
+    CtrlVar.TotalTime=10;
+    CtrlVar.TotalNumberOfForwardRunSteps=inf;
+    UserVar.Plots="-plot-Calving1dIceShelf-";
+    % UserVar.Plots="-save-";
+    CtrlVar.AdaptMeshMaxIterations=20;  % Number of adapt mesh iterations within each run-step.
+    CtrlVar.AdaptMeshUntilChangeInNumberOfElementsLessThan=20;
+    CtrlVar.TriNodes=3;
+    
+    CtrlVar.Restart=1;
+    CtrlVar.LevelSetFAB=true ;
+    CtrlVar.LevelSetReinitializeTimeInterval=inf;
+    UserVar.Calving=[];
+    
+end
 
 if contains(UserVar.RunType,"-1dAnalyticalIceShelf-")
     
@@ -167,8 +218,7 @@ CtrlVar.AdaptMeshAndThenStop=0;    % if true, then mesh will be adapted but no f
 
 
 CtrlVar.MeshAdapt.GLrange=[20000 5000 ; 5000 2000];
-%CtrlVar.MeshAdapt.GLrange=[20000 5000 ];
-CtrlVar.MeshAdapt.CFrange=[10000 2000];
+CtrlVar.MeshAdapt.CFrange=[10000 2000 ; 5000 1000];
 
 I=1;
 CtrlVar.ExplicitMeshRefinementCriteria(I).Name='effective strain rates gradient';
@@ -178,8 +228,6 @@ CtrlVar.ExplicitMeshRefinementCriteria(I).EleMax=[];
 CtrlVar.ExplicitMeshRefinementCriteria(I).p=1;
 CtrlVar.ExplicitMeshRefinementCriteria(I).InfoLevel=1;
 CtrlVar.ExplicitMeshRefinementCriteria(I).Use=true;
-
-
 
 %% Pos. thickness constr
 
@@ -191,7 +239,7 @@ CtrlVar.ThicknessConstraintsItMax=5  ;
 
 %%
 
-if contains(UserVar.RunType,"-Calving-1dIceShelf-") 
+if contains(UserVar.RunType,"-1dIceShelf-")
     xd=640e3; xu=0e3 ; yr=-10e3 ; yl=10e3 ;
 else
     xd=640e3; xu=0e3 ; yr=0 ; yl=80e3 ;

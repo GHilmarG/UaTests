@@ -10,20 +10,8 @@ function [UserVar,s,b,S,B,alpha]=DefineGeometry(UserVar,CtrlVar,MUA,time,FieldsT
     switch UserVar.InitialGeometry
         
         case "-1dAnalyticalIceShelf-"
-            
-            ugl=300 ; xgl=0; hgl=1000;
-            
-            if isempty(F.AGlen)
-                [UserVar,F.AGlen,F.n]=DefineAGlenDistribution(UserVar,CtrlVar,MUA) ;
-            end
-            if isempty(F.rho)
-                [UserVar,F.rho,F.rhow,F.g]=DefineDensities(UserVar,CtrlVar,MUA);
-            end
-            if isempty(F.as)
-                [UserVar,F.as,F.ab]=DefineMassBalance(UserVar,CtrlVar,MUA);
-            end
-            
-            [s,b]=AnalyticalOneDimentionalIceShelf(CtrlVar,MUA,F,hgl,ugl,xgl,MUA.coordinates(:,1));
+
+            [s,b]=AnalyticalOneDimentionalIceShelf(CtrlVar,MUA); 
             B=zeros(MUA.Nnodes,1)-1e5;
             S=zeros(MUA.Nnodes,1) ;
             
