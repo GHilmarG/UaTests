@@ -2,8 +2,7 @@
 function [UserVar,CtrlVar,MeshBoundaryCoordinates]=Ua2D_InitialUserInput(UserVar,CtrlVar)
 
 
-UserVar.InterpolantDirectory='../Interpolants/CS_Data';
-
+UserVar.InterpolantDirectory='E:\Runs\ChhotaShigri';
 
 CtrlVar.Experiment='ChhotaShigri';
 CtrlVar.TimeDependentRun=1 ;  % any of [0|1].  

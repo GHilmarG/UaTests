@@ -16,19 +16,13 @@ b=B;
 %ampl=0; sigma_x=10000 ; sigma_y=10000;
 %s=b+0+ampl*exp(-((x/sigma_x).^2+(y/sigma_y).^2));
 
-switch CtrlVar.Experiment
-    
-    case 'GaussMelting'
-        
-        s=b*0+500;
-        
-    case 'UniformMelting'
-        
-        s=b*0+1;
-        
-    otherwise
-        error(' which case')
-        
+if contains(CtrlVar.Experiment,"GaussMelting")
+    h0=100;
+    s=b+h0;
+elseif contains(CtrlVar.Experiment,"GaussMelting")
+    s=b*0+1;
+else
+    error(' which case')
 end
 
 end
