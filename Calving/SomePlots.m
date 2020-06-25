@@ -1,8 +1,16 @@
 
+
+%%
+CurDir=pwd ;
+if ~contains(CurDir,"ResultsFiles")
+    cd ResultsFiles\
+end
+ReadPlotSequenceOfResultFiles("FileNameSubstring","Ex-LevelSetWithMeltFeedback","PlotType","-1dIceShelf-","PlotTimestep",1,"PlotTimeInterval",[1700 inf])
+cd(CurDir)
 %%
 CurDir=pwd ;
 cd ResultsFiles\
-Data=ReadPlotSequenceOfResultFiles("FileNameSubstring","LevelSetWithMeltFeedback","PlotType","-collect-","PlotTimestep",20);
+Data=ReadPlotSequenceOfResultFiles("FileNameSubstring","Ex-LevelSetWithMeltFeedback","PlotType","-collect-","PlotTimestep",20);
 
 cd(CurDir)
 

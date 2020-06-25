@@ -16,7 +16,7 @@ if isempty(UserVar)
     UserVar.RunType="-1dAnalyticalIceShelf-"; CtrlVar.doplots=0;
     
     UserVar.RunType="-MeltFeedback-1dIceShelf-"; CtrlVar.doplots=0;
-    UserVar.RunType="-LevelSetWithMeltFeedback-1dIceShelf-"; CtrlVar.doplots=0;
+    UserVar.RunType="-Reinitialize-LevelSetWithMeltFeedback-1dIceShelf-"; CtrlVar.doplots=0;
     %UserVar.RunType="-TravellingFront-1dAnalyticalIceShelf-"; CtrlVar.doplots=0;
 
     CtrlVar.AdaptiveTimeStepping=1 ; 
@@ -33,7 +33,15 @@ CtrlVar.AdaptMeshMaxIterations=1;  % Number of adapt mesh iterations within each
 
 if contains(UserVar.RunType,"-LevelSetWithMeltFeedback-1dIceShelf-")
     UserVar.InitialGeometry="-1dAnalyticalIceShelf-" ;
-    CtrlVar.LevelSetMethod=1; CtrlVar.LevelSetReinitializeTimeInterval=1; 
+    
+    CtrlVar.LevelSetMethod=1;
+    
+    if contains(UserVar.RunType,"-Reinitialize-")
+        CtrlVar.LevelSetReinitializeTimeInterval=10;
+    else
+        CtrlVar.LevelSetReinitializeTimeInterval=inf;
+    end
+    
     CtrlVar.DefineOutputsDt=1;  % because I'm testing
     CtrlVar.dt=1e-3;
     CtrlVar.AdaptMesh=1;
@@ -48,7 +56,7 @@ if contains(UserVar.RunType,"-LevelSetWithMeltFeedback-1dIceShelf-")
     CtrlVar.AdaptMeshUntilChangeInNumberOfElementsLessThan=20;
     CtrlVar.TriNodes=3;
     
-    CtrlVar.Restart=1;
+    CtrlVar.Restart=0;
  
     UserVar.Calving="Function of analytical thickness" ; % "Function of analytical thickness" ;
     
