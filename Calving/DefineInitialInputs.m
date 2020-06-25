@@ -33,11 +33,11 @@ CtrlVar.AdaptMeshMaxIterations=1;  % Number of adapt mesh iterations within each
 
 if contains(UserVar.RunType,"-LevelSetWithMeltFeedback-1dIceShelf-")
     UserVar.InitialGeometry="-1dAnalyticalIceShelf-" ;
-    CtrlVar.LevelSetMethod=1;
+    CtrlVar.LevelSetMethod=1; CtrlVar.LevelSetReinitializeTimeInterval=1; 
     CtrlVar.DefineOutputsDt=1;  % because I'm testing
     CtrlVar.dt=1e-3;
     CtrlVar.AdaptMesh=1;
-    CtrlVar.doplots=0; CtrlVar.LevelSetInfoLevel=0;
+    CtrlVar.doplots=0; CtrlVar.LevelSetInfoLevel=1;
     CtrlVar.uvh.SUPG.tau="taus" ;
     CtrlVar.ATSdtMin=1e-2;
     CtrlVar.TotalTime=2000;
@@ -48,7 +48,7 @@ if contains(UserVar.RunType,"-LevelSetWithMeltFeedback-1dIceShelf-")
     CtrlVar.AdaptMeshUntilChangeInNumberOfElementsLessThan=20;
     CtrlVar.TriNodes=3;
     
-    CtrlVar.Restart=0;
+    CtrlVar.Restart=1;
  
     UserVar.Calving="Function of analytical thickness" ; % "Function of analytical thickness" ;
     
