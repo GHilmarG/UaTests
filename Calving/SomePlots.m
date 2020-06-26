@@ -5,12 +5,20 @@ CurDir=pwd ;
 if ~contains(CurDir,"ResultsFiles")
     cd ResultsFiles\
 end
-ReadPlotSequenceOfResultFiles("FileNameSubstring","Ex-LevelSetWithMeltFeedback","PlotType","-1dIceShelf-","PlotTimestep",1,"PlotTimeInterval",[1700 inf])
+%ReadPlotSequenceOfResultFiles("FileNameSubstring","Ex-LevelSetWithMeltFeedback","PlotType","-1dIceShelf-","PlotTimestep",10,"PlotTimeInterval",[1700 inf])
+%ReadPlotSequenceOfResultFiles("FileNameSubstring","Ex-Reinitialize-LevelSetWithMeltFeedback","PlotType","-1dIceShelf-","PlotTimestep",10);
+ReadPlotSequenceOfResultFiles("FileNameSubstring","Ex-Reinitialize-RT0100-LevelSetWithMeltFeedback","PlotType","-1dIceShelf-","PlotTimestep",10);
+%ReadPlotSequenceOfResultFiles("FileNameSubstring","Ex-Reinitialize-RT0100-FAB0-LevelSetWithMeltFeedback","PlotType","-1dIceShelf-","PlotTimestep",1);
+
 cd(CurDir)
 %%
 CurDir=pwd ;
-cd ResultsFiles\
-Data=ReadPlotSequenceOfResultFiles("FileNameSubstring","Ex-LevelSetWithMeltFeedback","PlotType","-collect-","PlotTimestep",20);
+if ~contains(CurDir,"ResultsFiles")
+    cd ResultsFiles\
+end
+
+%Data=ReadPlotSequenceOfResultFiles("FileNameSubstring","Ex-LevelSetWithMeltFeedback","PlotType","-collect-","PlotTimestep",20);
+Data=ReadPlotSequenceOfResultFiles("FileNameSubstring","Ex-Reinitialize-RT0100-LevelSetWithMeltFeedback","PlotType","-collect-","PlotTimestep",5);
 
 cd(CurDir)
 

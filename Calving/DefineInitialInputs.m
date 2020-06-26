@@ -16,7 +16,7 @@ if isempty(UserVar)
     UserVar.RunType="-1dAnalyticalIceShelf-"; CtrlVar.doplots=0;
     
     UserVar.RunType="-MeltFeedback-1dIceShelf-"; CtrlVar.doplots=0;
-    UserVar.RunType="-Reinitialize-LevelSetWithMeltFeedback-1dIceShelf-"; CtrlVar.doplots=0;
+    UserVar.RunType="-Reinitialize-RT1000-FAB1k0-LevelSetWithMeltFeedback-1dIceShelf-"; CtrlVar.doplots=0;
     %UserVar.RunType="-TravellingFront-1dAnalyticalIceShelf-"; CtrlVar.doplots=0;
 
     CtrlVar.AdaptiveTimeStepping=1 ; 
@@ -37,11 +37,13 @@ if contains(UserVar.RunType,"-LevelSetWithMeltFeedback-1dIceShelf-")
     CtrlVar.LevelSetMethod=1;
     
     if contains(UserVar.RunType,"-Reinitialize-")
-        CtrlVar.LevelSetReinitializeTimeInterval=10;
+        CtrlVar.LevelSetReinitializeTimeInterval=str2double(replace(extractBetween(UserVar.RunType,"RT","-"),"k",".")); 
     else
         CtrlVar.LevelSetReinitializeTimeInterval=inf;
     end
     
+    CtrlVar.LevelSetFAB=str2double(replace(extractBetween(UserVar.RunType,"FAB","-"),"k","."));
+
     CtrlVar.DefineOutputsDt=1;  % because I'm testing
     CtrlVar.dt=1e-3;
     CtrlVar.AdaptMesh=1;
