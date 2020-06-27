@@ -8,7 +8,7 @@ end
 %ReadPlotSequenceOfResultFiles("FileNameSubstring","Ex-LevelSetWithMeltFeedback","PlotType","-1dIceShelf-","PlotTimestep",10,"PlotTimeInterval",[1700 inf])
 %ReadPlotSequenceOfResultFiles("FileNameSubstring","Ex-Reinitialize-LevelSetWithMeltFeedback","PlotType","-1dIceShelf-","PlotTimestep",10);
 ReadPlotSequenceOfResultFiles("FileNameSubstring","Ex-Reinitialize-RT0100-LevelSetWithMeltFeedback","PlotType","-1dIceShelf-","PlotTimestep",10);
-%ReadPlotSequenceOfResultFiles("FileNameSubstring","Ex-Reinitialize-RT0100-FAB0-LevelSetWithMeltFeedback","PlotType","-1dIceShelf-","PlotTimestep",1);
+ReadPlotSequenceOfResultFiles("FileNameSubstring","Ex-Reinitialize-RT0100-FAB0-LevelSetWithMeltFeedback","PlotType","-1dIceShelf-","PlotTimestep",1);
 
 cd(CurDir)
 %%
