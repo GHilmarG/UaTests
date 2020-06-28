@@ -16,7 +16,7 @@ if isempty(UserVar)
     UserVar.RunType="-1dAnalyticalIceShelf-"; CtrlVar.doplots=0;
     
     UserVar.RunType="-MeltFeedback-1dIceShelf-"; CtrlVar.doplots=0;
-    UserVar.RunType="-Reinitialize-RT1000-FAB1k0-LevelSetWithMeltFeedback-1dIceShelf-"; CtrlVar.doplots=0;
+    UserVar.RunType="-Reinitialize-RT10-FAB1k0-LevelSetWithMeltFeedback-1dIceShelf-"; CtrlVar.doplots=0;
     %UserVar.RunType="-TravellingFront-1dAnalyticalIceShelf-"; CtrlVar.doplots=0;
 
     CtrlVar.AdaptiveTimeStepping=1 ; 
@@ -166,7 +166,7 @@ UserVar.MassBalanceCase='ice0';
 %
 CtrlVar.TimeDependentRun=1; 
 CtrlVar.time=0; 
-CtrlVar.ATSdtMax=1;
+CtrlVar.ATSdtMax=0.1;
 CtrlVar.WriteRestartFile=1;
 
 %% Reading in mesh
