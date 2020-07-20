@@ -4,7 +4,7 @@ function [UserVar,as,ab,dasdh,dabdh]=DefineMassBalance(UserVar,CtrlVar,MUA,time,
 
 as=zeros(MUA.Nnodes,1)+0.3;
 
-dasdh=[];
+dasdh=[]; dabdh=[];
 
 
 if contains(UserVar.RunType,"-1dAnalyticalIceShelf-") || contains(UserVar.RunType,"-1dIceShelf-") 

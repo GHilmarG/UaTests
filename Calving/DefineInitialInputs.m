@@ -16,7 +16,7 @@ if isempty(UserVar)
     UserVar.RunType="-1dAnalyticalIceShelf-"; CtrlVar.doplots=0;
     
     UserVar.RunType="-MeltFeedback-1dIceShelf-"; CtrlVar.doplots=0;
-    UserVar.RunType="-Reinitialize-RT10-FAB1k0-LevelSetWithMeltFeedback-1dIceShelf-"; CtrlVar.doplots=0;
+    UserVar.RunType="CFAa10000CFAb2000CFBa5000CFBb500-RTinf-FAB0k01-CFp2q4-CubicMF-CAisNum-LevelSetWithMeltFeedback-1dIceShelf-"; CtrlVar.doplots=0;
     %UserVar.RunType="-TravellingFront-1dAnalyticalIceShelf-"; CtrlVar.doplots=0;
 
     CtrlVar.AdaptiveTimeStepping=1 ; 
@@ -25,71 +25,61 @@ if isempty(UserVar)
 end
 
 
-CtrlVar.AdaptMesh=1;         
-CtrlVar.dt=0.01; 
+CtrlVar.AdaptMesh=1;
+CtrlVar.dt=0.01;
 CtrlVar.TriNodes=3;
-UserVar.InitialGeometry="-MismipPlus-" ;  % default  
+UserVar.InitialGeometry="-MismipPlus-" ;  % default)
+UserVar.Plots="-plot-mapplane-" ;
+CtrlVar.TotalTime=5000;
+CtrlVar.TotalNumberOfForwardRunSteps=inf;
 CtrlVar.AdaptMeshMaxIterations=1;  % Number of adapt mesh iterations within each run-step.
 
 if contains(UserVar.RunType,"-LevelSetWithMeltFeedback-1dIceShelf-")
     UserVar.InitialGeometry="-1dAnalyticalIceShelf-" ;
     
     CtrlVar.LevelSetMethod=1;
+    CtrlVar.SUPG.beta0=1;
     
-    if contains(UserVar.RunType,"-Reinitialize-")
-        CtrlVar.LevelSetReinitializeTimeInterval=str2double(replace(extractBetween(UserVar.RunType,"RT","-"),"k",".")); 
+    CtrlVar.LevelSetReinitializeTimeInterval=str2double(replace(extractBetween(UserVar.RunType,"-RT","-"),"k","."));
+    
+    if contains(UserVar.RunType,"-CubicMF-")
+        CtrlVar.LevelSetMethodMassBalanceFeedbackCoeffLin=-0.909090909090909;
+        CtrlVar.LevelSetMethodMassBalanceFeedbackCoeffCubic=-0.0909090909090909;
+        
     else
-        CtrlVar.LevelSetReinitializeTimeInterval=inf;
+        CtrlVar.LevelSetMethodMassBalanceFeedbackCoeffLin=-1;
+        CtrlVar.LevelSetMethodMassBalanceFeedbackCoeffCubic=0;
+        
     end
     
-    CtrlVar.LevelSetFAB=str2double(replace(extractBetween(UserVar.RunType,"FAB","-"),"k","."));
-
+    
+    CtrlVar.LevelSetFAB=str2double(replace(extractBetween(UserVar.RunType,"-FAB","-"),"k","."));
+    CtrlVar.LevelSetFABCostFunction=extractBetween(UserVar.RunType,"-CF","-") ;
+    
     CtrlVar.DefineOutputsDt=1;  % because I'm testing
     CtrlVar.dt=1e-3;
     CtrlVar.AdaptMesh=1;
     CtrlVar.doplots=0; CtrlVar.LevelSetInfoLevel=1;
     CtrlVar.uvh.SUPG.tau="taus" ;
     CtrlVar.ATSdtMin=1e-2;
-    CtrlVar.TotalTime=2000;
+    CtrlVar.TotalTime=5000;
     CtrlVar.TotalNumberOfForwardRunSteps=inf;
-    UserVar.Plots="-save-" ; % plot-Calving1dIceShelf-";
+    UserVar.Plots="-plot-" ; "-plot-Calving1dIceShelf-";  % "-save-" 
     % UserVar.Plots="-save-";
     CtrlVar.AdaptMeshMaxIterations=20;  % Number of adapt mesh iterations within each run-step.
     CtrlVar.AdaptMeshUntilChangeInNumberOfElementsLessThan=20;
     CtrlVar.TriNodes=3;
     
     CtrlVar.Restart=0;
- 
-    UserVar.Calving="Function of analytical thickness" ; % "Function of analytical thickness" ;
     
+    CAis=extractBetween(UserVar.RunType,"-CAis","-") ;
+    if CAis=="Ana"
+        UserVar.Calving="Function of analytical thickness" ; % "Function of analytical thickness" ;
+    elseif CAis=="Num"
+        UserVar.Calving="Function of numerical thickness";
+    end
 end
 
-
-
-if contains(UserVar.RunType,"-MeltFeedback-1dIceShelf-")
-    UserVar.InitialGeometry="-1dAnalyticalIceShelf-" ;
-    CtrlVar.MassBalanceGeometryFeedback=3;
-    CtrlVar.LevelSetMethod=0;
-    CtrlVar.DefineOutputsDt=0;  % because I'm testing
-    CtrlVar.dt=1e-3;
-    CtrlVar.AdaptMesh=1;
-    CtrlVar.doplots=0; CtrlVar.LevelSetInfoLevel=0;
-    CtrlVar.uvh.SUPG.tau="taus" ;
-    CtrlVar.ATSdtMin=1e-2;
-    CtrlVar.TotalTime=10;
-    CtrlVar.TotalNumberOfForwardRunSteps=inf;
-    UserVar.Plots="-plot-Calving1dIceShelf-";
-    % UserVar.Plots="-save-";
-    CtrlVar.AdaptMeshMaxIterations=20;  % Number of adapt mesh iterations within each run-step.
-    CtrlVar.AdaptMeshUntilChangeInNumberOfElementsLessThan=20;
-    CtrlVar.TriNodes=3;
-    
-    CtrlVar.Restart=1;
-    CtrlVar.LevelSetFAB=true ;
-    CtrlVar.LevelSetReinitializeTimeInterval=inf;
-    UserVar.Calving=[];
-    
-end
 
 if contains(UserVar.RunType,"-1dAnalyticalIceShelf-")
     
@@ -166,7 +156,8 @@ UserVar.MassBalanceCase='ice0';
 %
 CtrlVar.TimeDependentRun=1; 
 CtrlVar.time=0; 
-CtrlVar.ATSdtMax=0.1;
+CtrlVar.ATSdtMax=1;
+CtrlVar.ATSdtMin=0.01; 
 CtrlVar.WriteRestartFile=1;
 
 %% Reading in mesh
@@ -228,17 +219,28 @@ CtrlVar.AdaptMeshAndThenStop=0;    % if true, then mesh will be adapted but no f
 
 
 CtrlVar.MeshAdapt.GLrange=[20000 5000 ; 5000 2000];
-CtrlVar.MeshAdapt.CFrange=[10000 2000 ; 5000 1000];
 
-I=1;
-CtrlVar.ExplicitMeshRefinementCriteria(I).Name='effective strain rates gradient';
-CtrlVar.ExplicitMeshRefinementCriteria(I).Scale=0.001/1000;
-CtrlVar.ExplicitMeshRefinementCriteria(I).EleMin=[];
-CtrlVar.ExplicitMeshRefinementCriteria(I).EleMax=[];
-CtrlVar.ExplicitMeshRefinementCriteria(I).p=1;
-CtrlVar.ExplicitMeshRefinementCriteria(I).InfoLevel=1;
-CtrlVar.ExplicitMeshRefinementCriteria(I).Use=true;
 
+L1=str2double(replace(extractBetween(UserVar.RunType,"CFAa","CFAb"),"k","."));
+l1=str2double(replace(extractBetween(UserVar.RunType,"CFAb","CFBa"),"k","."));
+L2=str2double(replace(extractBetween(UserVar.RunType,"CFBa","CFBb"),"k","."));
+l2=str2double(replace(extractBetween(UserVar.RunType,"CFBb","-"),"k","."));
+% CtrlVar.MeshAdapt.CFrange=[10000 2000 ; 5000 1000];
+
+if CtrlVar.LevelSetMethod
+    CtrlVar.MeshAdapt.CFrange=[L1 l1 ; L2 l2];
+end
+
+if contains(UserVar.RunType,"-1dIceShelf-")
+    I=1;
+    CtrlVar.ExplicitMeshRefinementCriteria(I).Name='effective strain rates gradient';
+    CtrlVar.ExplicitMeshRefinementCriteria(I).Scale=0.001/1000;
+    CtrlVar.ExplicitMeshRefinementCriteria(I).EleMin=[];
+    CtrlVar.ExplicitMeshRefinementCriteria(I).EleMax=[];
+    CtrlVar.ExplicitMeshRefinementCriteria(I).p=1;
+    CtrlVar.ExplicitMeshRefinementCriteria(I).InfoLevel=1;
+    CtrlVar.ExplicitMeshRefinementCriteria(I).Use=true;
+end
 %% Pos. thickness constr
 
 

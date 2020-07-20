@@ -10,8 +10,8 @@ function [UserVar,s,b,S,B,alpha]=DefineGeometry(UserVar,CtrlVar,MUA,time,FieldsT
     switch UserVar.InitialGeometry
         
         case "-1dAnalyticalIceShelf-"
-
-            [s,b]=AnalyticalOneDimentionalIceShelf(CtrlVar,MUA); 
+            
+            [s,b]=AnalyticalOneDimentionalIceShelf(CtrlVar,MUA);
             B=zeros(MUA.Nnodes,1)-1e5;
             S=zeros(MUA.Nnodes,1) ;
             
@@ -33,22 +33,25 @@ function [UserVar,s,b,S,B,alpha]=DefineGeometry(UserVar,CtrlVar,MUA,time,FieldsT
             S=zeros(MUA.Nnodes,1) ;
             
         case "-MismipPlus-" % "Mismip3"  "Constant" ;
-
+            
             B=MismBed(x,y);
             S=B*0;
-            fprintf(' The geometry is initialised based on a previously obtained steady-state solutions. \n')
-            switch CtrlVar.SlidingLaw
-                
-                case "Tsai"
-                    load('MismipPlusThicknessInterpolants','FsTsai','FbTsai')
-                    s=FsTsai(x,y) ;
-                    b=FbTsai(x,y) ;
-                otherwise
-                    load('MismipPlusThicknessInterpolants','FsWeertman','FbWeertman')
-                    s=FsWeertman(x,y) ;
-                    b=FbWeertman(x,y) ;
+            if contains(FieldsToBeDefined,"s")
+                fprintf(' The geometry is initialised based on a previously obtained steady-state solutions. \n')
+                switch CtrlVar.SlidingLaw
+                    
+                    case "Tsai"
+                        load('MismipPlusThicknessInterpolants','FsTsai','FbTsai')
+                        s=FsTsai(x,y) ;
+                        b=FbTsai(x,y) ;
+                    otherwise
+                        load('MismipPlusThicknessInterpolants','FsWeertman','FbWeertman')
+                        s=FsWeertman(x,y) ;
+                        b=FbWeertman(x,y) ;
+                end
+            else
+                s=[] ; b=[];
             end
-            
     end
     
 end

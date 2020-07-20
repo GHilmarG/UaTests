@@ -63,7 +63,7 @@ end
 
 if CtrlVar.LevelSetMethod
     BCs.LSFFixedNode=nodesu ;
-    BCs.LSFFixedValue=100e3+BCs.LSFFixedNode*0;
+    BCs.LSFFixedValue=200e3+BCs.LSFFixedNode*0;
 end
 
 

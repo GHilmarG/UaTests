@@ -60,7 +60,7 @@ function UserVar=DefineOutputs(UserVar,CtrlVar,MUA,BCs,F,l,GF,InvStartValues,Inv
         
         subplot(4,1,2)
         hold off
-        QuiverColorGHG(MUA.coordinates(:,1),MUA.coordinates(:,2),ub,vb,CtrlVar);
+        QuiverColorGHG(MUA.coordinates(:,1),MUA.coordinates(:,2),F.ub,F.vb,CtrlVar);
         hold on
         [xGL,yGL,GLgeo]=PlotGroundingLines(CtrlVar,MUA,F.GF,GLgeo,xGL,yGL,'b');
         [xc,yc]=PlotCalvingFronts(CtrlVar,MUA,F,'r') ;
@@ -71,7 +71,7 @@ function UserVar=DefineOutputs(UserVar,CtrlVar,MUA,BCs,F,l,GF,InvStartValues,Inv
         if CtrlVar.LevelSetMethod
             PlotMeshScalarVariable(CtrlVar,MUA,F.c);   title(sprintf('Calving Rate Field at t=%g',time))
         else
-            PlotMeshScalarVariable(CtrlVar,MUA,dhdt);   title(sprintf('dh/dt at t=%g',time))
+            PlotMeshScalarVariable(CtrlVar,MUA,F.dhdt);   title(sprintf('dh/dt at t=%g',time))
         end
         hold on
         [xGL,yGL,GLgeo]=PlotGroundingLines(CtrlVar,MUA,F.GF,GLgeo,xGL,yGL,'b');

@@ -62,7 +62,8 @@ function [UserVar,LSF,c]=DefineCalving(UserVar,CtrlVar,MUA,F,BCs)
     end
     
     q=-2;
-    k=86322275.9814533 ;
+    % k=86322275.9814533 ;
+    k=86320694.4400036;
     
     switch UserVar.Calving
         
@@ -70,21 +71,72 @@ function [UserVar,LSF,c]=DefineCalving(UserVar,CtrlVar,MUA,F,BCs)
             % First for testing, define calving rate as a function of the analytical thickness
             % profile.
             
-            [s,b]=AnalyticalOneDimentionalIceShelf(CtrlVar,MUA);
+            [s,b,u]=AnalyticalOneDimentionalIceShelf(CtrlVar,MUA);
             h=s-b;
             
-            
             c=k*h.^q;
+            if ~isempty(LSF)
+                [xc,yc]=CalcMuaFieldsContourLine(CtrlVar,MUA,LSF,0); xc=mean(xc,'omitnan') ;
+                
+            else
+                xc=200e3;
+            end
+            TH = TopHatApprox(1/10e3,MUA.coordinates(:,1)-xc,50e3) ;
+            c=c.*TH+F.ub.*(1-TH) ;
             
         case "Function of numerical thickness"
             
-            c=k*F.h.^q;
-            % The issue is that this goes to infinity with h to zero. 
-            % 
-            c(c>2000)=2000; 
+            hAverage=F.h ;
+            nSmooth=3; 
+            E2N = Ele2Nodes(MUA.connectivity,MUA.Nnodes);
+            for Ismooth=1:nSmooth
+                hAverage=Nodes2EleMean(MUA.connectivity,hAverage);
+                hAverage=E2N*hAverage;
+            end
+            
+            
+            c=k*hAverage.^q;
+            % The issue is that this goes to infinity with h to zero.
+            %
+            c(c>2000)=2000;
+            
+            if ~isempty(LSF)
+                TH = TopHatApprox(1/10e3,LSF,50e3) ;
+                c=c.*TH+F.ub.*(1-TH) ;
+            else
+                c=c*0;
+            end
+            
+           
+            
+            
     end
     
     c=c(:) ;
     c=c.*(1-F.GF.node) ;
-
+    
+    LSFMask=CalcMeshMask(CtrlVar,MUA,LSF,0);
+    c(LSFMask.NodesOut)=F.ub(LSFMask.NodesOut) ;
+    
+    if contains(UserVar.Plots,"-plot-")
+        F.c=c ; F.LSF=LSF ; % for plotting
+        TestLevelSetPlots(CtrlVar,UserVar.RunType,MUA,F)
+        
+        
+        fig=FindOrCreateFigure("1d Profile"+UserVar.RunType);
+        
+        hold off ;
+        
+        yyaxis left ;
+        
+        plot(MUA.coordinates(:,1)/1000,F.s,'.') ;
+        hold on ; plot(MUA.coordinates(:,1)/1000,F.b,'.') ;
+        ylabel("$s(x)\,\mathrm{and}\; b(x)\;(\mathrm{m/yr})$","interpreter","latex")
+        yyaxis right ; hold off
+        plot(MUA.coordinates(:,1)/1000,F.ub,'.')
+        ylabel("$u\,\mathrm{(m/yr)}$","interpreter","latex")
+        title(sprintf('time %f ',CtrlVar.time))
+        hold off
+    end
+    
 end
