@@ -7,7 +7,7 @@ function [UserVar,CtrlVar,MeshBoundaryCoordinates]=DefineInitialInputs(UserVar,C
 % CalvingJobDW30=batch('Ua')  
 %%
 
-
+ % UserVar.RunType="Test-1dAnalyticalIceShelf-";
 
 
 if isempty(UserVar)
@@ -90,10 +90,51 @@ if contains(UserVar.RunType,"-1dAnalyticalIceShelf-")
     CtrlVar.TotalTime=500;
     UserVar.Plots="-plot-flowline-";
     if contains(UserVar.RunType,"Test-")
-        CtrlVar.TotalTime=10;
+        CtrlVar.TotalTime=100;
     end
     CtrlVar.DefineOutputsDt=1;
 end
+
+if contains(UserVar.RunType,"Test-ManuallyDeactivateElements-")
+    % This is an example of how manual deactivation of elements can be used to simulate a
+    % calving event. 
+    
+    UserVar.InitialGeometry="-MismipPlus-" ; 
+    CtrlVar.ManuallyDeactivateElements=1 ;
+    CtrlVar.doplots=1;
+    CtrlVar.LevelSetMethod=0;
+    CtrlVar.TotalNumberOfForwardRunSteps=inf;
+    CtrlVar.TotalTime=10;
+    UserVar.Plots="-plot-mapplane-" ;
+    CtrlVar.DefineOutputsDt=0;
+end
+
+
+if contains(UserVar.RunType,"Test-CalvingThroughMassBalanceFeedback-")
+    
+    % Here a fictitious basal melt distribution is applied over the ice shelf downstream
+    % of x=400km for the first two years to melt away all/most floating ice.
+    %
+    % The melt is prescribed as a function of ice thickness and to speed things up
+    % the mass-balance feedback is provided here as well. This requires setting
+    %
+    %   CtrlVar.MassBalanceGeometryFeedback=3;
+    %
+    % The mass-balance is defined in DefineMassBalance.m
+    
+    UserVar.InitialGeometry="-MismipPlus-" ;
+    CtrlVar.MassBalanceGeometryFeedback=3;
+    
+    CtrlVar.doplots=1;
+    CtrlVar.LevelSetMethod=0;
+    CtrlVar.TotalNumberOfForwardRunSteps=inf;
+    CtrlVar.TotalTime=10;
+    UserVar.Plots="-plot-mapplane-" ;
+    CtrlVar.DefineOutputsDt=0;
+    
+end
+
+
 
 if contains(UserVar.RunType,"-Calving-1dIceShelf-")
     UserVar.InitialGeometry="-1dAnalyticalIceShelf-" ;
@@ -199,10 +240,8 @@ CtrlVar.MeshSizeMin=0.01*CtrlVar.MeshSize;     % min element size
 
 CtrlVar.MaxNumberOfElements=250e3;           % max number of elements. If #elements larger then CtrlMeshSize/min/max are changed
 
-
-
 CtrlVar.AdaptMeshRunStepInterval=1;  % number of run-steps between mesh adaptation
-
+CtrlVar.AdaptMeshUntilChangeInNumberOfElementsLessThan=5;
 CtrlVar.MeshRefinementMethod='explicit:local:newest vertex bisection';    % can have any of these values:
                                                    % 'explicit:global' 
                                                    % 'explicit:local'
@@ -210,12 +249,8 @@ CtrlVar.MeshRefinementMethod='explicit:local:newest vertex bisection';    % can 
                                                    % 'explicit:local:newest vertex bisection';
 %  
 CtrlVar.SaveAdaptMeshFileName=[] ; % no file written if left empty "AdaptMesh"+CtrlVar.Experiment+".mat";
-
-
-
 CtrlVar.AdaptMeshAndThenStop=0;    % if true, then mesh will be adapted but no further calculations performed
                                    % usefull, for example, when trying out different remeshing options (then use CtrlVar.doRemeshPlots=1 to get plots)
-
 
 
 CtrlVar.MeshAdapt.GLrange=[20000 5000 ; 5000 2000];
@@ -231,7 +266,7 @@ if CtrlVar.LevelSetMethod
     CtrlVar.MeshAdapt.CFrange=[L1 l1 ; L2 l2];
 end
 
-if contains(UserVar.RunType,"-1dIceShelf-")
+if contains(UserVar.RunType,"-1dIceShelf-") || contains(UserVar.RunType,"-1dAnalyticalIceShelf-")
     I=1;
     CtrlVar.ExplicitMeshRefinementCriteria(I).Name='effective strain rates gradient';
     CtrlVar.ExplicitMeshRefinementCriteria(I).Scale=0.001/1000;
@@ -249,7 +284,7 @@ CtrlVar.ResetThicknessToMinThickness=0;  % if true, thickness values less than T
 CtrlVar.ThicknessConstraints=1  ;        % if true, min thickness is enforced using active set method
 CtrlVar.ThicknessConstraintsItMax=5  ; 
 
-%%
+%% MeshBoundaryCoordinates
 
 if contains(UserVar.RunType,"-1dIceShelf-")
     xd=640e3; xu=0e3 ; yr=-10e3 ; yl=10e3 ;
@@ -258,23 +293,8 @@ else
 end
 MeshBoundaryCoordinates=[xu yr ; xu yl ; xd yl ; xd yr];
 
-%% Things that I´m testing and that are specifically realted to ideas around implementing calving
-
-if contains(UserVar.RunType,"-ManuallyDeactivateElements-")
-    CtrlVar.ManuallyDeactivateElements=1 ;
-else
-    CtrlVar.ManuallyDeactivateElements=0 ;
-    
-end
-
-if contains(UserVar.RunType,"-ManuallyModifyThickness-")
-    CtrlVar.GeometricalVarsDefinedEachTransienRunStepByDefineGeometry="sb";
-else
-    CtrlVar.GeometricalVarsDefinedEachTransienRunStepByDefineGeometry="";
-end
 
 
-CtrlVar.AdaptMeshUntilChangeInNumberOfElementsLessThan=5;
 
 %% Experiment and file name
 

@@ -51,12 +51,14 @@ function UserVar=DefineOutputs(UserVar,CtrlVar,MUA,BCs,F,l,GF,InvStartValues,Inv
         
         subplot(4,1,1)
         hold off
-        PlotMeshScalarVariable(CtrlVar,MUA,F.h); title(sprintf('h at t=%g',time))
+        [~,cbar]=PlotMeshScalarVariable(CtrlVar,MUA,F.h); 
+        title(sprintf('h at t=%g',time))
         hold on
         [xGL,yGL,GLgeo]=PlotGroundingLines(CtrlVar,MUA,F.GF,GLgeo,xGL,yGL,'b');
         %Plot_sbB(CtrlVar,MUA,s,b,B) ; title(sprintf('time=%g',time))
-        
+        title(cbar,'(m)')
         [xc,yc]=PlotCalvingFronts(CtrlVar,MUA,F,'r') ;
+        xlabel('x (km)') ; ylabel('y (km)')
         
         subplot(4,1,2)
         hold off
@@ -64,6 +66,7 @@ function UserVar=DefineOutputs(UserVar,CtrlVar,MUA,BCs,F,l,GF,InvStartValues,Inv
         hold on
         [xGL,yGL,GLgeo]=PlotGroundingLines(CtrlVar,MUA,F.GF,GLgeo,xGL,yGL,'b');
         [xc,yc]=PlotCalvingFronts(CtrlVar,MUA,F,'r') ;
+        xlabel('x (km)') ; ylabel('y (km)')
         hold off
         
         subplot(4,1,3)
@@ -71,26 +74,32 @@ function UserVar=DefineOutputs(UserVar,CtrlVar,MUA,BCs,F,l,GF,InvStartValues,Inv
         if CtrlVar.LevelSetMethod
             PlotMeshScalarVariable(CtrlVar,MUA,F.c);   title(sprintf('Calving Rate Field at t=%g',time))
         else
-            PlotMeshScalarVariable(CtrlVar,MUA,F.dhdt);   title(sprintf('dh/dt at t=%g',time))
+          
+            [~,cbar]=PlotMeshScalarVariable(CtrlVar,MUA,F.dhdt);  
+            hold on ; PlotMuaMesh(CtrlVar,MUA,[],'w');
+            title(sprintf('dh/dt at t=%g',time))
+            title(cbar,'(m/yr)')
         end
         hold on
         [xGL,yGL,GLgeo]=PlotGroundingLines(CtrlVar,MUA,F.GF,GLgeo,xGL,yGL,'b');
         [xc,yc]=PlotCalvingFronts(CtrlVar,MUA,F,'r') ;
-        
+        xlabel('x (km)') ; ylabel('y (km)')
         subplot(4,1,4)
         hold off
         
         if CtrlVar.LevelSetMethod
-            PlotMeshScalarVariable(CtrlVar,MUA,F.LSF);   title(sprintf('Level Set Field at t=%g',time))
+            [~,cbar]=PlotMeshScalarVariable(CtrlVar,MUA,F.LSF);   title(sprintf('Level Set Field at t=%g',time))
             ModifyColormap ;
         else
-            PlotMeshScalarVariable(CtrlVar,MUA,F.ab);   title(sprintf('ab at t=%g',time))
+            [~,cbar]=PlotMeshScalarVariable(CtrlVar,MUA,F.ab);   title(sprintf('ab at t=%g',time))
+            title(cbar,'(m/yr)')
         end
         hold on
         
         [xGL,yGL,GLgeo]=PlotGroundingLines(CtrlVar,MUA,F.GF,GLgeo,xGL,yGL,'b');
         [xc,yc]=PlotCalvingFronts(CtrlVar,MUA,F,'r') ;
         colormap(othercolor('BuOr_12',2048)); ModifyColormap();
+        xlabel('x (km)') ; ylabel('y (km)')
         hold off
         
     end

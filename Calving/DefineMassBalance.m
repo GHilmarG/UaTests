@@ -89,6 +89,34 @@ switch UserVar.MassBalanceCase
         
 end
 
+if contains(UserVar.RunType,"-CalvingThroughMassBalanceFeedback-")
+    
+    % Here a fictitious basal melt distribution is applied over the ice shelf downstream
+    % of x=400km for the first two years to melt away all/most floating ice. 
+    %
+    % The melt is prescribed as a function of ice thickness and to speed things up
+    % the mass-balance feedback is provided here as well. This requires setting 
+    %
+    %   CtrlVar.MassBalanceGeometryFeedback=3;
+    %
+    % in DefineInitialInputs.m
+    %
+    
+    dabdh=zeros(MUA.Nnodes,1) ;
+    dasdh=zeros(MUA.Nnodes,1) ;
+    
+    if (CtrlVar.time+CtrlVar.dt)  < 2
+        
+        NodesSelected=MUA.coordinates(:,1)>400e3 & GF.node<0.5 ;
+        
+        % ab = -(h-hmin)  , dab=-1 ;
+        ab(NodesSelected)=-(h(NodesSelected)-CtrlVar.ThickMin) ;
+        dabdh(NodesSelected)=-1;
+        
+        
+    end
+    
+end
 
 
 

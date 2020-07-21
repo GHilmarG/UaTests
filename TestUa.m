@@ -9,20 +9,21 @@ function tests = TestUa
     
     
     f={@setupOnce,@testCrack,@teardownOnce};
-    %f={@setupOnce,@testCalvingManuallyDeactivateElements,@teardownOnce};
+    f={@setupOnce,@testCalvingManuallyDeactivateElements,@teardownOnce};
+    f={@setupOnce,@testCalvingThroughMassBalanceFeedback,@teardownOnce};
     
     %f={@setupOnce,@testGaussPeak,@teardownOnce};
     %f={@setupOnce,@testMassBalanceFeedback,@teardownOnce};
-    % f={@testPIGmeshing};
+    
+    %f={@testPIGmeshing};
     
     
     % f=localfunctions ;  % all tests
     
     % f={@test1dIceShelf} ;                   % results = runtests('TestUa.m') ; table(results)
     % f={@test1dIceStream} ;                  % results = runtests('TestUa.m') ; table(results)
-    % f={@testCalvingModifyThickness} ;        % results = runtests('TestUa.m') ; table(results)
     % f={@testFreeSlipBCs,@testGaussPeak,@testMassBalanceFeedback} ;        % results = runtests('TestUa.m') ; table(results)
-     f={@testCalvingAnalyticalIceShelf};
+    % f={@testCalvingAnalyticalIceShelf};
     % f={@testPIGtransient};
     
     tests = functiontests(f);
@@ -45,9 +46,8 @@ function testPIGmeshing(testCase)
     UserVar=Ua(UserVar) ;
     cd ..
     actSolution= UserVar.Test.Norm.actValue ;
-    % 42368.9157216889   laptop 17 Nov
-    expSolution = 56024.4217889207;
-    verifyEqual(testCase,actSolution,expSolution,'AbsTol',1e-2)
+    expSolution = 56024.4217889207;  % ; 56024.6341690262
+    verifyEqual(testCase,actSolution,expSolution,'RelTol',1e-3)
     
 end
 
@@ -122,22 +122,23 @@ function testCalvingAnalyticalIceShelf(testCase)
     UserVar=Ua(UserVar) ;
     cd ..
     actSolution= UserVar.Test.Norm.actValue ;
-    expSolution = 283505.367599898 ;  % 258690.495608992 ; 
+    expSolution = 58890.590773997 ;  
     verifyEqual(testCase,actSolution,expSolution,'RelTol',1e-3)
     
 end
 
 
 
-function testCalvingModifyThickness(testCase)
+function testCalvingThroughMassBalanceFeedback(testCase)
     
     cd Calving ;
-    UserVar.RunType="-ManuallyModifyThickness-";
+
+    UserVar.RunType="Test-CalvingThroughMassBalanceFeedback-";
     UserVar=Ua(UserVar) ;
     cd ..
     actSolution= UserVar.Test.Norm.actValue ;
-    expSolution = 33552.4222224353 ;
-    verifyEqual(testCase,actSolution,expSolution,'AbsTol',1e-6)
+    expSolution = 10378.4835439273;
+    verifyEqual(testCase,actSolution,expSolution,'RelTol',1e-6)
     
 end
 
@@ -145,12 +146,12 @@ end
 function testCalvingManuallyDeactivateElements(testCase)
     
     cd Calving ;
-    UserVar.RunType="-ManuallyDeactivateElements-";
+    UserVar.RunType="Test-ManuallyDeactivateElements-";
     UserVar=Ua(UserVar) ;
     cd ..
     actSolution= UserVar.Test.Norm.actValue ;
-    expSolution = 40277.0242978501 ;
-    verifyEqual(testCase,actSolution,expSolution,'AbsTol',1e-6)
+    expSolution = 9904.84631032403 ; 
+    verifyEqual(testCase,actSolution,expSolution,'RelTol',1e-6)
     
 end
 
