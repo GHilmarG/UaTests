@@ -55,12 +55,16 @@ BCs.ubFixedValue=BCs.ubFixedNode*0;
 BCs.vbFixedNode=[nodesu;nodesl;nodesr] ;
 BCs.vbFixedValue=BCs.vbFixedNode*0;
 
-if contains(UserVar.RunType,"-1dAnalyticalIceShelf-")
+if contains(UserVar.RunType,"-1dAnalyticalIceShelf-") || contains(UserVar.RunType,"-1dIceShelf-")
     BCs.ubFixedValue=BCs.ubFixedNode*0+300;
     BCs.hFixedNode=nodesu ;
     BCs.hFixedValue=BCs.hFixedNode*0+1000;
 end
 
+if CtrlVar.LevelSetMethod
+    BCs.LSFFixedNode=nodesu ;
+    BCs.LSFFixedValue=200e3+BCs.LSFFixedNode*0;
+end
 
 
 end

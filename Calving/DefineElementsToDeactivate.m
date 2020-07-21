@@ -45,8 +45,6 @@ if contains(UserVar.RunType,"-ManuallyDeactivateElements-")
         CutOff=400e3;  % t < 0.1
     elseif (CtrlVar.time+CtrlVar.dt) < 0.2
         CutOff=500e3;  % 0.1 <= t <0.2
-    else
-        CutOff=300e3;  % t >= 0.2
     end
     
 end
