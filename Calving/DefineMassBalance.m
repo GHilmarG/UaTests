@@ -1,53 +1,32 @@
-function [UserVar,as,ab]=DefineMassBalance(UserVar,CtrlVar,MUA,time,s,b,h,S,B,rho,rhow,GF)
+function [UserVar,as,ab,dasdh,dabdh]=DefineMassBalance(UserVar,CtrlVar,MUA,time,s,b,h,S,B,rho,rhow,GF)
 
 
 
 as=zeros(MUA.Nnodes,1)+0.3;
 
-
-% MISMIP+consists of three experiments with different melt rates. Each
-% experiment is initialized with mi=0 (no melting), and should begin with a
-% stable grounding line crossing the center of the channel on the retrograde
-% slope around x =450±10km. Stable in this case means that the ice sheet
-% thickness and the grounding-line position is permitted to ?uctuate, but any
-% ?uctuations should average to zero over time, and should be of low amplitude
-% compared to the response to perturbations. Preliminary experiments indicate
-% that,startingfromauniformthicknessof100m,astablestate
-% isfoundafteraround20000a.Oneexperiment(Ice0)issimply a control, where the melt
-% rate is maintained at mi=0 for 100 years, while the other two (Ice1 and Ice2)
-% are intended to study the response to substantial ice shelf ablation.
-% Experiment Ice1 is divided into several parts, all beginning with Ice1r, where
-% the melt rate given in Eq. (17) is applied from t =0 to t =100a, and is
-% expected to produce thinningoftheiceshelf,alossofbuttressing,andgroundingline
-% retreat. Ice1ra starts from the state computed at the end of the Ice1r
-% simulation and runs at least until t =200a, and optionally until t =1000a,
-% with no melting, so that the ice shelf thickens, buttressing is restored and
-% the grounding line advances. Preliminary simulations have shown that the
-% grounding-line position does not reach its initial steady state within even
-% 1000 years. Finally, Ice1rr is optional and continues Ice1r, with the melt
-% rate of Eq. (17), until t =1000a. Figure 2 shows example basal-traction and
-% melt-rate ?elds calculated at several points during the Ice1r and Ice1ra
-% experiments. ExperimentIce2isstructuredinthesamewayasIce1,but a different melt
-% rate is applied. The Ice1 melt rate adjusts
-% topursuethegroundinglineasitretreats,preventingtheformationofasubstantiveiceshelf.Incontrast,Ice2rprescribes
-% asubice-shelfmelt-rateof100ma?1,wherex > 480kmand no melt elsewhere from t =0
-% to t =100a, resulting in substantial loss of ice concentrated away from the
-% grounding line, as in a sequence of extensive calving events3. Preliminary
-% calculations show that the grounding line retreats for
+dasdh=[]; dabdh=[];
 
 
+if contains(UserVar.RunType,"-1dAnalyticalIceShelf-") || contains(UserVar.RunType,"-1dIceShelf-") 
+    as=0.3+zeros(MUA.Nnodes,1) ; 
+    ab=0+zeros(MUA.Nnodes,1) ; 
+    dasdh=zeros(MUA.Nnodes,1) ;
+    dabdh=zeros(MUA.Nnodes,1) ;
+    
+%     if contains(UserVar.RunType,"-MeltFeedback-") 
+%         
+%         x=MUA.coordinates(:,1) ; 
+%         I=x>200e3 ; 
+%         hmin=1; 
+%         ab(I) = (hmin-h(I)) ; 
+%         as(I)= 0 ; 
+%         dabdh(I) = -1; 
+%         
+%     end
+    
+    return
+end
 
-%rhofw=1000;
-%L=3.34e5;
-%rho=917;
-%cw=3974 ;
-%Gt=5e-2;
-%Gs=1.e3-3;
-
-
-%uH=u0*tanh(Hc/Hc0);
-%Tzd=T0*(b-B)/zref;
-%ab=rho*cw*Gt*uH.*Tzd/rhofw/L;
 
 switch UserVar.MassBalanceCase
     
@@ -110,6 +89,34 @@ switch UserVar.MassBalanceCase
         
 end
 
+if contains(UserVar.RunType,"-CalvingThroughMassBalanceFeedback-")
+    
+    % Here a fictitious basal melt distribution is applied over the ice shelf downstream
+    % of x=400km for the first two years to melt away all/most floating ice. 
+    %
+    % The melt is prescribed as a function of ice thickness and to speed things up
+    % the mass-balance feedback is provided here as well. This requires setting 
+    %
+    %   CtrlVar.MassBalanceGeometryFeedback=3;
+    %
+    % in DefineInitialInputs.m
+    %
+    
+    dabdh=zeros(MUA.Nnodes,1) ;
+    dasdh=zeros(MUA.Nnodes,1) ;
+    
+    if (CtrlVar.time+CtrlVar.dt)  < 2
+        
+        NodesSelected=MUA.coordinates(:,1)>400e3 & GF.node<0.5 ;
+        
+        % ab = -(h-hmin)  , dab=-1 ;
+        ab(NodesSelected)=-(h(NodesSelected)-CtrlVar.ThickMin) ;
+        dabdh(NodesSelected)=-1;
+        
+        
+    end
+    
+end
 
 
 
