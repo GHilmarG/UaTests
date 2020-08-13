@@ -1,5 +1,5 @@
 
-function [UserVar,CtrlVar,MeshBoundaryCoordinates]=Ua2D_InitialUserInput(UserVar,CtrlVar)
+function [UserVar,CtrlVar,MeshBoundaryCoordinates]=DefineInitialInputs(UserVar,CtrlVar)
 
 
 %% Select the type of run by uncommenting one of the following options:
@@ -9,9 +9,9 @@ if isempty(UserVar) || ~isfield(UserVar,'RunType')
     UserVar.RunType='Inverse-MatOpt';
     % UserVar.RunType='Inverse-ConjGrad';
     % UserVar.RunType='Inverse-SteepestDesent';
-    UserVar.RunType='Inverse-ConjGrad-FixPoint';
+    % UserVar.RunType='Inverse-ConjGrad-FixPoint';
     % UserVar.RunType='Inverse-MatOpt-FixPoint';
-    UserVar.RunType='Forward-Diagnostic';
+    % UserVar.RunType='Forward-Diagnostic';
     % UserVar.RunType='Forward-Transient';
     % UserVar.RunType='TestingMeshOptions';
 end
@@ -66,6 +66,10 @@ switch UserVar.RunType
         CtrlVar.Inverse.Iterations=1;
         CtrlVar.Inverse.InvertFor='logA-logC' ; % '-logAGlen-logC-' ; % {'-C-','-logC-','-AGlen-','-logAGlen-'}
         CtrlVar.Inverse.Regularize.Field=CtrlVar.Inverse.InvertFor;
+        
+        CtrlVar.Inverse.Measurements='-uv-' ;  % {'-uv-,'-uv-dhdt-','-dhdt-'}
+        CtrlVar.SlidingLaw="rCW-N0" ; % "W" ;
+        
         
         if contains(UserVar.RunType,'FixPoint')
             
