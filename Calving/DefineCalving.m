@@ -120,8 +120,11 @@ function [UserVar,LSF,c]=DefineCalving(UserVar,CtrlVar,MUA,F,BCs)
     
     if contains(UserVar.Plots,"-plot-")
         F.c=c ; F.LSF=LSF ; % for plotting
-        TestLevelSetPlots(CtrlVar,UserVar.RunType,MUA,F)
+
         
+        %% appears lost
+        %  TestLevelSetPlots(CtrlVar,UserVar.RunType,MUA,F)
+        %%
         
         fig=FindOrCreateFigure("1d Profile"+UserVar.RunType);
         

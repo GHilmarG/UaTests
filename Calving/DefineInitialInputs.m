@@ -37,7 +37,7 @@ CtrlVar.AdaptMeshMaxIterations=1;  % Number of adapt mesh iterations within each
 if contains(UserVar.RunType,"-LevelSetWithMeltFeedback-1dIceShelf-")
     UserVar.InitialGeometry="-1dAnalyticalIceShelf-" ;
     
-    CtrlVar.LevelSetMethod=1;
+    CtrlVar.LevelSetMethod=1; CtrlVar.DevelopmentVersion=1;
     CtrlVar.SUPG.beta0=1;
     
     CtrlVar.LevelSetReinitializeTimeInterval=str2double(replace(extractBetween(UserVar.RunType,"-RT","-"),"k","."));
@@ -82,7 +82,7 @@ end
 
 
 if contains(UserVar.RunType,"-1dAnalyticalIceShelf-")
-    
+    % using this as one of the tests in TestUa
     UserVar.InitialGeometry="-Constant-" ; 
     CtrlVar.doplots=0;
     CtrlVar.LevelSetMethod=0;
@@ -138,7 +138,7 @@ end
 
 if contains(UserVar.RunType,"-Calving-1dIceShelf-")
     UserVar.InitialGeometry="-1dAnalyticalIceShelf-" ;
-    CtrlVar.LevelSetMethod=1;
+    CtrlVar.LevelSetMethod=1; CtrlVar.DevelopmentVersion=1 ; 
     CtrlVar.DefineOutputsDt=1;  % because I'm testing
     CtrlVar.dt=1e-3;
     CtrlVar.AdaptMesh=1;

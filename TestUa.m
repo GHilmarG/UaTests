@@ -23,7 +23,7 @@ function tests = TestUa
     % f={@test1dIceShelf} ;                   % results = runtests('TestUa.m') ; table(results)
     % f={@test1dIceStream} ;                  % results = runtests('TestUa.m') ; table(results)
     % f={@testFreeSlipBCs,@testGaussPeak,@testMassBalanceFeedback} ;        % results = runtests('TestUa.m') ; table(results)
-    % f={@testCalvingAnalyticalIceShelf};
+     f={@testCalvingAnalyticalIceShelf};  % OK
     % f={@testPIGtransient};
     
     
