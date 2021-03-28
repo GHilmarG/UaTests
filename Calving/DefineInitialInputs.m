@@ -4,11 +4,23 @@ function [UserVar,CtrlVar,MeshBoundaryCoordinates]=DefineInitialInputs(UserVar,C
 
 %%
 %
+%   23/03/3021: New test with a constant prescribed constant calving rate
+%
+%
+%
+%
+%
+%%
+
+
+%%
+%
 % CalvingJobDW30=batch('Ua')  
 %%
 
  % UserVar.RunType="Test-1dAnalyticalIceShelf-";
 
+ CtrlVar.LevelSetInfoLevel=100;
 
 if isempty(UserVar)
     UserVar.RunType="-ManuallyDeactivateElements-ManuallyModifyThickness-";
@@ -16,7 +28,17 @@ if isempty(UserVar)
     UserVar.RunType="-1dAnalyticalIceShelf-"; CtrlVar.doplots=0;
     
     UserVar.RunType="-MeltFeedback-1dIceShelf-"; CtrlVar.doplots=0;
-    UserVar.RunType="CFAa10000CFAb2000CFBa5000CFBb500-RTinf-FAB0k01-CFp2q4-CubicMF-CAisNum-LevelSetWithMeltFeedback-1dIceShelf-"; CtrlVar.doplots=0;
+    UserVar.RunType="CFAa10000CFAb2000CFBa5000CFBb500-RTinf-FAB0k01-CFp2q4-CubicMF-CAisNumTau-LevelSetWithMeltFeedback-1dIceShelf-";
+    UserVar.RunType="CFAa10000CFAb10000CFBa5000CFBb5000-RTinf-FAB0k01-CFp2q4-CubicMF-CAisConstant-LevelSetWithMeltFeedback-1dIceShelf-"; 
+    UserVar.RunType="CFAa10000CFAb10000CFBa5000CFBb5000-RTinf-FAB0k001-CFp2q4-CubicMF-CAisConstant-LevelSetWithMeltFeedback-1dIceShelf-"; 
+    UserVar.RunType="CFAa10000CFAb10000CFBa5000CFBb5000-RTinf-FAB0k0001-CFp2q4-CubicMF-CAisConstant-LevelSetWithMeltFeedback-1dIceShelf-"; 
+    UserVar.RunType="CFAa10000CFAb2000CFBa5000CFBb500-RTinf-FAB0k0001-CFp2q4-CubicMF-CAisConstant-LevelSetWithMeltFeedback-1dIceShelf-"; 
+    
+    UserVar.RunType="CFAa10000CFAb10000CFBa5000CFBb5000-RTinf-FAB1k-CFp2q4-CubicMF-CAisConstant-LevelSetWithMeltFeedback-1dIceShelf-"; 
+    
+    UserVar.RunType="CFAa10000CFAb10000CFBa5000CFBb5000-RTinf-FAB1k-CFp2q4-CubicMF-CAisConstant-DiffusionOnly-LevelSetWithMeltFeedback-1dIceShelf-"; 
+    
+    CtrlVar.doplots=0;
     %UserVar.RunType="-TravellingFront-1dAnalyticalIceShelf-"; CtrlVar.doplots=0;
 
     CtrlVar.AdaptiveTimeStepping=1 ; 
@@ -25,14 +47,29 @@ if isempty(UserVar)
 end
 
 
-CtrlVar.AdaptMesh=1;
+UserVar.Plots="-plot-save-Calving1dIceShelf-plotcalving-";
+% UserVar.Plots="-save-";
+
+
 CtrlVar.dt=0.01;
 CtrlVar.TriNodes=3;
 UserVar.InitialGeometry="-MismipPlus-" ;  % default)
-UserVar.Plots="-plot-mapplane-" ;
+
+CtrlVar.Restart=0;
+
+if CtrlVar.Restart
+    CtrlVar.AdaptMesh=0;  % trying to speed things up by having not adapt in a restart
+else
+    CtrlVar.AdaptMesh=1;
+end
+
+
 CtrlVar.TotalTime=5000;
 CtrlVar.TotalNumberOfForwardRunSteps=inf;
 CtrlVar.AdaptMeshMaxIterations=1;  % Number of adapt mesh iterations within each run-step.
+CtrlVar.doplots=1; 
+
+
 
 if contains(UserVar.RunType,"-LevelSetWithMeltFeedback-1dIceShelf-")
     UserVar.InitialGeometry="-1dAnalyticalIceShelf-" ;
@@ -58,127 +95,36 @@ if contains(UserVar.RunType,"-LevelSetWithMeltFeedback-1dIceShelf-")
     
     CtrlVar.DefineOutputsDt=1;  % because I'm testing
     CtrlVar.dt=1e-3;
-    CtrlVar.AdaptMesh=1;
-    CtrlVar.doplots=0; CtrlVar.LevelSetInfoLevel=1;
+    
+    
     CtrlVar.uvh.SUPG.tau="taus" ;
     CtrlVar.ATSdtMin=1e-2;
     CtrlVar.TotalTime=5000;
     CtrlVar.TotalNumberOfForwardRunSteps=inf;
-    UserVar.Plots="-plot-" ; "-plot-Calving1dIceShelf-";  % "-save-" 
+
     % UserVar.Plots="-save-";
     CtrlVar.AdaptMeshMaxIterations=20;  % Number of adapt mesh iterations within each run-step.
     CtrlVar.AdaptMeshUntilChangeInNumberOfElementsLessThan=20;
-    CtrlVar.TriNodes=3;
     
-    CtrlVar.Restart=0;
+    
+    
     
     CAis=extractBetween(UserVar.RunType,"-CAis","-") ;
     if CAis=="Ana"
         UserVar.Calving="Function of analytical thickness" ; % "Function of analytical thickness" ;
     elseif CAis=="Num"
         UserVar.Calving="Function of numerical thickness";
+    elseif CAis=="NumTau"
+        UserVar.Calving="Function of numerical tauxx";
+    elseif CAis=="Constant"
+        UserVar.Calving="Constant calving rate";
+    elseif CAis=="Zero"
+        UserVar.Calving="Zero calving rate";
     end
 end
 
 
-if contains(UserVar.RunType,"-1dAnalyticalIceShelf-")
-    % using this as one of the tests in TestUa
-    UserVar.InitialGeometry="-Constant-" ; 
-    CtrlVar.doplots=0;
-    CtrlVar.LevelSetMethod=0;
-    CtrlVar.TotalNumberOfForwardRunSteps=inf;
-    CtrlVar.TotalTime=500;
-    UserVar.Plots="-plot-flowline-";
-    if contains(UserVar.RunType,"Test-")
-        CtrlVar.TotalTime=100;
-    end
-    CtrlVar.DefineOutputsDt=1;
-end
 
-if contains(UserVar.RunType,"Test-ManuallyDeactivateElements-")
-    % This is an example of how manual deactivation of elements can be used to simulate a
-    % calving event. 
-    
-    UserVar.InitialGeometry="-MismipPlus-" ; 
-    CtrlVar.ManuallyDeactivateElements=1 ;
-    CtrlVar.doplots=1;
-    CtrlVar.LevelSetMethod=0;
-    CtrlVar.TotalNumberOfForwardRunSteps=inf;
-    CtrlVar.TotalTime=10;
-    UserVar.Plots="-plot-mapplane-" ;
-    CtrlVar.DefineOutputsDt=0;
-end
-
-
-if contains(UserVar.RunType,"Test-CalvingThroughMassBalanceFeedback-")
-    
-    % Here a fictitious basal melt distribution is applied over the ice shelf downstream
-    % of x=400km for the first two years to melt away all/most floating ice.
-    %
-    % The melt is prescribed as a function of ice thickness and to speed things up
-    % the mass-balance feedback is provided here as well. This requires setting
-    %
-    %   CtrlVar.MassBalanceGeometryFeedback=3;
-    %
-    % The mass-balance is defined in DefineMassBalance.m
-    
-    UserVar.InitialGeometry="-MismipPlus-" ;
-    CtrlVar.MassBalanceGeometryFeedback=3;
-    
-    CtrlVar.doplots=1;
-    CtrlVar.LevelSetMethod=0;
-    CtrlVar.TotalNumberOfForwardRunSteps=inf;
-    CtrlVar.TotalTime=10;
-    UserVar.Plots="-plot-mapplane-" ;
-    CtrlVar.DefineOutputsDt=0;
-    
-end
-
-
-
-if contains(UserVar.RunType,"-Calving-1dIceShelf-")
-    UserVar.InitialGeometry="-1dAnalyticalIceShelf-" ;
-    CtrlVar.LevelSetMethod=1; CtrlVar.DevelopmentVersion=1 ; 
-    CtrlVar.DefineOutputsDt=1;  % because I'm testing
-    CtrlVar.dt=1e-3;
-    CtrlVar.AdaptMesh=1;
-    CtrlVar.doplots=0; CtrlVar.LevelSetInfoLevel=1;
-    CtrlVar.uvh.SUPG.tau="taus" ;
-    CtrlVar.ATSdtMin=1e-2;
-    CtrlVar.TotalTime=4000;
-    CtrlVar.TotalNumberOfForwardRunSteps=inf;
-    UserVar.Plots="-Calving1dIceShelf-";
-    UserVar.Plots="-save-";
-    CtrlVar.AdaptMeshMaxIterations=20;  % Number of adapt mesh iterations within each run-step.
-    CtrlVar.AdaptMeshUntilChangeInNumberOfElementsLessThan=20;
-    CtrlVar.TriNodes=6;
-    
-    CtrlVar.Restart=0;
-    CtrlVar.LevelSetFAB=true ;
-    CtrlVar.LevelSetReinitializeTimeInterval=inf;
-    
-    if contains(UserVar.RunType,"-Calving-1dIceShelf-CalvingNumerical-")
-        UserVar.Calving="Function of numerical thickness" ; % "Function of analytical thickness" ;
-    elseif contains(UserVar.RunType,"-Calving-1dIceShelf-CalvingAnalytical-")
-        UserVar.Calving="Function of analytical thickness" ; % "Function of analytical thickness" ;
-    else
-        error('asfd')
-    end
-end
-
-if contains(UserVar.RunType,"-TravellingFront-")
-    % Here I set a 'calving front' within the domain to see how it evolves with time.
-    UserVar.InitialGeometry="-Constant-" ;
-    CtrlVar.LevelSetMethod=0;
-    CtrlVar.dt=1e-3;
-    CtrlVar.AdaptMesh=1;
-    CtrlVar.doplots=1;
-    CtrlVar.DefineOutputsDt=0.1;     UserVar.Plots="-plot-flowline-";
-    CtrlVar.TotalTime=201;
-    CtrlVar.uvh.SUPG.tau="tau2" ; % {'tau1','tau2','taus','taut'}  % taus works fine!  tau2 is the default
-    CtrlVar.ResetTimeStep=1; CtrlVar.ATSdtMin=1e-3;
-    CtrlVar.Restart=1;
-end
 
 
 
@@ -266,6 +212,8 @@ if CtrlVar.LevelSetMethod
     CtrlVar.MeshAdapt.CFrange=[L1 l1 ; L2 l2];
 end
 
+
+
 if contains(UserVar.RunType,"-1dIceShelf-") || contains(UserVar.RunType,"-1dAnalyticalIceShelf-")
     I=1;
     CtrlVar.ExplicitMeshRefinementCriteria(I).Name='effective strain rates gradient';
@@ -303,7 +251,7 @@ CtrlVar.Experiment=replace(CtrlVar.Experiment,"--","-");
 CtrlVar.NameOfRestartFiletoWrite="Restart"+CtrlVar.Experiment+".mat";
 CtrlVar.NameOfRestartFiletoRead=CtrlVar.NameOfRestartFiletoWrite;
 
-
+CtrlVar.NameOfRestartFiletoRead="RestartExCFAa10000CFAb2000CFBa5000CFBb500-RTinf-FAB0k01-CFp2q4-CubicMF-CAisNumTau-LevelSetWithMeltFeedback-1dIceShelf-MBice0-SUPGtaus-Adapt1" ; 
 
 end
 

@@ -62,9 +62,10 @@ if contains(UserVar.RunType,"-1dAnalyticalIceShelf-") || contains(UserVar.RunTyp
 end
 
 if CtrlVar.LevelSetMethod
-    BCs.LSFFixedNode=nodesu ;
-    BCs.LSFFixedValue=200e3+BCs.LSFFixedNode*0;
-end
+     xc=200e3 ; 
+     BCs.LSFFixedNode=[nodesu;nodesd] ;
+     BCs.LSFFixedValue=xc-x(BCs.LSFFixedNode);
+ end
 
 
 end
