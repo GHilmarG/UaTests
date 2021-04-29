@@ -2,10 +2,14 @@
 function [UserVar,CtrlVar,MeshBoundaryCoordinates]=DefineInitialInputs(UserVar,CtrlVar)
 
   
-    CtrlVar.Experiment='UIP';
-    CtrlVar.FlowApproximation="SSHEET" ; % "SSTREAM" ; % 'Hybrid' ;  % 'SSTREAM'|'SSHEET'|'Hybrid'
+    CtrlVar.Experiment='TestingAgainstTransferFunctions';
+    CtrlVar.FlowApproximation="SSTREAM" ; % "SSTREAM" ; % 'Hybrid' ;  % 'SSTREAM'|'SSHEET'|'Hybrid'
     CtrlVar.TimeDependentRun=0;
+    CtrlVar.alpha=0.05;   % slope of the coordinate system
+
     xd=100e3; xu=0 ; yl=20e3 ; yr=-20e3;
+
+
     MeshBoundaryCoordinates=flipud([xu yr ; xd yr ; xd yl ; xu yl]);
     CtrlVar.GmshGeoFileAdditionalInputLines{1}='Periodic Line {1,2} = {3,4};';  % these lines are added to the gmsh .geo input file each time such a file is created
     CtrlVar.OnlyMeshDomainAndThenStop=0;

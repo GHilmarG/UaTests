@@ -8,7 +8,7 @@ time=CtrlVar.time;
 
 plots='-ubvb-e-save-';
 plots='-sbB-udvd-ubvb-ub-';
-plots='-udvd-stresses-';
+plots='-ubvb-stresses-';
 
 
 x=MUA.coordinates(:,1);  y=MUA.coordinates(:,2);
@@ -94,7 +94,7 @@ if contains(plots,'-udvd-')
     dsdx=tan(0.1);
     hmean=mean(s-b);
     taud=mean(rho*g*dsdx*hmean);
-    udAnalytical=2*mean(AGlen)*taud.^mean(n)*hmean./mean(n+1)
+    udAnalytical=2*mean(AGlen)*taud.^mean(n)*hmean./mean(n+1); 
     
 end
 
