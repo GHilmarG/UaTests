@@ -9,11 +9,16 @@ hmean=1000;
 
 
 B=zeros(MUA.Nnodes,1);
-b=B;
 S=B*0-1e10;
 
-s=b+hmean;
+dB=UserVar.ampl_b*hmean*exp(-F.x.^2./UserVar.sigma_bx^2-F.y.^2./UserVar.sigma_by^2); 
+dB=dB-mean(dB(:)) ;
 
+
+
+B=B+dB ; 
+b=B; 
+s=hmean ;
 
 end
 

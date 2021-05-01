@@ -71,12 +71,14 @@ nodesr=MUA.Boundary.Nodes(abs(MUA.coordinates(MUA.Boundary.Nodes,2)-yr)<L);
 
 % set the boundary condtions for basal velocities
 BCs.ubTiedNodeA=[nodesu;nodesl]; BCs.ubTiedNodeB=[nodesd;nodesr];
-BCs.vbTiedNodeA=[nodesu]; BCs.vbTiedNodeB=[nodesd];
+BCs.vbTiedNodeA=nodesu; BCs.vbTiedNodeB=nodesd;
 BCs.vbFixedNode=[nodesl;nodesr];   BCs.vbFixedValue=BCs.vbFixedNode*0; 
 
+% Note: I'm applying the same BCs twice becaus some nodes in nodesl and nodes u are the same!
 
-% FigBCs=FindOrCreateFigure("-BCs-") ;
-% PlotBoundaryConditions(CtrlVar,MUA,BCs)
+
+ % FigBCs=FindOrCreateFigure("-BCs-") ;
+ % PlotBoundaryConditions(CtrlVar,MUA,BCs)
 
 
 

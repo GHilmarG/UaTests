@@ -9,6 +9,7 @@ time=CtrlVar.time;
 plots='-ubvb-e-save-';
 plots='-sbB-udvd-ubvb-ub-';
 plots='-ubvb-stresses-';
+plots='-flowline-';
 
 
 x=MUA.coordinates(:,1);  y=MUA.coordinates(:,2);
@@ -36,7 +37,48 @@ if contains(plots,'-save-')
     end
 end
 
-% only do plots at end of run
+
+%% Transfer
+
+
+
+if contains(plots,'-flowline-')
+    
+    [sAna,uAna,vAna,wAna]=TransferFunctionsGauss(UserVar,CtrlVar,MUA,F) ;
+    
+    FindOrCreateFigure("-s-ub-")
+    hold off
+    yyaxis left
+    plot(F.x/1000,F.s,"ob")
+    hold on
+    plot(F.x/1000,sAna,".b")
+    ylabel("$s(x,t)$ (m)","interpreter","latex") ;
+    ylim([900 1100])
+    yyaxis right
+    hold off
+    plot(F.x/1000,F.ub,"or")
+    hold on
+    plot(F.x/1000,uAna,".r")
+    ylim([900 1100])
+    ylabel("$u_b(x,t)$ (m)","interpreter","latex") ;
+    xlabel("$x$ (km)","interpreter","latex") ;
+    title(sprintf("upper surface and basal velocity at t=%f",F.time),"interpreter","latex")
+    legend("$s$ (numerical)","$s$ (analytical)","$u_b$ (numerical)","$u_b$ (analytical)",...
+        "interpreter","latex","location","southeast")
+    hold off
+    
+end
+
+
+
+
+
+
+
+
+% only do these additonal plots at end of run
+
+
 if ~strcmp(CtrlVar.DefineOutputsInfostring,'Last call') ; return ; end
 
 
@@ -120,6 +162,9 @@ if contains(plots,'-ub-')
     title(sprintf('ub t=%-g ',time)) ; xlabel('x (km)') ; ylabel('y (km)')
     
 end
+
+
+
 
 
 end
