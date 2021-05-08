@@ -38,7 +38,7 @@ CtrlVar.InfoLevelNonLinIt=1;
 %% Automated mesh refinement
 CtrlVar.MeshGenerator='gmsh'; % mesh2d does not allow for periodic BCs 
 CtrlVar.GmshMeshingAlgorithm=8;  % see gmsh manual
-CtrlVar.AdaptMesh=1;  CtrlVar.InfoLevelAdaptiveMeshing=10;
+CtrlVar.AdaptMesh=0;  CtrlVar.InfoLevelAdaptiveMeshing=10;
 CtrlVar.AdaptMeshInitial=1  ;
 CtrlVar.AdaptMeshMaxIterations=5;
 CtrlVar.AdaptMeshUntilChangeInNumberOfElementsLessThan=0;
@@ -63,8 +63,8 @@ CtrlVar.ExplicitMeshRefinementCriteria(I).Use=true;
 
 %% Perturbations
 
-UserVar.ampl_c=0.0; UserVar.sigma_cx=(xd-xu)/20; UserVar.sigma_cy=Inf;
-UserVar.ampl_b=0.1; UserVar.sigma_bx=(xd-xu)/20; UserVar.sigma_by=(xd-xu)/0;
+UserVar.ampl_c=0.0; UserVar.sigma_cx=(xd-xu)/20; UserVar.sigma_cy=Inf;   UserVar.C0=...
+UserVar.ampl_b=0.1; UserVar.sigma_bx=(xd-xu)/20; UserVar.sigma_by=(xd-xu)/0;  UserVar.h0=...
 
 
 
