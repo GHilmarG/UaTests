@@ -225,8 +225,8 @@ CtrlVar.Cmin=1e-20;  CtrlVar.Cmax=1e20;
 %% Testing adjoint parameters, start:
 CtrlVar.Inverse.TestAdjoint.isTrue=0; % If true then perform a brute force calculation 
                                       % of the directional derivative of the objective function.  
-CtrlVar.Inverse.TestAdjoint.FiniteDifferenceType='second-order' ; % {'central','forward'}
-CtrlVar.Inverse.TestAdjoint.FiniteDifferenceStepSize=1e-8 ;
+CtrlVar.Inverse.TestAdjointFiniteDifferenceType='second-order' ; % {'central','forward'}
+CtrlVar.Inverse.TestAdjointFiniteDifferenceStepSize=1e-8 ;
 CtrlVar.Inverse.TestAdjoint.iRange=[100,121] ;  % range of nodes/elements over which brute force gradient is to be calculated.
                                          % if left empty, values are calulated for every node/element within the mesh. 
                                          % If set to for example [1,10,45] values are calculated for these three

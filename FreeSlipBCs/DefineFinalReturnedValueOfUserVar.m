@@ -11,7 +11,8 @@ function UserVar=DefineFinalReturnedValueOfUserVar(UserVar,CtrlVar,MUA,BCs,F,l,I
 %
 
 UserVar.Test.Norm.actValue=mean(F.ub+F.vb);
-UserVar.Test.Norm.expValue=113315.884582759; 
+%UserVar.Test.Norm.expValue=113315.884582759; 
+UserVar.Test.Norm.expValue=113446.525611581  ;%  Labtop 11/05/2021
 
 
 end

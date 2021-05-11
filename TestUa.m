@@ -16,15 +16,19 @@ function tests = TestUa
     %f={@setupOnce,@testMassBalanceFeedback,@teardownOnce};
     
     %f={@testPIGmeshing};
-    f={@testPIGdiagnostic};
+
     
     %f=localfunctions ;  % all tests
     
-    % f={@test1dIceShelf} ;                   % results = runtests('TestUa.m') ; table(results)
-    % f={@test1dIceStream} ;                  % results = runtests('TestUa.m') ; table(results)
-    % f={@testFreeSlipBCs,@testGaussPeak,@testMassBalanceFeedback} ;        % results = runtests('TestUa.m') ; table(results)
-     f={@testCalvingAnalyticalIceShelf};  % OK
-    % f={@testPIGtransient};
+    % f={@testCrack}                ;  % OK  11/05/2021
+    % f={@testPIGdiagnostic}        ;  % OK  11/05/2021
+    % f={@testMassBalanceFeedback}  ;  % OK  11/05/2021
+    % f={@test1dIceStream}          ;  % OK  11/05/2021
+    % f={@test1dIceShelf}           ;  % OK  11/05/2021
+    % f={@testGaussPeak}            ;  % OK  11/05/2021
+    % f={@testFreeSlipBCs}          ;  % OK  11/05/2021
+    % f={@testCalvingAnalyticalIceShelf};  % OK 11/05/2021
+    % f={@testPIGtransient}         ;  % OK 11/05/2021
     
     
     tests = functiontests(f);

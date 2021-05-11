@@ -20,9 +20,10 @@ function [UserVar,CtrlVar,MeshBoundaryCoordinates]=DefineInitialInputs(UserVar,C
     %%
     xd=300e3; xu=-300e3 ; yl=300e3 ; yr=-300e3;
     MeshBoundaryCoordinates=flipud([xu yr ; xd yr ; xd yl ; xu yl]);
-    CtrlVar.MeshGenerator='gmsh'; % mesh2d does not allow for periodic BCs 
-    CtrlVar.MeshGenerator='mesh2d'; % mesh2d does not allow for periodic BCs 
+    CtrlVar.MeshGenerator='gmsh'; % mesh2d does not allow for periodic BCs
+    % CtrlVar.MeshGenerator='mesh2d'; % mesh2d does not allow for periodic BCs
     CtrlVar.GmshGeoFileAdditionalInputLines{1}='Periodic Line {1,2} = {3,4};';  % these lines are added to the gmsh .geo input file each time such a file is created
+    CtrlVar.GmshMeshingAlgorithm=8;  % see gmsh manual
     CtrlVar.OnlyMeshDomainAndThenStop=0;
     
     CtrlVar.TriNodes=6;   % [3,6,10]

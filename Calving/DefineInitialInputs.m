@@ -55,6 +55,10 @@ CtrlVar.dt=0.01;
 CtrlVar.TriNodes=3;
 UserVar.InitialGeometry="-MismipPlus-" ;  % default)
 
+if contains(UserVar.RunType,"-1dAnalyticalIceShelf-")
+    UserVar.InitialGeometry="-1dAnalyticalIceShelf-" ;
+end
+
 CtrlVar.Restart=0;
 
 if CtrlVar.Restart

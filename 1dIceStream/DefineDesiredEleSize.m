@@ -1,6 +1,7 @@
 function [UserVar,EleSizeDesired,ElementsToBeRefined,ElementsToBeCoarsened]=...
             DefineDesiredEleSize(UserVar,CtrlVar,MUA,x,y,EleSizeDesired,ElementsToBeRefined,ElementsToBeCoarsened,s,b,S,B,rho,rhow,ub,vb,ud,vd,GF,NodalErrorIndicators)
         
+
 %%
 % Define desired sizes of elements or specify which elements to refine or
 % coarsen.
@@ -92,32 +93,14 @@ function [UserVar,EleSizeDesired,ElementsToBeRefined,ElementsToBeCoarsened]=...
 %             xmin=-1727e3   ; xmax=-1100e3 ; ymin=-600e3 ; ymax=-20.e3;
 %             ind=MUA.xEle < xmax & MUA.xEle > xmin & MUA.yEle >ymin & MUA.yEle < ymax ;
 %       
-%             ElementsToBeRefined(~ind)=false;
-%
+%             ElementsToBeRefined(~ind)=false; 
+% 
 %     end
-%
-%
-%
+% 
+% 
+% 
 %%
-
-switch lower(CtrlVar.MeshRefinementMethod)
+ 
+ 
     
-    case 'explicit:global'
-
-        x=MUA.coordinates(:,1) ; y=MUA.coordinates(:,1) ;
-        I=x>-120e3 & x<120e3 & y<120e3 & y>-120e3 ;
-        EleSizeDesired(~I)=CtrlVar.MeshSizeMax;
-        
-    case 'explicit:local:newest vertex bisection'
-
-        x=MUA.xEle; y=MUA.yEle ; 
-
-        I=x>-120e3 & x<120e3 & y<120e3 & y>-120e3 ;
-        ElementsToBeRefined(~I)=false;
-        ElementsToBeCoarsened(~I)=false;
-
-    otherwise
-        
-        error("Case not fou8nd")
-        
 end
