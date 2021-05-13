@@ -3,10 +3,7 @@ function [UserVar,CtrlVar,MeshBoundaryCoordinates]=DefineInitialInputs(UserVar,C
 
 
 if isempty(UserVar)
-    UserVar.RunType="-ManuallyDeactivateElements-ManuallyModifyThickness-";
-    UserVar.RunType="-ManuallyModifyThickness-";
-    UserVar.RunType="-ManuallyDeactivateElements-";
-    UserVar.RunType="-";
+    UserVar.RunType="SlidingLawTest";
 end
 
 %%
@@ -117,22 +114,6 @@ CtrlVar.ThicknessConstraintsItMax=5  ;
 
 xd=640e3; xu=0e3 ; yr=0 ; yl=80e3 ;  
 MeshBoundaryCoordinates=[xu yr ; xu yl ; xd yl ; xd yr];
-
-%% Things that I´m testing and that are specifically realted to ideas around implementing calving
-
-if contains(UserVar.RunType,"-ManuallyDeactivateElements-")
-    CtrlVar.ManuallyDeactivateElements=1 ;
-else
-    CtrlVar.ManuallyDeactivateElements=1 ;
-    
-end
-
-if contains(UserVar.RunType,"-ManuallyModifyThickness-")
-    CtrlVar.GeometricalVarsDefinedEachTransienRunStepByDefineGeometry="sb";
-else
-    CtrlVar.GeometricalVarsDefinedEachTransienRunStepByDefineGeometry="";
-end
-
 
 CtrlVar.doAdaptMeshPlots=1; CtrlVar.InfoLevelAdaptiveMeshing=100;
 CtrlVar.doplots=0;
