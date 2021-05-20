@@ -48,7 +48,7 @@ function  UserVar=DefineOutputs(UserVar,CtrlVar,MUA,BCs,F,l,GF,InvStartValues,In
     %
     %%
 
-    persistent hLast nCounter timeLast length time  MB Volume
+    persistent nCounter timeLast length time  MB Volume
 
     if isempty(nCounter)
 
@@ -87,18 +87,20 @@ function  UserVar=DefineOutputs(UserVar,CtrlVar,MUA,BCs,F,l,GF,InvStartValues,In
 
 
 
-                FindOrCreateFigure("dh/dt") ;
+                Figdhdt=FindOrCreateFigure("dh/dt") ;
                 
                 hold off
                 plot(x/1000,F.dhdt,'or')
-                xlabel('x (km)') ; ylabel('dh/dt (m/yr)') ;
-                title(sprintf('dh/dt      t=%-g (yr)',CtrlVar.time),'interpreter','latex') ;
-
+                xlabel('x (km)','interpreter','latex') ; 
+                ylabel('dh/dt (m/yr)','interpreter','latex') ;
+                ylim([0 5])
+                title(sprintf('$dh/dt$  at  $t=$%-g (yr)',CtrlVar.time),'interpreter','latex',FontSize=14) ;
+                Figdhdt.Position=[ 635       487.67       625.33       393.33] ;
             end
         end
     end
 
-    hLast=F.h ;
+    
     timeLast=CtrlVar.time ;
 
 
@@ -123,37 +125,58 @@ function  UserVar=DefineOutputs(UserVar,CtrlVar,MUA,BCs,F,l,GF,InvStartValues,In
 
 
     if PlotFigures
-
+        
         [~,I]=sort(x);
-
-        FindOrCreateFigure("Mountain") ;
-
-
+        
+        FigM=FindOrCreateFigure("Mountain") ;
+        
+       
         xBedrockPoly=[x(I);x(I(1))];
         BedrockPoly=[F.B(I);F.B(I(1))] ;
         GlacierPoly=[F.s(I);fliplr(F.b(I))] ;
         xGlacierPoly=[x(I);fliplr(x(I))] ;
-
+        
         hold off
+        
+        fill(xBedrockPoly/1000,BedrockPoly,[0.9 0.9 0.9],'LineStyle','none'); hold on
+        fill(xGlacierPoly/1000,GlacierPoly,'b','Linestyle','none');
+        
 
-        fill(xBedrockPoly,BedrockPoly,[0.9 0.9 0.9],'LineStyle','none'); hold on
-        fill(xGlacierPoly,GlacierPoly,'b','Linestyle','none');
-
-        title(sprintf('t=%-g (yr)',CtrlVar.time)) ; xlabel('x (km)') ; ylabel('z (m)')
-
-        drawnow
-
+        hold on
+        [zero,I]=min(abs(F.as)); ELA=F.s(I) ; 
+        plot(x/1000,x*0+ELA,'r'); 
+        text(40,ELA,'ELA','VerticalAlignment','bottom','color','r','interpreter','latex')
+        %%ylabel('Equlibrium Line (m)','interpreter','latex')
+        title(sprintf('t=%-g (yr)',CtrlVar.time),'interpreter','latex',FontSize=14) ; 
+        xlabel('$x$ (km)','interpreter','latex') ; 
+        ylabel('$z$ (m)','interpreter','latex')
+        axis tight
+        FigM.Position=[ 1263.7       486.33       1286.7          860] ; 
+        
+        
 
         %%
 
-        FindOrCreateFigure("Ice thickness distribution") ;
+        Figh=FindOrCreateFigure("Ice thickness distribution") ;
         plot(x/1000,F.h,'.') ;
-        xlabel('x (km)') ; ylabel('ice thickness (m)') ;
-        title(sprintf('t=%-g (yr)',CtrlVar.time)) ;
-
+        xlabel('x (km)','interpreter','latex');
+        ylabel('ice thickness (m)','interpreter','latex') ;
+        title(sprintf('t=%-g (yr)',CtrlVar.time),'interpreter','latex',FontSize=14) ;
+        Figh.Position=[7       487.67          626       392.67]; 
 
     end
 
+    
+    
+    %
+    % figure(10) ; plot(F.x/1000,F.as,LineWidth=2) ; 
+    % xlabel("$x$ (km)","interpreter","latex") ; 
+    % ylabel("surface mass balance, $a_s(x)$ (m/yr)","interpreter","latex") ; 
+    % ax=gca ; ax.XAxisLocation = 'origin'; box off
+    %
+    %
+    %
+    
     %%
     % x=MUA.coordinates(:,1);  y=MUA.coordinates(:,2);
     % FindOrCreateFigure("Velocity in x direction") ;
@@ -179,7 +202,7 @@ function  UserVar=DefineOutputs(UserVar,CtrlVar,MUA,BCs,F,l,GF,InvStartValues,In
     % save in a separate file and then plot.
     %
 
-    % How to calculate the lenght, l, of the glacier?
+    % How to calculate the length, l, of the glacier?
     % Answer: l=max(x(F.h>2))
 
     % the length of the glacier is the maximum value of x for which the ice
@@ -218,10 +241,13 @@ function  UserVar=DefineOutputs(UserVar,CtrlVar,MUA,BCs,F,l,GF,InvStartValues,In
         hold on
         yyaxis left
         plot(time,length/1000,'ob')
-        ylabel('Length (km)')
+        ylabel('Length (km)','interpreter','latex')
         yyaxis right
         plot(time,MB,'*r')
-        ylabel('Specific Mean Mass Balance (m/yr)')
+        ylabel('Mean Specific Mass Balance (m/yr)','interpreter','latex')
+        xlabel('time (yr)','interpreter','latex')
+        FGL.Position=[9.6667       965.67       1250.7       381.33] ; 
+        title('Glacier Length (horizontal half-span) and the Mean Specific Mass Balance','interpreter','latex',FontSize=14)
         hold off
     end
     
@@ -232,5 +258,5 @@ function  UserVar=DefineOutputs(UserVar,CtrlVar,MUA,BCs,F,l,GF,InvStartValues,In
         save("MyDataFile.mat","time","length","MB","Volume")
     end
 
-
+drawnow
 end

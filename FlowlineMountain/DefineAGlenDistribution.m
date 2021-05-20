@@ -11,6 +11,8 @@ function [UserVar,AGlen,n]=DefineAGlenDistribution(UserVar,CtrlVar,MUA,time,s,b,
     n=1 ;  AGlen=1e-13*1e3*365.25*24*60*60+zeros(MUA.Nnodes,1) ; % 
 
     Factor=1; 
+
+    
     AGlen=Factor*AGlen; 
 
 end
