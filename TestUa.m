@@ -16,15 +16,20 @@ function tests = TestUa
     %f={@setupOnce,@testMassBalanceFeedback,@teardownOnce};
     
     %f={@testPIGmeshing};
+
     
+    %f=localfunctions ;  % all tests
     
-    % f=localfunctions ;  % all tests
+    % f={@testCrack}                ;  % OK  11/05/2021
+    % f={@testPIGdiagnostic}        ;  % OK  11/05/2021
+    % f={@testMassBalanceFeedback}  ;  % OK  11/05/2021
+    % f={@test1dIceStream}          ;  % OK  11/05/2021
+    % f={@test1dIceShelf}           ;  % OK  11/05/2021
+    % f={@testGaussPeak}            ;  % OK  11/05/2021
+    % f={@testFreeSlipBCs}          ;  % OK  11/05/2021
+    % f={@testCalvingAnalyticalIceShelf};  % OK 11/05/2021
+    % f={@testPIGtransient}         ;  % OK 11/05/2021
     
-    % f={@test1dIceShelf} ;                   % results = runtests('TestUa.m') ; table(results)
-    % f={@test1dIceStream} ;                  % results = runtests('TestUa.m') ; table(results)
-    % f={@testFreeSlipBCs,@testGaussPeak,@testMassBalanceFeedback} ;        % results = runtests('TestUa.m') ; table(results)
-    % f={@testCalvingAnalyticalIceShelf};
-    % f={@testPIGtransient};
     
     tests = functiontests(f);
 end
@@ -59,7 +64,7 @@ function testPIGdiagnostic(testCase)
     cd ..
     actSolution= UserVar.Test.Norm.actValue ;
     expSolution = 95982.7181182457;
-    verifyEqual(testCase,actSolution,expSolution,'AbsTol',1e-2)
+    verifyEqual(testCase,actSolution,expSolution,'RelTol',1e-4)
     
 end
 

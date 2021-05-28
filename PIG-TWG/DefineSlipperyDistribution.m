@@ -1,15 +1,18 @@
-function [UserVar,C,m,q]=DefineSlipperyDistribution(UserVar,CtrlVar,MUA,time,s,b,h,S,B,rho,rhow,GF)
+function [UserVar,C,m,q,mu]=DefineSlipperyDistribution(UserVar,CtrlVar,MUA,time,s,b,h,S,B,rho,rhow,GF)
 
 persistent FC
+
+m=UserVar.m;
+q=1;      % Only used in the Budd sliding law
+mu=0.5 ;  % Used in sliding laws involving Couloum friction such as minCW, rpCW, and rCW 
 
 if ~UserVar.Slipperiness.ReadFromFile
     
     
-    m=UserVar.m;
     ub=10 ; tau=80 ; % units meters, year , kPa
     C0=ub/tau^m;
     C=C0;
-    q=m; 
+    
     
 else
     
@@ -29,7 +32,6 @@ else
     end
     
     C=FC(MUA.coordinates(:,1),MUA.coordinates(:,2));
-    m=UserVar.m;
-    q=m; 
+  
     
 end

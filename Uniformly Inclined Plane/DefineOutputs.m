@@ -1,4 +1,4 @@
-function  UserVar=DefineOutputs(UserVar,CtrlVar,MUA,BCs,F,l,GF,InvStartValues,InvFinalValues,Priors,Meas,BCsAdjoint,RunInfo);
+function  UserVar=DefineOutputs(UserVar,CtrlVar,MUA,BCs,F,l,GF,InvStartValues,InvFinalValues,Priors,Meas,BCsAdjoint,RunInfo)
 
 v2struct(F);
 
@@ -21,7 +21,7 @@ if contains(plots,'-save-')
     % save data in files with running names
     % check if folder 'ResultsFiles' exists, if not create
 
-    if strcmp(CtrlVar.DefineOutputsInfostring,'First call ') && exist('ResultsFiles','dir')~=7 ;
+    if strcmp(CtrlVar.DefineOutputsInfostring,'First call ') && exist('ResultsFiles','dir')~=7 
         mkdir('ResultsFiles') ;
     end
     
@@ -31,7 +31,7 @@ if contains(plots,'-save-')
         FileName=['ResultsFiles/',sprintf('%07i',CtrlVar.DefineOutputsCounter),'-TransPlots-',CtrlVar.Experiment];
         
         fprintf(' Saving data in %s \n',FileName)
-        save(FileName,'CtrlVar','MUA','time','s','b','S','B','h','u','v','dhdt','dsdt','dbdt','C','AGlen','m','n','rho','rhow','as','ab','GF')
+        save(FileName,"CtrlVar","MUA","F")
         
     end
 end
@@ -40,36 +40,20 @@ end
 if ~strcmp(CtrlVar.DefineOutputsInfostring,'Last call') ; return ; end
 
 
-if contains(plots,'-sbB-')
-    figure(5)
-    hold off
-    if isempty(TRI) ;  TRI = delaunay(x,y); end
-    trisurf(TRI,x/CtrlVar.PlotXYscale,y/CtrlVar.PlotXYscale,s,'EdgeColor','none') ; hold on
-    trisurf(TRI,x/CtrlVar.PlotXYscale,y/CtrlVar.PlotXYscale,b,'EdgeColor','none') ;
-    trisurf(TRI,x/CtrlVar.PlotXYscale,y/CtrlVar.PlotXYscale,B,'EdgeColor','none') ;
-    view(50,20); lightangle(-45,30) ; lighting phong ;
-    xlabel('y') ; ylabel('x') ;
-    colorbar ; title(colorbar,'(m)')
-    hold on
-    
-    title(sprintf('sbB at t=%#5.1g ',time))
-    axis equal ; tt=daspect ; daspect([mean(tt(1)+tt(2)) mean(tt(1)+tt(2)) tt(3)*CtrlVar.PlotXYscale]); axis tight
-    hold off
-end
 
 if contains(plots,'-stresses-')
     %%
-    [tbx,tby,tb,beta2] = CalcBasalTraction(CtrlVar,MUA,F.ub,F.vb,F.C,F.m,GF) ;
+    [tbx,tby,tb] = CalcBasalTraction(CtrlVar,UserVar,MUA,F) ;
     
-    [txzb,tyzb]=CalcNodalStrainRatesAndStresses(CtrlVar,MUA,F.AGlen,F.n,F.C,F.m,GF,F.s,F.b,F.ub,F.vb);
-    figure
+    [txzb,tyzb]=CalcNodalStrainRatesAndStresses(CtrlVar,UserVar,MUA,F);
+    FindOrCreateFigure("-stresses-")
     PlotMeshScalarVariable(CtrlVar,MUA,tb) ;
     title(' tb ') ; cbar=colorbar; title(cbar, '(kPa)');
     hold on
     [xGL,yGL,GLgeo]=PlotGroundingLines(CtrlVar,MUA,GF,GLgeo,xGL,yGL,'r');
     
     
-    figure
+    FindOrCreateFigure("-txzb-")
     PlotMeshScalarVariable(CtrlVar,MUA,txzb) ;
     title(' txzb ') ; cbar=colorbar; title(cbar, '(kPa)');
     hold on
@@ -81,7 +65,7 @@ end
 
 if contains(plots,'-ubvb-')
     % plotting horizontal velocities
-    figure
+    FindOrCreateFigure("-ubvb-")
     N=1;
     speed=sqrt(ub.*ub+vb.*vb);
     CtrlVar.MinSpeedWhenPlottingVelArrows=0; CtrlVar.MaxPlottedSpeed=max(speed); %CtrlVar.VelPlotIntervalSpacing='log10';
@@ -96,7 +80,7 @@ end
 
 if contains(plots,'-udvd-')
     % plotting horizontal velocities
-    figure
+    FindOrCreateFigure("-udvd-")
     N=1;
     speed=sqrt(ud.*ud+vd.*vd);
     CtrlVar.MinSpeedWhenPlottingVelArrows=0; CtrlVar.MaxPlottedSpeed=max(speed); %CtrlVar.VelPlotIntervalSpacing='log10';
@@ -123,7 +107,7 @@ if contains(plots,'-e-')
     % therfore if plotting on nodes, must first project these onto nodes
     eNod=ProjectFintOntoNodes(MUA,e);
     
-    figure
+    FindOrCreateFigure("-effective strain rate-")
     [FigHandle,ColorbarHandel,tri]=PlotNodalBasedQuantities(MUA.connectivity,MUA.coordinates,eNod,CtrlVar)    ;
     title(sprintf('e t=%-g ',time)) ; xlabel('x (km)') ; ylabel('y (km)')
     
@@ -131,7 +115,7 @@ end
 
 if contains(plots,'-ub-')
     
-    figure
+    FindOrCreateFigure("-ud-")
     [FigHandle,ColorbarHandel,tri]=PlotNodalBasedQuantities(MUA.connectivity,MUA.coordinates,ub,CtrlVar)    ;
     title(sprintf('ub t=%-g ',time)) ; xlabel('x (km)') ; ylabel('y (km)')
     

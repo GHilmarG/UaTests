@@ -1,12 +1,9 @@
 
-function [UserVar,CtrlVar,MeshBoundaryCoordinates]=Ua2D_InitialUserInput(UserVar,CtrlVar)
+function [UserVar,CtrlVar,MeshBoundaryCoordinates]=DefineInitialInputs(UserVar,CtrlVar)
 
 
 if isempty(UserVar)
-    UserVar.RunType="-ManuallyDeactivateElements-ManuallyModifyThickness-";
-    UserVar.RunType="-ManuallyModifyThickness-";
-    UserVar.RunType="-ManuallyDeactivateElements-";
-    UserVar.RunType="-";
+    UserVar.RunType="SlidingLawTest";
 end
 
 %%
@@ -29,11 +26,11 @@ CtrlVar.InfoLevelNonLinIt=1;
 CtrlVar.dt=0.01; 
 CtrlVar.time=0; 
 
-CtrlVar.UaOutputsDt=0; % interval between calling UaOutputs. 0 implies call it at each and every run step.
+CtrlVar.DefineOutputsDt=0; % interval between calling UaOutputs. 0 implies call it at each and every run step.
                        % setting CtrlVar.UaOutputsDt=1; causes UaOutputs to be called every 1 years.
                        % This is a more reasonable value once all looks OK.
 
-CtrlVar.ATStimeStepTarget=1;
+CtrlVar.ATSdtMax=1;
 CtrlVar.WriteRestartFile=1;
 
 %% Reading in mesh
@@ -48,7 +45,7 @@ CtrlVar.WhenPlottingMesh_PlotMeshBoundaryCoordinatesToo=1;
 
 CtrlVar.PlotXYscale=1000; 
 %%
-
+ 
 CtrlVar.TriNodes=3;
 
 
@@ -99,7 +96,7 @@ CtrlVar.AdaptMeshAndThenStop=0;    % if true, then mesh will be adapted but no f
                                    % usefull, for example, when trying out different remeshing options (then use CtrlVar.doRemeshPlots=1 to get plots)
 
 
-CtrlVar.AdaptMeshInterval=1;  % number of run-steps between mesh adaptation
+CtrlVar.AdaptMeshRunStepInterval=1;  % number of run-steps between mesh adaptation
 CtrlVar.MeshAdapt.GLrange=[20000 5000 ; 5000 2000];
 %CtrlVar.MeshAdapt.GLrange=[20000 5000 ];
 
@@ -117,22 +114,6 @@ CtrlVar.ThicknessConstraintsItMax=5  ;
 
 xd=640e3; xu=0e3 ; yr=0 ; yl=80e3 ;  
 MeshBoundaryCoordinates=[xu yr ; xu yl ; xd yl ; xd yr];
-
-%% Things that I´m testing and that are specifically realted to ideas around implementing calving
-
-if contains(UserVar.RunType,"-ManuallyDeactivateElements-")
-    CtrlVar.ManuallyDeactivateElements=1 ;
-else
-    CtrlVar.ManuallyDeactivateElements=1 ;
-    
-end
-
-if contains(UserVar.RunType,"-ManuallyModifyThickness-")
-    CtrlVar.GeometricalVarsDefinedEachTransienRunStepByDefineGeometry="sb";
-else
-    CtrlVar.GeometricalVarsDefinedEachTransienRunStepByDefineGeometry="";
-end
-
 
 CtrlVar.doAdaptMeshPlots=1; CtrlVar.InfoLevelAdaptiveMeshing=100;
 CtrlVar.doplots=0;

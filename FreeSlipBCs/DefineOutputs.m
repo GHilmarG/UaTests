@@ -1,4 +1,4 @@
-function  UserVar=DefineOutputs(UserVar,CtrlVar,MUA,BCs,F,l,GF,InvStartValues,InvFinalValues,Priors,Meas,BCsAdjoint,RunInfo);
+function  UserVar=DefineOutputs(UserVar,CtrlVar,MUA,BCs,F,l,GF,InvStartValues,InvFinalValues,Priors,Meas,BCsAdjoint,RunInfo)
 v2struct(F);
 
 time=CtrlVar.time; 
@@ -6,10 +6,10 @@ time=CtrlVar.time;
 plots='-ubvb-e-save-';
 plots='-ubvb-sbB-';
 
-TRI=[];
+
 x=MUA.coordinates(:,1);  y=MUA.coordinates(:,2);
 
-if ~isempty(strfind(plots,'-R-'))
+if contains(plots,'-R-')
     MLC=BCs2MLC(MUA,BCs) ;
     Reactions=CalculateReactions(MLC,l);
     PlotReactions(CtrlVar,MUA,Reactions);
@@ -17,7 +17,7 @@ end
 
 
 
-if ~isempty(strfind(plots,'-save-'))
+if contains(plots,'-save-')
 
     % save data in files with running names
     % check if folder 'ResultsFiles' exists, if not create
@@ -32,7 +32,7 @@ if ~isempty(strfind(plots,'-save-'))
         FileName=['ResultsFiles/',sprintf('%07i',CtrlVar.DefineOutputsCounter),'-TransPlots-',CtrlVar.Experiment];
         
         fprintf(' Saving data in %s \n',FileName)
-        save(FileName,'CtrlVar','MUA','time','s','b','S','B','h','u','v','dhdt','dsdt','dbdt','C','AGlen','m','n','rho','rhow','as','ab','GF')
+        save(FileName,'UserVar','CtrlVar','MUA','F')
         
     end
 end
@@ -40,7 +40,7 @@ end
 % only do plots at end of run
 if ~strcmp(CtrlVar.DefineOutputsInfostring,'Last call') ; return ; end
 
-if ~isempty(strfind(plots,'-txzb(x)-'))
+if contains(plots,'-txzb(x)-')
     
     [txzb,tyzb]=CalcNodalStrainRatesAndStresses(CtrlVar,MUA,AGlen,n,C,m,GF,s,b,ub,vb);
     
@@ -49,20 +49,20 @@ if ~isempty(strfind(plots,'-txzb(x)-'))
 end
 
 
-if ~isempty(strfind(plots,'-ub(x)-'))
+if contains(plots,'-ub(x)-')
     figure
    plot(x/CtrlVar.PlotXYscale,ub) ;
     title(sprintf('u_b(x) at t=%-g ',time)) ; xlabel('x') ; ylabel('u_b')
 end
 
-if ~isempty(strfind(plots,'-ud(x)-'))
+if contains(plots,'-ud(x)-')
     figure
    plot(x/CtrlVar.PlotXYscale,ud) ;
     title(sprintf('u_d(x) at t=%-g ',time)) ; xlabel('x') ; ylabel('u_d')
 end
 
 
-if ~isempty(strfind(plots,'-sbSB(x)-'))
+if contains(plots,'-sbSB(x)-')
     figure
     
     plot(x/CtrlVar.PlotXYscale,S,'k--') ; hold on
@@ -74,8 +74,8 @@ if ~isempty(strfind(plots,'-sbSB(x)-'))
 end
 
 
-if ~isempty(strfind(plots,'-sbB-'))
-    figure(5)
+if contains(plots,'-sbB-')
+    FindOrCreateFigure("-sbB-")
     hold off
     Plot_sbB(CtrlVar,MUA,s,b,B);
     xlabel('y') ; ylabel('x') ;
@@ -88,9 +88,9 @@ if ~isempty(strfind(plots,'-sbB-'))
 end
 
 
-if ~isempty(strfind(plots,'-ubvb-'))
+if contains(plots,'-ubvb-')
     % plotting horizontal velocities
-    figure
+    FindOrCreateFigure("-ubvb-")
     N=1;
     %speed=sqrt(ub.*ub+vb.*vb);
     %CtrlVar.VelPlotIntervalSpacing='log10';
@@ -103,9 +103,9 @@ if ~isempty(strfind(plots,'-ubvb-'))
     
 end
 
-if ~isempty(strfind(plots,'-udvd-'))
+if contains(plots,'-udvd-')
     % plotting horizontal velocities
-    figure
+    FindOrCreateFigure("-udvd-")
     N=1;
     %speed=sqrt(ud.*ud+vd.*vd);
     %CtrlVar.VelPlotIntervalSpacing='log10';
@@ -117,29 +117,5 @@ if ~isempty(strfind(plots,'-udvd-'))
     axis equal tight
     
 end
-
-if ~isempty(strfind(plots,'-e-'))
-    % plotting effectiv strain rates
-    
-    % first get effective strain rates, e :
-    [etaInt,xint,yint,exx,eyy,exy,Eint,e,txx,tyy,txy]=calcStrainRatesEtaInt(CtrlVar,MUA,u,v,AGlen,n);
-    % all these variables are are element variables defined on integration points
-    % therfore if plotting on nodes, must first project these onto nodes
-    eNod=ProjectFintOntoNodes(MUA,e);
-    
-    figure
-    [FigHandle,ColorbarHandel,tri]=PlotNodalBasedQuantities(MUA.connectivity,MUA.coordinates,eNod,CtrlVar)    ;
-    title(sprintf('e t=%-g ',time)) ; xlabel('x (km)') ; ylabel('y (km)')
-    
-end
-
-if ~isempty(strfind(plots,'-ub-'))
-    
-    figure
-    [FigHandle,ColorbarHandel,tri]=PlotNodalBasedQuantities(MUA.connectivity,MUA.coordinates,ub,CtrlVar)    ;
-    title(sprintf('ub t=%-g ',time)) ; xlabel('x (km)') ; ylabel('y (km)')
-    
-end
-
 
 end
