@@ -70,9 +70,13 @@ nodesr=MUA.Boundary.Nodes(abs(MUA.coordinates(MUA.Boundary.Nodes,2)-yr)<L);
 
 
 % set the boundary condtions for basal velocities
-BCs.ubTiedNodeA=[nodesu;nodesl]; BCs.ubTiedNodeB=[nodesd;nodesr];
-BCs.vbTiedNodeA=nodesu; BCs.vbTiedNodeB=nodesd;
+
+
+
 BCs.vbFixedNode=[nodesl;nodesr];   BCs.vbFixedValue=BCs.vbFixedNode*0; 
+
+BCs.vbTiedNodeA=nodesu; BCs.vbTiedNodeB=nodesd;
+BCs.ubTiedNodeA=nodesu; BCs.ubTiedNodeB=nodesd;
 
 % Note: I'm applying the same BCs twice becaus some nodes in nodesl and nodes u are the same!
 
@@ -81,8 +85,36 @@ BCs.vbFixedNode=[nodesl;nodesr];   BCs.vbFixedValue=BCs.vbFixedNode*0;
  % PlotBoundaryConditions(CtrlVar,MUA,BCs)
 
 
+%  Even if a node is twice in list A, it can be unique if it is tied 
+%  to two different freedome of degrees
 
 
+
+
+% Are there linked pairs of nodes that are also fixed for the same degree of freedome?
+% If so, the delete the ties, keep the fixes
+[~,iaA]=intersect(BCs.ubTiedNodeA,BCs.ubFixedNode) ; % TiedA  that are also fixed
+[~,iaB]=intersect(BCs.ubTiedNodeB,BCs.ubFixedNode) ; % TiedeB that are also fixed
+
+if ~isempty(iaA) && ~isempty(iaB)
+    ubNodesTidedAndFixed=intersect(iaA,iaB); % Nodal ties where both nodes of a given tie are also fixed for the same degree of freedom
+    if ~isempty(ubNodesTidedAndFixed)
+        BCs.ubTiedNodeA(ubNodesTidedAndFixed)=[] ;
+        BCs.ubTiedNodeB(ubNodesTidedAndFixed)=[] ;
+    end
+end
+
+
+[~,iaA]=intersect(BCs.vbTiedNodeA,BCs.vbFixedNode) ; % TiedA  that are also fixed
+[~,iaB]=intersect(BCs.vbTiedNodeB,BCs.vbFixedNode) ; % TiedeB that are also fixed
+
+if ~isempty(iaA) && ~isempty(iaB)
+    vbNodesTidedAndFixed=intersect(iaA,iaB); % Nodal ties where both nodes of a given tie are also fixed for the same degree of freedom
+    if ~isempty(vbNodesTidedAndFixed)
+        BCs.vbTiedNodeA(vbNodesTidedAndFixed)=[] ;
+        BCs.vbTiedNodeB(vbNodesTidedAndFixed)=[] ;
+    end
+end
 
 
 
