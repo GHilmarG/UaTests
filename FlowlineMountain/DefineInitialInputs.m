@@ -29,12 +29,12 @@ CtrlVar.FlowApproximation="SSHEET" ;
 
 
 CtrlVar.Restart=0;   
-CtrlVar.WriteRestartFile=0;
+
 
 CtrlVar.time=0 ; 
 CtrlVar.dt=1; 
 CtrlVar.TotalNumberOfForwardRunSteps=Inf;  
-CtrlVar.TotalTime=500;
+CtrlVar.TotalTime=1000;
 
 % automated time stepping
 CtrlVar.AdaptiveTimeStepping=1 ; CtrlVar.ATSdtMax=10; 
@@ -52,6 +52,7 @@ MeshBoundaryCoordinates=[xu yr ; xd yr ; xd yl ; xu yl];
 CtrlVar.MeshSize=1000;
 
 %%
+CtrlVar.WriteRestartFile=1; 
 CtrlVar.NameOfRestartFiletoRead='Ua2D_Restartfile.mat';
 CtrlVar.NameOfRestartFiletoWrite='Ua2D_Restartfile.mat';
 
