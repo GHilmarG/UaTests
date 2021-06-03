@@ -55,7 +55,8 @@ if contains(plots,'-plot-')
     [xGL,yGL,GLgeo]=PlotGroundingLines(CtrlVar,MUA,F.GF,GLgeo,xGL,yGL);
     
     subplot(4,1,4)
-    PlotMeshScalarVariable(CtrlVar,MUA,F.ab);   title(sprintf('ab at t=%g',CtrlVar.time))
+    speed=sqrt(F.ub.*F.ub+F.vb.*F.vb) ; 
+    PlotMeshScalarVariable(CtrlVar,MUA,speed);   title(sprintf('surface speed at t=%g',CtrlVar.time))
     hold on
     
     [xGL,yGL,GLgeo]=PlotGroundingLines(CtrlVar,MUA,F.GF,GLgeo,xGL,yGL);

@@ -12,7 +12,7 @@ function tests = TestUa
     f={@setupOnce,@testCalvingManuallyDeactivateElements,@teardownOnce};
     f={@setupOnce,@testCalvingThroughMassBalanceFeedback,@teardownOnce};
     
-    %f={@setupOnce,@testGaussPeak,@teardownOnce};
+    f={@setupOnce,@testGaussPeak,@teardownOnce};
     %f={@setupOnce,@testMassBalanceFeedback,@teardownOnce};
     
     %f={@testPIGmeshing};
@@ -27,7 +27,7 @@ function tests = TestUa
     % f={@test1dIceShelf}           ;  % OK  11/05/2021
     % f={@testGaussPeak}            ;  % OK  11/05/2021
     % f={@testFreeSlipBCs}          ;  % OK  11/05/2021
-    % f={@testCalvingAnalyticalIceShelf};  % OK 11/05/2021
+     f={@testCalvingAnalyticalIceShelf};  % OK 11/05/2021
     % f={@testPIGtransient}         ;  % OK 11/05/2021
     
     
