@@ -24,12 +24,16 @@ end
 % This run requires some additional input files. They are too big to be kept on Github so you
 % will have to get those separately. 
 %
-% You can get these files on OneDrive using the link: https://1drv.ms/f/s!Anaw0Iv-oEHTloRzWreBMDBFCJ0R4Q
+% You can https://livenorthumbriaac-my.sharepoint.com/:f:/g/personal/hilmar_gudmundsson_northumbria_ac_uk/EgrEImnkQuJNmf1GEB80VbwB1hgKNnRMscUitVpBrghjRg?e=yMZEOs
 % 
 % Put the OneDrive folder `Interpolants' into you directory so that it can be reaced as ../Interpolants with respect to you rundirectory. 
 %
 %
-UserVar.GeometryInterpolant='../../Interpolants/Bedmap2GriddedInterpolantModifiedBathymetry.mat'; % this assumes you have downloaded the OneDrive folder `Interpolants'.
+
+
+% Interpolant paths: this assumes you have downloaded the OneDrive folder `Interpolants'.
+% UserVar.GeometryInterpolant='../../Interpolants/Bedmap2GriddedInterpolantModifiedBathymetry.mat';
+UserVar.GeometryInterpolant='../../Interpolants/BedMachineGriddedInterpolants.mat';                       
 UserVar.DensityInterpolant='../../Interpolants/DepthAveragedDensityGriddedInterpolant.mat';
 UserVar.SurfaceVelocityInterpolant='../../Interpolants/SurfVelMeasures990mInterpolants.mat';
 
