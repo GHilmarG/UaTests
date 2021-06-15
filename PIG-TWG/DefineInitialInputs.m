@@ -34,13 +34,24 @@ end
 % Interpolant paths: this assumes you have downloaded the OneDrive folder `Interpolants'.
 % UserVar.GeometryInterpolant='../../Interpolants/Bedmap2GriddedInterpolantModifiedBathymetry.mat';
 UserVar.GeometryInterpolant='../../Interpolants/BedMachineGriddedInterpolants.mat';                       
-UserVar.DensityInterpolant='../../Interpolants/DepthAveragedDensityGriddedInterpolant.mat';
 UserVar.SurfaceVelocityInterpolant='../../Interpolants/SurfVelMeasures990mInterpolants.mat';
+UserVar.MeshBoundaryCoordinatesFile='../../Interpolants/MeshBoundaryCoordinatesForAntarcticaBasedOnBedmachine'; 
+UserVar.DistanceBetweenPointsAlongBoundary=5e3 ; 
 
-UserVar.CFile='FC5kGrid_m3.mat'; UserVar.AFile='FA5kGrid_n3.mat';
-UserVar.CFile='FC.mat'; UserVar.AFile='FA.mat';
+CtrlVar.SlidingLaw="Weertman" ; % "Umbi" ; % "Weertman" ; % "Tsai" ; % "Cornford" ;  "Umbi" ; "Cornford" ; % "Tsai" , "Budd"
 
-if ~isfile(UserVar.GeometryInterpolant) || ~isfile(UserVar.DensityInterpolant) || ~isfile(UserVar.SurfaceVelocityInterpolant)
+switch CtrlVar.SlidingLaw
+    
+    case "Weertman"
+        UserVar.CFile='FC-Weertman.mat'; UserVar.AFile='FA-Weertman.mat';
+    case "Umbi"
+        UserVar.CFile='FC-Umbi.mat'; UserVar.AFile='FA-Umbi.mat';
+    otherwise
+        error('A and C fields not available')
+end
+
+
+if ~isfile(UserVar.GeometryInterpolant) || ~isfile(UserVar.SurfaceVelocityInterpolant)
      
      fprintf('\n This run requires the additional input files: \n %s \n %s \n %s  \n \n',UserVar.GeometryInterpolant,UserVar.DensityInterpolant,UserVar.SurfaceVelocityInterpolant)
      fprintf('You can download these file from : https://1drv.ms/f/s!Anaw0Iv-oEHTloRzWreBMDBFCJ0R4Q \n')
@@ -72,7 +83,7 @@ switch UserVar.RunType
         CtrlVar.Inverse.Regularize.Field=CtrlVar.Inverse.InvertFor;
         
         CtrlVar.Inverse.Measurements='-uv-' ;  % {'-uv-,'-uv-dhdt-','-dhdt-'}
-        CtrlVar.SlidingLaw="rCW-N0" ; % "W" ;
+        
         
         
         if contains(UserVar.RunType,'FixPoint')
@@ -168,7 +179,7 @@ CtrlVar.MeshSizeMax=20e3;
 CtrlVar.MeshSize=CtrlVar.MeshSizeMax/2;
 CtrlVar.MeshSizeMin=CtrlVar.MeshSizeMax/20;
 UserVar.MeshSizeIceShelves=CtrlVar.MeshSizeMax/5;
-MeshBoundaryCoordinates=CreateMeshBoundaryCoordinatesForPIGandTWG(CtrlVar);
+MeshBoundaryCoordinates=CreateMeshBoundaryCoordinatesForPIGandTWG(UserVar,CtrlVar);
                                          
 CtrlVar.AdaptMeshInitial=1  ;   
 CtrlVar.AdaptMeshMaxIterations=5;
