@@ -20,6 +20,8 @@ if isempty(UserVar) || ~isfield(UserVar,'m')
     UserVar.m=3;
 end
 
+
+CtrlVar.FlowApproximation="SSTREAM" ;
 %%
 % This run requires some additional input files. They are too big to be kept on Github so you
 % will have to get those separately. 
@@ -78,7 +80,7 @@ switch UserVar.RunType
         CtrlVar.ReadInitialMesh=1;
         CtrlVar.AdaptMesh=0;
         
-        CtrlVar.Inverse.Iterations=1;
+        CtrlVar.Inverse.Iterations=5;
         CtrlVar.Inverse.InvertFor='logA-logC' ; % '-logAGlen-logC-' ; % {'-C-','-logC-','-AGlen-','-logAGlen-'}
         CtrlVar.Inverse.Regularize.Field=CtrlVar.Inverse.InvertFor;
         
