@@ -13,7 +13,7 @@ plot(F.x/1000,F.s,'.') ;
 hold on ; plot(F.x/1000,F.b,'.') ;
 ylabel("$s(x)\,\mathrm{and}\; b(x)\;(\mathrm{m/yr})$","interpreter","latex")
 yyaxis right ; hold off
-plot(F.x/1000,F.ub,'.')
+plot(F.x/1000,F.ub,'o')
 hold on ; plot(F.x/1000,-F.c,'.c')
 ylabel("$u(x) \hbox{and} c(x) \,\mathrm{(m/yr)}$","interpreter","latex")
 title(sprintf('time %f ',CtrlVar.time))
