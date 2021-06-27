@@ -13,7 +13,11 @@
 %
 %   25 June, 2021. The NR with analytical ice-shelf velocities does not appear to get into second-order convergence.
 %
-%
+%   27 June, 2021: -NR interation now good, found some obvious mistakes and corrected. Also, found that BCs were not fulfilled if the
+%                   initial guess for LSF did not (not a feasable point) and no update was made if not convergent.
+%                  -It appears that the LSF has to be reasonably close to the minimum of the P term for it to converge to the 
+%                   right solution.                
+%                  -In the initialisation step, set theta=1, otherwise the mean value (f0+f1)/2 is the solution , not f1.
 function TestLSF
 
 clearvars
@@ -21,25 +25,40 @@ clear FindOrCreateFigure
 
 load("LSFtest","BCs","CtrlVar","F0","F1","MUA","UserVar","RunInfo")
 
+F0.x=MUA.coordinates(:,1) ; F0.y=MUA.coordinates(:,2) ; 
+F1.x=MUA.coordinates(:,1) ; F1.y=MUA.coordinates(:,2) ; 
+CtrlVar.LSFslope=1; 
 nRunSteps=50; nReinitialisationSteps=5 ; CtrlVar.dt=1;
 CtrlVar.VelocityField="Linear" ; % "Analytical" ; % "Constant" ;  % prescribed velocity, see below in nested function"Analytical"
 CtrlVar.LevelSetFABmu=1e6 ;
+
+CtrlVar.LSFMinimisationQuantity="Work Residuals";
+CtrlVar.LevelSetSolverMaxIterations=100;
+CtrlVar.LSFDesiredWorkAndForceTolerances=[1e-10 1];  % just use the work tolerance
+CtrlVar.LSFDesiredWorkOrForceTolerances=[1e-12 1];
+CtrlVar.LSFExitBackTrackingStepLength=1e-4;
+CtrlVar.LSFAcceptableWorkAndForceTolerances=[inf 1e-2];
+CtrlVar.LSFAcceptableWorkOrForceTolerances=[100 1e-2];
 
 % I find that while mu can not be either too small or too large,
 % it can have a wide range of acceptable values 1e6 to 1e9 at least
 
 
-CtrlVar.LevelSetInfoLevel=1;
+CtrlVar.LevelSetInfoLevel=100;
 CtrlVar.LevelSetEpsilon=0;
 
 xc=600e3;  % this is the initial calving front
 UserVar.xc=xc;
+BCs.LSFFixedNode=[]; BCs.LSFFixedValue=[];
 BCs=DefineBoundaryConditions(UserVar,CtrlVar,MUA,BCs) ;
 
 % Initial LSF
 F0.LSF=1*(xc-MUA.coordinates(:,1)) ;
 F1.LSF=1*(xc-MUA.coordinates(:,1)) ;
 
+% for I=1:21
+% P(I)=CalcLevelSetPertubationFunctional(CtrlVar,MUA,0.1*(I-1)*(xc-MUA.coordinates(:,1)));
+% end
 
 
 xcAnalytical=NaN(2*nRunSteps,1) ; tVector=NaN(2*nRunSteps,1) ;
@@ -54,43 +73,49 @@ F1.c=c ; F0.c=c;
 
 
 
-CtrlVar.LevelSetPhase="Initialisation" ;
+CtrlVar.LevelSetPhase="Initialisation" ; 
 CtrlVar.LevelSetSolutionMethod="Newton Raphson";
 CtrlVar.LevelSetFABCostFunction="p2q1";
-
-CtrlVar.LevelSetTheta=0.5;
+CtrlVar.LevelSetEpsilon=0;
 fprintf('\n \n Initialisation Phase. \n ')
-CtrlVar.LevelSetInfoLevel=10 ; CtrlVar.doplots=1  ;
 
-% Testing initialisation 
+
+% Testing initialisation
 % BCs.LSFFixedNode=[] ; BCs.LSFFixedValue=[] ;
-x=MUA.coordinates(:,1) ; 
-F0.LSF=100*sin(x/100e3) ; 
-F1.LSF=F0.LSF ; 
-F0.LSF(BCs.LSFFixedNode)=BCs.LSFFixedValue;
+
+F0.LSF=0.9*(xc-F0.x) ;
+F1.LSF=0.9*(xc-F1.x) ;
+
+
 CtrlVar.LevelSetFABmu=1 ;
-CtrlVar.dt=1e-5;
+
 [UserVar,RunInfo,LSF,Mask,lambda]=LevelSetEquation(UserVar,RunInfo,CtrlVar,MUA,BCs,F0,F1);
 
 
-   FindOrCreateFigure("Re-initialisation step")
-    hold off
-    yyaxis left
-    F.x=MUA.coordinates(:,1) ; 
-    plot(F.x/1000,F1.LSF/1000,'.g')
-    hold on
-    plot(F.x/1000,LSF/1000,'.b')
-    yyaxis right
-    plot(F.x/1000,(F1.LSF-LSF)/1000,'or')
-    legend('Before','after','change')
+% Perturbation term: J=1/(pq) int ( norm(nabla phi)^q-1)^p d|
 
+FindOrCreateFigure("Re-initialisation step")
+hold off
+yyaxis left
+F.x=MUA.coordinates(:,1) ;
+plot(F.x/1000,F1.LSF/1000,'.g')
+hold on
+plot(F.x/1000,LSF/1000,'.b')
+yyaxis right
+plot(F.x/1000,(F1.LSF-LSF)/1000,'or')
+legend('Before','after','change')
 
+[Pbefore,Nbefore]=CalcLevelSetPertubationFunctional(CtrlVar,MUA,F1.LSF) ;
+[Pafter,Nafter]=CalcLevelSetPertubationFunctional(CtrlVar,MUA,LSF);
+
+FindOrCreateFigure("LSF slope") ;
+hold off;
+plot(F.x/1000,Nbefore,'.r') ; hold on  ; plot(F.x/1000,Nafter,'.b')
+legend("before","after")
 %%
-F1.LSF = LSF ;
+F1.LSF = LSF ; F0.LSF = F1.LSF ;
 TestLevelSetPlots(CtrlVar,UserVar,MUA,F1);
 
-
-F0.LSF = F1.LSF ;
 
 
 
@@ -113,8 +138,6 @@ for iReInitialisationStep=1:nReinitialisationSteps
         F1.time=CtrlVar.time ;
         
         
-        
-        
         [u,c]=ucAnalytical(xcAnalytical(iV)) ;
         xcAnalytical(iV+1)=(u+c)*CtrlVar.dt+xcAnalytical(iV) ;
         tVector(iV+1)=CtrlVar.time ;
@@ -131,17 +154,9 @@ for iReInitialisationStep=1:nReinitialisationSteps
     end
     
     fprintf('\n \n Re-initialisation Phase. \n ')
-    Mask=CalcMeshMask(CtrlVar,MUA,F1.LSF,0);
-    BCsReinitialisation=BCs;  % Here I'm exploring the option of defining bespoke BCs for the reinitialisation step.
-    BCsReinitialisation.LSFFixedNode=find(Mask.NodesOn);  % fix the LSF field for all nodes of elements around the level.
-    BCsReinitialisation.LSFFixedValue=F1.LSF(Mask.NodesOn);
-    FindOrCreateFigure("LSF BCs Initialisation")
-    PlotBoundaryConditions(CtrlVar,MUA,BCsReinitialisation) ;
-    hold on ; [xc,yc]=PlotCalvingFronts(CtrlVar,MUA,F1,'b','LineWidth',2) ;
-      
-    CtrlVar.LevelSetPhase="Initialisation" ;
+        CtrlVar.LevelSetPhase="Initialisation" ;
     fprintf("time=%f \t %s \n",CtrlVar.time,CtrlVar.LevelSetPhase)
-    CtrlVar.LevelSetInfoLevel=10 ; CtrlVar.doplots=1  ;
+    
     [UserVar,RunInfo,LSF,Mask]=LevelSetEquation(UserVar,RunInfo,CtrlVar,MUA,BCsReinitialisation,F0,F1);
     
     FindOrCreateFigure("Re-initialisation step")
@@ -155,7 +170,7 @@ for iReInitialisationStep=1:nReinitialisationSteps
     plot(F.x/1000,(F1.LSF-LSF)/1000,'or')
     legend('Before','after','change')
     
-    F0.LSF=LSF ; F1.LSF=LSF ;
+    F0.LSF=LSF ; F1.LSF=LSF ;  % after a re-initialisation
     TestLevelSetPlots(CtrlVar,UserVar,MUA,F0);
     LevelSetInfoLevelPlots(CtrlVar,MUA,BCs,F0,F1);
 end
