@@ -3,7 +3,7 @@ function TestLevelSetPlots(CtrlVar,UserVar,MUA,F)
 
 persistent LSFlast timelast
 
-fig=FindOrCreateFigure("1d Profile"+UserVar.RunType);
+fig=FindOrCreateFigure("1d Profile");
 
 hold off ;
 
