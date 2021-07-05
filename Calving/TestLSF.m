@@ -47,7 +47,7 @@ if ~Restart
         MeshBoundaryCoordinates=[0 -10e3 ; 800e3 -10e3 ; 800e3 10e3 ; 0  10e3 ] ;
         CtrlVar.MeshBoundaryCoordinates=MeshBoundaryCoordinates;
         [UserVar,MUA]=genmesh2d(UserVar,CtrlVar);
-        figure ; PlotMuaMesh(CtrlVar,MUA); drawnow
+        FindOrCreateFigure("Mesh"); PlotMuaMesh(CtrlVar,MUA); drawnow
         F0=UaFields;
         F1=UaFields;
         BCs=BoundaryConditions;
@@ -58,12 +58,14 @@ if ~Restart
     ReinitialisationStepsStart=1;
     F0.x=MUA.coordinates(:,1) ; F0.y=MUA.coordinates(:,2) ;
     F1.x=MUA.coordinates(:,1) ; F1.y=MUA.coordinates(:,2) ;
+
+    nRunSteps=10; nReinitialisationSteps=20000; CtrlVar.dt=0.1;   CtrlVar.LevelSetFABmu=1e7 ;  xc=100e3;  % this is the initial calving front
+    
+    
+    
     CtrlVar.LSFslope=1;
     
-    nRunSteps=10; nReinitialisationSteps=10; CtrlVar.dt=0.1;
-    CtrlVar.LevelSetFABmu=1 ;
-    
-    ResultsFile=sprintf("TestLSFresults-Iceshelf-mu%i-dt%i-%i-%i",CtrlVar.LevelSetFABmu,CtrlVar.dt,nRunSteps,nReinitialisationSteps);
+    ResultsFile=sprintf("TestLSFresults-Iceshelf-mu%i-dt%3.1f-%i-%i-xc%i",CtrlVar.LevelSetFABmu,CtrlVar.dt,nRunSteps,nReinitialisationSteps,xc);
     ResultsFile=replace(ResultsFile,".","k") ;
     CtrlVar.VelocityField="Analytical" ; % "Linear" ; % "Analytical" ; % "Constant" ;  % prescribed velocity, see below in nested function"Analytical"
     
@@ -76,7 +78,7 @@ if ~Restart
     CtrlVar.LevelSetInfoLevel=1;
     CtrlVar.LevelSetEpsilon=0;
     
-    xc=200e3;  % this is the initial calving front
+   
     UserVar.xc=xc;
     BCs.LSFFixedNode=[]; BCs.LSFFixedValue=[];
     
@@ -92,7 +94,7 @@ if ~Restart
     
     xcAnalytical=NaN(2*nRunSteps,1) ; tVector=NaN(2*nRunSteps,1) ;
     xcNumerical=NaN(2*nRunSteps,1) ;  xcLSFNumerical=NaN(2*nRunSteps,1) ;
-    iV=1;  xcAnalytical(iV)=xc ; tVector(iV)=CtrlVar.time;
+    iV=1;  xcAnalytical(iV)=xc ; tVector(iV)=CtrlVar.time;  xcLSFNumerical(iV)=xc ;
     
     [u,c]=ucAnalytical(F1.x) ; % this is a nested function, so it sees all local variables
     
@@ -165,6 +167,8 @@ else
     
 end
 
+
+
 CtrlVar.LevelSetInfoLevel=1;
 
 for iReInitialisationStep=ReinitialisationStepsStart:nReinitialisationSteps
@@ -201,7 +205,7 @@ for iReInitialisationStep=ReinitialisationStepsStart:nReinitialisationSteps
         
     end
     
-    close all
+    
     fprintf('\n \n Re-initialisation Phase. \n ')
     CtrlVar.LevelSetPhase="Initialisation" ;
     fprintf("time=%f \t %s \n",CtrlVar.time,CtrlVar.LevelSetPhase)
@@ -238,7 +242,8 @@ for iReInitialisationStep=ReinitialisationStepsStart:nReinitialisationSteps
     
     % save a restart once in a while
     if mod(iReInitialisationStep,5)==0
-        save(ResultsFile,"tVector","xcAnalytical","xcLSFNumerical","xcNumerical")
+        save(ResultsFile,"tVector","xcAnalytical","xcLSFNumerical","xcNumerical","MUA","F0","F1","CtrlVar","UserVar")
+        close all
         save("RestartFile-"+ResultsFile)
     end
 end
@@ -255,7 +260,7 @@ xlabel("$t \; \mathrm{(yr)}$","Interpreter","latex")
 ylabel("$x_c\;\mathrm{(km)}$","Interpreter","latex")
 
 yyaxis right
-plot(tVector,(xcAnalytical-xcLSFNumerical)/1000,'.r')
+plot(tVector,(xcAnalytical-xcLSFNumerical)/1000,'.b')
 ylabel("$\Delta x_c$ (Analytical-Numerical) $\;\mathrm{(km)}$","Interpreter","latex")
 
 %legend("$x_c$ analytical","$x_c$ numerical","Nearest node to $x_c$","$\Delta x_c$ (Analytical-Numerical)",...
@@ -263,11 +268,15 @@ ylabel("$\Delta x_c$ (Analytical-Numerical) $\;\mathrm{(km)}$","Interpreter","la
 
 legend("$x_c$ analytical","$x_c$ numerical","$\Delta x_c$ (Analytical-Numerical)",...
     "interpreter","latex","location","northeast")
+title(sprintf("std %f ",std(xcAnalytical-xcLSFNumerical,'omitnan')))
 
-save(ResultsFile,"tVector","xcAnalytical","xcLSFNumerical","xcNumerical")
+fprintf('Saving results in %s \n',ResultsFile) 
 
-%exportgraphics(gca,"FABp2q2.pdf")
+exportgraphics(gca,ResultsFile+"-t"+num2str(round(CtrlVar.time))+".pdf") ; 
 
+
+
+save(ResultsFile,"tVector","xcAnalytical","xcLSFNumerical","xcNumerical","MUA","F0","F1","CtrlVar","UserVar")
 %% nested functions
 
     function [u,c]=ucAnalytical(x)
