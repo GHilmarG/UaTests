@@ -13,16 +13,33 @@ File(8)="TestLSFresults-Iceshelf-mu100000000-dt0k1-10-20000";
 File(9)="TestLSFresults-Iceshelf-mu10000000000-dt0k1-10-20000";
 
 
-File(10)="TestLSFresults-Iceshelf-mu10000000-dt0k1-10-20000-xc50000";
+
 
 File(11)="TestLSFresults-Iceshelf-mu10000000-dt0k1-10-20000-xc100000";
+
+File(10)="TestLSFresults-Iceshelf-mu10000000-dt0k1-10-20000-xc50000";
+File(12)="TestLSFresults-Iceshelf-mu10000000-dt0k1-10-20000-xc50000--pseudo-forward-";
+File(13)="TestLSFresults-Iceshelf-mu10000000-dt0k01-10-20000-xc50000-";
+File(14)="TestLSFresults-Iceshelf-mu5000000-dt0k01-10-20000-xc50000-";
+File(15)="TestLSFresults-Iceshelf-mu10000000-dt0k10-2-20000-xc50000-";
+File(16)="TestLSFresults-Iceshelf-muucl-dt0k10-2-20000-xc50000-";
+File(17)="TestLSFresults-Iceshelf-muucl-dt0k10-10-20000-xc50000-";
+
+File(18)="TestLSFresults-Iceshelf-muScaleucl-muValue1000-dt0k10-10-20000-xc50000-" ; 
+File(19)="TestLSFresults-Iceshelf-p2q2-muScaleucl-muValue100-dt0k10-10-20000-xc50000-";
+File(20)="TestLSFresults-Iceshelf-p2q2-muScaleucl-muValue10-dt0k10-10-20000-xc50000-";
+
+File(21)="TestLSFresults-Iceshelf-F0test-p2q2-muScaleconstant-muValue10000000-dt0k10-10-20000-xc50000-" ;
+File(22)="TestLSFresults-Iceshelf-F0test2-p2q2-muScaleconstant-muValue10000000-dt0k10-10-20000-xc50000-" ;
+File(23)="TestLSFresults-Iceshelf-F0test3-p2q2-muScaleconstant-muValue10000000-dt0k10-10-20000-xc50000-l1000";
+File(24)="TestLSFresults-Iceshelf-F0test3-p2q2-muScaleconstant-muValue10000000-dt0k10-10-20000-xc50000-l1000-N6";
 
 col=["m","b","g","c","r","y"];
 close all
 K=0 ;
 fig=FindOrCreateFigure("PPplots") ;
 hold off
-for I=[7 8 ]
+for I=[23 24] % [10 21 22 23]
     
     load(File(I))
     
@@ -57,9 +74,9 @@ for I=[7 8 ]
 end
 l=plot(xlim,[0 0],'-r');
 
-l.Annotation.LegendInformation.IconDisplayStyle = 'off';
-lgd=legend(...
-    "interpreter","latex","location","northeast");
-lgd.NumColumns = 3;
+% l.Annotation.LegendInformation.IconDisplayStyle = 'off';
+% lgd=legend(...
+%     "interpreter","latex","location","northeast");
+% lgd.NumColumns = 3;
 
 % exportgraphics(gca,"PPplots.pdf") ; 

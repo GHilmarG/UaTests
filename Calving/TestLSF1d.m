@@ -39,14 +39,16 @@ if ~Restart
         CtrlVar=Ua2D_DefaultParameters(); %
         CtrlVar.LevelSetMethod=true;
         CtrlVar.WhenPlottingMesh_PlotMeshBoundaryCoordinatesToo=1;
-        MeshSize=2e3;
+        MeshSize=1e3;
         CtrlVar.MeshSizeMax=MeshSize;
         CtrlVar.MeshSizeMin=MeshSize;
         CtrlVar.MeshSize=MeshSize;
         
         MeshBoundaryCoordinates=[0 -10e3 ; 800e3 -10e3 ; 800e3 10e3 ; 0  10e3 ] ;
         CtrlVar.MeshBoundaryCoordinates=MeshBoundaryCoordinates;
+        CtrlVar.TriNodes=6 ;  % Possible values are 3, 6, 10 node (linear/quadradic/cubic)
         [UserVar,MUA]=genmesh2d(UserVar,CtrlVar);
+        CtrlVar.PlotNodes=1;
         FindOrCreateFigure("Mesh"); PlotMuaMesh(CtrlVar,MUA); drawnow
         F0=UaFields;
         F1=UaFields;
@@ -59,14 +61,24 @@ if ~Restart
     F0.x=MUA.coordinates(:,1) ; F0.y=MUA.coordinates(:,2) ;
     F1.x=MUA.coordinates(:,1) ; F1.y=MUA.coordinates(:,2) ;
 
-    nRunSteps=10; nReinitialisationSteps=20000; CtrlVar.dt=0.1;   CtrlVar.LevelSetFABmu=1e7 ;  xc=100e3;  % this is the initial calving front
     
-    
+    %% Parameters
+    nRunSteps=10; nReinitialisationSteps=20000; CtrlVar.dt=0.1;   xc=50e3;   
+    CtrlVar.LevelSetTestString="" ; % "-xc/yc nodes-" ; 
+    CtrlVar.LevelSetFABmu.Value=1e7 ; CtrlVar.LevelSetFABmu.Scale="constant"; CtrlVar.LevelSetFABCostFunction="p2q2";
+    CtrlVar.LevelSetInfoLevel=1;
+    AddedStringToFileName="F0test3" ;
+    %%
     
     CtrlVar.LSFslope=1;
     
-    ResultsFile=sprintf("TestLSFresults-Iceshelf-mu%i-dt%3.1f-%i-%i-xc%i",CtrlVar.LevelSetFABmu,CtrlVar.dt,nRunSteps,nReinitialisationSteps,xc);
+    ResultsFile=sprintf("TestLSFresults-Iceshelf-%s-%s-muScale%s-muValue%i-dt%3.2f-%i-%i-xc%i-%s-l%i-N%i",...
+        AddedStringToFileName,...
+        CtrlVar.LevelSetFABCostFunction,CtrlVar.LevelSetFABmu.Scale,CtrlVar.LevelSetFABmu.Value,...
+        CtrlVar.dt,nRunSteps,nReinitialisationSteps,xc,CtrlVar.LevelSetTestString,CtrlVar.MeshSize,CtrlVar.TriNodes);
+    
     ResultsFile=replace(ResultsFile,".","k") ;
+    ResultsFile=replace(ResultsFile,"--","-") ;
     CtrlVar.VelocityField="Analytical" ; % "Linear" ; % "Analytical" ; % "Constant" ;  % prescribed velocity, see below in nested function"Analytical"
     
     
@@ -75,7 +87,7 @@ if ~Restart
     % it can have a wide range of acceptable values 1e6 to 1e9 at least
     
     
-    CtrlVar.LevelSetInfoLevel=1;
+    
     CtrlVar.LevelSetEpsilon=0;
     
    
@@ -106,7 +118,7 @@ if ~Restart
     
     CtrlVar.LevelSetPhase="Initialisation" ;
     CtrlVar.LevelSetSolutionMethod="Newton Raphson";
-    CtrlVar.LevelSetFABCostFunction="p2q2";
+    
     CtrlVar.LevelSetEpsilon=0;
     fprintf('\n \n Initialisation Phase. \n ')
     
@@ -169,7 +181,7 @@ end
 
 
 
-CtrlVar.LevelSetInfoLevel=1;
+
 
 for iReInitialisationStep=ReinitialisationStepsStart:nReinitialisationSteps
     
@@ -209,7 +221,7 @@ for iReInitialisationStep=ReinitialisationStepsStart:nReinitialisationSteps
     fprintf('\n \n Re-initialisation Phase. \n ')
     CtrlVar.LevelSetPhase="Initialisation" ;
     fprintf("time=%f \t %s \n",CtrlVar.time,CtrlVar.LevelSetPhase)
-    
+    F0=F1; 
     [UserVar,RunInfo,LSF,Mask]=LevelSetEquation(UserVar,RunInfo,CtrlVar,MUA,BCs,F0,F1);
     
     if CtrlVar.LevelSetInfoLevel>=10
