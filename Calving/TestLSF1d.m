@@ -18,7 +18,7 @@
 %                  -It appears that the LSF has to be reasonably close to the minimum of the P term for it to converge to the
 %                   right solution.
 %                  -In the initialisation step, set theta=1, otherwise the mean value (f0+f1)/2 is the solution , not f1.
-function TestLSF
+function TestLSF1d
 
 clearvars
 clear FindOrCreateFigure
@@ -39,14 +39,14 @@ if ~Restart
         CtrlVar=Ua2D_DefaultParameters(); %
         CtrlVar.LevelSetMethod=true;
         CtrlVar.WhenPlottingMesh_PlotMeshBoundaryCoordinatesToo=1;
-        MeshSize=1e3;
+        MeshSize=2e3;
         CtrlVar.MeshSizeMax=MeshSize;
         CtrlVar.MeshSizeMin=MeshSize;
         CtrlVar.MeshSize=MeshSize;
         
         MeshBoundaryCoordinates=[0 -10e3 ; 800e3 -10e3 ; 800e3 10e3 ; 0  10e3 ] ;
         CtrlVar.MeshBoundaryCoordinates=MeshBoundaryCoordinates;
-        CtrlVar.TriNodes=6 ;  % Possible values are 3, 6, 10 node (linear/quadradic/cubic)
+        CtrlVar.TriNodes=3 ;  % Possible values are 3, 6, 10 node (linear/quadradic/cubic)
         [UserVar,MUA]=genmesh2d(UserVar,CtrlVar);
         CtrlVar.PlotNodes=1;
         FindOrCreateFigure("Mesh"); PlotMuaMesh(CtrlVar,MUA); drawnow
@@ -64,10 +64,10 @@ if ~Restart
     
     %% Parameters
     nRunSteps=10; nReinitialisationSteps=20000; CtrlVar.dt=0.1;   xc=50e3;   
-    CtrlVar.LevelSetTestString="" ; % "-xc/yc nodes-" ; 
-    CtrlVar.LevelSetFABmu.Value=1e7 ; CtrlVar.LevelSetFABmu.Scale="constant"; CtrlVar.LevelSetFABCostFunction="p2q2";
+    CtrlVar.LevelSetTestString="" ; %-xc sign-"  ; % "-xc/yc nodes-" ; 
+    CtrlVar.LevelSetFABmu.Value=100 ; CtrlVar.LevelSetFABmu.Scale="constant"; CtrlVar.LevelSetFABCostFunction="p2q2" ; %"p2q2";
     CtrlVar.LevelSetInfoLevel=1;
-    AddedStringToFileName="F0test3" ;
+    AddedStringToFileName="" ;
     %%
     
     CtrlVar.LSFslope=1;
@@ -204,6 +204,7 @@ for iReInitialisationStep=ReinitialisationStepsStart:nReinitialisationSteps
         
         [u,c]=ucAnalytical(xcAnalytical(iV)) ;
         xcAnalytical(iV+1)=(u+c)*CtrlVar.dt+xcAnalytical(iV) ;
+        
         tVector(iV+1)=CtrlVar.time ;
         [Value,Index]=min(abs(F1.LSF)) ; xcNumerical(iV+1)=F1.x(Index) ;
         
@@ -253,7 +254,7 @@ for iReInitialisationStep=ReinitialisationStepsStart:nReinitialisationSteps
     end
     
     % save a restart once in a while
-    if mod(iReInitialisationStep,5)==0
+    if mod(iReInitialisationStep,20)==0
         save(ResultsFile,"tVector","xcAnalytical","xcLSFNumerical","xcNumerical","MUA","F0","F1","CtrlVar","UserVar")
         close all
         save("RestartFile-"+ResultsFile)

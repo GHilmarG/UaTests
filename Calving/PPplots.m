@@ -34,12 +34,28 @@ File(22)="TestLSFresults-Iceshelf-F0test2-p2q2-muScaleconstant-muValue10000000-d
 File(23)="TestLSFresults-Iceshelf-F0test3-p2q2-muScaleconstant-muValue10000000-dt0k10-10-20000-xc50000-l1000";
 File(24)="TestLSFresults-Iceshelf-F0test3-p2q2-muScaleconstant-muValue10000000-dt0k10-10-20000-xc50000-l1000-N6";
 
+File(25)="TestLSFresults-Iceshelf-p2q2-muScaleconstant-muValue1000000-dt0k10-100-20000-xc50000-l2000-N3";
+File(26)="TestLSFresults-Iceshelf-p2q2-muScaleconstant-muValue1-dt0k10-100-20000-xc50000-l2000-N3";
+File(27)="TestLSFresults-Iceshelf-p2q1-muScaleconstant-muValue1-dt0k10-100-20000-xc50000-l2000-N3";
+File(28)="TestLSFresults-Iceshelf-p2q1-muScaleconstant-muValue1-dt0k10-10-20000-xc50000-l2000-N3";
+File(29)="TestLSFresults-Iceshelf-p2q1-muScaleconstant-muValue1-dt0k10-1-20000-xc50000-l2000-N3";
+
+File(30)="TestLSFresults-Iceshelf-p2q1-muScaleconstant-muValue1000000-dt0k10-10-20000-xc50000-l2000-N3";
+File(31)="TestLSFresults-Iceshelf-p2q2-muScaleconstant-muValue1000000-dt0k10-10-20000-xc50000-l2000-N3";
+File(32)="TestLSFresults-Iceshelf-p2q4-muScaleconstant-muValue1000000-dt0k10-10-20000-xc50000-l2000-N3";
+
+File(33)="TestLSFresults-Iceshelf-Li2010-muScaleconstant-muValue1000000-dt0k10-10-20000-xc50000-l2000-N3";
+File(34)="TestLSFresults-Iceshelf-p2q1-muScaleconstant-muValue1000000-dt0k10-10-20000-xc50000-xc sign-l2000-N3";
+
+File(35)="TestLSFresults-Iceshelf-p2q2-muScaleconstant-muValue100-dt0k10-10-20000-xc50000-xc sign-l2000-N3";
+File(36)="TestLSFresults-Iceshelf-p2q2-muScaleconstant-muValue100-dt0k10-10-20000-xc50000-l2000-N3";
+
 col=["m","b","g","c","r","y"];
 close all
 K=0 ;
 fig=FindOrCreateFigure("PPplots") ;
 hold off
-for I=[23 24] % [10 21 22 23]
+for I=[35 36]
     
     load(File(I))
     
@@ -80,3 +96,27 @@ l=plot(xlim,[0 0],'-r');
 % lgd.NumColumns = 3;
 
 % exportgraphics(gca,"PPplots.pdf") ; 
+
+
+
+%%
+FindOrCreateFigure("BCs") ; PlotBoundaryConditions(CtrlVar,MUA,BCs) ;
+hold on ; plot(xC,yC,'*r',DisplayName="C")
+CtrlVar.LineUpGLs=true ; PlotCalvingFronts(CtrlVar,MUA,F1) ;
+FindOrCreateFigure("F1.LSF") ; PlotMeshScalarVariable(CtrlVar,MUA,F1.LSF) ; hold on ; PlotCalvingFronts(CtrlVar,MUA,F1,'r') ;
+FindOrCreateFigure("F1.LSF surface") ; PatchObject=PlotMeshScalarVariableAsSurface(CtrlVar,MUA,F1.LSF,0.2) ; colormap(parula) ;
+
+%%
+load TestSave
+
+
+[dfdx,dfdy,xint,yint]=calcFEderivativesMUA(F1.LSF,MUA,CtrlVar);
+
+
+
+figure ;
+
+[FigHandle,ColorbarHandle]=PlotMeshScalarVariable(CtrlVar,MUA,N) ;
+
+
+
