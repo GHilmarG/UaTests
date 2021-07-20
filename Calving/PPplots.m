@@ -50,43 +50,66 @@ File(34)="TestLSFresults-Iceshelf-p2q1-muScaleconstant-muValue1000000-dt0k10-10-
 File(35)="TestLSFresults-Iceshelf-p2q2-muScaleconstant-muValue100-dt0k10-10-20000-xc50000-xc sign-l2000-N3";
 File(36)="TestLSFresults-Iceshelf-p2q2-muScaleconstant-muValue100-dt0k10-10-20000-xc50000-l2000-N3";
 
+File(37)="TestLSF2d-p2q2-muScaleucl-muValue1k000000e-01-dt0k10-50-20-xc50000-l10000-N6";
+File(38)="TestLSF2d-p2q2-muScaleucl-muValue1-dt0k10-50-20-xc50000-l10000-N6";
+
+
 col=["m","b","g","c","r","y"];
 close all
 K=0 ;
 fig=FindOrCreateFigure("PPplots") ;
 hold off
-for I=[35 36]
+for I=[37 38]
     
     load(File(I))
     
     K=K+1;
     
- 
-    yyaxis left
-    plot(tVector,xcLSFNumerical/1000,'.',color=col(K),LineWidth=0.5,DisplayName="numerical")
-    hold on
-    plot(tVector,xcAnalytical/1000,'-k',DisplayName="analytical") ;
- 
+    if contains(File(I),"LSF2")
+        
+        yyaxis left
+        plot(tVector,RcNumerical/1000,'.',color=col(K),LineWidth=0.5,DisplayName="numerical")
+        hold on
+        plot(tVector,RcAnalytical/1000,'-k',DisplayName="analytical") ;
+        xlabel("$t \; \mathrm{(yr)}$","Interpreter","latex")
+        ylabel("$R_c\;\mathrm{(km)}$","Interpreter","latex")
+        %ylim([100 200])
+        yyaxis right
+        hold on
+        plot(tVector,(RcAnalytical-RcNumerical)/1000,'--',color=col(K),Linewidth=0.5,DisplayName="error")
+
+        ylabel("$\Delta R_c$ (Analytical-Numerical) $\;\mathrm{(km)}$","Interpreter","latex")
+        
+        title(sprintf("std %f ",std(RcAnalytical-RcNumerical,'omitnan')))
+        
+    else
+        
+        yyaxis left
+        plot(tVector,xcLSFNumerical/1000,'.',color=col(K),LineWidth=0.5,DisplayName="numerical")
+        plot(tVector,xcLSFNumerical/1000,'.',color=col(K),LineWidth=0.5,DisplayName="numerical")
+        hold on
+        plot(tVector,xcAnalytical/1000,'-k',DisplayName="analytical") ;
+        xlabel("$t \; \mathrm{(yr)}$","Interpreter","latex")
+        ylabel("$x_c\;\mathrm{(km)}$","Interpreter","latex")
+        %ylim([100 200])
+        yyaxis right
+        hold on
+        plot(tVector,(xcAnalytical-xcLSFNumerical)/1000,'--',color=col(K),Linewidth=0.5,DisplayName="error")
+        % plot(xlim,[0 0],'-r')
+        ylabel("$\Delta x_c$ (Analytical-Numerical) $\;\mathrm{(km)}$","Interpreter","latex")
+        
+        %legend("$x_c$ analytical","$x_c$ numerical","Nearest node to $x_c$","$\Delta x_c$ (Analytical-Numerical)",...
+        %    "interpreter","latex","location","northwest")
+        
+        %    legend("$x_c$ analytical","$x_c$ numerical","$\Delta x_c$ (Analytical-Numerical)",...
+        %        "interpreter","latex","location","northeast")
+        
+        
+        
+        title(sprintf("std %f ",std(xcAnalytical-xcLSFNumerical,'omitnan')))
+        
+    end
     
-   
-    xlabel("$t \; \mathrm{(yr)}$","Interpreter","latex")
-    ylabel("$x_c\;\mathrm{(km)}$","Interpreter","latex")
-    %ylim([100 200])
-    yyaxis right
-    hold on
-    plot(tVector,(xcAnalytical-xcLSFNumerical)/1000,'--',color=col(K),Linewidth=0.5,DisplayName="error")
-    % plot(xlim,[0 0],'-r')
-    ylabel("$\Delta x_c$ (Analytical-Numerical) $\;\mathrm{(km)}$","Interpreter","latex")
-    
-    %legend("$x_c$ analytical","$x_c$ numerical","Nearest node to $x_c$","$\Delta x_c$ (Analytical-Numerical)",...
-    %    "interpreter","latex","location","northwest")
-    
-    %    legend("$x_c$ analytical","$x_c$ numerical","$\Delta x_c$ (Analytical-Numerical)",...
-    %        "interpreter","latex","location","northeast")
-    
-    
-    
-    title(sprintf("std %f ",std(xcAnalytical-xcLSFNumerical,'omitnan')))
 end
 l=plot(xlim,[0 0],'-r');
 
