@@ -25,7 +25,9 @@ function TestLSF2d
 %% Generate mesh and MUA.
 UserVar=[];
 CtrlVar=Ua2D_DefaultParameters(); %
-CtrlVar.LevelSetMethod=true;
+CtrlVar.DevelopmentTestingQuadRules=true; 
+CtrlVar.DevelopmentVersion=true; 
+CtrlVar.LevelSetMethod=true; CtrlVar.LevelSetAssembly="consistent" ;
 CtrlVar.WhenPlottingMesh_PlotMeshBoundaryCoordinatesToo=1;
 MeshSize=10e3;
 CtrlVar.MeshSizeMax=MeshSize;
@@ -38,6 +40,7 @@ CtrlVar.PlotsXaxisLabel='x (km)' ; CtrlVar.PlotsYaxisLabel='y (km)' ; %
 MeshBoundaryCoordinates=[-100e3 -100e3 ; 100e3 -100e3 ; 100e3 100e3 ; -100e3  100e3 ] ;
 CtrlVar.MeshBoundaryCoordinates=MeshBoundaryCoordinates;
 CtrlVar.TriNodes=3 ;  % Possible values are 3, 6, 10 node (linear/quadradic/cubic)
+CtrlVar.MUA.DecomposeMassMatrix=true;
 [UserVar,MUA]=genmesh2d(UserVar,CtrlVar);
 CtrlVar.PlotNodes=1;
 FindOrCreateFigure("Mesh"); PlotMuaMesh(CtrlVar,MUA); drawnow
@@ -60,7 +63,7 @@ R1=sqrt(F1.x.^2+F1.y.^2);
 
 
 %% Parameters
-nRunSteps=5; nReinitialisationSteps=200; CtrlVar.dt=0.1;   Rc=50e3;
+nRunSteps=5; nReinitialisationSteps=20; CtrlVar.dt=0.1;   Rc=50e3;
  CtrlVar.LevelSetTestString="" ; %-xc sign-"  ; % "-xc/yc nodes-" ;
 % CtrlVar.LevelSetTestString="-limit c-" ; 
 CtrlVar.LevelSetFABmu.Value=1e4 ; CtrlVar.LevelSetFABmu.Scale="constant"; 
@@ -129,6 +132,8 @@ fprintf('\n \n Initialisation Phase. \n ')
 
 F0.LSF=1*(Rc-R0);
 F1.LSF=1*(Rc-R1);
+F0.LSFqx=zeros(MUA.Nnodes,1) ; F0.LSFqy=zeros(MUA.Nnodes,1) ;
+F1.LSFqx=zeros(MUA.Nnodes,1) ; F1.LSFqy=zeros(MUA.Nnodes,1) ;
 
 
 % defining evenn plataus
@@ -143,7 +148,7 @@ F1.LSF=1*(Rc-R1);
 % I=F0.LSF< -10e3 & F1.x>0  & abs(F1.y)<50e3 ;   F0.LSF(I)=-50e3; 
 
 CtrlVar.LSF.InitBCsZeroLevel=true ; 
-[UserVar,RunInfo,LSF,Mask,lambda]=LevelSetEquation(UserVar,RunInfo,CtrlVar,MUA,BCs,F0,F1);
+[UserVar,RunInfo,LSF,Mask,lambda,LSFqx,LSFqy]=LevelSetEquation(UserVar,RunInfo,CtrlVar,MUA,BCs,F0,F1);
 
 % sqrt((F1.LSF'*MUA.Dxx*F1.LSF+F1.LSF'*MUA.Dyy*F1.LSF)/MUA.Area)
 % Some aditional 1D plots
@@ -157,7 +162,7 @@ fprintf('er her \n')
 
 
 
-F1.LSF = LSF ; F0.LSF = F1.LSF ;
+F1.LSF = LSF ; F0.LSF = F1.LSF ; F0.LSFqx=LSFqx ; F0.LSFqy=LSFqy; 
 
 BCs.LSFFixedNode=[]; BCs.LSFFixedValue=[];
 
@@ -171,10 +176,9 @@ for iReInitialisationStep=ReinitialisationStepsStart:nReinitialisationSteps
         fprintf("time=%f \t %s \n",CtrlVar.time,CtrlVar.LevelSetPhase)
 
         
-        F0=F1 ;  F0.time=CtrlVar.time ;
-        [UserVar,RunInfo,F1.LSF,Mask,lambda]=LevelSetEquation(UserVar,RunInfo,CtrlVar,MUA,BCs,F0,F1,lambda);
-        
-            
+        F0=F1 ;  F0.time=CtrlVar.time ; 
+        [UserVar,RunInfo,F1.LSF,Mask,lambda,F1.LSFqx,F1.LSFqy]=LevelSetEquation(UserVar,RunInfo,CtrlVar,MUA,BCs,F0,F1,lambda);
+              
         CtrlVar.time=CtrlVar.time+CtrlVar.dt ;
         F1.time=CtrlVar.time ;
         
@@ -200,15 +204,16 @@ for iReInitialisationStep=ReinitialisationStepsStart:nReinitialisationSteps
     fprintf('\n \n Re-initialisation Phase. \n ')
     CtrlVar.LevelSetPhase="Initialisation" ;
     fprintf("time=%f \t %s \n",CtrlVar.time,CtrlVar.LevelSetPhase)
-    [UserVar,RunInfo,LSF,Mask]=LevelSetEquation(UserVar,RunInfo,CtrlVar,MUA,BCs,F0,F1);
+    [UserVar,RunInfo,LSF,Mask,l,LSFqx,LSFqy]=LevelSetEquation(UserVar,RunInfo,CtrlVar,MUA,BCs,F0,F1);
     
     
     F0.LSF=LSF ; F1.LSF=LSF ;  % after a re-initialisation
-    
+     F0.LSFqx=LSFqx ; F0.LSFqy=LSFqy; 
     
     % save a restart once in a while
     if mod(iReInitialisationStep,20)==0
-        save(ResultsFile,"tVector","RcAnalytical","xcLSFNumerical","RcNumerical","MUA","F0","F1","CtrlVar","UserVar")
+        warning('off','MATLAB:decomposition:SaveNotSupported')
+        save(ResultsFile,"tVector","RcAnalytical","xcLSFNumerical","RcNumerical","MUA","F0","F1","CtrlVar","UserVar","RunInfo")
         close all
         save("RestartFile-"+ResultsFile)
     end
@@ -241,8 +246,22 @@ fprintf('Saving results in %s \n',ResultsFile)
 % exportgraphics(gca,ResultsFile+"-t"+num2str(round(CtrlVar.time))+".pdf") ;
 
 
+I=RunInfo.LevelSet.Phase=="Propagation and FAB";
+FindOrCreateFigure("Propagation and FAB")
+plot(RunInfo.LevelSet.time(I),RunInfo.LevelSet.Iterations(I),'ro')
+title("Propagation and FAB")
+xlabel("time")
+ylabel("#NR iterations")
 
-save(ResultsFile,"tVector","RcAnalytical","RcNumerical","MUA","F0","F1","CtrlVar","UserVar")
+I=RunInfo.LevelSet.Phase=="Initialisation";
+FindOrCreateFigure("Initialisation")
+plot(RunInfo.LevelSet.time(I),RunInfo.LevelSet.Iterations(I),'b*')
+title("Initialisation")
+xlabel("time")
+ylabel("#NR iterations")
+
+
+save(ResultsFile,"tVector","RcAnalytical","RcNumerical","MUA","F0","F1","CtrlVar","UserVar","RunInfo")
 %% nested functions
 
 function [speed,c]=ucAnalytical(r)
