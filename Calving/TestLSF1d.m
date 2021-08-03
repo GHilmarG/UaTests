@@ -40,7 +40,7 @@ if ~Restart
         
         CtrlVar.DevelopmentTestingQuadRules=true; CtrlVar.DevelopmentVersion=true;
         CtrlVar.LevelSetMethod=true; CtrlVar.LevelSetAssembly="consistent" ;
-        CtrlVar.LSF.InitBCsZeroLevel=true ; 
+        
         
         CtrlVar.WhenPlottingMesh_PlotMeshBoundaryCoordinatesToo=1;
         MeshSize=2e3;

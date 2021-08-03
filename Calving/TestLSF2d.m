@@ -26,7 +26,7 @@ function TestLSF2d
 UserVar=[];
 CtrlVar=Ua2D_DefaultParameters(); %
 CtrlVar.DevelopmentTestingQuadRules=true; CtrlVar.DevelopmentVersion=true; 
-CtrlVar.LevelSetMethod=true; CtrlVar.LevelSetAssembly="consistent" ;
+CtrlVar.LevelSetMethod=true; CtrlVar.LevelSetAssembly="inconsistent" ;
 CtrlVar.WhenPlottingMesh_PlotMeshBoundaryCoordinatesToo=1;
 MeshSize=10e3;
 CtrlVar.MeshSizeMax=MeshSize;
@@ -38,7 +38,7 @@ CtrlVar.PlotsXaxisLabel='x (km)' ; CtrlVar.PlotsYaxisLabel='y (km)' ; %
 
 MeshBoundaryCoordinates=[-100e3 -100e3 ; 100e3 -100e3 ; 100e3 100e3 ; -100e3  100e3 ] ;
 CtrlVar.MeshBoundaryCoordinates=MeshBoundaryCoordinates;
-CtrlVar.TriNodes=3 ;  % Possible values are 3, 6, 10 node (linear/quadradic/cubic)
+CtrlVar.TriNodes=6 ;  % Possible values are 3, 6, 10 node (linear/quadradic/cubic)
 CtrlVar.MUA.DecomposeMassMatrix=true;
 [UserVar,MUA]=genmesh2d(UserVar,CtrlVar);
 CtrlVar.PlotNodes=1;
@@ -146,7 +146,7 @@ F1.LSFqx=zeros(MUA.Nnodes,1) ; F1.LSFqy=zeros(MUA.Nnodes,1) ;
 % I=F0.LSF< -20e3 & F1.x>10e3 ;  F0.LSF(I)=-10e3 ;
 % I=F0.LSF< -10e3 & F1.x>0  & abs(F1.y)<50e3 ;   F0.LSF(I)=-50e3; 
 
-CtrlVar.LSF.InitBCsZeroLevel=true ; 
+
 [UserVar,RunInfo,LSF,Mask,lambda,LSFqx,LSFqy]=LevelSetEquation(UserVar,RunInfo,CtrlVar,MUA,BCs,F0,F1);
 
 % sqrt((F1.LSF'*MUA.Dxx*F1.LSF+F1.LSF'*MUA.Dyy*F1.LSF)/MUA.Area)
