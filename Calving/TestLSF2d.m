@@ -25,8 +25,7 @@ function TestLSF2d
 %% Generate mesh and MUA.
 UserVar=[];
 CtrlVar=Ua2D_DefaultParameters(); %
-CtrlVar.DevelopmentTestingQuadRules=true; 
-CtrlVar.DevelopmentVersion=true; 
+CtrlVar.DevelopmentTestingQuadRules=true; CtrlVar.DevelopmentVersion=true; 
 CtrlVar.LevelSetMethod=true; CtrlVar.LevelSetAssembly="consistent" ;
 CtrlVar.WhenPlottingMesh_PlotMeshBoundaryCoordinatesToo=1;
 MeshSize=10e3;
@@ -208,7 +207,7 @@ for iReInitialisationStep=ReinitialisationStepsStart:nReinitialisationSteps
     
     
     F0.LSF=LSF ; F1.LSF=LSF ;  % after a re-initialisation
-     F0.LSFqx=LSFqx ; F0.LSFqy=LSFqy; 
+    F0.LSFqx=LSFqx ; F0.LSFqy=LSFqy; 
     
     % save a restart once in a while
     if mod(iReInitialisationStep,20)==0

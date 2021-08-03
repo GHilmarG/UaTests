@@ -37,7 +37,11 @@ if ~Restart
         %% Generate mesh and MUA.
         UserVar=[];
         CtrlVar=Ua2D_DefaultParameters(); %
-        CtrlVar.LevelSetMethod=true;
+        
+        CtrlVar.DevelopmentTestingQuadRules=true; CtrlVar.DevelopmentVersion=true;
+        CtrlVar.LevelSetMethod=true; CtrlVar.LevelSetAssembly="consistent" ;
+        CtrlVar.LSF.InitBCsZeroLevel=true ; 
+        
         CtrlVar.WhenPlottingMesh_PlotMeshBoundaryCoordinatesToo=1;
         MeshSize=2e3;
         CtrlVar.MeshSizeMax=MeshSize;
@@ -46,7 +50,8 @@ if ~Restart
         
         MeshBoundaryCoordinates=[0 -10e3 ; 800e3 -10e3 ; 800e3 10e3 ; 0  10e3 ] ;
         CtrlVar.MeshBoundaryCoordinates=MeshBoundaryCoordinates;
-        CtrlVar.TriNodes=3 ;  % Possible values are 3, 6, 10 node (linear/quadradic/cubic)
+        CtrlVar.TriNodes=6 ;  % Possible values are 3, 6, 10 node (linear/quadradic/cubic)
+        CtrlVar.MUA.DecomposeMassMatrix=true;
         [UserVar,MUA]=genmesh2d(UserVar,CtrlVar);
         CtrlVar.PlotNodes=1;
         FindOrCreateFigure("Mesh"); PlotMuaMesh(CtrlVar,MUA); drawnow
@@ -63,7 +68,7 @@ if ~Restart
 
     
     %% Parameters
-    nRunSteps=10; nReinitialisationSteps=20000; CtrlVar.dt=0.1;   xc=50e3;   
+    nRunSteps=10; nReinitialisationSteps=2; CtrlVar.dt=0.1;   xc=50e3;   
     CtrlVar.LevelSetTestString="" ; %-xc sign-"  ; % "-xc/yc nodes-" ; 
     CtrlVar.LevelSetFABmu.Value=100 ; CtrlVar.LevelSetFABmu.Scale="constant"; CtrlVar.LevelSetFABCostFunction="p2q2" ; %"p2q2";
     CtrlVar.LevelSetInfoLevel=1;
@@ -98,7 +103,8 @@ if ~Restart
     % Initial LSF
     F0.LSF=1*(xc-MUA.coordinates(:,1)) ;
     F1.LSF=1*(xc-MUA.coordinates(:,1)) ;
-    
+    F0.LSFqx=zeros(MUA.Nnodes,1) ; F0.LSFqy=zeros(MUA.Nnodes,1) ;
+    F1.LSFqx=zeros(MUA.Nnodes,1) ; F1.LSFqy=zeros(MUA.Nnodes,1) ;
     % for I=1:21
     % P(I)=CalcLevelSetPertubationFunctional(CtrlVar,MUA,0.1*(I-1)*(xc-MUA.coordinates(:,1)));
     % end
@@ -133,7 +139,7 @@ if ~Restart
     
     
     
-    [UserVar,RunInfo,LSF,Mask,lambda]=LevelSetEquation(UserVar,RunInfo,CtrlVar,MUA,BCs,F0,F1);
+    [UserVar,RunInfo,LSF,Mask,lambda,LSFqx,LSFqy]=LevelSetEquation(UserVar,RunInfo,CtrlVar,MUA,BCs,F0,F1);
     
     
     % Perturbation term: J=1/(pq) int ( norm(nabla phi)^q-1)^p d|
@@ -160,7 +166,7 @@ if ~Restart
     end
     %%
     
-    F1.LSF = LSF ; F0.LSF = F1.LSF ;
+    F1.LSF = LSF ; F0.LSF = F1.LSF ; F0.LSFqx=LSFqx ; F0.LSFqy=LSFqy; 
     if CtrlVar.LevelSetInfoLevel>=10
         TestLevelSetPlots(CtrlVar,UserVar,MUA,F1);
     end
@@ -192,7 +198,7 @@ for iReInitialisationStep=ReinitialisationStepsStart:nReinitialisationSteps
         fprintf("time=%f \t %s \n",CtrlVar.time,CtrlVar.LevelSetPhase)
         
         F0=F1 ;
-        [UserVar,RunInfo,F1.LSF,Mask,lambda]=LevelSetEquation(UserVar,RunInfo,CtrlVar,MUA,BCs,F0,F1);
+        [UserVar,RunInfo,F1.LSF,Mask,lambda,F1.LSFqx,F1.LSFqy]=LevelSetEquation(UserVar,RunInfo,CtrlVar,MUA,BCs,F0,F1);
         
         if CtrlVar.LevelSetInfoLevel>=10
             TestLevelSetPlots(CtrlVar,UserVar,MUA,F1);
@@ -223,7 +229,7 @@ for iReInitialisationStep=ReinitialisationStepsStart:nReinitialisationSteps
     CtrlVar.LevelSetPhase="Initialisation" ;
     fprintf("time=%f \t %s \n",CtrlVar.time,CtrlVar.LevelSetPhase)
     F0=F1; 
-    [UserVar,RunInfo,LSF,Mask]=LevelSetEquation(UserVar,RunInfo,CtrlVar,MUA,BCs,F0,F1);
+    [UserVar,RunInfo,LSF,Mask,lambda,LSFqx,LSFqy]=LevelSetEquation(UserVar,RunInfo,CtrlVar,MUA,BCs,F0,F1);
     
     if CtrlVar.LevelSetInfoLevel>=10
         FindOrCreateFigure("Re-initialisation step")
@@ -247,6 +253,7 @@ for iReInitialisationStep=ReinitialisationStepsStart:nReinitialisationSteps
     end
     
     F0.LSF=LSF ; F1.LSF=LSF ;  % after a re-initialisation
+    F0.LSFqx=LSFqx ; F0.LSFqy=LSFqy; 
     
     if CtrlVar.LevelSetInfoLevel>=10
         TestLevelSetPlots(CtrlVar,UserVar,MUA,F0);
@@ -262,7 +269,7 @@ for iReInitialisationStep=ReinitialisationStepsStart:nReinitialisationSteps
 end
 
 % Plot comparision
-fig=FindOrCreateFigure("xc comparision") ;
+fig=FindOrCreateFigure("xc comparision "+CtrlVar.LevelSetAssembly+" Nod="+string(num2str(CtrlVar.TriNodes))) ;
 hold off
 yyaxis left
 plot(tVector,xcAnalytical/1000,'b') ;
