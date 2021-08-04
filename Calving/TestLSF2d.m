@@ -62,7 +62,7 @@ R1=sqrt(F1.x.^2+F1.y.^2);
 
 
 %% Parameters
-nRunSteps=7; nReinitialisationSteps=20; CtrlVar.dt=0.1;   Rc=50e3;
+nRunSteps=25; nReinitialisationSteps=20; CtrlVar.dt=0.1;   Rc=50e3;
  CtrlVar.LevelSetTestString="" ; %-xc sign-"  ; % "-xc/yc nodes-" ;
 % CtrlVar.LevelSetTestString="-limit c-" ; 
 CtrlVar.LevelSetFABmu.Value=1e4 ; CtrlVar.LevelSetFABmu.Scale="constant"; 
@@ -89,8 +89,6 @@ CtrlVar.VelocityField="Linear2D" ; % "Linear" ; % "Analytical" ; % "Constant" ; 
 % it can have a wide range of acceptable values 1e6 to 1e9 at least
 
 
-
-CtrlVar.LevelSetEpsilon=0;
 
 
 UserVar.Rc=Rc;
