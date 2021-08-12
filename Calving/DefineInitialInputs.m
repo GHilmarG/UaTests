@@ -20,7 +20,7 @@ function [UserVar,CtrlVar,MeshBoundaryCoordinates]=DefineInitialInputs(UserVar,C
 
 % UserVar.RunType="Test-1dAnalyticalIceShelf-";
 
-CtrlVar.LevelSetInfoLevel=100;
+CtrlVar.LevelSetInfoLevel=1;
 
 if isempty(UserVar)
     UserVar.RunType="-ManuallyDeactivateElements-ManuallyModifyThickness-";
@@ -34,14 +34,14 @@ if isempty(UserVar)
     UserVar.RunType="CFAa10000CFAb10000CFBa5000CFBb5000-RTinf-FAB0k0001-CFp2q4-CubicMF-CAisConstant-LevelSetWithMeltFeedback-1dIceShelf-";
     UserVar.RunType="CFAa10000CFAb2000CFBa5000CFBb500-RTinf-FAB0k0001-CFp2q4-CubicMF-CAisConstant-LevelSetWithMeltFeedback-1dIceShelf-";
     
-    UserVar.RunType="-RT10-FAB1-1dAnalyticalIceShelf-CAisConstant-";
+    UserVar.RunType="-RT1-FAB1-CFp2q2-1dAnalyticalIceShelf-CAisConstant-";
     
     CtrlVar.doplots=0;
     %UserVar.RunType="-TravellingFront-1dAnalyticalIceShelf-"; CtrlVar.doplots=0;
     
     CtrlVar.AdaptiveTimeStepping=1 ;
     
-    CtrlVar.LevelSetInitialisationInterval=10;
+ 
     CtrlVar.DefineOutputsDt=1;
 end
 
@@ -51,7 +51,7 @@ UserVar.Plots="-plot-save-Calving1dIceShelf-plotcalving-";
 
 
 CtrlVar.dt=0.01;
-CtrlVar.TriNodes=3;
+CtrlVar.TriNodes=6;
 UserVar.InitialGeometry="-MismipPlus-" ;  % default)
 
 if contains(UserVar.RunType,"-1dAnalyticalIceShelf-")
@@ -67,7 +67,7 @@ else
 end
 
 
-CtrlVar.TotalTime=5;
+CtrlVar.TotalTime=50;
 CtrlVar.TotalNumberOfForwardRunSteps=inf;
 CtrlVar.AdaptMeshMaxIterations=1;  % Number of adapt mesh iterations within each run-step.
 CtrlVar.doplots=1;

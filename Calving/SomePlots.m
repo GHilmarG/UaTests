@@ -26,23 +26,29 @@ end
 
 % 
 % to plot
-SubString="ExCFAa10000CFAb10000CFBa5000CFBb5000-RTinf-FAB100k-CFp2q4-CubicMF-CAisConstant-LevelSetWithMeltFeedback-1dIceShelf-MBice0-SUPGtaus-Adapt1";
+% SubString="ExCFAa10000CFAb10000CFBa5000CFBb5000-RTinf-FAB100k-CFp2q4-CubicMF-CAisConstant-LevelSetWithMeltFeedback-1dIceShelf-MBice0-SUPGtaus-Adapt1";
+% D{1}=ReadPlotSequenceOfResultFiles("FileNameSubstring",SubString,"PlotType","-collect-","PlotTimestep",1); 
+% 
+% SubString="ExCFAa10000CFAb10000CFBa5000CFBb5000-RTinf-FAB10k-CFp2q4-CubicMF-CAisConstant-LevelSetWithMeltFeedback-1dIceShelf-MBice0-SUPGtaus-Adapt1";
+% D{2}=ReadPlotSequenceOfResultFiles("FileNameSubstring",SubString,"PlotType","-collect-","PlotTimestep",1); 
+% 
+% SubString="ExCFAa10000CFAb10000CFBa5000CFBb5000-RTinf-FAB1k-CFp2q4-CubicMF-CAisConstant-LevelSetWithMeltFeedback-1dIceShelf-MBice0-SUPGtaus-Adapt1";
+% D{3}=ReadPlotSequenceOfResultFiles("FileNameSubstring",SubString,"PlotType","-collect-","PlotTimestep",1); 
+% 
+% SubString="ExCFAa10000CFAb10000CFBa5000CFBb5000-RTinf-FAB0k1-CFp2q4-CubicMF-CAisConstant-LevelSetWithMeltFeedback-1dIceShelf-MBice0-SUPGtaus-Adapt1";
+% D{4}=ReadPlotSequenceOfResultFiles("FileNameSubstring",SubString,"PlotType","-collect-","PlotTimestep",1); 
+% 
+% SubString="ExCFAa10000CFAb10000CFBa5000CFBb5000-RTinf-FAB0k01-CFp2q4-CubicMF-CAisConstant-LevelSetWithMeltFeedback-1dIceShelf-MBice0-SUPGtaus-Adapt1";
+% D{5}=ReadPlotSequenceOfResultFiles("FileNameSubstring",SubString,"PlotType","-collect-","PlotTimestep",1); 
+% 
+% SubString="ExCFAa10000CFAb10000CFBa5000CFBb5000-RTinf-FAB0k001-CFp2q4-CubicMF-CAisConstant-LevelSetWithMeltFeedback-1dIceShelf-MBice0-SUPGtaus-Adapt1";
+% D{6}=ReadPlotSequenceOfResultFiles("FileNameSubstring",SubString,"PlotType","-collect-","PlotTimestep",1); 
+% 
+% 
+SubString="Ex-RT1-FAB1-CFp2q2-1dAnalyticalIceShelf-CAisConstant-MBice0-SUPGtaus-Adapt1";
+SubString="Tri6-kH1000-Ex-RT1-FAB1-CFp2q2-1dAnalyticalIceShelf-CAisConstant-MBice0-SUPGtaus-Adapt1";
+SubString="Tri10-kH1000-Ex-RT1-FAB1-CFp2q2-1dAnalyticalIceShelf-CAisConstant-MBice0-SUPGtaus-Adapt1";
 D{1}=ReadPlotSequenceOfResultFiles("FileNameSubstring",SubString,"PlotType","-collect-","PlotTimestep",1); 
-
-SubString="ExCFAa10000CFAb10000CFBa5000CFBb5000-RTinf-FAB10k-CFp2q4-CubicMF-CAisConstant-LevelSetWithMeltFeedback-1dIceShelf-MBice0-SUPGtaus-Adapt1";
-D{2}=ReadPlotSequenceOfResultFiles("FileNameSubstring",SubString,"PlotType","-collect-","PlotTimestep",1); 
-
-SubString="ExCFAa10000CFAb10000CFBa5000CFBb5000-RTinf-FAB1k-CFp2q4-CubicMF-CAisConstant-LevelSetWithMeltFeedback-1dIceShelf-MBice0-SUPGtaus-Adapt1";
-D{3}=ReadPlotSequenceOfResultFiles("FileNameSubstring",SubString,"PlotType","-collect-","PlotTimestep",1); 
-
-SubString="ExCFAa10000CFAb10000CFBa5000CFBb5000-RTinf-FAB0k1-CFp2q4-CubicMF-CAisConstant-LevelSetWithMeltFeedback-1dIceShelf-MBice0-SUPGtaus-Adapt1";
-D{4}=ReadPlotSequenceOfResultFiles("FileNameSubstring",SubString,"PlotType","-collect-","PlotTimestep",1); 
-
-SubString="ExCFAa10000CFAb10000CFBa5000CFBb5000-RTinf-FAB0k01-CFp2q4-CubicMF-CAisConstant-LevelSetWithMeltFeedback-1dIceShelf-MBice0-SUPGtaus-Adapt1";
-D{5}=ReadPlotSequenceOfResultFiles("FileNameSubstring",SubString,"PlotType","-collect-","PlotTimestep",1); 
-
-SubString="ExCFAa10000CFAb10000CFBa5000CFBb5000-RTinf-FAB0k001-CFp2q4-CubicMF-CAisConstant-LevelSetWithMeltFeedback-1dIceShelf-MBice0-SUPGtaus-Adapt1";
-D{6}=ReadPlotSequenceOfResultFiles("FileNameSubstring",SubString,"PlotType","-collect-","PlotTimestep",1); 
 
 %
 %SubString="ExCFAa10000CFAb10000CFBa5000CFBb5000-RTinf-FAB0k0001-CFp2q4-CubicMF-CAisZero-LevelSetWithMeltFeedback-1dIceShelf-MBice0-SUPGtaus-Adapt1";
@@ -50,38 +56,17 @@ D{6}=ReadPlotSequenceOfResultFiles("FileNameSubstring",SubString,"PlotType","-co
 
 
 
-CurDir=pwd ;
-if ~contains(CurDir,"ResultsFiles")
-    cd ResultsFiles\
-end
-
-
 figure
 
-for I=1:3
-    
-    Data=D{I};
-    
-    plot(Data.time,Data.LSFmean/1000,'o')
-    hold on
-    %plot(Data.time,Data.LSFmin/1000)
-    %plot(Data.time,Data.LSFmax/1000)
-    plot(Data.time,Data.Lx/1000,'b')
-    
-end
 
-    
-    
-
-xlabel('$t$ (yr)','interpreter','latex')
-ylabel('$x_c$ (km)','interpreter','latex')
 
 
 %continue here for analytical comparision
 p=-2 ; 
 k=86320694.4400036;
-dt=0.1;
-N=10000;
+dt=0.1;  % this is my rough dt for simple explicit integration
+tMax=max(D{1}.time);
+N=floor(tMax/dt);
 xc=NaN(N,1) ;
 t=NaN(N,1);
 
@@ -89,7 +74,7 @@ xc(1)=200e3 ;
 t(1)=0;
 n=1;
 
-while t(n)<35
+while t(n)<=tMax
     
     [s,b,u]=AnalyticalOneDimentionalIceShelf([],xc(n)) ;
     h=s-b;
@@ -105,14 +90,47 @@ while t(n)<35
 end
 xc(xc<0)=NaN; 
 
-hold on; plot(t,xc/1000,'r','LineWidth',2) ;
+hold on; plot(t,xc/1000,'k','LineWidth',2) ;
+
+
+
+for I=1:1
+    
+    Data=D{I};
+    
+    plot(Data.time,Data.LSFmean/1000,'ob')
+    hold on
+    %plot(Data.time,Data.LSFmin/1000)
+    %plot(Data.time,Data.LSFmax/1000)
+    %plot(Data.time,Data.Lx/1000,'b')
+    
+end
+    
+
+xlabel('$t$ (yr)','interpreter','latex')
+ylabel('$x_c$ (km)','interpreter','latex')
+
 
 % ylim([50 200]) ; xlim([0 max(Data.time)])
 
+I=isnan(t) ; t=t(~I) ; xc=xc(~I) ; 
+
+xcAnalytical = interp1(t,xc,Data.time,'spline');
+
+yyaxis right
+plot(Data.time,(Data.LSFmean-xcAnalytical)/1000,'or')
+ylabel('$x_c$ analytical-numerical  (km)','interpreter','latex')
+
+plot(xlim,xlim*0,'-r')
+
+legend("analytical","numerical","numerical-analytical")
 
 
+ax = gca;
+ax.YAxis(1).Color = 'b';
+ax.YAxis(2).Color = 'r';
 
-
+cd(CurDir)
 
 
 

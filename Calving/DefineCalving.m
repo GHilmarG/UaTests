@@ -60,7 +60,7 @@ if CtrlVar.CurrentRunStepNumber< 2  % initialize the Level-Set-Field
     % LSF set equal to signed distance from x=xc
     xc=200e3;  % this is the initial calving front
     % Testing
-    LSF=0.5*(xc-MUA.coordinates(:,1)) ;
+    LSF=xc-MUA.coordinates(:,1) ;
     
 end
 
@@ -132,16 +132,5 @@ end
 
 
 
-
-if contains(UserVar.Plots,"-plotcalving-")
-    F.c=c ; F.LSF=LSF ; % for plotting
-    
-    
-    %% appears lost
-    TestLevelSetPlots(CtrlVar,UserVar,MUA,F)
-    %%
-    
-    
-end
 
 end
