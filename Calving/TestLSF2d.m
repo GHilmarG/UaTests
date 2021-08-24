@@ -26,9 +26,9 @@ function TestLSF2d
 UserVar=[];
 CtrlVar=Ua2D_DefaultParameters(); %
 CtrlVar.DevelopmentTestingQuadRules=true; CtrlVar.DevelopmentVersion=true; 
-CtrlVar.LevelSetMethod=true; CtrlVar.LevelSetAssembly="inconsistent" ;
+CtrlVar.LevelSetMethod=true; CtrlVar.LevelSetAssembly="consistent" ;
 CtrlVar.WhenPlottingMesh_PlotMeshBoundaryCoordinatesToo=1;
-MeshSize=10e3;
+MeshSize=5e3;
 CtrlVar.MeshSizeMax=MeshSize;
 CtrlVar.MeshSizeMin=MeshSize;
 CtrlVar.MeshSize=MeshSize;
@@ -38,7 +38,7 @@ CtrlVar.PlotsXaxisLabel='x (km)' ; CtrlVar.PlotsYaxisLabel='y (km)' ; %
 
 MeshBoundaryCoordinates=[-100e3 -100e3 ; 100e3 -100e3 ; 100e3 100e3 ; -100e3  100e3 ] ;
 CtrlVar.MeshBoundaryCoordinates=MeshBoundaryCoordinates;
-CtrlVar.TriNodes=6 ;  % Possible values are 3, 6, 10 node (linear/quadradic/cubic)
+CtrlVar.TriNodes=3 ;  % Possible values are 3, 6, 10 node (linear/quadradic/cubic)
 CtrlVar.MUA.DecomposeMassMatrix=true;
 [UserVar,MUA]=genmesh2d(UserVar,CtrlVar);
 CtrlVar.PlotNodes=1;
@@ -62,7 +62,7 @@ R1=sqrt(F1.x.^2+F1.y.^2);
 
 
 %% Parameters
-nRunSteps=25; nReinitialisationSteps=20; CtrlVar.dt=0.1;   Rc=50e3;
+nRunSteps=5; nReinitialisationSteps=20; CtrlVar.dt=0.1;   Rc=50e3;
  CtrlVar.LevelSetTestString="" ; %-xc sign-"  ; % "-xc/yc nodes-" ;
 % CtrlVar.LevelSetTestString="-limit c-" ; 
 CtrlVar.LevelSetFABmu.Value=1e4 ; CtrlVar.LevelSetFABmu.Scale="constant"; 
@@ -184,7 +184,7 @@ for iReInitialisationStep=ReinitialisationStepsStart:nReinitialisationSteps
         
       
         
-        RcAnalytical(iV+1)=(speedAnalytical+c)*CtrlVar.dt+RcAnalytical(iV) ;
+        RcAnalytical(iV+1)=(speedAnalytical-c)*CtrlVar.dt+RcAnalytical(iV) ;
         
         CtrlVar.LineUpGLs=false ; [xC,yC]=CalcMuaFieldsContourLine(CtrlVar,MUA,F1.LSF,Threshold);  Rc=sqrt(xC.^2+yC.^2) ;
         
@@ -209,7 +209,7 @@ for iReInitialisationStep=ReinitialisationStepsStart:nReinitialisationSteps
     
     % save a restart once in a while
     if mod(iReInitialisationStep,20)==0
-        warning('off','MATLAB:decomposition:SaveNotSupported')
+        MUA.dM=[];
         save(ResultsFile,"tVector","RcAnalytical","xcLSFNumerical","RcNumerical","MUA","F0","F1","CtrlVar","UserVar","RunInfo")
         close all
         save("RestartFile-"+ResultsFile)
@@ -276,14 +276,14 @@ switch CtrlVar.VelocityField
         q=-2;
         % k=86322275.9814533 ;
         k=86320694.4400036;
-        c=-k*h.^q;
+        c=k*h.^q;
         
     case "Linear"
         
         ugl=0;
         cgl=0;
         dudx=1000/600e3;
-        dcdx=-2*dudx;
+        dcdx=2*dudx;
         
         speed=ugl+dudx*x;
         c=cgl+dcdx*x;
@@ -293,7 +293,7 @@ switch CtrlVar.VelocityField
         u0=0;
         c0=0;
         dudr=1000/100e3;
-        dcdr=-2*dudr;
+        dcdr=2*dudr;
         
         speed=u0+dudr*r;
         c=c0+dcdr*r;
@@ -302,14 +302,14 @@ switch CtrlVar.VelocityField
         
         
         speed=1000+zeros(size(r),'like',r);
-        c=-1*speed ;
+        c=speed ;
         
         
     case "Constant2D"
         
       
         speed=1000+zeros(size(r),'like',r);
-        c=-1*speed ;
+        c=speed ;
         
     otherwise
         

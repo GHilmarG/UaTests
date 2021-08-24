@@ -43,7 +43,7 @@ if ~Restart
         
         
         CtrlVar.WhenPlottingMesh_PlotMeshBoundaryCoordinatesToo=1;
-        MeshSize=2e3;
+        MeshSize=10e3;
         CtrlVar.MeshSizeMax=MeshSize;
         CtrlVar.MeshSizeMin=MeshSize;
         CtrlVar.MeshSize=MeshSize;
@@ -209,7 +209,7 @@ for iReInitialisationStep=ReinitialisationStepsStart:nReinitialisationSteps
         
         
         [u,c]=ucAnalytical(xcAnalytical(iV)) ;
-        xcAnalytical(iV+1)=(u+c)*CtrlVar.dt+xcAnalytical(iV) ;
+        xcAnalytical(iV+1)=(u-c)*CtrlVar.dt+xcAnalytical(iV) ;
         
         tVector(iV+1)=CtrlVar.time ;
         [Value,Index]=min(abs(F1.LSF)) ; xcNumerical(iV+1)=F1.x(Index) ;
@@ -274,8 +274,8 @@ hold off
 yyaxis left
 plot(tVector,xcAnalytical/1000,'b') ;
 hold on ;
-plot(tVector,xcLSFNumerical/1000,'.g')
-%plot(tVector,xcNumerical/1000,'og')
+%plot(tVector,xcLSFNumerical/1000,'.g')
+plot(tVector,xcLSFNumerical/1000,'og')
 xlabel("$t \; \mathrm{(yr)}$","Interpreter","latex")
 ylabel("$x_c\;\mathrm{(km)}$","Interpreter","latex")
 
@@ -295,7 +295,7 @@ fprintf('Saving results in %s \n',ResultsFile)
 exportgraphics(gca,ResultsFile+"-t"+num2str(round(CtrlVar.time))+".pdf") ; 
 
 
-
+MUA.dM=[];
 save(ResultsFile,"tVector","xcAnalytical","xcLSFNumerical","xcNumerical","MUA","F0","F1","CtrlVar","UserVar")
 %% nested functions
 
@@ -314,14 +314,14 @@ save(ResultsFile,"tVector","xcAnalytical","xcLSFNumerical","xcNumerical","MUA","
                 q=-2;
                 % k=86322275.9814533 ;
                 k=86320694.4400036;
-                c=-k*h.^q;
+                c=k*h.^q;
                 
             case "Linear"
                 
                 ugl=0;
                 cgl=0;
                 dudx=1000/600e3;
-                dcdx=-2*dudx;
+                dcdx=2*dudx;
                 
                 u=ugl+dudx*x;
                 c=cgl+dcdx*x;
@@ -332,7 +332,7 @@ save(ResultsFile,"tVector","xcAnalytical","xcLSFNumerical","xcNumerical","MUA","
                 
                 
                 u=1000+zeros(size(x),'like',x);
-                c=-1*u ;
+                c=u ;
                 
                 
             otherwise

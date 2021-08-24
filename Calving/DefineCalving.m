@@ -125,9 +125,9 @@ switch UserVar.Calving
         
         
     case "Constant calving rate"
-        c=-5000;
+        c=5000;
     case "Zero calving rate"
-        c=-F.ub ;
+        c=F.ub ;
 end
 
 
