@@ -13,7 +13,7 @@
 %
 %   25 June, 2021. The NR with analytical ice-shelf velocities does not appear to get into second-order convergence.
 %
-%   27 June, 2021: -NR interation now good, found some obvious mistakes and corrected. Also, found that BCs were not fulfilled if the
+%   27 June, 2021: -NR iteration now good, found some obvious mistakes and corrected. Also, found that BCs were not fulfilled if the
 %                   initial guess for LSF did not (not a feasable point) and no update was made if not convergent in initial step.
 %                  -It appears that the LSF has to be reasonably close to the minimum of the P term for it to converge to the
 %                   right solution.
@@ -43,14 +43,14 @@ if ~Restart
         
         
         CtrlVar.WhenPlottingMesh_PlotMeshBoundaryCoordinatesToo=1;
-        MeshSize=10e3;
+        MeshSize=2.5e3;
         CtrlVar.MeshSizeMax=MeshSize;
         CtrlVar.MeshSizeMin=MeshSize;
         CtrlVar.MeshSize=MeshSize;
         
         MeshBoundaryCoordinates=[0 -10e3 ; 800e3 -10e3 ; 800e3 10e3 ; 0  10e3 ] ;
         CtrlVar.MeshBoundaryCoordinates=MeshBoundaryCoordinates;
-        CtrlVar.TriNodes=6 ;  % Possible values are 3, 6, 10 node (linear/quadradic/cubic)
+        CtrlVar.TriNodes=3 ;  % Possible values are 3, 6, 10 node (linear/quadradic/cubic)
         CtrlVar.MUA.DecomposeMassMatrix=true;
         [UserVar,MUA]=genmesh2d(UserVar,CtrlVar);
         CtrlVar.PlotNodes=1;
@@ -68,14 +68,20 @@ if ~Restart
 
     
     %% Parameters
-    nRunSteps=10; nReinitialisationSteps=2; CtrlVar.dt=0.1;   xc=50e3;   
+    nRunSteps=20; nReinitialisationSteps=1500; 
+    CtrlVar.dt=0.1;   xc=90e3;   
     CtrlVar.LevelSetTestString="" ; %-xc sign-"  ; % "-xc/yc nodes-" ; 
-    CtrlVar.LevelSetFABmu.Value=100 ; CtrlVar.LevelSetFABmu.Scale="constant"; CtrlVar.LevelSetFABCostFunction="p2q2" ; %"p2q2";
+    CtrlVar.LevelSetFABmu.Value=0.1 ; % 0.32
+    CtrlVar.LevelSetFABmu.Value=0.01 ; % 0.032
+    CtrlVar.LevelSetFABmu.Value=0.001 ; % 0.027
+    CtrlVar.LevelSetFABmu.Value=1 ; % 0.027
+
+    
+    CtrlVar.LevelSetFABmu.Scale="ucl"; CtrlVar.LevelSetFABCostFunction="p2q2" ; %"p2q2";
     CtrlVar.LevelSetInfoLevel=1;
     AddedStringToFileName="" ;
     %%
     
-    CtrlVar.LSFslope=1;
     
     ResultsFile=sprintf("TestLSFresults-Iceshelf-%s-%s-muScale%s-muValue%i-dt%3.2f-%i-%i-xc%i-%s-l%i-N%i",...
         AddedStringToFileName,...
@@ -144,7 +150,8 @@ if ~Restart
     
     % Perturbation term: J=1/(pq) int ( norm(nabla phi)^q-1)^p d|
     
-    if CtrlVar.LevelSetInfoLevel>=10
+    if CtrlVar.LevelSetInfoLevel>=5
+        
         FindOrCreateFigure("Re-initialisation step")
         hold off
         yyaxis left
@@ -221,6 +228,17 @@ for iReInitialisationStep=ReinitialisationStepsStart:nReinitialisationSteps
         
         iV=iV+1;
         
+        if CtrlVar.LevelSetInfoLevel>=5
+            FindOrCreateFigure(CtrlVar.LevelSetPhase)
+            hold off
+            F.x=MUA.coordinates(:,1) ;
+            plot(F.x/1000,F1.LSF/1000,'.g')
+            title(sprintf("Level Set at t=%4.2f",CtrlVar.time))
+
+        end
+        
+        
+        
         
     end
     
@@ -231,7 +249,7 @@ for iReInitialisationStep=ReinitialisationStepsStart:nReinitialisationSteps
     F0=F1; 
     [UserVar,RunInfo,LSF,Mask,lambda,LSFqx,LSFqy]=LevelSetEquation(UserVar,RunInfo,CtrlVar,MUA,BCs,F0,F1);
     
-    if CtrlVar.LevelSetInfoLevel>=10
+    if CtrlVar.LevelSetInfoLevel>=5
         FindOrCreateFigure("Re-initialisation step")
         hold off
         yyaxis left
@@ -261,11 +279,12 @@ for iReInitialisationStep=ReinitialisationStepsStart:nReinitialisationSteps
     end
     
     % save a restart once in a while
-    if mod(iReInitialisationStep,20)==0
-        save(ResultsFile,"tVector","xcAnalytical","xcLSFNumerical","xcNumerical","MUA","F0","F1","CtrlVar","UserVar")
-        close all
-        save("RestartFile-"+ResultsFile)
-    end
+%     if mod(iReInitialisationStep,20000)==0
+%         
+%         save(ResultsFile,"tVector","xcAnalytical","xcLSFNumerical","xcNumerical","MUA","F0","F1","CtrlVar","UserVar")
+%         close all
+%         save("RestartFile-"+ResultsFile)
+%     end
 end
 
 % Plot comparision
@@ -288,15 +307,17 @@ ylabel("$\Delta x_c$ (Analytical-Numerical) $\;\mathrm{(km)}$","Interpreter","la
 
 legend("$x_c$ analytical","$x_c$ numerical","$\Delta x_c$ (Analytical-Numerical)",...
     "interpreter","latex","location","northeast")
-title(sprintf("std %f ",std(xcAnalytical-xcLSFNumerical,'omitnan')))
-
-fprintf('Saving results in %s \n',ResultsFile) 
-
-exportgraphics(gca,ResultsFile+"-t"+num2str(round(CtrlVar.time))+".pdf") ; 
 
 
-MUA.dM=[];
-save(ResultsFile,"tVector","xcAnalytical","xcLSFNumerical","xcNumerical","MUA","F0","F1","CtrlVar","UserVar")
+dt=CtrlVar.dt ; T=max(tVector)-min(tVector) ;
+RMSE=sqrt(sum((xcAnalytical-xcLSFNumerical).^2,'omitnan'))*dt/T ;
+
+title(sprintf("RMSE %f ",RMSE))
+
+ fprintf('Saving results in %s \n',ResultsFile) 
+% exportgraphics(gca,ResultsFile+"-t"+num2str(round(CtrlVar.time))+".pdf") ; 
+% MUA.dM=[];
+% save(ResultsFile,"tVector","xcAnalytical","xcLSFNumerical","xcNumerical","MUA","F0","F1","CtrlVar","UserVar")
 %% nested functions
 
     function [u,c]=ucAnalytical(x)
