@@ -173,8 +173,8 @@ switch UserVar.BasalMeltRate
         
 end
 
-ab(~GF.NodesDownstreamOfGroundingLines)=0;
-dabdh(~GF.NodesDownstreamOfGroundingLines)=0;
+ab(~F.GF.NodesDownstreamOfGroundingLines)=0;
+dabdh(~F.GF.NodesDownstreamOfGroundingLines)=0;
 
 
 

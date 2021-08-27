@@ -1,4 +1,4 @@
-function [UserVar,C,m,q,muk]=DefineSlipperyDistribution(UserVar,CtrlVar,MUA,time,s,b,h,S,B,rho,rhow,GF)
+function [UserVar,C,m,q,muk]=DefineSlipperyDistribution(UserVar,CtrlVar,MUA,F)
 
 persistent FC
 
@@ -27,11 +27,11 @@ if ~UserVar.Slipperiness.ReadFromFile
         % N=rho g (h-hf)
         % hf=rhow (S-B)/rho
         % rhow=1030 ; rho=900 ; 
-        hf=rhow.*(S-B)./rho;
+        hf=F.rhow.*(F.S-F.B)./F.rho;
         hf(hf<eps)=0;
-        Dh=h-hf; Dh(Dh<eps)=0;
+        Dh=F.h-hf; Dh(Dh<eps)=0;
         g=9.81/1000;
-        N=rho.*g.*Dh;
+        N=F.rho.*F.g.*Dh;
 
         
         Speed=100;

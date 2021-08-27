@@ -291,7 +291,7 @@ end
 fig=FindOrCreateFigure("xc comparision "+CtrlVar.LevelSetAssembly+" Nod="+string(num2str(CtrlVar.TriNodes))) ;
 hold off
 yyaxis left
-plot(tVector,xcAnalytical/1000,'b') ;
+plot(tVector,xcAnalytical/1000,'k') ;
 hold on ;
 %plot(tVector,xcLSFNumerical/1000,'.g')
 plot(tVector,xcLSFNumerical/1000,'og')
@@ -299,7 +299,7 @@ xlabel("$t \; \mathrm{(yr)}$","Interpreter","latex")
 ylabel("$x_c\;\mathrm{(km)}$","Interpreter","latex")
 
 yyaxis right
-plot(tVector,(xcAnalytical-xcLSFNumerical)/1000,'.b')
+plot(tVector,(xcAnalytical-xcLSFNumerical)/1000,'.r')
 ylabel("$\Delta x_c$ (Analytical-Numerical) $\;\mathrm{(km)}$","Interpreter","latex")
 
 %legend("$x_c$ analytical","$x_c$ numerical","Nearest node to $x_c$","$\Delta x_c$ (Analytical-Numerical)",...
@@ -316,8 +316,10 @@ title(sprintf("RMSE %f ",RMSE))
 
  fprintf('Saving results in %s \n',ResultsFile) 
 % exportgraphics(gca,ResultsFile+"-t"+num2str(round(CtrlVar.time))+".pdf") ; 
-% MUA.dM=[];
-% save(ResultsFile,"tVector","xcAnalytical","xcLSFNumerical","xcNumerical","MUA","F0","F1","CtrlVar","UserVar")
+MUA.dM=[];
+save(ResultsFile,"tVector","xcAnalytical","xcLSFNumerical","xcNumerical","MUA","F0","F1","CtrlVar","UserVar")
+
+
 %% nested functions
 
     function [u,c]=ucAnalytical(x)

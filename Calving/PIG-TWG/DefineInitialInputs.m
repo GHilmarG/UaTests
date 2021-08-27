@@ -32,7 +32,7 @@ UserVar.GeometryInterpolant='../../../Interpolants/BedMachineGriddedInterpolants
 UserVar.SurfaceVelocityInterpolant='../../../Interpolants/SurfVelMeasures990mInterpolants.mat';
 UserVar.MeshBoundaryCoordinatesFile='../../../Interpolants/MeshBoundaryCoordinatesForAntarcticaBasedOnBedmachine'; 
 UserVar.DistanceBetweenPointsAlongBoundary=5e3 ; 
-
+UserVar.BasalMeltRate="MeltRate0" ;
 
 CtrlVar.SlidingLaw="Weertman" ; % "Umbi" ; % "Weertman" ; % "Tsai" ; % "Cornford" ;  "Umbi" ; "Cornford" ; % "Tsai" , "Budd"
 

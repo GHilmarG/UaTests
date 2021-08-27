@@ -62,11 +62,11 @@ R1=sqrt(F1.x.^2+F1.y.^2);
 
 
 %% Parameters
-nRunSteps=5; nReinitialisationSteps=20; CtrlVar.dt=0.1;   Rc=50e3;
+nRunSteps=200; nReinitialisationSteps=10; CtrlVar.dt=0.1;   Rc=50e3;
  CtrlVar.LevelSetTestString="" ; %-xc sign-"  ; % "-xc/yc nodes-" ;
 % CtrlVar.LevelSetTestString="-limit c-" ; 
 CtrlVar.LevelSetFABmu.Value=1e4 ; CtrlVar.LevelSetFABmu.Scale="constant"; 
-CtrlVar.LevelSetFABmu.Value=0.5; CtrlVar.LevelSetFABmu.Scale="ucl"; % 0.1 possible too small,
+CtrlVar.LevelSetFABmu.Value=1; CtrlVar.LevelSetFABmu.Scale="ucl"; % 0.1 possible too small,
 CtrlVar.LevelSetFABCostFunction="p2q2" ; % "Li2010" ; % "p2q1" ; %"p2q2";
 AddedStringToFileName="" ;
 CtrlVar.LevelSetInfoLevel=1 ; CtrlVar.doplots=1 ; 
@@ -81,7 +81,7 @@ ResultsFile=sprintf("TestLSF2d-%s-%s-muScale%s-muValue%i-dt%3.2f-%i-%i-xc%i-%s-l
 
 ResultsFile=replace(ResultsFile,".","k") ;
 ResultsFile=replace(ResultsFile,"--","-") ;
-CtrlVar.VelocityField="Linear2D" ; % "Linear" ; % "Analytical" ; % "Constant" ;  % prescribed velocity, see below in nested function"Analytical"
+CtrlVar.VelocityField="Stable Point" ; % "Linear2D" ; % "Linear" ; % "Analytical" ; % "Constant" ;  % prescribed velocity, see below in nested function"Analytical"
 
 
 
@@ -257,7 +257,7 @@ title("Initialisation")
 xlabel("time")
 ylabel("#NR iterations")
 
-
+MUA.dM=[] ; 
 save(ResultsFile,"tVector","RcAnalytical","RcNumerical","MUA","F0","F1","CtrlVar","UserVar","RunInfo")
 %% nested functions
 
@@ -288,16 +288,20 @@ switch CtrlVar.VelocityField
         speed=ugl+dudx*x;
         c=cgl+dcdx*x;
         
+        
     case "Linear2D"
         
         u0=0;
-        c0=0;
         dudr=1000/100e3;
-        dcdr=2*dudr;
-        
         speed=u0+dudr*r;
-        c=c0+dcdr*r;
-                
+        c=2*speed;
+                  
+    case "Stable Point"
+        
+        xcS=40e3 ;
+        speed=100 ;
+        c=speed + (r-xcS)/100;
+        
     case "Constant"
         
         
