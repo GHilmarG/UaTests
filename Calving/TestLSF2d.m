@@ -66,7 +66,7 @@ nRunSteps=200; nReinitialisationSteps=10; CtrlVar.dt=0.1;   Rc=50e3;
  CtrlVar.LevelSetTestString="" ; %-xc sign-"  ; % "-xc/yc nodes-" ;
 % CtrlVar.LevelSetTestString="-limit c-" ; 
 CtrlVar.LevelSetFABmu.Value=1e4 ; CtrlVar.LevelSetFABmu.Scale="constant"; 
-CtrlVar.LevelSetFABmu.Value=1; CtrlVar.LevelSetFABmu.Scale="ucl"; % 0.1 possible too small,
+CtrlVar.LevelSetFABmu.Value=0.1; CtrlVar.LevelSetFABmu.Scale="ucl"; % 0.1 possible too small,
 CtrlVar.LevelSetFABCostFunction="p2q2" ; % "Li2010" ; % "p2q1" ; %"p2q2";
 AddedStringToFileName="" ;
 CtrlVar.LevelSetInfoLevel=1 ; CtrlVar.doplots=1 ; 
@@ -149,8 +149,6 @@ F1.LSFqx=zeros(MUA.Nnodes,1) ; F1.LSFqy=zeros(MUA.Nnodes,1) ;
 
 % sqrt((F1.LSF'*MUA.Dxx*F1.LSF+F1.LSF'*MUA.Dyy*F1.LSF)/MUA.Area)
 % Some aditional 1D plots
-
-fprintf('er her \n')
 
 
 
