@@ -201,3 +201,33 @@ end
 BCs.LSFFixedNode=LSFFixedNodeUnmodified;
 BCs.LSFFixedValue=LSFFixedValueUnmodified;
 
+%%
+
+close all
+load TestSaveTheta.mat
+MUA.dM=decomposition(MUA.M,'chol','upper') ;
+
+[UserVar,RunInfo,LSF,l,LSFqx,LSFqy]=LevelSetEquationNewtonRaphson(UserVar,RunInfo,CtrlVar,MUA,BCs,F0,F1,l);
+
+
+
+%%
+
+
+close all
+load TestSaveFP2.mat
+MUA.dM=decomposition(MUA.M,'chol','upper') ;
+
+
+CtrlVar.LSF.L=0 ; 
+CtrlVar.LSF.P=1 ; 
+CtrlVar.LSF.T=1 ;
+CtrlVar.LSF.PG=0;
+CtrlVar.dt=30;
+[UserVar,RunInfo,LSF,l,LSFqx,LSFqy]=LevelSetEquationNewtonRaphson(UserVar,RunInfo,CtrlVar,MUA,BCs,F0,F1,l);
+
+
+
+
+
+
