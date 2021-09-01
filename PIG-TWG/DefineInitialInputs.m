@@ -2,6 +2,13 @@
 function [UserVar,CtrlVar,MeshBoundaryCoordinates]=DefineInitialInputs(UserVar,CtrlVar)
 
 
+% Note: this is OK as an example, BUT there the current FE mesh is highly irregular over Thwaites
+% ice shelf and this causes convergence issues. To do: Create a new mesh with more regular outline.
+%
+%
+%
+
+
 %% Select the type of run by uncommenting one of the following options:
 
 if isempty(UserVar) || ~isfield(UserVar,'RunType')
@@ -143,7 +150,7 @@ switch UserVar.RunType
 end
 
 
-CtrlVar.dt=0.01;
+CtrlVar.dt=1e-10; % For some reason with bedmachine I need much smaller initial time step than with bedmap2...?
 CtrlVar.time=0;
 CtrlVar.TotalNumberOfForwardRunSteps=1; 
 CtrlVar.TotalTime=10;

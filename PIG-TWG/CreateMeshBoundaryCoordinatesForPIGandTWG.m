@@ -14,6 +14,12 @@ CtrlVar.GLds=UserVar.DistanceBetweenPointsAlongBoundary;
 [xB,yB] = Smooth2dPos(Boundary(:,1),Boundary(:,2),CtrlVar);
 
 
+% There is an annoying irregularity in the outlines of Thwaites ice shelf, which can give rise to sharp corners in elements at low resolution.
+% Try to get rid of this (but note that this might possibly cause some unphysical infill of ice)
+xMin= -1589408.19947543   ; xMax=-1567174.21759984  ; yMin=-475596.948766028  ; yMax=-451120.183092588 ;
+I= xB<xMax & xB>xMin &  yB<yMax &   yB>yMin   ;
+
+xB(I)=[] ; yB(I)=[] ; 
 
 % Corner Points defining the interior points of the computational domain
 % CP=flipud([ ...
