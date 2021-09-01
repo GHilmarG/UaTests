@@ -132,5 +132,60 @@ ax.YAxis(2).Color = 'r';
 
 cd(CurDir)
 
+%%  TestLSF2d plots
+Klear
 
+FileName(1)="TestLSF2d-p2q2-muScaleucl-muValue1k000000e-01-dt0k10-2000-1-xc50000-l5000-N3";
+FileName(2)="TestLSF2d-p2q2-muScaleucl-muValue1k000000e-02-dt0k10-2000-1-xc50000-l5000-N3";
+FileName(3)="TestLSF2d-p2q2-muScaleucl-muValue1k000000e-03-dt0k10-2000-1-xc50000-l5000-N3" ;
+FileName(4)="TestLSF2d-p2q2-muScaleucl-muValue1k000000e-04-dt0k10-2000-1-xc50000-l5000-N3";
+FileName(5)="TestLSF2d-p2q2-muScaleucl-muValue1k000000e-04-dt0k10-200-2-xc50000-l5000-N3";
+FileName(6)="TestLSF2d-p2q2-muScaleucl-muValue1k000000e-04-dt0k10-100-4-xc50000-l5000-N3";
+FileName(7)="TestLSF2d-p2q2-muScaleucl-muValue5k000000e-04-dt0k10-2000-1-xc50000-l5000-N3";
+FileName(8)="TestLSF2d-p2q2-muScaleucl-muValue5k000000e-04-dt0k10-200-10-xc50000-l5000-N3";
+FileName(9)="TestLSF2d-p2q2-muScaleucl-muValue1k000000e-03-dt0k10-200-10-xc50000-l5000-N3";
 
+for KFile=5:6
+    
+    load(FileName(KFile))
+    % Plot comparision
+    fig=FindOrCreateFigure("xc comparision"+num2str(KFile)) ;
+    hold off
+    yyaxis left
+    plot(tVector,RcAnalytical/1000,'k',LineWidth=2) ;
+    hold on ;
+    plot(tVector,RcNumerical/1000,'ob')
+    xlabel("$t \; \mathrm{(yr)}$","Interpreter","latex")
+    ylabel("$x_c\;\mathrm{(km)}$","Interpreter","latex")
+    
+    yyaxis right
+    plot(tVector,(RcAnalytical-RcNumerical)/1000,'.r')
+    ylabel("$\Delta x_c$ (Analytical-Numerical) $\;\mathrm{(km)}$","Interpreter","latex")
+    
+    %legend("$x_c$ analytical","$x_c$ numerical","Nearest node to $x_c$","$\Delta x_c$ (Analytical-Numerical)",...
+    %    "interpreter","latex","location","northwest")
+    %
+    
+    legend("$x_c$ analytical","$x_c$ numerical","$\Delta x_c$ (Analytical-Numerical)",...
+        "interpreter","latex","location","northeast")
+    title(sprintf("std %f (km)",std((RcAnalytical-RcNumerical)/1000,'omitnan')))
+    
+    % exportgraphics(gca,ResultsFile+"-t"+num2str(round(CtrlVar.time))+".pdf") ;
+    
+    
+    I=RunInfo.LevelSet.Phase=="Propagation and FAB";
+    FindOrCreateFigure("Propagation and FAB"+num2str(KFile))
+    plot(RunInfo.LevelSet.time(I),RunInfo.LevelSet.Iterations(I),'ro')
+    title("Propagation and FAB")
+    xlabel("time")
+    ylabel("#NR iterations")
+    
+    I=RunInfo.LevelSet.Phase=="Initialisation";
+    FindOrCreateFigure("Initialisation"+num2str(KFile))
+    plot(RunInfo.LevelSet.time(I),RunInfo.LevelSet.Iterations(I),'b*')
+    title("Initialisation")
+    xlabel("time")
+    ylabel("#NR iterations")
+    
+    
+end

@@ -25,7 +25,7 @@ function TestLSF2d
 %% Generate mesh and MUA.
 UserVar=[];
 CtrlVar=Ua2D_DefaultParameters(); %
-CtrlVar.DevelopmentTestingQuadRules=true; CtrlVar.DevelopmentVersion=true; 
+CtrlVar.DevelopmentVersion=true; 
 CtrlVar.LevelSetMethod=true; CtrlVar.LevelSetAssembly="consistent" ;
 CtrlVar.WhenPlottingMesh_PlotMeshBoundaryCoordinatesToo=1;
 MeshSize=5e3;
@@ -62,11 +62,11 @@ R1=sqrt(F1.x.^2+F1.y.^2);
 
 
 %% Parameters
-nRunSteps=2000; nReinitialisationSteps=1; CtrlVar.dt=0.1;   Rc=50e3;
+nRunSteps=200; nReinitialisationSteps=10; CtrlVar.dt=0.1;   Rc=50e3;
  CtrlVar.LevelSetTestString="" ; %-xc sign-"  ; % "-xc/yc nodes-" ;
 % CtrlVar.LevelSetTestString="-limit c-" ; 
 CtrlVar.LevelSetFABmu.Value=1e4 ; CtrlVar.LevelSetFABmu.Scale="constant"; 
-CtrlVar.LevelSetFABmu.Value=0.1; CtrlVar.LevelSetFABmu.Scale="ucl"; % 0.1 possible too small,
+CtrlVar.LevelSetFABmu.Value=0.001; CtrlVar.LevelSetFABmu.Scale="ucl"; % 0.1 possible too small,
 CtrlVar.LevelSetFABCostFunction="p2q2" ; % "Li2010" ; % "p2q1" ; %"p2q2";
 AddedStringToFileName="" ;
 CtrlVar.LevelSetInfoLevel=1 ; CtrlVar.doplots=1 ; 

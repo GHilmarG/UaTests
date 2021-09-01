@@ -27,8 +27,8 @@ function tests = TestUa
     % f={@test1dIceShelf}           ;  % OK  11/05/2021
     % f={@testGaussPeak}            ;  % OK  11/05/2021
     % f={@testFreeSlipBCs}          ;  % OK  11/05/2021
-     f={@testCalvingAnalyticalIceShelf};  % OK 11/05/2021
-    % f={@testPIGtransient}         ;  % OK 11/05/2021
+    % f={@testCalvingAnalyticalIceShelf};  % ~OK 01/09/2021, OK 11/05/2021
+     f={@testPIGtransient}         ;  % OK 11/05/2021
     
     
     tests = functiontests(f);

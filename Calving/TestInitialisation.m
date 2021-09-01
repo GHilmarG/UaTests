@@ -1,11 +1,13 @@
+
+%%
 close all
 clearvars
 load TestSaveInitialisation.mat
 
 
 %
-% I=F1.LSF> 20e3 ; F1.LSF(I)=20e3; 
-% I=F1.LSF<-20e3 ; F1.LSF(I)=0e3; 
+ I=F1.LSF> 20e3 ; F1.LSF(I)=20e3; 
+ I=F1.LSF<-20e3 ; F1.LSF(I)=10e3; 
 %
 CtrlVar.LevelSetReinitializePDist=true ;
 [UserVar,RunInfo,LSF,Mask,l,LSFqx,LSFqy]=LevelSetEquationInitialisation(UserVar,RunInfo,CtrlVar,MUA,BCs,F0,F1,l) ; 

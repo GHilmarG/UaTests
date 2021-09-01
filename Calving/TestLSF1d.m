@@ -38,7 +38,7 @@ if ~Restart
         UserVar=[];
         CtrlVar=Ua2D_DefaultParameters(); %
         
-        CtrlVar.DevelopmentTestingQuadRules=true; CtrlVar.DevelopmentVersion=true;
+        CtrlVar.DevelopmentVersion=true;
         CtrlVar.LevelSetMethod=true; CtrlVar.LevelSetAssembly="consistent" ;
         
         
@@ -68,7 +68,7 @@ if ~Restart
 
     
     %% Parameters
-    nRunSteps=20; nReinitialisationSteps=1500; 
+    nRunSteps=20; nReinitialisationSteps=5; 
     CtrlVar.dt=0.1;   xc=90e3;   
     CtrlVar.LevelSetTestString="" ; %-xc sign-"  ; % "-xc/yc nodes-" ; 
     CtrlVar.LevelSetFABmu.Value=0.1 ; % 0.32
