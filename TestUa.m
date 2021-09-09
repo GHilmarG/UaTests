@@ -23,12 +23,13 @@ function tests = TestUa
     % f={@testCrack}                ;  % OK  11/05/2021
     % f={@testPIGdiagnostic}        ;  % OK  11/05/2021
     % f={@testMassBalanceFeedback}  ;  % OK  11/05/2021
-    % f={@test1dIceStream}          ;  % OK  11/05/2021
-    % f={@test1dIceShelf}           ;  % OK  11/05/2021
-    % f={@testGaussPeak}            ;  % OK  11/05/2021
-    % f={@testFreeSlipBCs}          ;  % OK  11/05/2021
+    % f={@test1dIceStream}          ;  % OK  11/05/2021, OK on 08/09/2021
+    % f={@test1dIceShelf}           ;  % OK  11/05/2021, OK on 08/09/2021
+    % f={@testGaussPeak}            ;  % OK  11/05/2021, needs gmsh
+    % f={@testFreeSlipBCs}          ;  % OK  11/05/2021,  OK 08/09/2021
     % f={@testCalvingAnalyticalIceShelf};  % ~OK 01/09/2021, OK 11/05/2021
-     f={@testPIGtransient}         ;  % OK 11/05/2021
+    % f={@testPIGtransient}         ;  % OK 11/05/2021, 08/09/2021 due to new geomery with sharp corners this now only runs for
+    % small initial time step
     
     
     tests = functiontests(f);
