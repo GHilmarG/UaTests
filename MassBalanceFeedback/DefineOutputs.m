@@ -21,7 +21,8 @@ end
 if ~isfield(CtrlVar,'DefineOutputs')
     CtrlVar.uvPlotScale=[];
     %plots='-ubvb-udvd-log10(C)-log10(Surfspeed)-log10(DeformationalSpeed)-log10(BasalSpeed)-log10(AGlen)-';
-    plots='-ubvb-log10(BasalSpeed)-sbB-ab-log10(C)-log10(AGlen)-';
+    % plots='-ubvb-log10(BasalSpeed)-sbB-ab-log10(C)-log10(AGlen)-';
+    plots='-';
     
 else
     plots=CtrlVar.DefineOutputs;
@@ -36,7 +37,7 @@ TRI=[]; DT=[];
 x=MUA.coordinates(:,1);  y=MUA.coordinates(:,2);
 
 %%
-if ~isempty(strfind(plots,'-stresses-'))
+if contains(plots,'-stresses-')
     
     figure
     %PathName='E:/GHG/Satellite Images/Landsat/Brunt/Landsat 8/2015-02-06/';
@@ -78,7 +79,7 @@ if ~strcmp(CtrlVar.DefineOutputsInfostring,'Last call')
    
 end
     
-if ~isempty(strfind(plots,'-save-'))
+if contains(plots,'-save-')
 
     % save data in files with running names
     % check if folder 'ResultsFiles' exists, if not create
@@ -115,7 +116,7 @@ if strcmp(CtrlVar.DefineOutputsInfostring,'Last call')
     
 end
 
-if ~isempty(strfind(plots,'-sbB-'))
+if contains(plots,'-sbB-')
 %%
     figure
     hold off
@@ -127,7 +128,7 @@ if ~isempty(strfind(plots,'-sbB-'))
 end
 
 
-if ~isempty(strfind(plots,'-ubvb-'))
+if contains(plots,'-ubvb-')
     % plotting horizontal velocities
 %%
     figure
@@ -145,7 +146,7 @@ if ~isempty(strfind(plots,'-ubvb-'))
     
 end
 
-if ~isempty(strfind(plots,'-udvd-'))
+if contains(plots,'-udvd-')
     % plotting horizontal velocities
     figure
     N=1;
@@ -161,7 +162,7 @@ if ~isempty(strfind(plots,'-udvd-'))
     
 end
 
-if ~isempty(strfind(plots,'-e-'))
+if contains(plots,'-e-')
     % plotting effectiv strain rates
     
     % first get effective strain rates, e :
@@ -177,7 +178,7 @@ if ~isempty(strfind(plots,'-e-'))
     
 end
 
-if ~isempty(strfind(plots,'-ub-'))
+if contains(plots,'-ub-')
     
     figure
     [FigHandle,ColorbarHandel,tri]=PlotNodalBasedQuantities(MUA.connectivity,MUA.coordinates,ub,CtrlVar)    ;
@@ -187,7 +188,7 @@ if ~isempty(strfind(plots,'-ub-'))
 end
 
 
-if ~isempty(strfind(plots,'-log10(AGlen)-'))
+if contains(plots,'-log10(AGlen)-')
     
     figure
     PlotMeshScalarVariable(CtrlVar,MUA,log10(AGlen));
@@ -197,7 +198,7 @@ if ~isempty(strfind(plots,'-log10(AGlen)-'))
 end
 
 
-if ~isempty(strfind(plots,'-log10(C)-'))
+if contains(plots,'-log10(C)-')
     
     figure
     PlotMeshScalarVariable(CtrlVar,MUA,log10(C));
@@ -207,7 +208,7 @@ if ~isempty(strfind(plots,'-log10(C)-'))
 end
 
 
-if ~isempty(strfind(plots,'-C-'))
+if contains(plots,'-C-')
     
     figure
     PlotElementBasedQuantities(MUA.connectivity,MUA.coordinates,C,CtrlVar);
@@ -216,7 +217,7 @@ if ~isempty(strfind(plots,'-C-'))
 end
 
 
-if ~isempty(strfind(plots,'-log10(SurfSpeed)-'))
+if contains(plots,'-log10(SurfSpeed)-')
     
     us=ub+ud;  vs=vb+vd; 
     SurfSpeed=sqrt(us.*us+vs.*vs); 
@@ -231,7 +232,7 @@ end
 
 
 
-if ~isempty(strfind(plots,'-log10(BasalSpeed)-'))
+if contains(plots,'-log10(BasalSpeed)-')
     BasalSpeed=sqrt(ub.*ub+vb.*vb); 
     figure
     PlotNodalBasedQuantities(MUA.connectivity,MUA.coordinates,log10(BasalSpeed),CtrlVar);
@@ -242,7 +243,7 @@ end
 
 
 
-if ~isempty(strfind(plots,'-log10(DeformationalSpeed)-'))
+if contains(plots,'-log10(DeformationalSpeed)-')
     DeformationalSpeed=sqrt(ud.*ud+vd.*vd); 
     figure
     PlotNodalBasedQuantities(MUA.connectivity,MUA.coordinates,log10(DeformationalSpeed),CtrlVar);
@@ -252,7 +253,7 @@ if ~isempty(strfind(plots,'-log10(DeformationalSpeed)-'))
 end
 
 
-if ~isempty(strfind(plots,'-ab-'))
+if contains(plots,'-ab-')
 %%
     figure
     PlotMeshScalarVariable(CtrlVar,MUA,ab)
@@ -264,7 +265,7 @@ if ~isempty(strfind(plots,'-ab-'))
 end
 
 
-if ~isempty(strfind(plots,'-as-'))
+if contains(plots,'-as-')
 %%
     figure
     PlotMeshScalarVariable(CtrlVar,MUA,as)
@@ -275,7 +276,7 @@ if ~isempty(strfind(plots,'-as-'))
 %%
 end
 
-if ~isempty(strfind(plots,'-h-'))
+if contains(plots,'-h-')
 %%
     figure
     PlotMeshScalarVariable(CtrlVar,MUA,h)

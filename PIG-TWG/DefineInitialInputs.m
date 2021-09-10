@@ -2,6 +2,13 @@
 function [UserVar,CtrlVar,MeshBoundaryCoordinates]=DefineInitialInputs(UserVar,CtrlVar)
 
 
+% Note: this is OK as an example, BUT there the current FE mesh is highly irregular over Thwaites
+% ice shelf and this causes convergence issues. To do: Create a new mesh with more regular outline.
+%
+%
+%
+
+
 %% Select the type of run by uncommenting one of the following options:
 
 if isempty(UserVar) || ~isfield(UserVar,'RunType')
@@ -20,23 +27,40 @@ if isempty(UserVar) || ~isfield(UserVar,'m')
     UserVar.m=3;
 end
 
+
+CtrlVar.FlowApproximation="SSTREAM" ;
 %%
 % This run requires some additional input files. They are too big to be kept on Github so you
 % will have to get those separately. 
 %
-% You can get these files on OneDrive using the link: https://1drv.ms/f/s!Anaw0Iv-oEHTloRzWreBMDBFCJ0R4Q
+% You can https://livenorthumbriaac-my.sharepoint.com/:f:/g/personal/hilmar_gudmundsson_northumbria_ac_uk/EgrEImnkQuJNmf1GEB80VbwB1hgKNnRMscUitVpBrghjRg?e=yMZEOs
 % 
 % Put the OneDrive folder `Interpolants' into you directory so that it can be reaced as ../Interpolants with respect to you rundirectory. 
 %
 %
-UserVar.GeometryInterpolant='../../Interpolants/Bedmap2GriddedInterpolantModifiedBathymetry.mat'; % this assumes you have downloaded the OneDrive folder `Interpolants'.
-UserVar.DensityInterpolant='../../Interpolants/DepthAveragedDensityGriddedInterpolant.mat';
+
+
+% Interpolant paths: this assumes you have downloaded the OneDrive folder `Interpolants'.
+% UserVar.GeometryInterpolant='../../Interpolants/Bedmap2GriddedInterpolantModifiedBathymetry.mat';
+UserVar.GeometryInterpolant='../../Interpolants/BedMachineGriddedInterpolants.mat';                       
 UserVar.SurfaceVelocityInterpolant='../../Interpolants/SurfVelMeasures990mInterpolants.mat';
+UserVar.MeshBoundaryCoordinatesFile='../../Interpolants/MeshBoundaryCoordinatesForAntarcticaBasedOnBedmachine'; 
+UserVar.DistanceBetweenPointsAlongBoundary=5e3 ; 
 
-UserVar.CFile='FC5kGrid_m3.mat'; UserVar.AFile='FA5kGrid_n3.mat';
-UserVar.CFile='FC.mat'; UserVar.AFile='FA.mat';
+CtrlVar.SlidingLaw="Weertman" ; % "Umbi" ; % "Weertman" ; % "Tsai" ; % "Cornford" ;  "Umbi" ; "Cornford" ; % "Tsai" , "Budd"
 
-if ~isfile(UserVar.GeometryInterpolant) || ~isfile(UserVar.DensityInterpolant) || ~isfile(UserVar.SurfaceVelocityInterpolant)
+switch CtrlVar.SlidingLaw
+    
+    case "Weertman"
+        UserVar.CFile='FC-Weertman.mat'; UserVar.AFile='FA-Weertman.mat';
+    case "Umbi"
+        UserVar.CFile='FC-Umbi.mat'; UserVar.AFile='FA-Umbi.mat';
+    otherwise
+        error('A and C fields not available')
+end
+
+
+if ~isfile(UserVar.GeometryInterpolant) || ~isfile(UserVar.SurfaceVelocityInterpolant)
      
      fprintf('\n This run requires the additional input files: \n %s \n %s \n %s  \n \n',UserVar.GeometryInterpolant,UserVar.DensityInterpolant,UserVar.SurfaceVelocityInterpolant)
      fprintf('You can download these file from : https://1drv.ms/f/s!Anaw0Iv-oEHTloRzWreBMDBFCJ0R4Q \n')
@@ -63,12 +87,12 @@ switch UserVar.RunType
         CtrlVar.ReadInitialMesh=1;
         CtrlVar.AdaptMesh=0;
         
-        CtrlVar.Inverse.Iterations=1;
+        CtrlVar.Inverse.Iterations=5;
         CtrlVar.Inverse.InvertFor='logA-logC' ; % '-logAGlen-logC-' ; % {'-C-','-logC-','-AGlen-','-logAGlen-'}
         CtrlVar.Inverse.Regularize.Field=CtrlVar.Inverse.InvertFor;
         
         CtrlVar.Inverse.Measurements='-uv-' ;  % {'-uv-,'-uv-dhdt-','-dhdt-'}
-        CtrlVar.SlidingLaw="rCW-N0" ; % "W" ;
+        
         
         
         if contains(UserVar.RunType,'FixPoint')
@@ -126,7 +150,7 @@ switch UserVar.RunType
 end
 
 
-CtrlVar.dt=0.01;
+CtrlVar.dt=1e-10; % For some reason with bedmachine I need much smaller initial time step than with bedmap2...?
 CtrlVar.time=0;
 CtrlVar.TotalNumberOfForwardRunSteps=1; 
 CtrlVar.TotalTime=10;
@@ -164,7 +188,7 @@ CtrlVar.MeshSizeMax=20e3;
 CtrlVar.MeshSize=CtrlVar.MeshSizeMax/2;
 CtrlVar.MeshSizeMin=CtrlVar.MeshSizeMax/20;
 UserVar.MeshSizeIceShelves=CtrlVar.MeshSizeMax/5;
-MeshBoundaryCoordinates=CreateMeshBoundaryCoordinatesForPIGandTWG(CtrlVar);
+MeshBoundaryCoordinates=CreateMeshBoundaryCoordinatesForPIGandTWG(UserVar,CtrlVar);
                                          
 CtrlVar.AdaptMeshInitial=1  ;   
 CtrlVar.AdaptMeshMaxIterations=5;

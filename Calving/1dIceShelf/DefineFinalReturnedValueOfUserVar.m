@@ -1,4 +1,4 @@
-function UserVar=DefineFinalReturnedValueOfUserVar(UserVar,CtrlVar,MUA,BCs,F,l,InvStartValues,InvFinalValues,Priors,Meas,BCsAdjoint,RunInfo);
+function UserVar=DefineFinalReturnedValueOfUserVar(UserVar,CtrlVar,MUA,BCs,F,l,InvStartValues,InvFinalValues,Priors,Meas,BCsAdjoint,RunInfo)
 
 %% 
 %
@@ -10,6 +10,7 @@ function UserVar=DefineFinalReturnedValueOfUserVar(UserVar,CtrlVar,MUA,BCs,F,l,I
 % 
 %
 
-UserVar.Test.Norm=norm(F.ub+F.vb);
+UserVar.Test.Norm.actValue=norm(F.ub+F.vb);
+ 
 
 end

@@ -90,11 +90,20 @@ function  UserVar=DefineOutputs(UserVar,CtrlVar,MUA,BCs,F,l,GF,InvStartValues,In
                 Figdhdt=FindOrCreateFigure("dh/dt") ;
                 
                 hold off
-                plot(x/1000,F.dhdt,'or')
+                yyaxis left
+                plot(x/1000,F.dhdt,'.b')
                 xlabel('x (km)','interpreter','latex') ; 
-                ylabel('dh/dt (m/yr)','interpreter','latex') ;
+                ylabel('$dh/dt$ (m/yr)','interpreter','latex') ;
                 ylim([0 5])
+                
+                yyaxis right
+                plot(x/1000,F.ud,'r.',LineWidth=2) ; 
+                hold on ; 
+                plot(x/1000,F.ub,'c.',LineWidth=2) ;
+                ylabel('$u_d$ and $u_b$ (m/yr)','interpreter','latex') ;
+                
                 title(sprintf('$dh/dt$  at  $t=$%-g (yr)',CtrlVar.time),'interpreter','latex',FontSize=14) ;
+                legend("$dh/dt$","$u_d$","$u_b$",interpreter="latex")
                 Figdhdt.Position=[ 635       487.67       625.33       393.33] ;
             end
         end
@@ -244,10 +253,13 @@ function  UserVar=DefineOutputs(UserVar,CtrlVar,MUA,BCs,F,l,GF,InvStartValues,In
         ylabel('Length (km)','interpreter','latex')
         yyaxis right
         plot(time,MB,'*r')
+        tt=xlim ; 
+        plot(tt,tt*0,'r-') ; 
         ylabel('Mean Specific Mass Balance (m/yr)','interpreter','latex')
         xlabel('time (yr)','interpreter','latex')
         FGL.Position=[9.6667       965.67       1250.7       381.33] ; 
         title('Glacier Length (horizontal half-span) and the Mean Specific Mass Balance','interpreter','latex',FontSize=14)
+        % legend("Length","Mass Balance")
         hold off
     end
     
