@@ -20,9 +20,9 @@ function tests = TestUa
     
     %f=localfunctions ;  % all tests
     
-    % f={@testCrack}                ;  % OK  11/05/2021
-    % f={@testPIGdiagnostic}        ;  % OK  11/05/2021
-    % f={@testMassBalanceFeedback}  ;  % OK  11/05/2021
+     f={@testCrack}                ;  % OK  11/05/2021 , OK on 09/09/2021
+    % f={@testPIGdiagnostic}        ;  % OK  11/05/2021, OK on 09/09/2021
+    % f={@testMassBalanceFeedback}  ;  % OK  11/05/2021 , OK on 09/09/2021
     % f={@test1dIceStream}          ;  % OK  11/05/2021, OK on 08/09/2021
     % f={@test1dIceShelf}           ;  % OK  11/05/2021, OK on 08/09/2021
     % f={@testGaussPeak}            ;  % OK  11/05/2021, needs gmsh
@@ -64,7 +64,8 @@ function testPIGdiagnostic(testCase)
     UserVar=Ua(UserVar) ;
     cd ..
     actSolution= UserVar.Test.Norm.actValue ;
-    expSolution = 95982.7181182457;
+    % expSolution = 95982.7181182457;  % this was with the old bedmap2 data
+    expSolution = 9757675340.83092 ;   % this is with the new Bedmachine data, 10/09/2021
     verifyEqual(testCase,actSolution,expSolution,'RelTol',1e-4)
     
 end
@@ -91,7 +92,8 @@ function testCrack(testCase)
     UserVar=Ua(UserVar) ;
     cd ..
     actSolution= UserVar.Test.Norm.actValue ;
-    expSolution = 5034.37163446407;
+    % expSolution = 5034.37163446407;
+    expSolution = 5033.4404813878  ; % 10/09/2021 on WS-HO
     verifyEqual(testCase,actSolution,expSolution,'RelTol',1e-6)
     
 end
