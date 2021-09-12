@@ -2,11 +2,6 @@
 function [UserVar,CtrlVar,MeshBoundaryCoordinates]=DefineInitialInputs(UserVar,CtrlVar)
 
 
-% Note: this is OK as an example, BUT there the current FE mesh is highly irregular over Thwaites
-% ice shelf and this causes convergence issues. To do: Create a new mesh with more regular outline.
-%
-%
-%
 
 
 %% Select the type of run by uncommenting one of the following options:
@@ -271,12 +266,6 @@ else
     
 end
 
-
-
-
-CtrlVar.Inverse.AdjointGradientPreMultiplier='I'; % {'I','M'}
-
-
                                                     
 UserVar.AddDataErrors=0;
 
@@ -305,6 +294,21 @@ CtrlVar.ThickMin=50;
 CtrlVar.NameOfFileForSavingSlipperinessEstimate="C-Estimate"+CtrlVar.SlidingLaw+".mat";
 CtrlVar.NameOfFileForSavingAGlenEstimate=   "AGlen-Estimate"+CtrlVar.SlidingLaw+".mat";
 
+if CtrlVar.InverseRun
+    CtrlVar.Experiment="PIG-TWG-Inverse-"...
+        +CtrlVar.ReadInitialMeshFileName...
+        +CtrlVar.Inverse.InvertFor...
+        +CtrlVar.Inverse.MinimisationMethod...
+        +"-"+CtrlVar.Inverse.AdjointGradientPreMultiplier...
+        +CtrlVar.Inverse.DataMisfit.GradientCalculation...
+        +CtrlVar.Inverse.Hessian...
+        +"-"+CtrlVar.SlidingLaw...
+        +"-"+num2str(CtrlVar.DevelopmentVersion);
+else
+    CtrlVar.Experiment="PIG-TWG-Forward"...
+        +CtrlVar.ReadInitialMeshFileName;
+end
+
 
 filename=sprintf('IR-%s-%s-Nod%i-%s-%s-Cga%f-Cgs%f-Aga%f-Ags%f-m%i-%s',...
     UserVar.RunType,...
@@ -318,7 +322,10 @@ filename=sprintf('IR-%s-%s-Nod%i-%s-%s-Cga%f-Cgs%f-Aga%f-Ags%f-m%i-%s',...
     CtrlVar.Inverse.Regularize.logAGlen.gs,...
     UserVar.m,...
     CtrlVar.Inverse.InvertFor);
+
+CtrlVar.Experiment=replace(CtrlVar.Experiment," ","-");
 filename=replace(filename,'.','k');
+
 CtrlVar.Inverse.NameOfRestartOutputFile=filename;
 CtrlVar.Inverse.NameOfRestartInputFile=CtrlVar.Inverse.NameOfRestartOutputFile;
 
