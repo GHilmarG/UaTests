@@ -32,6 +32,6 @@ else
     end
     
     C=FC(MUA.coordinates(:,1),MUA.coordinates(:,2));
-  
+    C=kk_proj(C,CtrlVar.Cmax,CtrlVar.Cmin) ;
     
 end

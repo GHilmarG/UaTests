@@ -18,7 +18,7 @@ if isempty(UserVar) || ~isfield(UserVar,'RunType')
     % UserVar.RunType='Inverse-SteepestDesent';
     % UserVar.RunType='Inverse-ConjGrad-FixPoint';
     % UserVar.RunType='Inverse-MatOpt-FixPoint';
-    % UserVar.RunType='Forward-Diagnostic';
+    UserVar.RunType='Forward-Diagnostic';
     % UserVar.RunType='Forward-Transient';
     % UserVar.RunType='TestingMeshOptions';
 end
@@ -82,12 +82,12 @@ switch UserVar.RunType
         CtrlVar.Inverse.InfoLevel=1;
         CtrlVar.InfoLevel=0;
         
-        UserVar.Slipperiness.ReadFromFile=0;
-        UserVar.AGlen.ReadFromFile=0;
+        UserVar.Slipperiness.ReadFromFile=1;
+        UserVar.AGlen.ReadFromFile=1;
         CtrlVar.ReadInitialMesh=1;
         CtrlVar.AdaptMesh=0;
         
-        CtrlVar.Inverse.Iterations=5;
+        CtrlVar.Inverse.Iterations=100;
         CtrlVar.Inverse.InvertFor='logA-logC' ; % '-logAGlen-logC-' ; % {'-C-','-logC-','-AGlen-','-logAGlen-'}
         CtrlVar.Inverse.Regularize.Field=CtrlVar.Inverse.InvertFor;
         
@@ -168,6 +168,7 @@ CtrlVar.doAdaptMeshPlots=5;
 %%
 
 CtrlVar.ReadInitialMeshFileName='PIG-TWG-Mesh.mat';
+CtrlVar.ReadInitialMeshFileName='PIG-TWG-Mesh-withThwaitesIceshelfWestDeleted.mat';
 CtrlVar.SaveInitialMeshFileName='MeshFile.mat';
 CtrlVar.MaxNumberOfElements=70e3;
 
@@ -179,10 +180,10 @@ CtrlVar.MaxNumberOfElements=70e3;
 
 CtrlVar.MeshRefinementMethod='explicit:local:newest vertex bisection';   
 %CtrlVar.MeshRefinementMethod='explicit:local:red-green';
-%CtrlVar.MeshRefinementMethod='explicit:global';   
+CtrlVar.MeshRefinementMethod='explicit:global';   
 
 CtrlVar.MeshGenerator='gmsh' ; % 'mesh2d';
-CtrlVar.MeshGenerator='mesh2d' ; % 'mesh2d';
+%CtrlVar.MeshGenerator='mesh2d' ; % 'mesh2d';
 CtrlVar.GmshMeshingAlgorithm=8; 
 CtrlVar.MeshSizeMax=20e3;
 CtrlVar.MeshSize=CtrlVar.MeshSizeMax/2;
@@ -302,7 +303,7 @@ CtrlVar.ThickMin=50;
 %% Filenames
 
 CtrlVar.NameOfFileForSavingSlipperinessEstimate="C-Estimate"+CtrlVar.SlidingLaw+".mat";
-CtrlVar.NameOfFileForSavingAGlenEstimate="AGlen-Estimate.mat";
+CtrlVar.NameOfFileForSavingAGlenEstimate=   "AGlen-Estimate"+CtrlVar.SlidingLaw+".mat";
 
 
 filename=sprintf('IR-%s-%s-Nod%i-%s-%s-Cga%f-Cgs%f-Aga%f-Ags%f-m%i-%s',...
