@@ -51,7 +51,6 @@ CtrlVar.UaOutputs='-saveAcc-';
 
 %%
 CtrlVar.MassBalanceGeometryFeedback=3; 
-%CtrlVar.MassBalanceGeometryFeedback=0; 
-CtrlVar.MassBalanceGeometryFeedbackDamping=0;
+
 
 end
