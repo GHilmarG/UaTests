@@ -1,19 +1,16 @@
 function  UserVar=DefineOutputs(UserVar,CtrlVar,MUA,BCs,F,l,GF,InvStartValues,InvFinalValues,Priors,Meas,BCsAdjoint,RunInfo);
-v2struct(F);
+
 
 time=CtrlVar.time;
 
 if strcmp(CtrlVar.DefineOutputsInfostring,'First call') 
     return
 end
-persistent nCalls Acc Surf Time
+persistent nCalls Acc Surf Time V iCount
 
 if isempty(nCalls)
     nCalls=0;
-end
 
-if nargin==1
-    load(CtrlVar) ; CtrlVar=CtrlVarInRestartFile;
 end
 
 
@@ -72,11 +69,34 @@ end
 
 if ~strcmp(CtrlVar.DefineOutputsInfostring,'Last call')
     
-    Acc=[Acc;mean(as)];
-    Surf=[Surf;mean(s)];
-    Time=[Time;time];
+    if isempty(iCount)
+        iCount=0;
+        N=1000;
+        Acc=NaN(N,1);
+        Time=NaN(N,1);
+        Surf=NaN(N,1);
+        V=NaN(N,1);
+    end
+
+    iCount=iCount+1;
+
+    if numel(Acc) < iCount
+
+        Acc=[Acc;Acc+NaN];
+        Surf=[Surf;Surf+NaN];
+        Time=[Time;Time+NaN];
+        V=[V;V+NaN];
+    end
+
+
     
-   
+    Acc(iCount)=mean(F.as);
+    Surf(iCount)=mean(F.s);
+    Time(iCount)=F.time;
+    
+    IceVolume=sum(FEintegrate2D(CtrlVar,MUA,F.h)) ;
+    V(iCount)=IceVolume ;
+
 end
     
 if contains(plots,'-save-')
@@ -92,10 +112,10 @@ if contains(plots,'-save-')
         %FileName=['ResultsFiles/',sprintf('%07i',round(100*time)),'-',CtrlVar.Experiment]; good for transient runs
         %FileName=['ResultsFiles/',sprintf('%07i',CtrlVar.DefineOutputsCounter),'-',CtrlVar.Experiment];
         
-        FileName=sprintf('ResultsFiles/%07i-Nodes%i-Ele%i-Tri%i-kH%i-%s.mat',...
-            round(100*time),MUA.Nnodes,MUA.Nele,MUA.nod,1000*CtrlVar.kH,CtrlVar.Experiment);
+        FileName=sprintf('ResultsFiles/%07i-Nodes%i-Ele%i-Tri%i-%s.mat',...
+            round(100*time),MUA.Nnodes,MUA.Nele,MUA.nod,CtrlVar.Experiment);
         fprintf(' Saving data in %s \n',FileName)
-        save(FileName,'CtrlVar','MUA','time','s','b','S','B','h','ub','vb','C','dhdt','AGlen','m','n','rho','rhow','as','ab','GF')
+        save(FileName,'CtrlVar','UserVar','MUA','F')
         
     end
 end
@@ -103,191 +123,55 @@ end
 % only do plots at end of run
 if strcmp(CtrlVar.DefineOutputsInfostring,'Last call')
     
-    %load AccSurf ;
-    figure ; plot(Time,Surf,'or') ; xlabel('time (yr)') ; ylabel('Surface elevation (m)')
-    hold on ; plot(Time,10*exp(Time),'g'); legend('Numerical','Analytical')
-    
-    Analytical=10*exp(Time);
-    Numerical=Surf;
-    Error=Numerical-Analytical;
-    T=table(Time,Numerical,Analytical,Error);
-    disp(T)
-    
-    
-end
 
-if contains(plots,'-sbB-')
-%%
-    figure
-    hold off
-    AspectRatio=10; 
-    ViewAndLight(1)=260 ;  ViewAndLight(2)=10 ;
-    ViewAndLight(3)=90 ;  ViewAndLight(4)=50;
-    [TRI,DT]=Plot_sbB(CtrlVar,MUA,s,b,B,TRI,DT,AspectRatio,ViewAndLight);
-%%   
-end
+    switch UserVar.Experiment
+
+        case "MB-plane-"
 
 
-if contains(plots,'-ubvb-')
-    % plotting horizontal velocities
-%%
-    figure
-    N=1;
-    %speed=sqrt(ub.*ub+vb.*vb);
-    %CtrlVar.MinSpeedWhenPlottingVelArrows=0; CtrlVar.MaxPlottedSpeed=max(speed); %
-    CtrlVar.VelPlotIntervalSpacing='log10';
-    %CtrlVar.VelColorMap='hot';
-    %CtrlVar.RelativeVelArrowSize=10;
-    
-    QuiverColorGHG(x(1:N:end),y(1:N:end),ub(1:N:end),vb(1:N:end),CtrlVar);
-    hold on ; plot(GLgeo(:,[3 4])'/CtrlVar.PlotXYscale,GLgeo(:,[5 6])'/CtrlVar.PlotXYscale,'k','LineWidth',1);
-    title(sprintf('(ub,vb) t=%-g ',time)) ; xlabel('x (km)') ; ylabel('y (km)')
-    %%
-    
-end
+            %load AccSurf ;
+            figure ; plot(Time,Surf,'or') ; xlabel('time (yr)') ; ylabel('Surface elevation (m)')
+            ELA=UserVar.ELA;
+            lambda=UserVar.lambda;
+            hStart=UserVar.hStart;
+            Analytical=(hStart-ELA)*exp(lambda*Time)+ELA ;
 
-if contains(plots,'-udvd-')
-    % plotting horizontal velocities
-    figure
-    N=1;
-    %speed=sqrt(ud.*ud+vd.*vd);
-    %CtrlVar.MinSpeedWhenPlottingVelArrows=0; CtrlVar.MaxPlottedSpeed=max(speed); 
-    CtrlVar.VelPlotIntervalSpacing='log10';
-    %CtrlVar.RelativeVelArrowSize=10;
-    %CtrlVar.VelColorMap='hot';
-    QuiverColorGHG(x(1:N:end),y(1:N:end),ud(1:N:end),vd(1:N:end),CtrlVar);
-    hold on ; plot(GLgeo(:,[3 4])'/CtrlVar.PlotXYscale,GLgeo(:,[5 6])'/CtrlVar.PlotXYscale,'k','LineWidth',1);
-    title(sprintf('(ud,vd) t=%-g ',time)) ; xlabel('xps (km)') ; ylabel('yps (km)')
-    axis equal tight
-    
-end
+            hold on ; plot(Time,Analytical,'g'); legend('Numerical','Analytical')
 
-if contains(plots,'-e-')
-    % plotting effectiv strain rates
-    
-    % first get effective strain rates, e :
-    [etaInt,xint,yint,exx,eyy,exy,Eint,e,txx,tyy,txy]=calcStrainRatesEtaInt(CtrlVar,MUA,u,v,AGlen,n);
-    % all these variables are are element variables defined on integration points
-    % therfore if plotting on nodes, must first project these onto nodes
-    eNod=ProjectFintOntoNodes(MUA,e);
-    
-    figure
-    [FigHandle,ColorbarHandel,tri]=PlotNodalBasedQuantities(MUA.connectivity,MUA.coordinates,eNod,CtrlVar)    ;
-    hold on ; plot(GLgeo(:,[3 4])'/CtrlVar.PlotXYscale,GLgeo(:,[5 6])'/CtrlVar.PlotXYscale,'k','LineWidth',1);
-    title(sprintf('e t=%-g ',time)) ; xlabel('x (km)') ; ylabel('y (km)')
-    
-end
 
-if contains(plots,'-ub-')
-    
-    figure
-    [FigHandle,ColorbarHandel,tri]=PlotNodalBasedQuantities(MUA.connectivity,MUA.coordinates,ub,CtrlVar)    ;
-    hold on ; plot(GLgeo(:,[3 4])'/CtrlVar.PlotXYscale,GLgeo(:,[5 6])'/CtrlVar.PlotXYscale,'k','LineWidth',1);
-    title(sprintf('ub t=%-g ',time)) ; xlabel('x (km)') ; ylabel('y (km)')
-    
+            Numerical=Surf;
+            Error=Numerical-Analytical;
+            T=table(Time,Numerical,Analytical,Error);
+            disp(T)
+
+        case "MB-1dMountain-"
+
+            FindOrCreateFigure("Mass balance")
+            yyaxis left
+            plot(F.x/1000,F.b,'ok') ; hold on
+            plot(F.x/1000,F.s,'.b') ;
+            ylabel("upper and lower surfaces (m)")
+            yyaxis right
+            plot(F.x/1000,F.as,'*r') ;
+            ylabel("surface mass balance (m/yr)")
+
+
+            FindOrCreateFigure("Velocity")
+        
+            plot(F.x/1000,F.ub,'ok') ;
+            ylabel("velocity (m/yr)")
+            
+
+            FindOrCreateFigure("Volume versus time")
+            plot(Time,V/1e9)
+            ylabel("Ice Volume (km^3)")
+            xlabel("time (yr)")
+
+    end
+
+
 end
 
 
-if contains(plots,'-log10(AGlen)-')
-    
-    figure
-    PlotMeshScalarVariable(CtrlVar,MUA,log10(AGlen));
-    hold on ; plot(GLgeo(:,[3 4])'/CtrlVar.PlotXYscale,GLgeo(:,[5 6])'/CtrlVar.PlotXYscale,'k','LineWidth',1);
-    title(sprintf('log_{10}(AGlen) t=%-g ',time)) ; xlabel('x (km)') ; ylabel('y (km)')
-    title(colorbar,'log_{10}(yr^{-1} kPa^{-3})')
-end
-
-
-if contains(plots,'-log10(C)-')
-    
-    figure
-    PlotMeshScalarVariable(CtrlVar,MUA,log10(C));
-    hold on ; plot(GLgeo(:,[3 4])'/CtrlVar.PlotXYscale,GLgeo(:,[5 6])'/CtrlVar.PlotXYscale,'k','LineWidth',1);
-    title(sprintf('log_{10}(C) t=%-g ',time)) ; xlabel('x (km)') ; ylabel('y (km)')
-    title(colorbar,'log_{10}(m yr^{-1} kPa^{-3})')
-end
-
-
-if contains(plots,'-C-')
-    
-    figure
-    PlotElementBasedQuantities(MUA.connectivity,MUA.coordinates,C,CtrlVar);
-    title(sprintf('C t=%-g ',time)) ; xlabel('x (km)') ; ylabel('y (km)')
-    
-end
-
-
-if contains(plots,'-log10(SurfSpeed)-')
-    
-    us=ub+ud;  vs=vb+vd; 
-    SurfSpeed=sqrt(us.*us+vs.*vs); 
-    
-    figure
-    PlotNodalBasedQuantities(MUA.connectivity,MUA.coordinates,log10(SurfSpeed),CtrlVar);
-    hold on ; plot(GLgeo(:,[3 4])'/CtrlVar.PlotXYscale,GLgeo(:,[5 6])'/CtrlVar.PlotXYscale,'k','LineWidth',1);
-    
-    title(sprintf('log_{10}(Surface speed) t=%-g ',time)) ; xlabel('x (km)') ; ylabel('y (km)')
-    title(colorbar,'log_{10}(m/yr)')
-end
-
-
-
-if contains(plots,'-log10(BasalSpeed)-')
-    BasalSpeed=sqrt(ub.*ub+vb.*vb); 
-    figure
-    PlotNodalBasedQuantities(MUA.connectivity,MUA.coordinates,log10(BasalSpeed),CtrlVar);
-    hold on
-    plot(GLgeo(:,[3 4])'/CtrlVar.PlotXYscale,GLgeo(:,[5 6])'/CtrlVar.PlotXYscale,'k','LineWidth',1);
-    title(sprintf('log_{10}(Basal speed) t=%-g ',time)) ; xlabel('x (km)') ; ylabel('y (km)') ; title(colorbar,'log_{10}(m/yr)')
-end
-
-
-
-if contains(plots,'-log10(DeformationalSpeed)-')
-    DeformationalSpeed=sqrt(ud.*ud+vd.*vd); 
-    figure
-    PlotNodalBasedQuantities(MUA.connectivity,MUA.coordinates,log10(DeformationalSpeed),CtrlVar);
-    hold on
-    plot(GLgeo(:,[3 4])'/CtrlVar.PlotXYscale,GLgeo(:,[5 6])'/CtrlVar.PlotXYscale,'k','LineWidth',1);
-    title(sprintf('log_{10}(Deformational speed) t=%-g ',time)) ; xlabel('x (km)') ; ylabel('y (km)') ; title(colorbar,'log_{10}(m/yr)')
-end
-
-
-if contains(plots,'-ab-')
-%%
-    figure
-    PlotMeshScalarVariable(CtrlVar,MUA,ab)
-    hold on
-    plot(GLgeo(:,[3 4])'/CtrlVar.PlotXYscale,GLgeo(:,[5 6])'/CtrlVar.PlotXYscale,'k','LineWidth',1);
-    title(sprintf('ab t=%-g ',time)) ; xlabel('x (km)') ; ylabel('y (km)') ; title(colorbar,'(m/yr)')
-    axis equal
-%%
-end
-
-
-if contains(plots,'-as-')
-%%
-    figure
-    PlotMeshScalarVariable(CtrlVar,MUA,as)
-    hold on
-    plot(GLgeo(:,[3 4])'/CtrlVar.PlotXYscale,GLgeo(:,[5 6])'/CtrlVar.PlotXYscale,'k','LineWidth',1);
-    title(sprintf('as t=%-g ',time)) ; xlabel('x (km)') ; ylabel('y (km)') ; title(colorbar,'(m/yr)')
-    axis equal
-%%
-end
-
-if contains(plots,'-h-')
-%%
-    figure
-    PlotMeshScalarVariable(CtrlVar,MUA,h)
-    hold on
-    plot(GLgeo(:,[3 4])'/CtrlVar.PlotXYscale,GLgeo(:,[5 6])'/CtrlVar.PlotXYscale,'k','LineWidth',1);
-    
-    I=h<=CtrlVar.ThickMin;
-    plot(MUA.coordinates(I,1)/CtrlVar.PlotXYscale,MUA.coordinates(I,2)/CtrlVar.PlotXYscale,'.r')
-    title(sprintf('h t=%-g ',time)) ; xlabel('x (km)') ; ylabel('y (km)') ; title(colorbar,'(m/yr)')
-    axis equal
-%%
-end
 
 end

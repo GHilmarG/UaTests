@@ -13,23 +13,38 @@ function [UserVar,CtrlVar,MeshBoundaryCoordinates]=DefineInitialInputs(UserVar,C
 
 %%
 
+xd=50e3; xu=-50e3; yl=50e3 ; yr=-50e3;
+
+UserVar.ELA=3500;
+UserVar.hStart=10;
+UserVar.lambda=1e-1; 
+UserVar.Geometry="-1dMountain-" ; "-plane-" ; 
+UserVar.Experiment="MB"+UserVar.Geometry; 
+UserVar.B0=4000;
+UserVar.beta=atan(UserVar.B0/xd) ;
+
 %%
 
 
+
+
 CtrlVar.FlowApproximation='SSTREAM' ;  % any off ['SSTREAM'|'SSHEET'|'Hybrid']  
-CtrlVar.Experiment='MB';
-CtrlVar.Implicituvh=0; 
+CtrlVar.Experiment=UserVar.Experiment ;
+CtrlVar.Implicituvh=1; 
+CtrlVar.ResetThicknessToMinThickness=0;CtrlVar.ThicknessConstraints=1; CtrlVar.ThicknessConstraintsItMax=1  ;
 CtrlVar.TimeDependentRun=1 ;  % any of [0|1].  
 CtrlVar.time=0 ; 
 CtrlVar.dt=0.1; 
-CtrlVar.TotalNumberOfForwardRunSteps=10; 
-CtrlVar.TotalTime=1 ; 
-CtrlVar.AdaptiveTimeStepping=0 ; CtrlVar.ATSdtMax=0.1;   % maximum time step allowed
+CtrlVar.TotalNumberOfForwardRunSteps=inf; 
+CtrlVar.TotalTime=25 ; 
+CtrlVar.AdaptiveTimeStepping=1 ;
+CtrlVar.ATSdtMax=1;  
+CtrlVar.ATSdtMin=0.01;  
 CtrlVar.Restart=0;  CtrlVar.WriteRestartFile=1;
 
 CtrlVar.theta=0.5;    
 
-xd=50e3; xu=-50e3; yl=50e3 ; yr=-50e3;
+
 MeshBoundaryCoordinates=flipud([xu yr ; xd yr ; xd yl ; xu yl]);
 
 CtrlVar.TriNodes=3;   % [3,6,10]
