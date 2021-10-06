@@ -40,7 +40,7 @@ if ~Restart
         
         CtrlVar.DevelopmentVersion=true;
         CtrlVar.LevelSetMethod=true; CtrlVar.LevelSetAssembly="consistent" ;
-        
+        CtrlVar.LevelSetEvolution="-By solving the level set equation-" ;
         
         CtrlVar.WhenPlottingMesh_PlotMeshBoundaryCoordinatesToo=1;
         MeshSize=2.5e3;
