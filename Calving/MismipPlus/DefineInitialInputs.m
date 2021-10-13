@@ -5,27 +5,25 @@ function [UserVar,CtrlVar,MeshBoundaryCoordinates]=DefineInitialInputs(UserVar,C
 UserVar.MisExperiment='ice0';  % This I use in DefineMassBalance
 UserVar.Outputsdirectory='ResultsFiles'; % This I use in UaOutputs
 UserVar.MassBalanceCase='ice0';
+UserVar.InitialGeometry="-MismipPlus-"; 
 %%
 
 CtrlVar.SlidingLaw="W" ;  % options:  "W","W-N0","minCW-N0","C","rpCW-N0", and "rCW-N0"  
 CtrlVar.Experiment=['MismipPlus-',UserVar.MisExperiment];   
 %% Types of run
 %
-CtrlVar.TimeDependentRun=0; 
-CtrlVar.TotalNumberOfForwardRunSteps=10;
-CtrlVar.TotalTime=100;
+CtrlVar.TimeDependentRun=1; 
+CtrlVar.TotalNumberOfForwardRunSteps=inf;
+CtrlVar.TotalTime=5;
 CtrlVar.Restart=0;  
-CtrlVar.InfoLevelNonLinIt=1;  % try setting to 100 for more info and plots on non-linear convergence  
-CtrlVar.NRitmax=500;            % maximum number of NR iteration
-CtrlVar.dt=0.01;  
 
-%% testing Coulomb convergence  
-% CtrlVar.dt=1e-3; CtrlVar.NRitmax=500;
-%%
+%% time, time-step, output interval
+
 
 CtrlVar.time=0; 
+CtrlVar.dt=0.1;  
 
-CtrlVar.DefineOutputsDt=0; % interval between calling UaOutputs. 0 implies call it at each and every run step.
+CtrlVar.DefineOutputsDt=0.5; % interval between calling UaOutputs. 0 implies call it at each and every run step.
                        % setting CtrlVar.DefineOutputsDt=1; causes UaOutputs to be called every 1 years.
                        % This is a more reasonable value once all looks OK.
 
@@ -52,10 +50,28 @@ CtrlVar.TriNodes=3;
 CtrlVar.NameOfRestartFiletoWrite=['Restart',CtrlVar.Experiment,'.mat'];
 CtrlVar.NameOfRestartFiletoRead=CtrlVar.NameOfRestartFiletoWrite;
 
+%% Calving options
+
+CtrlVar.LevelSetMethod=1;
+CtrlVar.MeshAdapt.CFrange=[10e3 1e3 ] ; % This refines the mesh around the calving front, but must set
+CtrlVar.AdaptMesh=0;                    %  CtrlVar.AdaptMesh=1 as well
 
 
+% The melt is decribed as a= a_1 (h-hmin)
+CtrlVar.LevelSetMethodMassBalanceFeedbackCoeffLin=-1;  % This is the constant a1, it has units 1/time.
+% Default value is -1
+
+CtrlVar.LevelSetMinIceThickness=CtrlVar.ThickMin+1;    % this is the hmin constant, i.e. the accepted min ice thickness
+% over the 'ice-free' areas.
+% Default value is CtrlVar.ThickMin+1
 
 %% adapt mesh
+CtrlVar.AdaptMesh=0;         
+CtrlVar.AdaptMeshInitial=0 ;       % if true, then a remeshing will always be performed at the inital step
+CtrlVar.AdaptMeshAndThenStop=0;    % if true, then mesh will be adapted but no further calculations performed
+                                   % usefull, for example, when trying out different remeshing options (then use CtrlVar.doRemeshPlots=1 to get plots)
+
+
 CtrlVar.InfoLevelAdaptiveMeshing=1;
 CtrlVar.doAdaptMeshPlots=1; 
 CtrlVar.MeshGenerator='mesh2d' ; % 'gmsh';  % possible values: {mesh2d|gmsh}
@@ -79,7 +95,7 @@ CtrlVar.MeshSizeMin=0.01*CtrlVar.MeshSize;     % min element size
 
 CtrlVar.MaxNumberOfElements=250e3;           % max number of elements. If #elements larger then CtrlMeshSize/min/max are changed
 
-CtrlVar.AdaptMesh=1;         
+
 CtrlVar.AdaptMeshMaxIterations=10;  % Number of adapt mesh iterations within each run-step.
 CtrlVar.MeshRefinementMethod='explicit:local:newest vertex bisection';    % can have any of these values:
                                                    % 'explicit:global' 
@@ -89,11 +105,6 @@ CtrlVar.MeshRefinementMethod='explicit:local:newest vertex bisection';    % can 
 %  
 CtrlVar.SaveAdaptMeshFileName='AdaptMesh.mat'; 
 
-
-
-CtrlVar.AdaptMeshInitial=1 ;       % if true, then a remeshing will always be performed at the inital step
-CtrlVar.AdaptMeshAndThenStop=0;    % if true, then mesh will be adapted but no further calculations performed
-                                   % usefull, for example, when trying out different remeshing options (then use CtrlVar.doRemeshPlots=1 to get plots)
 
 
 CtrlVar.AdaptMeshRunStepInterval=1;  % number of run-steps between mesh adaptation

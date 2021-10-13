@@ -34,8 +34,9 @@ if contains(plots,'-plot-')
     figsWidth=1000 ; figHeights=300;
     GLgeo=[]; xGL=[] ; yGL=[];
     %%
-    fig100=figure(100) ;
-    fig100.Position=[50 50 figsWidth 3*figHeights];
+    fig100=FindOrCreateFigure("4Plots") ; 
+    %fig100=figure(100) ;
+    %fig100.Position=[50 50 figsWidth 3*figHeights];
     subplot(4,1,1)
     PlotMeshScalarVariable(CtrlVar,MUA,F.h); title(sprintf('h at t=%g',CtrlVar.time))
     hold on    
@@ -76,9 +77,9 @@ if contains(plots,'-plot-')
     
     BProfile=MismBed(xProfile,yCentre);
     
-    
-    fig200=figure(200);
-    fig200.Position=[1200 50 figsWidth 2*figHeights];
+    fig200=FindOrCreateFigure("flowline") ; 
+    %fig200=figure(200);
+    %fig200.Position=[1200 50 figsWidth 2*figHeights];
     
     plot(xProfile/1000,sProfile,'b')
     hold on
@@ -87,9 +88,9 @@ if contains(plots,'-plot-')
     title(sprintf('t=%g',time))
     hold off
     
-    
-    fig300=figure(300);
-    fig300.Position=[1200 700 figsWidth figHeights];
+    fig200=FindOrCreateFigure("grounding line and mesh") ; 
+    %fig300=figure(300);
+    %fig300.Position=[1200 700 figsWidth figHeights];
     PlotMuaMesh(CtrlVar,MUA);
     hold on 
     
