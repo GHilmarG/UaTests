@@ -53,19 +53,35 @@ function [UserVar,LSF,c]=DefineCalving(UserVar,CtrlVar,MUA,F,BCs)
 
 c=[] ;
 
-if F.time > 2
+switch CtrlVar.LevelSetEvolution
+
+    case "-By solving the level set equation-"
 
 
-    F.GF=IceSheetIceShelves(CtrlVar,MUA,F.GF);
-    NodesSelected=F.x>500e3 & F.GF.NodesDownstreamOfGroundingLines;
-    LSF=zeros(MUA.Nnodes,1)+ 1 ;
-    LSF(NodesSelected)=-1;
+        c=sqrt(F.ub.*F.ub+F.vb.*F.vb);  % the idea here is that the calving front does not move
+        F.GF=IceSheetIceShelves(CtrlVar,MUA,F.GF);
+        NodesSelected=F.x>500e3 & F.GF.NodesDownstreamOfGroundingLines;
+        LSF=zeros(MUA.Nnodes,1)+ 1 ;
+        LSF(NodesSelected)=-1;
 
+    case "-prescribed-"
 
+        if F.time > 2
 
-else
+            F.GF=IceSheetIceShelves(CtrlVar,MUA,F.GF);
+            NodesSelected=F.x>500e3 & F.GF.NodesDownstreamOfGroundingLines;
+            LSF=zeros(MUA.Nnodes,1)+ 1 ;
+            LSF(NodesSelected)=-1;
 
-    LSF=1 ; % just some positive number to indicate that there is ice in all of the domain
+        else
+
+            LSF=1 ; % just some positive number to indicate that there is ice in all of the domain
+
+        end
+
+    otherwise
+
+        error("case not found")
 
 end
 

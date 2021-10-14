@@ -53,6 +53,9 @@ CtrlVar.NameOfRestartFiletoRead=CtrlVar.NameOfRestartFiletoWrite;
 %% Calving options
 
 CtrlVar.LevelSetMethod=1;
+CtrlVar.LevelSetEvolution="-By solving the level set equation-"   ; % "-prescribed-", 
+CtrlVar.DevelopmentVersion=true; 
+
 CtrlVar.MeshAdapt.CFrange=[10e3 1e3 ] ; % This refines the mesh around the calving front, but must set
 CtrlVar.AdaptMesh=0;                    %  CtrlVar.AdaptMesh=1 as well
 
@@ -64,6 +67,9 @@ CtrlVar.LevelSetMethodMassBalanceFeedbackCoeffLin=-1;  % This is the constant a1
 CtrlVar.LevelSetMinIceThickness=CtrlVar.ThickMin+1;    % this is the hmin constant, i.e. the accepted min ice thickness
 % over the 'ice-free' areas.
 % Default value is CtrlVar.ThickMin+1
+
+CtrlVar.LevelSetEvolution="-By solving the level set equation-"  ; % "-prescribed-", 
+
 
 %% adapt mesh
 CtrlVar.AdaptMesh=0;         
