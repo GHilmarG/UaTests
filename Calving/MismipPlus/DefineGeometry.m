@@ -16,4 +16,23 @@ b=B;
 h0=300;
 s=b+h0;
 
+
+if contains(FieldsToBeDefined,"s")
+    fprintf(' The geometry is initialised based on a previously obtained steady-state solutions. \n')
+    switch CtrlVar.SlidingLaw
+
+        case "Tsai"
+            load('MismipPlusThicknessInterpolants','FsTsai','FbTsai')
+            s=FsTsai(x,y) ;
+            b=FbTsai(x,y) ;
+        otherwise
+            load('../../../Interpolants/MismipPlusThicknessInterpolants','FsWeertman','FbWeertman')
+            s=FsWeertman(x,y) ;
+            b=FbWeertman(x,y) ;
+    end
+else
+    s=[] ; b=[];
+end
+
+
 end

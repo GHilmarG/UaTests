@@ -58,11 +58,38 @@ switch CtrlVar.LevelSetEvolution
     case "-By solving the level set equation-"
 
 
-        c=sqrt(F.ub.*F.ub+F.vb.*F.vb);  % the idea here is that the calving front does not move
-        F.GF=IceSheetIceShelves(CtrlVar,MUA,F.GF);
-        NodesSelected=F.x>500e3 & F.GF.NodesDownstreamOfGroundingLines;
-        LSF=zeros(MUA.Nnodes,1)+ 1 ;
-        LSF(NodesSelected)=-1;
+        % c=sqrt(F.ub.*F.ub+F.vb.*F.vb);  % the idea here is that the calving front does not move
+        c=F.ub ;
+        if contains(UserVar.CalvingLaw,"FixedRate")
+            CR=str2double(extract(UserVar.CalvingLaw,digitsPattern));
+            c=c+CR;
+        elseif contains(UserVar.CalvingLaw,"IceThickness")
+            CR=str2double(extract(UserVar.CalvingLaw,digitsPattern));
+            c=c+CR*F.h ;
+        elseif contains(UserVar.CalvingLaw,"CliffHeight")
+            CliffHeight=min((F.s-F.S),F.h) ; 
+            CR=str2double(extract(UserVar.CalvingLaw,digitsPattern));
+            c=CR*CliffHeight ;
+            cMax=5000; 
+            c(c>cMax)=cMax;
+        else
+
+            error("asfda")
+        end
+
+        if F.time<eps
+            % Prescribe initial LSF
+            F.GF=IceSheetIceShelves(CtrlVar,MUA,F.GF);
+            NodesSelected=F.x>500e3 & F.GF.NodesDownstreamOfGroundingLines;
+            LSF=zeros(MUA.Nnodes,1)+ 1 ;
+            LSF(NodesSelected)=-1;
+
+            [xC,yC]=CalcMuaFieldsContourLine(CtrlVar,MUA,LSF,0);
+            [LSF,UserVar]=SignedDistUpdate(UserVar,[],CtrlVar,MUA,LSF,xC,yC);
+        else
+            LSF=F.LSF ;
+        end
+
 
     case "-prescribed-"
 

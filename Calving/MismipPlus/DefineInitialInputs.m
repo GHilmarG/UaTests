@@ -2,19 +2,25 @@ function [UserVar,CtrlVar,MeshBoundaryCoordinates]=DefineInitialInputs(UserVar,C
 
 
 %%
-UserVar.MisExperiment='ice0';  % This I use in DefineMassBalance
+
 UserVar.Outputsdirectory='ResultsFiles'; % This I use in UaOutputs
 UserVar.MassBalanceCase='ice0';
 UserVar.InitialGeometry="-MismipPlus-"; 
+UserVar.CalvingLaw="-FixedRate100-"  ;
+UserVar.CalvingLaw="-IceThickness10-"  ;
+UserVar.CalvingLaw="-CliffHeight10-"  ;
+UserVar.MisExperiment=UserVar.CalvingLaw ; 
 %%
 
 CtrlVar.SlidingLaw="W" ;  % options:  "W","W-N0","minCW-N0","C","rpCW-N0", and "rCW-N0"  
-CtrlVar.Experiment=['MismipPlus-',UserVar.MisExperiment];   
+CtrlVar.Experiment="MismipPlus-"+UserVar.MisExperiment;   
+
+CtrlVar.Experiment=replace(CtrlVar.Experiment,"--","-"); 
 %% Types of run
 %
 CtrlVar.TimeDependentRun=1; 
 CtrlVar.TotalNumberOfForwardRunSteps=inf;
-CtrlVar.TotalTime=5;
+CtrlVar.TotalTime=100;
 CtrlVar.Restart=0;  
 
 %% time, time-step, output interval
@@ -23,11 +29,12 @@ CtrlVar.Restart=0;
 CtrlVar.time=0; 
 CtrlVar.dt=0.1;  
 
-CtrlVar.DefineOutputsDt=0.5; % interval between calling UaOutputs. 0 implies call it at each and every run step.
+CtrlVar.DefineOutputsDt=1; % interval between calling UaOutputs. 0 implies call it at each and every run step.
                        % setting CtrlVar.DefineOutputsDt=1; causes UaOutputs to be called every 1 years.
                        % This is a more reasonable value once all looks OK.
 
 CtrlVar.ATSdtMax=1;
+CtrlVar.ATSdtMin=0.01;
 CtrlVar.WriteRestartFile=1;
 
 %% Reading in mesh
@@ -47,7 +54,7 @@ CtrlVar.PlotXYscale=1000;
 CtrlVar.TriNodes=3;
 
 
-CtrlVar.NameOfRestartFiletoWrite=['Restart',CtrlVar.Experiment,'.mat'];
+CtrlVar.NameOfRestartFiletoWrite="Restart"+CtrlVar.Experiment+".mat";
 CtrlVar.NameOfRestartFiletoRead=CtrlVar.NameOfRestartFiletoWrite;
 
 %% Calving options
@@ -56,6 +63,7 @@ CtrlVar.LevelSetMethod=1;
 CtrlVar.LevelSetEvolution="-By solving the level set equation-"   ; % "-prescribed-", 
 CtrlVar.DevelopmentVersion=true; 
 
+CtrlVar.LevelSetInfoLevel=1  ; 
 CtrlVar.MeshAdapt.CFrange=[10e3 1e3 ] ; % This refines the mesh around the calving front, but must set
 CtrlVar.AdaptMesh=0;                    %  CtrlVar.AdaptMesh=1 as well
 

@@ -1,9 +1,18 @@
 function UserVar=DefineOutputs(UserVar,CtrlVar,MUA,BCs,F,l,GF,InvStartValues,InvFinalValues,Priors,Meas,BCsAdjoint,RunInfo)
 
+persistent iCount Cx Ct
+
+if isempty(iCount)
+    iCount=1;
+    Cx=NaN(10000,1);
+    Ct=NaN(10000,1) ; 
+else 
+    iCount=iCount+1 ; 
+end
 
 time=CtrlVar.time; 
 
-plots='-plot-';
+plots='-plot-save-';
 
 if contains(plots,'-save-')
     
@@ -11,19 +20,19 @@ if contains(plots,'-save-')
     % check if folder 'ResultsFiles' exists, if not create
     
     if exist(fullfile(cd,UserVar.Outputsdirectory),'dir')~=7
-        mkdir(CtrlVar.Outputsdirectory) ;
+        mkdir(UserVar.Outputsdirectory) ;
     end
     
-    if strcmp(CtrlVar.DefineOutputsInfostring,'Last call')==0
+    if CtrlVar.DefineOutputsInfostring=="Last call"
         
         %
         % 
         %
         
         FileName=sprintf('%s/%07i-Nodes%i-Ele%i-Tri%i-kH%i-%s.mat',...
-            CtrlVar.Outputsdirectory,round(100*time),MUA.Nnodes,MUA.Nele,MUA.nod,1000*CtrlVar.kH,CtrlVar.Experiment);
+            UserVar.Outputsdirectory,round(100*time),MUA.Nnodes,MUA.Nele,MUA.nod,1000*CtrlVar.kH,CtrlVar.Experiment);
         fprintf(' Saving data in %s \n',FileName)
-        save(FileName,'CtrlVar','MUA','F','BCs','RunInfo')
+        save(FileName,'CtrlVar','MUA','F','BCs','Cx','Ct','RunInfo')
         
     end
     
@@ -41,25 +50,38 @@ if contains(plots,'-plot-')
     PlotMeshScalarVariable(CtrlVar,MUA,F.h); title(sprintf('h at t=%g',CtrlVar.time))
     hold on    
     [xGL,yGL,GLgeo]=PlotGroundingLines(CtrlVar,MUA,F.GF,GLgeo,xGL,yGL);
+    hold on ; [xc,yc]=PlotCalvingFronts(CtrlVar,MUA,F,'b',LineWidth=2);
     %Plot_sbB(CtrlVar,MUA,s,b,B) ; title(sprintf('time=%g',time))
     
-    
+
+    if ~isempty(xc)
+        Cx(iCount)=min(xc) ;
+        Ct(iCount)=F.time ;
+    end
+
     subplot(4,1,2)
     QuiverColorGHG(MUA.coordinates(:,1),MUA.coordinates(:,2),F.ub,F.vb,CtrlVar);
     hold on
     [xGL,yGL,GLgeo]=PlotGroundingLines(CtrlVar,MUA,F.GF,GLgeo,xGL,yGL);
+    hold on ; [xc,yc]=PlotCalvingFronts(CtrlVar,MUA,F,'b',LineWidth=2);
     hold off
     
     subplot(4,1,3)
-    PlotMeshScalarVariable(CtrlVar,MUA,F.dhdt);   title(sprintf('dhdt at t=%g',CtrlVar.time))
+    hold off
+    [~,cbar]=PlotMeshScalarVariable(CtrlVar,MUA,F.LSF/1000);   title(sprintf('LSF at t=%g',CtrlVar.time))
     hold on
     [xGL,yGL,GLgeo]=PlotGroundingLines(CtrlVar,MUA,F.GF,GLgeo,xGL,yGL);
+    hold on ; [xc,yc]=PlotCalvingFronts(CtrlVar,MUA,F,'b',LineWidth=2);
+    title(cbar,"(km)")
+    hold off
     
     subplot(4,1,4)
-    PlotMeshScalarVariable(CtrlVar,MUA,F.ab);   title(sprintf('ab at t=%g',CtrlVar.time))
+    PlotMeshScalarVariable(CtrlVar,MUA,F.c);   title(sprintf('Calving rate c at t=%g',CtrlVar.time))
+
     hold on
     
     [xGL,yGL,GLgeo]=PlotGroundingLines(CtrlVar,MUA,F.GF,GLgeo,xGL,yGL);
+    hold on ; [xc,yc]=PlotCalvingFronts(CtrlVar,MUA,F,'b',LineWidth=2);
     hold off
     
     
@@ -95,9 +117,15 @@ if contains(plots,'-plot-')
     hold on 
     
     [xGL,yGL,GLgeo]=PlotGroundingLines(CtrlVar,MUA,F.GF,GLgeo,xGL,yGL,'r','LineWidth',2);
+    hold on ; [xc,yc]=PlotCalvingFronts(CtrlVar,MUA,F,'b',LineWidth=2);
     title(sprintf('t=%g',time))
     hold off
     
+    FigC=FindOrCreateFigure("Calving front") ;
+    plot(Ct,Cx/1000,'ob')
+    ylabel("Calving Front Position (km)")
+    xlabel("time (yr)")
+
     drawnow
     %%
 end
