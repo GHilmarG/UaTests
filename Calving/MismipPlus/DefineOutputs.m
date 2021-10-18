@@ -46,45 +46,67 @@ if contains(plots,'-plot-')
     fig100=FindOrCreateFigure("4Plots") ; 
     %fig100=figure(100) ;
     %fig100.Position=[50 50 figsWidth 3*figHeights];
-    subplot(4,1,1)
-    PlotMeshScalarVariable(CtrlVar,MUA,F.h); title(sprintf('h at t=%g',CtrlVar.time))
+    subplot(6,1,1)
+    PlotMeshScalarVariable(CtrlVar,MUA,F.h); title(sprintf('h at t=%g (yr)',CtrlVar.time))
     hold on    
     [xGL,yGL,GLgeo]=PlotGroundingLines(CtrlVar,MUA,F.GF,GLgeo,xGL,yGL);
     hold on ; [xc,yc]=PlotCalvingFronts(CtrlVar,MUA,F,'b',LineWidth=2);
+    axis tight
+    hold off
     %Plot_sbB(CtrlVar,MUA,s,b,B) ; title(sprintf('time=%g',time))
     
 
     if ~isempty(xc)
-        Cx(iCount)=min(xc) ;
+        Ind=abs(yc-40e3)<CtrlVar.MeshSize ;
+        Cx(iCount)=min(xc(Ind)) ;
         Ct(iCount)=F.time ;
     end
 
-    subplot(4,1,2)
+    subplot(6,1,2)
     QuiverColorGHG(MUA.coordinates(:,1),MUA.coordinates(:,2),F.ub,F.vb,CtrlVar);
     hold on
     [xGL,yGL,GLgeo]=PlotGroundingLines(CtrlVar,MUA,F.GF,GLgeo,xGL,yGL);
     hold on ; [xc,yc]=PlotCalvingFronts(CtrlVar,MUA,F,'b',LineWidth=2);
+    axis tight
     hold off
     
-    subplot(4,1,3)
+    subplot(6,1,3)
     hold off
-    [~,cbar]=PlotMeshScalarVariable(CtrlVar,MUA,F.LSF/1000);   title(sprintf('LSF at t=%g',CtrlVar.time))
+    [~,cbar]=PlotMeshScalarVariable(CtrlVar,MUA,F.LSF/1000);   title(sprintf('LSF at t=%g (yr)',CtrlVar.time))
     hold on
     [xGL,yGL,GLgeo]=PlotGroundingLines(CtrlVar,MUA,F.GF,GLgeo,xGL,yGL);
-    hold on ; [xc,yc]=PlotCalvingFronts(CtrlVar,MUA,F,'b',LineWidth=2);
+    [xc,yc]=PlotCalvingFronts(CtrlVar,MUA,F,'b',LineWidth=2);
     title(cbar,"(km)")
+    axis tight
     hold off
-    
-    subplot(4,1,4)
-    PlotMeshScalarVariable(CtrlVar,MUA,F.c);   title(sprintf('Calving rate c at t=%g',CtrlVar.time))
 
+    subplot(6,1,4)
+    [~,cbar]=PlotMeshScalarVariable(CtrlVar,MUA,F.c);   title(sprintf('Calving rate c at t=%g  (yr)',CtrlVar.time))
     hold on
-    
+    title(cbar,"(m/yr)")
     [xGL,yGL,GLgeo]=PlotGroundingLines(CtrlVar,MUA,F.GF,GLgeo,xGL,yGL);
-    hold on ; [xc,yc]=PlotCalvingFronts(CtrlVar,MUA,F,'b',LineWidth=2);
+    [xc,yc]=PlotCalvingFronts(CtrlVar,MUA,F,'b',LineWidth=2);
+    axis tight
     hold off
     
-    
+    subplot(6,1,5)
+    CliffHeight=min((F.s-F.S),F.h) ; 
+    [~,cbar]=PlotMeshScalarVariable(CtrlVar,MUA,CliffHeight);   title(sprintf('Cliff height at t=%g  (yr)',CtrlVar.time))
+    hold on
+    title(cbar,"(m)")
+    [xGL,yGL,GLgeo]=PlotGroundingLines(CtrlVar,MUA,F.GF,GLgeo,xGL,yGL);
+    [xc,yc]=PlotCalvingFronts(CtrlVar,MUA,F,'b',LineWidth=2);
+    axis tight
+    hold off
+
+    subplot(6,1,6)
+    PlotMuaMesh(CtrlVar,MUA);
+    title(sprintf('FE Mesh at t=%g  (yr)',CtrlVar.time))
+    [xGL,yGL,GLgeo]=PlotGroundingLines(CtrlVar,MUA,F.GF,GLgeo,xGL,yGL);
+    [xc,yc]=PlotCalvingFronts(CtrlVar,MUA,F,'b',LineWidth=2);
+    axis tight
+    hold off
+
     x=MUA.coordinates(:,1);
     y=MUA.coordinates(:,2);
     

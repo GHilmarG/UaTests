@@ -7,8 +7,8 @@ UserVar.Outputsdirectory='ResultsFiles'; % This I use in UaOutputs
 UserVar.MassBalanceCase='ice0';
 UserVar.InitialGeometry="-MismipPlus-"; 
 UserVar.CalvingLaw="-FixedRate100-"  ;
-UserVar.CalvingLaw="-IceThickness10-"  ;
-UserVar.CalvingLaw="-CliffHeight10-"  ;
+% UserVar.CalvingLaw="-IceThickness10-"  ;
+% UserVar.CalvingLaw="-CliffHeight10-"  ;
 UserVar.MisExperiment=UserVar.CalvingLaw ; 
 %%
 
@@ -61,11 +61,11 @@ CtrlVar.NameOfRestartFiletoRead=CtrlVar.NameOfRestartFiletoWrite;
 
 CtrlVar.LevelSetMethod=1;
 CtrlVar.LevelSetEvolution="-By solving the level set equation-"   ; % "-prescribed-", 
+CtrlVar.LevelSetInitialisationInterval=2 ; CtrlVar.LevelSetReinitializePDist=true ; 
 CtrlVar.DevelopmentVersion=true; 
 
-CtrlVar.LevelSetInfoLevel=1  ; 
-CtrlVar.MeshAdapt.CFrange=[10e3 1e3 ] ; % This refines the mesh around the calving front, but must set
-CtrlVar.AdaptMesh=0;                    %  CtrlVar.AdaptMesh=1 as well
+CtrlVar.LevelSetInfoLevel=1 ; 
+CtrlVar.MeshAdapt.CFrange=[20e3 5e3 ] ; % This refines the mesh around the calving front, but must set
 
 
 % The melt is decribed as a= a_1 (h-hmin)
@@ -80,7 +80,7 @@ CtrlVar.LevelSetEvolution="-By solving the level set equation-"  ; % "-prescribe
 
 
 %% adapt mesh
-CtrlVar.AdaptMesh=0;         
+CtrlVar.AdaptMesh=1;         
 CtrlVar.AdaptMeshInitial=0 ;       % if true, then a remeshing will always be performed at the inital step
 CtrlVar.AdaptMeshAndThenStop=0;    % if true, then mesh will be adapted but no further calculations performed
                                    % usefull, for example, when trying out different remeshing options (then use CtrlVar.doRemeshPlots=1 to get plots)
@@ -89,14 +89,6 @@ CtrlVar.AdaptMeshAndThenStop=0;    % if true, then mesh will be adapted but no f
 CtrlVar.InfoLevelAdaptiveMeshing=1;
 CtrlVar.doAdaptMeshPlots=1; 
 CtrlVar.MeshGenerator='mesh2d' ; % 'gmsh';  % possible values: {mesh2d|gmsh}
-
-CtrlVar.GmshMeshingAlgorithm=8;     % see gmsh manual
-                                    % 1=MeshAdapt
-                                    % 2=Automatic
-                                    % 5=Delaunay
-                                    % 6=Frontal
-                                    % 7=bamg
-                                    % 8=DelQuad (experimental)
 % very coarse mesh resolution
 CtrlVar.MeshSize=10e3;       % over-all desired element size
 CtrlVar.MeshSizeMax=10e3;    % max element size
@@ -110,7 +102,7 @@ CtrlVar.MeshSizeMin=0.01*CtrlVar.MeshSize;     % min element size
 CtrlVar.MaxNumberOfElements=250e3;           % max number of elements. If #elements larger then CtrlMeshSize/min/max are changed
 
 
-CtrlVar.AdaptMeshMaxIterations=10;  % Number of adapt mesh iterations within each run-step.
+CtrlVar.AdaptMeshMaxIterations=2;  % Number of adapt mesh iterations within each run-step.
 CtrlVar.MeshRefinementMethod='explicit:local:newest vertex bisection';    % can have any of these values:
                                                    % 'explicit:global' 
                                                    % 'explicit:local'
@@ -123,7 +115,7 @@ CtrlVar.SaveAdaptMeshFileName='AdaptMesh.mat';
 
 CtrlVar.AdaptMeshRunStepInterval=1;  % number of run-steps between mesh adaptation
 
-CtrlVar.MeshAdapt.GLrange=[20000 5000 ; 10000 500 ];
+% CtrlVar.MeshAdapt.GLrange=[20000 5000 ; 10000 500 ];
 
 
 
