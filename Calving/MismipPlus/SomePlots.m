@@ -25,3 +25,10 @@ load("ResultsFiles/0010000-Nodes652-Ele1158-Tri3-kH1000-MismipPlus-IceThickness1
 hold on  ; plot(Ct,Cx/1000,'^m')
 I=~isnan(Ct); Ct=Ct(I) ; Cx=Cx(I) ;  n=numel(Ct)  ; A=[ones(n,1) Ct] ; sol=A\Cx ; fprintf(" rate %f m/yr \n",-sol(2)) ; 
 
+%%
+figure
+load("ResultsFiles/0010000-Nodes1055-Ele1948-Tri3-kH1000-MismipPlus-FixedRate100-Keeper.mat")
+hold on  ; plot(Ct,Cx/1000,'^m')
+I=~isnan(Ct); Ct=Ct(I) ; Cx=Cx(I) ;  n=numel(Ct)  ; A=[ones(n,1) Ct] ; sol=A\Cx ; fprintf(" rate %f m/yr \n",-sol(2)) ; 
+c=100 ;
+plot(Ct,(Cx(end)-(Ct-Ct(end))*c)/1000,'k')

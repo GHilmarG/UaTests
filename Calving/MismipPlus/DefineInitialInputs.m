@@ -61,11 +61,11 @@ CtrlVar.NameOfRestartFiletoRead=CtrlVar.NameOfRestartFiletoWrite;
 
 CtrlVar.LevelSetMethod=1;
 CtrlVar.LevelSetEvolution="-By solving the level set equation-"   ; % "-prescribed-", 
-CtrlVar.LevelSetInitialisationInterval=2 ; CtrlVar.LevelSetReinitializePDist=true ; 
+CtrlVar.LevelSetInitialisationInterval=inf ; CtrlVar.LevelSetReinitializePDist=true ; 
 CtrlVar.DevelopmentVersion=true; 
 
 CtrlVar.LevelSetInfoLevel=1 ; 
-CtrlVar.MeshAdapt.CFrange=[20e3 5e3 ] ; % This refines the mesh around the calving front, but must set
+CtrlVar.MeshAdapt.CFrange=[20e3 5e3 ; 10e3 2e3] ; % This refines the mesh around the calving front, but must set
 
 
 % The melt is decribed as a= a_1 (h-hmin)
