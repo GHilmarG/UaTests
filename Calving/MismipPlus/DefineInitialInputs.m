@@ -6,7 +6,7 @@ function [UserVar,CtrlVar,MeshBoundaryCoordinates]=DefineInitialInputs(UserVar,C
 UserVar.Outputsdirectory='ResultsFiles'; % This I use in UaOutputs
 UserVar.MassBalanceCase='ice0';
 UserVar.InitialGeometry="-MismipPlus-"; 
-UserVar.CalvingLaw="-FixedRate100-"  ;
+UserVar.CalvingLaw="-FixedRate1000-"  ;
 % UserVar.CalvingLaw="-IceThickness10-"  ;
 % UserVar.CalvingLaw="-CliffHeight10-"  ;
 UserVar.MisExperiment=UserVar.CalvingLaw ; 
@@ -43,7 +43,7 @@ CtrlVar.ReadInitialMesh=0;    % if true then read FE mesh (i.e the MUA variable)
 CtrlVar.ReadInitialMeshFileName='AdaptMesh.mat';
 CtrlVar.SaveInitialMeshFileName='NewMeshFile.mat';
 %% Plotting options
-CtrlVar.doplots=1;
+CtrlVar.doplots=0;
 CtrlVar.PlotMesh=1; 
 CtrlVar.PlotBCs=1;
 CtrlVar.WhenPlottingMesh_PlotMeshBoundaryCoordinatesToo=1;
@@ -63,7 +63,8 @@ CtrlVar.LevelSetMethod=1;
 CtrlVar.LevelSetEvolution="-By solving the level set equation-"   ; % "-prescribed-", 
 CtrlVar.LevelSetInitialisationInterval=inf ; CtrlVar.LevelSetReinitializePDist=true ; 
 CtrlVar.DevelopmentVersion=true; 
-
+CtrlVar.LevelSetFABmu.Scale="-ucl-" ; % "-constant-"; 
+CtrlVar.LevelSetFABmu.Value=1 ;
 CtrlVar.LevelSetInfoLevel=1 ; 
 CtrlVar.MeshAdapt.CFrange=[20e3 5e3 ; 10e3 2e3] ; % This refines the mesh around the calving front, but must set
 
@@ -78,6 +79,10 @@ CtrlVar.LevelSetMinIceThickness=CtrlVar.ThickMin+1;    % this is the hmin consta
 
 CtrlVar.LevelSetEvolution="-By solving the level set equation-"  ; % "-prescribed-", 
 
+
+CtrlVar.Experiment=CtrlVar.Experiment+CtrlVar.LevelSetFABmu.Scale+"-muValue"+num2str(CtrlVar.LevelSetFABmu.Value)...
+    +"-Ini"+num2str(CtrlVar.LevelSetInitialisationInterval)+"-PDist"+num2str(CtrlVar.LevelSetReinitializePDist);
+CtrlVar.Experiment=replace(CtrlVar.Experiment,"--","-"); 
 
 %% adapt mesh
 CtrlVar.AdaptMesh=1;         
