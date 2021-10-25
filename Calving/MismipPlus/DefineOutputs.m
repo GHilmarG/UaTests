@@ -132,16 +132,16 @@ if contains(plots,'-plot-')
     title(sprintf('t=%g',time))
     hold off
     
-    fig200=FindOrCreateFigure("grounding line and mesh") ; 
+    %fig200=FindOrCreateFigure("grounding line and mesh") ; 
     %fig300=figure(300);
     %fig300.Position=[1200 700 figsWidth figHeights];
-    PlotMuaMesh(CtrlVar,MUA);
-    hold on 
+    %PlotMuaMesh(CtrlVar,MUA);
+    %hold on 
     
-    [xGL,yGL,GLgeo]=PlotGroundingLines(CtrlVar,MUA,F.GF,GLgeo,xGL,yGL,'r','LineWidth',2);
-    hold on ; [xc,yc]=PlotCalvingFronts(CtrlVar,MUA,F,'b',LineWidth=2);
-    title(sprintf('t=%g',time))
-    hold off
+    %[xGL,yGL,GLgeo]=PlotGroundingLines(CtrlVar,MUA,F.GF,GLgeo,xGL,yGL,'r','LineWidth',2);
+    %hold on ; [xc,yc]=PlotCalvingFronts(CtrlVar,MUA,F,'b',LineWidth=2);
+    %title(sprintf('t=%g',time))
+    %hold off
     
     FigC=FindOrCreateFigure("Calving front") ;
     plot(Ct,Cx/1000,'ob')

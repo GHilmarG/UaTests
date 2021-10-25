@@ -1,6 +1,8 @@
 function [UserVar,CtrlVar,MeshBoundaryCoordinates]=DefineInitialInputs(UserVar,CtrlVar)
 
 
+%
+%
 %%
 
 UserVar.Outputsdirectory='ResultsFiles'; % This I use in UaOutputs
@@ -8,7 +10,7 @@ UserVar.MassBalanceCase='ice0';
 UserVar.InitialGeometry="-MismipPlus-"; 
 UserVar.CalvingLaw="-FixedRate1000-"  ;
 % UserVar.CalvingLaw="-IceThickness10-"  ;
-% UserVar.CalvingLaw="-CliffHeight10-"  ;
+UserVar.CalvingLaw="-CliffHeight-Crawford"  ;
 UserVar.MisExperiment=UserVar.CalvingLaw ; 
 %%
 
@@ -20,7 +22,7 @@ CtrlVar.Experiment=replace(CtrlVar.Experiment,"--","-");
 %
 CtrlVar.TimeDependentRun=1; 
 CtrlVar.TotalNumberOfForwardRunSteps=inf;
-CtrlVar.TotalTime=100;
+CtrlVar.TotalTime=200;
 CtrlVar.Restart=0;  
 
 %% time, time-step, output interval
@@ -64,7 +66,7 @@ CtrlVar.LevelSetEvolution="-By solving the level set equation-"   ; % "-prescrib
 CtrlVar.LevelSetInitialisationInterval=inf ; CtrlVar.LevelSetReinitializePDist=true ; 
 CtrlVar.DevelopmentVersion=true; 
 CtrlVar.LevelSetFABmu.Scale="-ucl-" ; % "-constant-"; 
-CtrlVar.LevelSetFABmu.Value=1 ;
+CtrlVar.LevelSetFABmu.Value=1;
 CtrlVar.LevelSetInfoLevel=1 ; 
 CtrlVar.MeshAdapt.CFrange=[20e3 5e3 ; 10e3 2e3] ; % This refines the mesh around the calving front, but must set
 
@@ -83,6 +85,7 @@ CtrlVar.LevelSetEvolution="-By solving the level set equation-"  ; % "-prescribe
 CtrlVar.Experiment=CtrlVar.Experiment+CtrlVar.LevelSetFABmu.Scale+"-muValue"+num2str(CtrlVar.LevelSetFABmu.Value)...
     +"-Ini"+num2str(CtrlVar.LevelSetInitialisationInterval)+"-PDist"+num2str(CtrlVar.LevelSetReinitializePDist);
 CtrlVar.Experiment=replace(CtrlVar.Experiment,"--","-"); 
+CtrlVar.Experiment=replace(CtrlVar.Experiment,".","k"); 
 
 %% adapt mesh
 CtrlVar.AdaptMesh=1;         

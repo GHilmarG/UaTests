@@ -53,9 +53,29 @@ function [UserVar,LSF,c]=DefineCalving(UserVar,CtrlVar,MUA,F,BCs)
 
 c=[] ;
 
+
+
+%[ValuesB,FA]=ExtrapolateFromNodesAtoNodesB(CtrlVar,xA,yA,ValuesA,xB,yB);
+
+
+
 switch CtrlVar.LevelSetEvolution
 
     case "-By solving the level set equation-"
+
+        if F.time<eps
+            % Prescribe initial LSF
+            F.GF=IceSheetIceShelves(CtrlVar,MUA,F.GF);
+            NodesSelected=F.x>500e3 & F.GF.NodesDownstreamOfGroundingLines;
+            LSF=zeros(MUA.Nnodes,1) + 1 ;
+            LSF(NodesSelected)=-1;
+
+            [xC,yC]=CalcMuaFieldsContourLine(CtrlVar,MUA,LSF,0);
+            [LSF,UserVar]=SignedDistUpdate(UserVar,[],CtrlVar,MUA,LSF,xC,yC);
+        else
+            LSF=F.LSF ;
+        end
+
 
 
         % c=sqrt(F.ub.*F.ub+F.vb.*F.vb);  % the idea here is that the calving front does not move
@@ -64,31 +84,66 @@ switch CtrlVar.LevelSetEvolution
             CR=str2double(extract(UserVar.CalvingLaw,digitsPattern));
             c=c+CR;
         elseif contains(UserVar.CalvingLaw,"IceThickness")
+
             CR=str2double(extract(UserVar.CalvingLaw,digitsPattern));
             c=c+CR*F.h ;
+
         elseif contains(UserVar.CalvingLaw,"CliffHeight")
-            CliffHeight=min((F.s-F.S),F.h) ; 
-            CR=str2double(extract(UserVar.CalvingLaw,digitsPattern));
-            c=CR*CliffHeight ;
-            cMax=5000; 
-            c(c>cMax)=cMax;
+
+            CliffHeight=min((F.s-F.S),F.h) ;
+            % CliffHeightUnmodified=CliffHeight;
+
+
+            GFLSF.node=sign(LSF) ;
+            GFLSF=IceSheetIceShelves(CtrlVar,MUA,GFLSF);
+            NodesA=GFLSF.NodesUpstreamOfGroundingLines;
+            NodesB=~NodesA;
+
+            CliffHeight=ExtrapolateFromNodesAtoNodesB(CtrlVar,F.x,F.y,NodesA,NodesB,CliffHeight) ;
+
+
+            % FindOrCreateFigure("CliffHeightUnmodified") ; PlotMeshScalarVariable(CtrlVar,MUA,CliffHeightUnmodified) ;
+            % FindOrCreateFigure("CliffHeight") ; PlotMeshScalarVariable(CtrlVar,MUA,CliffHeight) ;
+            % FindOrCreateFigure("CliffHeight-CliffHeightUnmodified") ; PlotMeshScalarVariable(CtrlVar,MUA,CliffHeight-CliffHeightUnmodified) ;
+
+            if contains(UserVar.CalvingLaw,"CliffHeight-Linear")
+
+
+                CR=str2double(extract(UserVar.CalvingLaw,digitsPattern));
+                c=CR*CliffHeight ;
+                % c=1000;
+                cMax=5000;
+                c(c>cMax)=cMax;
+
+            elseif contains(UserVar.CalvingLaw,"CliffHeight-Crawford")
+
+                fI=1e-17 ; % Units m/d
+                fI=fI*365.25 ;
+                c= fI*CliffHeight.^7 ;
+                c(CliffHeight<135)=0 ;
+
+                NodesA=abs(LSF) < 50e3 ;
+                NodesB=~NodesA;
+                c=ExtrapolateFromNodesAtoNodesB(CtrlVar,F.x,F.y,NodesA,NodesB,c) ;
+
+                CliffHeightPlot=CliffHeight ; CliffHeightPlot(NodesB)=NaN ;
+                cPlot=c ; cPlot(NodesB)=NaN;
+              
+                % FindOrCreateFigure("CliffHeight") ; PlotMeshScalarVariable(CtrlVar,MUA,CliffHeightPlot) ;
+                % FindOrCreateFigure("Calving Rate") ; PlotMeshScalarVariable(CtrlVar,MUA,cPlot) ;
+
+
+
+            end
+
+
+
         else
 
             error("asfda")
         end
 
-        if F.time<eps
-            % Prescribe initial LSF
-            F.GF=IceSheetIceShelves(CtrlVar,MUA,F.GF);
-            NodesSelected=F.x>500e3 & F.GF.NodesDownstreamOfGroundingLines;
-            LSF=zeros(MUA.Nnodes,1)+ 1 ;
-            LSF(NodesSelected)=-1;
 
-            [xC,yC]=CalcMuaFieldsContourLine(CtrlVar,MUA,LSF,0);
-            [LSF,UserVar]=SignedDistUpdate(UserVar,[],CtrlVar,MUA,LSF,xC,yC);
-        else
-            LSF=F.LSF ;
-        end
 
 
     case "-prescribed-"
