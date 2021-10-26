@@ -45,9 +45,9 @@ CP(1,:)=[] ; CP(end,:)=[] ;
 
 MeshBoundaryCoordinates=[CP;xB yB] ;
 
-% FindOrCreateFigure("MeshBoundaryCoordinates") 
-%  plot(MeshBoundaryCoordinates(:,1)/1000,MeshBoundaryCoordinates(:,2)/1000,'r.-')
-%  axis equal
+FindOrCreateFigure("MeshBoundaryCoordinates") 
+ plot(MeshBoundaryCoordinates(:,1)/1000,MeshBoundaryCoordinates(:,2)/1000,'r.-')
+ axis equal
 
 
 end
