@@ -30,7 +30,7 @@ end
 %UserVar.GeometryInterpolant='../../Interpolants/Bedmap2GriddedInterpolantModifiedBathymetry.mat'; % this assumes you have downloaded the OneDrive folder `Interpolants'.
 UserVar.GeometryInterpolant='../../../Interpolants/BedMachineGriddedInterpolants.mat';                       
 UserVar.SurfaceVelocityInterpolant='../../../Interpolants/SurfVelMeasures990mInterpolants.mat';
-UserVar.MeshBoundaryCoordinatesFile='../../../Interpolants/MeshBoundaryCoordinatesForAntarcticaBasedOnBedmachine'; 
+ 
 UserVar.DistanceBetweenPointsAlongBoundary=5e3 ; 
 UserVar.BasalMeltRate="MeltRate0" ;
 
