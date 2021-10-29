@@ -1,27 +1,14 @@
-function  [UserVar,BCs]=DefineBoundaryConditions(UserVar,CtrlVar,MUA,BCs,time,s,b,h,S,B,ub,vb,ud,vd,GF)
+function  [UserVar,BCs]=DefineBoundaryConditions(UserVar,CtrlVar,MUA,F,BCs)
 
 
-persistent AA BB
 
 
-if isempty(AA)
-  
-    % load points that define the line-segments along which the BCs are to be defined
-    
-    CP=readmatrix('DomainCornerPoints.csv'); 
-    AA=CP(1:end-1,:) ; BB=CP(2:end,:) ; 
-    
 
-end
+I=F.x(MUA.Boundary.Nodes) >-1650e3 & F.x(MUA.Boundary.Nodes) <-1580e3 & F.y(MUA.Boundary.Nodes) < -300e3 ; 
 
 
-% find all boundary nodes within 1m distance from the line segment.
-x=MUA.coordinates(:,1);  y=MUA.coordinates(:,2); tolerance=1;
-I = DistanceToLineSegment([x(MUA.Boundary.Nodes) y(MUA.Boundary.Nodes)],AA,BB,tolerance);
-
-
-BCs.vbFixedNode=MUA.Boundary.Nodes(I);
-BCs.ubFixedNode=MUA.Boundary.Nodes(I);
+BCs.vbFixedNode=MUA.Boundary.Nodes(~I);
+BCs.ubFixedNode=MUA.Boundary.Nodes(~I);
 
 % [BCs.ubFixedValue,BCs.vbFixedValue]=EricVelocities(CtrlVar,[x(Boundary.Nodes(I)) y(Boundary.Nodes(I))]);
 
