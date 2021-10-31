@@ -15,9 +15,9 @@ xByB = [ -1582.37420767669         -374.936485955611 ; ...
 
 MeshBoundaryCoordinates=1000*xByB;
 
-FindOrCreateFigure("MeshBoundaryCoordinates")
-plot(MeshBoundaryCoordinates(:,1)/1000,MeshBoundaryCoordinates(:,2)/1000,'r.-')
-axis equal
+% FindOrCreateFigure("MeshBoundaryCoordinates")
+% plot(MeshBoundaryCoordinates(:,1)/1000,MeshBoundaryCoordinates(:,2)/1000,'r.-')
+% axis equal
 
 
 end

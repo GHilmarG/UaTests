@@ -65,13 +65,19 @@ switch CtrlVar.LevelSetEvolution
 
         if F.time<eps
             % Prescribe initial LSF
-            F.GF=IceSheetIceShelves(CtrlVar,MUA,F.GF);
-            NodesSelected=F.x>500e3 & F.GF.NodesDownstreamOfGroundingLines;
+
+            io=inpoly2([F.x F.y],UserVar.BedMachineBoundary);
+            NodesSelected=~io ;
+
             LSF=zeros(MUA.Nnodes,1) + 1 ;
             LSF(NodesSelected)=-1;
 
+
+            % plot(F.x(~io)/1000,F.y(~io)/1000,'or')
+
             [xC,yC]=CalcMuaFieldsContourLine(CtrlVar,MUA,LSF,0);
             [LSF,UserVar]=SignedDistUpdate(UserVar,[],CtrlVar,MUA,LSF,xC,yC);
+
         else
             LSF=F.LSF ;
         end
@@ -79,10 +85,16 @@ switch CtrlVar.LevelSetEvolution
 
 
         % c=sqrt(F.ub.*F.ub+F.vb.*F.vb);  % the idea here is that the calving front does not move
-        c=F.ub ;
+        c=sqrt(F.ub.*F.ub+F.vb.*F.vb) ;
         if contains(UserVar.CalvingLaw,"FixedRate")
             CR=str2double(extract(UserVar.CalvingLaw,digitsPattern));
             c=c+CR;
+
+        elseif contains(UserVar.CalvingLaw,"ScalesWithSpeed")
+
+            CR=str2double(extract(UserVar.CalvingLaw,digitsPattern));
+            c=CR*c;
+
         elseif contains(UserVar.CalvingLaw,"IceThickness")
 
             CR=str2double(extract(UserVar.CalvingLaw,digitsPattern));
@@ -125,6 +137,10 @@ switch CtrlVar.LevelSetEvolution
                 NodesA=abs(LSF) < 50e3 ;
                 NodesB=~NodesA;
                 c=ExtrapolateFromNodesAtoNodesB(CtrlVar,F.x,F.y,NodesA,NodesB,c) ;
+                cMax=5000;
+                c(c>cMax)=cMax;
+
+
 
                 CliffHeightPlot=CliffHeight ; CliffHeightPlot(NodesB)=NaN ;
                 cPlot=c ; cPlot(NodesB)=NaN;
