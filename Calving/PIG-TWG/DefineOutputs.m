@@ -111,10 +111,31 @@ if contains(plots,'-LSF-')
     end
 
 
+    if isfield(UserVar,"CliffHeightExtrapolated") &&  isfield(UserVar,"CliffHeightUnmodified")
+
+        FindOrCreateFigure("CliffHeightUnmodified") ;
+        [~,cbar]=PlotMeshScalarVariable(CtrlVar,MUA,UserVar.CliffHeightUnmodified);
+        title(sprintf('Cliff height, unmodified, at t=%g (yr)',CtrlVar.time)) ;
+        hold on
+        [xGL,yGL,GLgeo]=PlotGroundingLines(CtrlVar,MUA,F.GF,GLgeo,xGL,yGL,"color","r");
+        [xc,yc]=PlotCalvingFronts(CtrlVar,MUA,F,'b',LineWidth=2);
+        title(cbar,"(km)")
+        axis tight
+        hold off
+
+        FindOrCreateFigure("CliffHeightExtrapolated") ;
+        [~,cbar]=PlotMeshScalarVariable(CtrlVar,MUA,UserVar.CliffHeightExtrapolated);
+        title(sprintf('Cliff height, extrapolated, at t=%g (yr)',CtrlVar.time)) ;
+        hold on
+        [xGL,yGL,GLgeo]=PlotGroundingLines(CtrlVar,MUA,F.GF,GLgeo,xGL,yGL,"color","r");
+        [xc,yc]=PlotCalvingFronts(CtrlVar,MUA,F,'b',LineWidth=2);
+        title(cbar,"(km)")
+        axis tight
+        hold off
 
 
 
-
+    end
 
 end
 

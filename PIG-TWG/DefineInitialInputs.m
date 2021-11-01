@@ -23,7 +23,7 @@ if isempty(UserVar) || ~isfield(UserVar,'m')
 end
 
 
-CtrlVar.FlowApproximation="SSTREAM-rho" ;
+CtrlVar.FlowApproximation="SSTREAM" ; % "SSTREAM-rho" ;
 %%
 % This run requires some additional input files. They are too big to be kept on Github so you
 % will have to get those separately. 

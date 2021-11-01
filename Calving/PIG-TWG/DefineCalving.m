@@ -71,7 +71,7 @@ switch CtrlVar.LevelSetEvolution
 
             LSF=zeros(MUA.Nnodes,1) + 1 ;
             LSF(NodesSelected)=-1;
-
+            LSF(F.x<-1660e3)=+1;  % get rid of the additional calving front to the east of the main trunk
 
             % plot(F.x(~io)/1000,F.y(~io)/1000,'or')
 
@@ -104,7 +104,7 @@ switch CtrlVar.LevelSetEvolution
 
             CliffHeight=min((F.s-F.S),F.h) ;
             % CliffHeightUnmodified=CliffHeight;
-
+            UserVar.CliffHeightUnmodified=CliffHeight; 
 
             GFLSF.node=sign(LSF) ;
             GFLSF=IceSheetIceShelves(CtrlVar,MUA,GFLSF);
@@ -112,6 +112,9 @@ switch CtrlVar.LevelSetEvolution
             NodesB=~NodesA;
 
             CliffHeight=ExtrapolateFromNodesAtoNodesB(CtrlVar,F.x,F.y,NodesA,NodesB,CliffHeight) ;
+             
+
+            UserVar.CliffHeightExtrapolated=CliffHeight; 
 
 
             % FindOrCreateFigure("CliffHeightUnmodified") ; PlotMeshScalarVariable(CtrlVar,MUA,CliffHeightUnmodified) ;

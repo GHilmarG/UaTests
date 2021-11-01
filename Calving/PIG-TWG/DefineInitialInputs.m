@@ -161,7 +161,7 @@ switch UserVar.RunType
         UserVar.AGlen.ReadFromFile=1;
         CtrlVar.ReadInitialMesh=1;
         CtrlVar.AdaptMesh=0;
-        
+        CtrlVar.TotalNumberOfForwardRunSteps=inf; 
         %CtrlVar.LevelSetMethod=0; 
         
     case 'Forward-Diagnostic'
@@ -184,7 +184,7 @@ switch UserVar.RunType
         
         UserVar.Slipperiness.ReadFromFile=1;
         UserVar.AGlen.ReadFromFile=1;
-        
+        CtrlVar.TotalNumberOfForwardRunSteps=1; 
         CtrlVar.AdaptMesh=0;
         CtrlVar.AdaptMeshInitial=0  ;       % remesh in first iteration (Itime=1)  even if mod(Itime,CtrlVar.AdaptMeshRunStepInterval)~=0.
         CtrlVar.AdaptMeshAndThenStop=1;    % if true, then mesh will be adapted but no further calculations performed
@@ -195,7 +195,7 @@ end
 
 CtrlVar.dt=0.01;   CtrlVar.DefineOutputsDt=0;
 CtrlVar.time=0;
-CtrlVar.TotalNumberOfForwardRunSteps=1000; 
+
 CtrlVar.TotalTime=10;
 
 % Element type
@@ -212,7 +212,7 @@ CtrlVar.doAdaptMeshPlots=5;
 %% Meshing 
 
 CtrlVar.ReadInitialMeshFileName='PIG-TWG-Mesh';
-CtrlVar.ReadInitialMeshFileName='MeshFile';
+CtrlVar.ReadInitialMeshFileName='MeshFile10km';
 CtrlVar.SaveInitialMeshFileName='MeshFile';
 CtrlVar.MaxNumberOfElements=70e3;
 
@@ -222,9 +222,9 @@ CtrlVar.MeshRefinementMethod='explicit:global';
 
 
 CtrlVar.MeshGenerator='mesh2d' ; % 'mesh2d';
-CtrlVar.GmshMeshingAlgorithm=8; 
 
-CtrlVar.MeshSizeMax=20e3;
+
+CtrlVar.MeshSizeMax=10e3;
 CtrlVar.MeshSize=CtrlVar.MeshSizeMax/2;
 CtrlVar.MeshSizeMin=CtrlVar.MeshSizeMax/20;
 
