@@ -2,9 +2,11 @@ function  BCs=DefineBoundaryConditions(UserVar,CtrlVar,MUA,BCs,time,s,b,h,S,B,ub
 
 % fix vd along boundary
 
-BCs.vdFixedNode=MUA.Boundary.Nodes ; BCs.vdFixedValue=BCs.vdFixedNode*0;
+BCs.vdFixedNode=MUA.Boundary.Nodes ; 
+BCs.vdFixedValue=MUA.Boundary.Nodes*0 ; 
 
-
+BCs.vbFixedNode=MUA.Boundary.Nodes ; 
+BCs.vbFixedValue=MUA.Boundary.Nodes*0 ; 
 
 end
 

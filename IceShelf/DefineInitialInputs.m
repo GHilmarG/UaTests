@@ -1,5 +1,5 @@
 
-function [UserVar,CtrlVar,MeshBoundaryCoordinates]=Ua2D_InitialUserInput(UserVar,CtrlVar)
+function [UserVar,CtrlVar,MeshBoundaryCoordinates]=DefineInitialInputs(UserVar,CtrlVar)
 
 %%
 
@@ -42,7 +42,7 @@ CtrlVar.dt=0.1;
 CtrlVar.TotalNumberOfForwardRunSteps=200;
 CtrlVar.TotalTime=100;          % maximum model time
 CtrlVar.time=0; 
-CtrlVar.ATStimeStepTarget=10.0;  % Timestep maximum is 10 years
+CtrlVar.ATSdtMax=10.0;  % Timestep maximum is 10 years
 
 
 %% Solver
@@ -72,7 +72,7 @@ CtrlVar.GmshMeshingAlgorithm=8;     % see gmsh manual, only relevant if using th
 CtrlVar.MeshGenerator='mesh2d';      % 'mesh2d' | 'gmsh' 
 
 CtrlVar.AdaptMeshInitial=1  ; % remesh in first run-step irrespecitivy of the value of AdaptMeshInterval
-CtrlVar.AdaptMeshInterval=1 ; % Number of run-steps between mesh adaptation 
+CtrlVar.AdaptMeshRunStepInterval=1 ; % Number of run-steps between mesh adaptation 
 CtrlVar.AdaptMeshMaxIterations=1;  % Number of adapt mesh iterations within each run-step.
 CtrlVar.AdaptMeshUntilChangeInNumberOfElementsLessThan=0;  
 CtrlVar.AdaptMeshAndThenStop=0; 
@@ -126,7 +126,7 @@ CtrlVar.ResetThicknessToMinThickness=0;  % if true, thickness values less than T
 CtrlVar.ThicknessConstraints=1  ;        % if true, min thickness is enforced using active set method
 CtrlVar.ThicknessConstraintsItMax=10  ;
 
-CtrlVar.UaOutputsDt=20;
+CtrlVar.DefineOutputsDt=20;
 
 
 end
