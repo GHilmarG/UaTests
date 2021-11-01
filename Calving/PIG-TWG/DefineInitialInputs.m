@@ -47,7 +47,7 @@ UserVar.BasalMeltRate="MeltRate0" ;
 
 CtrlVar.LevelSetMethod=1;
 CtrlVar.LevelSetEvolution="-By solving the level set equation-"   ; % "-prescribed-", 
-CtrlVar.LevelSetInitialisationInterval=10 ; CtrlVar.LevelSetReinitializePDist=true ; 
+CtrlVar.LevelSetInitialisationInterval=100 ; CtrlVar.LevelSetReinitializePDist=true ; 
 CtrlVar.DevelopmentVersion=true; 
 CtrlVar.LevelSetFABmu.Scale="-ucl-" ; % "-constant-"; 
 CtrlVar.LevelSetFABmu.Value=1;
