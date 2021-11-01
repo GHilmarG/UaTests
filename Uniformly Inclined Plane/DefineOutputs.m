@@ -7,8 +7,8 @@ time=CtrlVar.time;
          
 
 plots='-ubvb-e-save-';
-plots='-sbB-udvd-ubvb-ub-';
-plots='-udvd-stresses-';
+plots='-ubvb-stresses-';
+% plots='-udvd-stresses-';
 
 
 x=MUA.coordinates(:,1);  y=MUA.coordinates(:,2);

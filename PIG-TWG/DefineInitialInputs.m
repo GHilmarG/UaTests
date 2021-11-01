@@ -14,7 +14,7 @@ if isempty(UserVar) || ~isfield(UserVar,'RunType')
     % UserVar.RunType='Inverse-ConjGrad-FixPoint';
     % UserVar.RunType='Inverse-MatOpt-FixPoint';
     UserVar.RunType='Forward-Diagnostic';
-    % UserVar.RunType='Forward-Transient';
+    UserVar.RunType='Forward-Transient';
     % UserVar.RunType='TestingMeshOptions';
 end
 
@@ -23,7 +23,7 @@ if isempty(UserVar) || ~isfield(UserVar,'m')
 end
 
 
-CtrlVar.FlowApproximation="SSTREAM" ;
+CtrlVar.FlowApproximation="SSTREAM" ; % "SSTREAM-rho" ;
 %%
 % This run requires some additional input files. They are too big to be kept on Github so you
 % will have to get those separately. 
@@ -145,7 +145,7 @@ switch UserVar.RunType
 end
 
 
-CtrlVar.dt=1e-10; % For some reason with bedmachine I need much smaller initial time step than with bedmap2...?
+CtrlVar.dt=1e-1; % For some reason with bedmachine I need much smaller initial time step than with bedmap2...?
 CtrlVar.time=0;
 CtrlVar.TotalNumberOfForwardRunSteps=1; 
 CtrlVar.TotalTime=10;

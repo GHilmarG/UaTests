@@ -27,6 +27,7 @@ UserVar=[];
 CtrlVar=Ua2D_DefaultParameters(); %
 CtrlVar.DevelopmentVersion=true; 
 CtrlVar.LevelSetMethod=true; CtrlVar.LevelSetAssembly="consistent" ;
+CtrlVar.LevelSetEvolution="-By solving the level set equation-" ;
 CtrlVar.WhenPlottingMesh_PlotMeshBoundaryCoordinatesToo=1;
 MeshSize=5e3;
 CtrlVar.MeshSizeMax=MeshSize;
@@ -62,7 +63,7 @@ R1=sqrt(F1.x.^2+F1.y.^2);
 
 
 %% Parameters
-nRunSteps=200; nReinitialisationSteps=10; CtrlVar.dt=0.1;   Rc=50e3;
+nRunSteps=200; nReinitialisationSteps=1; CtrlVar.dt=0.1;   Rc=50e3;
  CtrlVar.LevelSetTestString="" ; %-xc sign-"  ; % "-xc/yc nodes-" ;
 % CtrlVar.LevelSetTestString="-limit c-" ; 
 CtrlVar.LevelSetFABmu.Value=1e4 ; CtrlVar.LevelSetFABmu.Scale="constant"; 

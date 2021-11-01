@@ -3,7 +3,7 @@ function [UserVar,CtrlVar,MeshBoundaryCoordinates]=DefineInitialInputs(UserVar,C
 
 
 CtrlVar.Experiment='TestingAgainstTransferFunctions';
-CtrlVar.FlowApproximation="SSTREAM" ; % "SSTREAM" ; % 'Hybrid' ;  % 'SSTREAM'|'SSHEET'|'Hybrid'
+CtrlVar.FlowApproximation="SSTREAM-rho" ; % "SSTREAM" ; % "SSTREAM" ; % 'Hybrid' ;  % 'SSTREAM'|'SSHEET'|'Hybrid'
 CtrlVar.TimeDependentRun=1;
 CtrlVar.alpha=0.05;   % slope of the coordinate system
 
@@ -63,9 +63,9 @@ CtrlVar.ExplicitMeshRefinementCriteria(I).Use=true;
 
 %% Perturbations
 
-UserVar.ampl_c=0.0; UserVar.sigma_cx=(xd-xu)/20; UserVar.sigma_cy=Inf;        %  UserVar.C0=...
-UserVar.ampl_b=0.1; UserVar.sigma_bx=(xd-xu)/20; UserVar.sigma_by=(xd-xu)/0;  % UserVar.h0=...
-
+UserVar.ampl_c=0.0;   UserVar.sigma_cx=(xd-xu)/20; UserVar.sigma_cy=Inf;        %  UserVar.C0=...
+UserVar.ampl_b=0.0;   UserVar.sigma_bx=(xd-xu)/20; UserVar.sigma_by=(xd-xu)/0;  % UserVar.h0=...
+UserVar.ampl_rho=0.75; UserVar.sigma_rhox=(xd-xu)/10; UserVar.sigma_rhoy=(xd-xu)/10;  % UserVar.h0=...
 
 
 

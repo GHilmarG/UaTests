@@ -1,37 +1,38 @@
 
 
-% (alpha) 
+% (alpha)
 
 % results = runtests('TestUa.m') ; table(results)
-% 
+%
 
 function tests = TestUa
-    
-    
-    f={@setupOnce,@testCrack,@teardownOnce};
-    f={@setupOnce,@testCalvingManuallyDeactivateElements,@teardownOnce};
-    f={@setupOnce,@testCalvingThroughMassBalanceFeedback,@teardownOnce};
-    
-    f={@setupOnce,@testGaussPeak,@teardownOnce};
-    %f={@setupOnce,@testMassBalanceFeedback,@teardownOnce};
-    
-    %f={@testPIGmeshing};
 
-    
-    %f=localfunctions ;  % all tests
 
-     f={@testCrack}                ;  % OK  11/05/2021 , OK on 09/09/2021
-    % f={@testPIGdiagnostic}        ;  % OK  11/05/2021, OK on 09/09/2021
-    % f={@testMassBalanceFeedback}  ;  % OK  11/05/2021 , OK on 09/09/2021
-    % f={@test1dIceStream}          ;  % OK  11/05/2021, OK on 08/09/2021
-    % f={@test1dIceShelf}           ;  % OK  11/05/2021, OK on 08/09/2021
-    % f={@testGaussPeak}            ;  % OK  11/05/2021, needs gmsh
-    % f={@testFreeSlipBCs}          ;  % OK  11/05/2021,  OK 08/09/2021
-    % f={@testCalvingAnalyticalIceShelf};  % ~OK 01/09/2021, OK 11/05/2021
-    % f={@testPIGtransient}         ;  % OK 11/05/2021, 08/09/2021 due to new geomery with sharp corners this now only runs for
-    % small initial time step
-    
-    tests = functiontests(f);
+f={@setupOnce,@testCrack,@teardownOnce};
+f={@setupOnce,@testCalvingManuallyDeactivateElements,@teardownOnce};
+f={@setupOnce,@testCalvingThroughMassBalanceFeedback,@teardownOnce};
+
+f={@setupOnce,@testGaussPeak,@teardownOnce};
+%f={@setupOnce,@testMassBalanceFeedback,@teardownOnce};
+
+%f={@testPIGmeshing};
+
+
+%f=localfunctions ;  % all tests
+
+f={@testCrack}                ;  % OK  11/05/2021 , OK on 09/09/2021 , 01/11/2021
+f={@testPIGdiagnostic}        ;  % OK  11/05/2021, OK on 09/09/2021 , 01/11/2021
+f={@testMassBalanceFeedback}  ;  % OK  11/05/2021 , OK on 09/09/2021 , 01/11/2021
+f={@test1dIceStream}          ;  % OK  11/05/2021, OK on 08/09/2021 , 01/11/2021
+f={@test1dIceShelf}           ;  % OK  11/05/2021, OK on 08/09/2021 , 01/11/2021
+f={@testGaussPeak}            ;  % OK  11/05/2021, needs gmsh , 01/11/2021
+f={@testFreeSlipBCs}          ;  % OK  11/05/2021,  OK 08/09/2021 ,  01/11/2021
+% f={@testCalvingAnalyticalIceShelf};  % ~OK 01/09/2021, OK 11/05/2021 , On 01/11/2021 in development
+
+% f={@testPIGtransient}         ;  % OK 11/05/2021, 08/09/2021 due to new geomery with sharp corners this now only runs for
+% small initial time step
+
+tests = functiontests(f); 
 end
 
 function setupOnce(testCase)
@@ -63,8 +64,9 @@ function testPIGdiagnostic(testCase)
     UserVar=Ua(UserVar) ;
     cd ..
     actSolution= UserVar.Test.Norm.actValue ;
-    % expSolution = 95982.7181182457;  % this was with the old bedmap2 data
-    expSolution = 9757675340.83092 ;   % this is with the new Bedmachine data, 10/09/2021
+    % expSolution = 95982.7181182457;  % this was with the old bedmap2 data expSolution = 9757675340.83092 ;   % this is with the
+    % new Bedmachine data, 10/09/2021
+    expSolution = 202912           ;     % this is with the new Bedmachine data and a new boundary, 01/11/2021
     verifyEqual(testCase,actSolution,expSolution,'RelTol',1e-4)
     
 end
@@ -216,25 +218,17 @@ end
 % 
 % cd GaussPeak ;  clear ; Ua ; cd ..
 % 
-% cd IceShelf ; clear ; Ua ; cd .. 
+% cd IceShelf ; clear ; Ua ; cd ..
 % 
-% cd('Inverse') ;  clear ; 
-% UserVar.RunType='IceStream';
-% Ua(UserVar) ; 
-% cd ..
+% cd('Inverse') ;  clear ; UserVar.RunType='IceStream'; Ua(UserVar) ; cd ..
 % 
 % 
-% cd('Inverse') ;  clear ; 
-% UserVar.RunType='IceShelf';
-% Ua(UserVar) ; 
-% cd ..
+% cd('Inverse') ;  clear ; UserVar.RunType='IceShelf'; Ua(UserVar) ; cd ..
 % 
 % 
 % cd MassBalanceFeedback ;   clear ; Ua ; cd ..
 % 
-% % cd Melange ; clear ; Ua ; cd ..
-% %%
-% cd MismipPlus ; clear ; Ua ; cd ..
+% % cd Melange ; clear ; Ua ; cd .. %% cd MismipPlus ; clear ; Ua ; cd ..
 % 
 % %cd PIG-TWG ; clear ; close all ; Ua ; cd ..
 % 

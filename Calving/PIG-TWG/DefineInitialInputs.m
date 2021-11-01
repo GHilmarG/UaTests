@@ -16,6 +16,13 @@ if isempty(UserVar) || ~isfield(UserVar,'RunType')
     % UserVar.RunType='TestingMeshOptions';
 end
 
+
+UserVar.CalvingLaw="-FixedRate1-"  ;
+UserVar.CalvingLaw="-ScalesWithSpeed2-"  ;
+% UserVar.CalvingLaw="-IceThickness10-"  ;
+UserVar.CalvingLaw="-CliffHeight-Crawford"  ;
+UserVar.MisExperiment=UserVar.CalvingLaw ; 
+
 %%
 % This run requires some additional input files. They are too big to be kept on Github so you
 % will have to get those separately. 
@@ -31,8 +38,36 @@ end
 UserVar.GeometryInterpolant='../../../Interpolants/BedMachineGriddedInterpolants.mat';                       
 UserVar.SurfaceVelocityInterpolant='../../../Interpolants/SurfVelMeasures990mInterpolants.mat';
 UserVar.MeshBoundaryCoordinatesFile='../../../Interpolants/MeshBoundaryCoordinatesForAntarcticaBasedOnBedmachine'; 
+load(UserVar.MeshBoundaryCoordinatesFile,"Boundary") ; UserVar.BedMachineBoundary=Boundary;
 UserVar.DistanceBetweenPointsAlongBoundary=5e3 ; 
 UserVar.BasalMeltRate="MeltRate0" ;
+
+
+%%
+
+CtrlVar.LevelSetMethod=1;
+CtrlVar.LevelSetEvolution="-By solving the level set equation-"   ; % "-prescribed-", 
+CtrlVar.LevelSetInitialisationInterval=10 ; CtrlVar.LevelSetReinitializePDist=true ; 
+CtrlVar.DevelopmentVersion=true; 
+CtrlVar.LevelSetFABmu.Scale="-ucl-" ; % "-constant-"; 
+CtrlVar.LevelSetFABmu.Value=1;
+CtrlVar.LevelSetInfoLevel=1 ; 
+CtrlVar.MeshAdapt.CFrange=[20e3 5e3 ; 10e3 2e3] ; % This refines the mesh around the calving front, but must set
+
+
+% The melt is decribed as a= a_1 (h-hmin)
+CtrlVar.LevelSetMethodMassBalanceFeedbackCoeffLin=-1;  % This is the constant a1, it has units 1/time.
+% Default value is -1
+
+CtrlVar.LevelSetMinIceThickness=CtrlVar.ThickMin+1;    % this is the hmin constant, i.e. the accepted min ice thickness
+% over the 'ice-free' areas.
+% Default value is CtrlVar.ThickMin+1
+
+CtrlVar.LevelSetEvolution="-By solving the level set equation-"  ; % "-prescribed-", 
+
+
+
+%%
 
 CtrlVar.SlidingLaw="Weertman" ; % "Umbi" ; % "Weertman" ; % "Tsai" ; % "Cornford" ;  "Umbi" ; "Cornford" ; % "Tsai" , "Budd"
 
@@ -126,7 +161,7 @@ switch UserVar.RunType
         UserVar.AGlen.ReadFromFile=1;
         CtrlVar.ReadInitialMesh=1;
         CtrlVar.AdaptMesh=0;
-        
+        CtrlVar.TotalNumberOfForwardRunSteps=inf; 
         %CtrlVar.LevelSetMethod=0; 
         
     case 'Forward-Diagnostic'
@@ -149,18 +184,18 @@ switch UserVar.RunType
         
         UserVar.Slipperiness.ReadFromFile=1;
         UserVar.AGlen.ReadFromFile=1;
-        
-        CtrlVar.AdaptMesh=1;
-        CtrlVar.AdaptMeshInitial=1  ;       % remesh in first iteration (Itime=1)  even if mod(Itime,CtrlVar.AdaptMeshRunStepInterval)~=0.
+        CtrlVar.TotalNumberOfForwardRunSteps=1; 
+        CtrlVar.AdaptMesh=0;
+        CtrlVar.AdaptMeshInitial=0  ;       % remesh in first iteration (Itime=1)  even if mod(Itime,CtrlVar.AdaptMeshRunStepInterval)~=0.
         CtrlVar.AdaptMeshAndThenStop=1;    % if true, then mesh will be adapted but no further calculations performed
         % useful, for example, when trying out different remeshing options (then use CtrlVar.doAdaptMeshPlots=1 to get plots)
         CtrlVar.InfoLevelAdaptiveMeshing=10;
 end
 
 
-CtrlVar.dt=0.01;
+CtrlVar.dt=0.01;   CtrlVar.DefineOutputsDt=0;
 CtrlVar.time=0;
-CtrlVar.TotalNumberOfForwardRunSteps=1; 
+
 CtrlVar.TotalTime=10;
 
 % Element type
@@ -177,6 +212,7 @@ CtrlVar.doAdaptMeshPlots=5;
 %% Meshing 
 
 CtrlVar.ReadInitialMeshFileName='PIG-TWG-Mesh';
+CtrlVar.ReadInitialMeshFileName='MeshFile10km';
 CtrlVar.SaveInitialMeshFileName='MeshFile';
 CtrlVar.MaxNumberOfElements=70e3;
 
@@ -186,9 +222,9 @@ CtrlVar.MeshRefinementMethod='explicit:global';
 
 
 CtrlVar.MeshGenerator='mesh2d' ; % 'mesh2d';
-CtrlVar.GmshMeshingAlgorithm=8; 
 
-CtrlVar.MeshSizeMax=20e3;
+
+CtrlVar.MeshSizeMax=10e3;
 CtrlVar.MeshSize=CtrlVar.MeshSizeMax/2;
 CtrlVar.MeshSizeMin=CtrlVar.MeshSizeMax/20;
 
@@ -196,7 +232,7 @@ UserVar.MeshSizeIceShelves=CtrlVar.MeshSizeMax/5;
 
 MeshBoundaryCoordinates=CreateMeshBoundaryCoordinatesForPIGandTWG(UserVar,CtrlVar);
                                          
-CtrlVar.AdaptMeshInitial=1  ;       % remesh in first iteration (Itime=1)  even if mod(Itime,CtrlVar.AdaptMeshRunStepInterval)~=0.
+CtrlVar.AdaptMeshInitial=0  ;       % remesh in first iteration (Itime=1)  even if mod(Itime,CtrlVar.AdaptMeshRunStepInterval)~=0.
 CtrlVar.AdaptMeshAndThenStop=1;    % if true, then mesh will be adapted but no further calculations performed
                                    % useful, for example, when trying out different remeshing options (then use CtrlVar.doAdaptMeshPlots=1 to get plots)
 CtrlVar.AdaptMeshMaxIterations=5;
@@ -257,25 +293,6 @@ CtrlVar.ThickMin=50;
 
 %%
 
-if CtrlVar.InverseRun
-    CtrlVar.Experiment="PIG-TWG-Inverse-"...
-       +CtrlVar.ReadInitialMeshFileName...
-        +CtrlVar.Inverse.InvertFor...
-        +CtrlVar.Inverse.MinimisationMethod...
-        +"-"+CtrlVar.Inverse.AdjointGradientPreMultiplier...
-        +CtrlVar.Inverse.DataMisfit.GradientCalculation...
-        +CtrlVar.Inverse.Hessian...
-        +"-"+CtrlVar.SlidingLaw...
-        +"-"+num2str(CtrlVar.DevelopmentVersion);
-else
-    CtrlVar.Experiment="PIG-TWG-Forward"...
-        +CtrlVar.ReadInitialMeshFileName;
-    
-end
-
-CtrlVar.Experiment=replace(CtrlVar.Experiment," ","-"); 
-CtrlVar.Experiment=replace(CtrlVar.Experiment,".","k"); 
-
 
 CtrlVar.NameOfRestartFiletoWrite=CtrlVar.Experiment+"-ForwardRestartFile.mat";
 CtrlVar.NameOfRestartFiletoRead=CtrlVar.NameOfRestartFiletoWrite;
@@ -283,5 +300,9 @@ CtrlVar.NameOfRestartFiletoRead=CtrlVar.NameOfRestartFiletoWrite;
 CtrlVar.Inverse.NameOfRestartOutputFile=CtrlVar.Experiment+"-InverseRestartFile.mat";
 CtrlVar.Inverse.NameOfRestartInputFile=CtrlVar.Inverse.NameOfRestartOutputFile; 
 
+CtrlVar.Experiment=CtrlVar.Experiment+CtrlVar.LevelSetFABmu.Scale+"-muValue"+num2str(CtrlVar.LevelSetFABmu.Value)...
+    +"-Ini"+num2str(CtrlVar.LevelSetInitialisationInterval)+"-PDist"+num2str(CtrlVar.LevelSetReinitializePDist);
+CtrlVar.Experiment=replace(CtrlVar.Experiment,"--","-"); 
+CtrlVar.Experiment=replace(CtrlVar.Experiment,".","k"); 
 
 end
