@@ -95,20 +95,20 @@ switch CtrlVar.LevelSetEvolution
 
 
         % c=sqrt(F.ub.*F.ub+F.vb.*F.vb);  % the idea here is that the calving front does not move
-        c=sqrt(F.ub.*F.ub+F.vb.*F.vb) ;
+        speed=sqrt(F.ub.*F.ub+F.vb.*F.vb) ;
         if contains(UserVar.CalvingLaw,"FixedRate")
             CR=str2double(extract(UserVar.CalvingLaw,digitsPattern));
-            c=c+CR;
+            c=speed+CR;
 
         elseif contains(UserVar.CalvingLaw,"ScalesWithSpeed")
 
             CR=str2double(extract(UserVar.CalvingLaw,digitsPattern));
-            c=CR*c;
+            c=CR*speed;
 
         elseif contains(UserVar.CalvingLaw,"IceThickness")
 
             CR=str2double(extract(UserVar.CalvingLaw,digitsPattern));
-            c=c+CR*F.h ;
+            c=CR*F.h ;
 
         elseif contains(UserVar.CalvingLaw,"CliffHeight")
 
@@ -137,8 +137,9 @@ switch CtrlVar.LevelSetEvolution
                 CR=str2double(extract(UserVar.CalvingLaw,digitsPattern));
                 c=CR*CliffHeight ;
                 % c=1000;
-                cMax=15000;
-                c(c>cMax)=cMax;
+
+
+
 
             elseif contains(UserVar.CalvingLaw,"CliffHeight-Crawford")
 
@@ -150,22 +151,17 @@ switch CtrlVar.LevelSetEvolution
                 NodesA=abs(LSF) < 50e3 ;
                 NodesB=~NodesA;
                 c=ExtrapolateFromNodesAtoNodesB(CtrlVar,F.x,F.y,NodesA,NodesB,c) ;
-                cMax=15000;
-                c(c>cMax)=cMax;
 
-
-
-                CliffHeightPlot=CliffHeight ; CliffHeightPlot(NodesB)=NaN ;
-                cPlot=c ; cPlot(NodesB)=NaN;
-              
-                % FindOrCreateFigure("CliffHeight") ; PlotMeshScalarVariable(CtrlVar,MUA,CliffHeightPlot) ;
-                % FindOrCreateFigure("Calving Rate") ; PlotMeshScalarVariable(CtrlVar,MUA,cPlot) ;
 
 
 
             end
 
-
+            % Rough limitation on calving migration
+            speed=sqrt(F.ub.*F.ub+F.vb.*F.vb) ; 
+            vFrontMax=5e3 ;
+            ii=c>(speed+vFrontMax) ;
+            c(ii)=speed(ii)+vFrontMax ; 
 
         else
 
