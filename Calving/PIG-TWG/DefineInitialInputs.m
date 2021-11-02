@@ -21,6 +21,7 @@ UserVar.CalvingLaw="-FixedRate1-"  ;
 UserVar.CalvingLaw="-ScalesWithSpeed2-"  ;
 % UserVar.CalvingLaw="-IceThickness10-"  ;
 UserVar.CalvingLaw="-CliffHeight-Crawford"  ;
+UserVar.CalvingFront0="-GL0-" ; % "-BedMachineCalvingFronts-"  ;
 UserVar.MisExperiment=UserVar.CalvingLaw ; 
 
 %%

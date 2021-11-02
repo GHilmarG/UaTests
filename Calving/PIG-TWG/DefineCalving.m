@@ -65,18 +65,28 @@ switch CtrlVar.LevelSetEvolution
 
         if F.time<eps
             % Prescribe initial LSF
+            switch UserVar.CalvingFront0
 
-            io=inpoly2([F.x F.y],UserVar.BedMachineBoundary);
-            NodesSelected=~io ;
+                case "-GL0-"
 
-            LSF=zeros(MUA.Nnodes,1) + 1 ;
-            LSF(NodesSelected)=-1;
-            LSF(F.x<-1660e3)=+1;  % get rid of the additional calving front to the east of the main trunk
+                    LSF=F.GF.node-0.5 ;
 
-            % plot(F.x(~io)/1000,F.y(~io)/1000,'or')
+                case  "-BedMachineCalvingFronts-"
+
+
+                    io=inpoly2([F.x F.y],UserVar.BedMachineBoundary);
+                    NodesSelected=~io ;
+
+                    LSF=zeros(MUA.Nnodes,1) + 1 ;
+                    LSF(NodesSelected)=-1;
+                    LSF(F.x<-1660e3)=+1;  % get rid of the additional calving front to the east of the main trunk
+
+                    % plot(F.x(~io)/1000,F.y(~io)/1000,'or')
+            end
 
             [xC,yC]=CalcMuaFieldsContourLine(CtrlVar,MUA,LSF,0);
             [LSF,UserVar]=SignedDistUpdate(UserVar,[],CtrlVar,MUA,LSF,xC,yC);
+
 
         else
             LSF=F.LSF ;
@@ -127,7 +137,7 @@ switch CtrlVar.LevelSetEvolution
                 CR=str2double(extract(UserVar.CalvingLaw,digitsPattern));
                 c=CR*CliffHeight ;
                 % c=1000;
-                cMax=5000;
+                cMax=15000;
                 c(c>cMax)=cMax;
 
             elseif contains(UserVar.CalvingLaw,"CliffHeight-Crawford")
@@ -140,7 +150,7 @@ switch CtrlVar.LevelSetEvolution
                 NodesA=abs(LSF) < 50e3 ;
                 NodesB=~NodesA;
                 c=ExtrapolateFromNodesAtoNodesB(CtrlVar,F.x,F.y,NodesA,NodesB,c) ;
-                cMax=5000;
+                cMax=15000;
                 c(c>cMax)=cMax;
 
 

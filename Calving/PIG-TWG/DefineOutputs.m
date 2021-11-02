@@ -137,6 +137,28 @@ if contains(plots,'-LSF-')
 
     end
 
+   [xp,yp,d]=CreatePIGprofile(2);
+
+   Fs=scatteredInterpolant() ; 
+   Fs.Points=[F.x(:) ,F.y(:)];
+   Fb=Fs;
+   FB=Fs;
+   Fs.Values=F.s;
+   Fb.Values=F.b;
+   FB.Values=F.B;
+   sp=Fs(xp,yp) ; 
+   bp=Fb(xp,yp) ; 
+   Bp=FB(xp,yp) ; 
+   
+   FindOrCreateFigure("profile")
+   plot(d/1000,sp,'-b')
+   hold on
+   plot(d/1000,bp,'-b')
+   plot(d/1000,Bp,'-k')
+   title(sprintf('PIG profile at t=%g (yr)',CtrlVar.time),Interpreter="latex") ;
+   xlabel(" distance (km) ",Interpreter="latex")
+   ylabel("$s$, $b$ and $B$ (m) ",Interpreter="latex")
+
 end
 
 if contains(plots,'-sbB-')
