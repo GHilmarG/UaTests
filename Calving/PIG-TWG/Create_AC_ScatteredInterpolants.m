@@ -18,3 +18,14 @@ save('FC-Umbi.mat','FC')
 load('AGlen-Estimate.mat')
 FA=scatteredInterpolant(xA,yA,AGlen); 
 save('FA-Umbi.mat','FA')
+
+%%
+clearvars
+load('C-Estimate.mat')
+FC=scatteredInterpolant(xC,yC,C); 
+save('FC-Weertman-PIG-TWG-20km.mat','FC')
+
+clearvars
+load('AGlen-Estimate.mat')
+FA=scatteredInterpolant(xA,yA,AGlen); 
+save('FA-Weertman-PIG-TWG-20km.mat','FA')

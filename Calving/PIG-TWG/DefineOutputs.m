@@ -13,18 +13,19 @@ if isempty(cyMax)
 end
 
 
-CtrlVar.DefineOutputs='-sbB-ubvb-BCs-LSF-h-';
-CtrlVar.DefineOutputs='-ubvb-LSF-h-';
+
+
 
 
 %%
-if ~isfield(CtrlVar,'DefineOutputs')
-    CtrlVar.uvPlotScale=[];
-    %plots='-ubvb-udvd-log10(C)-log10(Klear )-log10(DeformationalSpeed)-log10(BasalSpeed)-log10(AGlen)-';
-    plots='-ubvb-log10(BasalSpeed)-sbB-ab-log10(C)-log10(AGlen)-';
-    plots='-save-';
+if ~isfield(UserVar,'DefineOutputs')
+    
+    UserVar.DefineOutputs='-ubvb-LSF-h-save-';
+    plots=UserVar.DefineOutputs  ; 
+    % plots='-ubvb-log10(BasalSpeed)-sbB-ab-log10(C)-log10(AGlen)-save-';
+    % plots='-save-';
 else
-    plots=CtrlVar.DefineOutputs;
+    plots=UserVar.DefineOutputs;
 end
 
 
@@ -42,7 +43,7 @@ if contains(plots,'-save-')
 
     % save data in files with running names
     % check if folder 'ResultsFiles' exists, if not create
-   if strcmp(CtrlVar.DefineOutputsInfostring,'First call ') && exist(fullfile(cd,'ResultsFiles'),'dir')~=7 ;
+   if strcmp(CtrlVar.DefineOutputsInfostring,'First call ') && exist(fullfile(cd,'ResultsFiles'),'dir')~=7 
         mkdir('ResultsFiles') ;
     end
     
@@ -50,6 +51,7 @@ if contains(plots,'-save-')
                 
         FileName=sprintf('ResultsFiles/%07i-Nodes%i-Ele%i-Tri%i-kH%i-%s.mat',...
             round(100*CtrlVar.time),MUA.Nnodes,MUA.Nele,MUA.nod,1000*CtrlVar.kH,CtrlVar.Experiment);
+        FileName=replace(FileName,"--","-"); 
         fprintf(' Saving data in %s \n',FileName)
         save(FileName,"CtrlVar","MUA","F")
         
@@ -367,4 +369,7 @@ if contains(plots,'-stresses-')
     ylabel(CtrlVar.PlotsYaxisLabel) ;
     
 end
+
+drawnow limitrate 
+
 end

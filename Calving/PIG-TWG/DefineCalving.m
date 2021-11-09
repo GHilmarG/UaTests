@@ -113,18 +113,7 @@ switch CtrlVar.LevelSetEvolution
         elseif contains(UserVar.CalvingLaw,"CliffHeight")
 
             CliffHeight=min((F.s-F.S),F.h) ;
-            % CliffHeightUnmodified=CliffHeight;
-            UserVar.CliffHeightUnmodified=CliffHeight; 
-
-            GFLSF.node=sign(LSF) ;
-            GFLSF=IceSheetIceShelves(CtrlVar,MUA,GFLSF);
-            NodesA=GFLSF.NodesUpstreamOfGroundingLines;
-            NodesB=~NodesA;
-
-            CliffHeight=ExtrapolateFromNodesAtoNodesB(CtrlVar,F.x,F.y,NodesA,NodesB,CliffHeight) ;
-             
-
-            UserVar.CliffHeightExtrapolated=CliffHeight; 
+            
 
 
             % FindOrCreateFigure("CliffHeightUnmodified") ; PlotMeshScalarVariable(CtrlVar,MUA,CliffHeightUnmodified) ;
@@ -136,38 +125,38 @@ switch CtrlVar.LevelSetEvolution
 
                 CR=str2double(extract(UserVar.CalvingLaw,digitsPattern));
                 c=CR*CliffHeight ;
-                % c=1000;
-
-
-
 
             elseif contains(UserVar.CalvingLaw,"CliffHeight-Crawford")
+                
 
-                fI=1e-17 ; % Units m/d
-                fI=fI*365.25 ;
-                c= fI*CliffHeight.^7 ;
+                CliffHeight(CliffHeight>500)=500 ;            % They had no data for anyting higher than this
+          
+                fI=3.2e-17*365.25 ; c=fI*CliffHeight.^(7.2) ; 
                 c(CliffHeight<135)=0 ;
-
-                NodesA=abs(LSF) < 50e3 ;
-                NodesB=~NodesA;
-                c=ExtrapolateFromNodesAtoNodesB(CtrlVar,F.x,F.y,NodesA,NodesB,c) ;
-
-
-
-
+                % c(F.B>F.S)=0 ;       % calving rate set to zero where B>S
+                cMax=fI*450.^(7.2) ; 
             end
 
-            % Rough limitation on calving migration
-            speed=sqrt(F.ub.*F.ub+F.vb.*F.vb) ; 
-            vFrontMax=5e3 ;
-            ii=c>(speed+vFrontMax) ;
-            c(ii)=speed(ii)+vFrontMax ; 
+   
 
         else
 
             error("asfda")
         end
 
+        if UserVar.CalvingRateExtrapolated
+            GFLSF.node=sign(LSF) ;
+            GFLSF=IceSheetIceShelves(CtrlVar,MUA,GFLSF);
+            NodesA=GFLSF.NodesUpstreamOfGroundingLines ; %  & LSF < 100e3 ;  % these are actually nodes strickly upstream of the zero level in LSF
+            NodesB=~NodesA;
+            c=ExtrapolateFromNodesAtoNodesB(CtrlVar,F.x,F.y,NodesA,NodesB,c) ;
+            c(c>cMax)=cMax ;
+        end
+%         % Rough limitation on calving migration
+%          speed=sqrt(F.ub.*F.ub+F.vb.*F.vb) ;
+%          vFrontMax=5e3 ;
+%          ii=c>(speed+vFrontMax) ;
+%          c(ii)=speed(ii)+vFrontMax ;
 
 
 

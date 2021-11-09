@@ -36,11 +36,17 @@ Err=double(FerrMeas(MUA.coordinates(:,1),MUA.coordinates(:,2)));
 % may, or may not, be a good idea. But the important thing is to set the errors where data is missing to some really high value. Here I
 % set the errors to 1e10.
 MissingData=isnan(Meas.us) | isnan(Meas.vs) | isnan(Err) | (Err==0);
-Meas.us(MissingData)=0 ;  Meas.vs(MissingData)=0 ; Err(MissingData)=1e10; 
+Meas.us(MissingData)=0 ;  Meas.vs(MissingData)=0 ; Err(MissingData)=1e10;
 
-% The data errors as specified by these covariance matrices. 
+io=inpoly2([F.x F.y],UserVar.BedMachineBoundary);
+NodesOutsideBoundary=~io ;
+Meas.us(NodesOutsideBoundary)=0 ;  Meas.vs(NodesOutsideBoundary)=0 ; Err(NodesOutsideBoundary)=1e10;
+
+
+
+% The data errors as specified by these covariance matrices.
 % The data errors are assumed to be uncorrelated, hence we are here using diagonal covariance matrices.
-usError=Err ; vsError=Err ; 
+usError=Err ; vsError=Err ;
 Meas.usCov=sparse(1:MUA.Nnodes,1:MUA.Nnodes,usError.^2,MUA.Nnodes,MUA.Nnodes);
 Meas.vsCov=sparse(1:MUA.Nnodes,1:MUA.Nnodes,vsError.^2,MUA.Nnodes,MUA.Nnodes);
 
