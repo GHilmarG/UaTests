@@ -43,7 +43,7 @@ if contains(plots,'-save-')
 
     % save data in files with running names
     % check if folder 'ResultsFiles' exists, if not create
-   if strcmp(CtrlVar.DefineOutputsInfostring,'First call ') && exist(fullfile(cd,'ResultsFiles'),'dir')~=7 
+   if CtrlVar.DefineOutputsInfostring == "First call" && exist(fullfile(cd,'ResultsFiles'),'dir')~=7 
         mkdir('ResultsFiles') ;
     end
     
