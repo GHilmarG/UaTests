@@ -24,7 +24,7 @@ UserVar.CalvingRateExtrapolated=1;
 UserVar.CalvingLaw="-CliffHeight-Crawford"  ;
 UserVar.CalvingFront0="-GL0-" ; % "-BedMachineCalvingFronts-"  ;
 UserVar.Experiment=UserVar.CalvingLaw ; 
-UserVar.DefineOutputs='-ubvb-LSF-h-save-';
+UserVar.DefineOutputs="-ubvb-LSF-h-"; % '-ubvb-LSF-h-save-';
 
 %%
 % This run requires some additional input files. They are too big to be kept on Github so you
