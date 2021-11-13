@@ -307,7 +307,7 @@ UserVar.AddDataErrors=0;
 %%
 CtrlVar.ThicknessConstraints=0;
 CtrlVar.ResetThicknessToMinThickness=1;  % change this later on
-CtrlVar.ThickMin=50;
+CtrlVar.ThickMin=5;
 
 %%
 
