@@ -23,10 +23,10 @@ UserVar.Region="-circular-" ;
 UserVar.CalvingLaw="-speed1-";
 UserVar.CalvingRateExtrapolated=0;
 UserVar.DefineOutputs="-ubvb-LSF-h-sbB-s-B-dhdt-save-";
-UserVar.DefineOutputs="-ubvb-h-sbB-s-B-dhdt-";
+% UserVar.DefineOutputs="-ubvb-h-sbB-s-B-dhdt-";
 %%
 
-CtrlVar.LevelSetMethod=0;
+CtrlVar.LevelSetMethod=1;
 CtrlVar.LevelSetEvolution="-By solving the level set equation-"   ; % "-prescribed-",
 CtrlVar.LevelSetInitialisationInterval=100 ; CtrlVar.LevelSetReinitializePDist=true ;
 CtrlVar.DevelopmentVersion=true;
@@ -55,7 +55,7 @@ CtrlVar.SlidingLaw="Weertman" ; % "Umbi" ; % "Weertman" ; % "Tsai" ; % "Cornford
 
 CtrlVar.InverseRun=0;
 CtrlVar.TimeDependentRun=1;
-CtrlVar.Restart=1;
+CtrlVar.Restart=0;
 CtrlVar.InfoLevelNonLinIt=1;
 CtrlVar.ReadInitialMesh=0;
 CtrlVar.AdaptMesh=0;
@@ -63,10 +63,10 @@ CtrlVar.TotalNumberOfForwardRunSteps=inf;
 %CtrlVar.LevelSetMethod=0;
 
 
-CtrlVar.dt=0.01;   CtrlVar.DefineOutputsDt=100;
+CtrlVar.dt=0.01;   CtrlVar.DefineOutputsDt=1;
 CtrlVar.time=0;
 
-CtrlVar.TotalTime=5000;
+CtrlVar.TotalTime=1000;
 
 % Element type
 CtrlVar.TriNodes=3 ;
