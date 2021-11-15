@@ -23,7 +23,7 @@ UserVar.Region="-Lethu-" ;
 UserVar.Region="-LethuNS-" ;
 UserVar.CalvingLaw="-speed1-";
 UserVar.CalvingRateExtrapolated=0;
-UserVar.DefineOutputs="-ubvb-LSF-h-sbB-s-B-dhdt-save-";
+UserVar.DefineOutputs="-ubvb-LSF-h-sbB-s-B-dhdt-";
 % UserVar.DefineOutputs="-ubvb-h-sbB-s-B-dhdt-";
 %%
 
@@ -64,10 +64,12 @@ CtrlVar.TotalNumberOfForwardRunSteps=inf;
 %CtrlVar.LevelSetMethod=0;
 
 
-CtrlVar.dt=0.01;   CtrlVar.DefineOutputsDt=0;
+CtrlVar.dt=0.01;   CtrlVar.DefineOutputsDt=10;
+CtrlVar.TotalTime=5000;
+
 CtrlVar.time=0;
 
-CtrlVar.TotalTime=1;
+
 
 % Element type
 CtrlVar.TriNodes=3 ;
@@ -117,8 +119,9 @@ if CtrlVar.LevelSetMethod
         +"-cExtrapolation"+num2str(UserVar.CalvingRateExtrapolated)...
         +"-"+UserVar.Region ;
 else
-    CtrlVar.Experiment="NoCalving" ;
+    CtrlVar.Experiment="NoCalving"+UserVar.Region ;
 end
+
 CtrlVar.Experiment=replace(CtrlVar.Experiment,"--","-");
 CtrlVar.Experiment=replace(CtrlVar.Experiment,".","k");
 

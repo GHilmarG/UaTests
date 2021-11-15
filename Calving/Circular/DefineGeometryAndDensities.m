@@ -29,7 +29,7 @@ g=9.81/1000;
 rho=917   ;
 rhow=1030 ;
 
-B=Bedgeometry(UserVar,CtrlVar,MUA,F);
+B=Bedgeometry(UserVar,CtrlVar,MUA,F,UserVar.Region);
 s=[] ; b=[] ;
 
 if contains(FieldsToBeDefined,"-s-")

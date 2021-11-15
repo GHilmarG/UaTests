@@ -86,7 +86,7 @@ end
 
         switch BedName
 
-            case "Lethu"
+            case "-Lethu-"
 
                 r=sqrt(x.*x+y.*y) ;
                 theta=atan2(y,x);
@@ -97,7 +97,7 @@ end
                 a=Bc - (Bc-Bl)*(r-rc).^2./(R-rc).^2;  % quadratic term in r
                 B=Ba*cos(3*pi*r./l)+a ;               %
 
-            case "LethuNS"
+            case "-LethuNS-"
 
                 r=sqrt(x.*x+y.*y) ;
                 theta=pi/2 ; 

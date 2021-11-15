@@ -1,17 +1,33 @@
 function  UserVar=DefineOutputs(UserVar,CtrlVar,MUA,BCs,F,l,GF,InvStartValues,InvFinalValues,Priors,Meas,BCsAdjoint,RunInfo)
 
 
-persistent cyMax cTime iCounter 
+persistent cyMax ctime icCounter iGLCounter GLMax GLtime    
 
 
 if isempty(cyMax)
 
-    iCounter=0 ;
-    cyMax=NaN(1000,1) ; 
-    cTime=NaN(1000,1) ;
+    icCounter=0 ;
+    cyMax=NaN(10000,1) ; 
+    ctime=NaN(10000,1) ;
+    iGLCounter=0 ;
+    GLMax=NaN(10000,1) ; 
+    GLtime=NaN(10000,1) ; 
 
 end
 
+if icCounter > numel(cyMax)
+   
+    cyMax=[cyMax;cyMax+NaN];
+    ctime=[ctime;ctime+NaN];
+
+end
+
+if iGLCounter > numel(GLMax)
+   
+    GLMax=[GLMax;GLMax+NaN];
+    GLtime=[GLtime;GLtime+NaN];
+
+end
 
 
 
@@ -103,18 +119,36 @@ if contains(plots,'-LSF-')
 
 
     if ~isempty(yc)
-        iCounter=iCounter+1;
-        cyMax(iCounter)=max(yc) ;
-        cTime(iCounter)=F.time ;
+        icCounter=icCounter+1;
+        cyMax(icCounter)=max(yc) ;
+        ctime(icCounter)=F.time ;
 
 
         FindOrCreateFigure(" yc(t)")
         hold off
-        plot(cTime,cyMax/1000,'or')
+        plot(ctime,cyMax/1000,'or')
         xlabel("t (yr)")
         ylabel(" y-calving front (km) ")
 
     end
+
+
+    if ~isempty(yGL)
+
+        iGLCounter=iGLCounter+1;
+        GLMax(iGLCounter)=max(yGL) ;
+        GLtime(iGLCounter)=F.time ;
+
+
+        FindOrCreateFigure(" yGL(t)")
+        hold off
+        plot(GLtime,GLMax/1000,'or')
+        xlabel("t (yr)")
+        ylabel(" y-GL  (km) ")
+
+    end
+
+
 
 
     if isfield(UserVar,"CliffHeightExtrapolated") &&  isfield(UserVar,"CliffHeightUnmodified")
