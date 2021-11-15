@@ -1,12 +1,18 @@
 
-function [B,UserVar,CtrlVar,MUA,F]=Bedgeometry(UserVar,CtrlVar,MUA,F,DoPlots)
+function [B,UserVar,CtrlVar,MUA,F]=Bedgeometry(UserVar,CtrlVar,MUA,F,BedName,DoPlots)
 
 
-if nargin<5
+if nargin<6
     DoPlots=false;
 end
 
-if nargin == 0
+if nargin<5 || isempty(BedName)
+    BedName="Lethu" ;
+end
+
+
+
+if nargin == 0 || isempty(MUA)  || isempty(F)
 
     %%
     R=1000e3 ;
@@ -40,7 +46,7 @@ if nargin == 0
 
 end
 
-B=Bfunc(F.x,F.y) ;
+B=Bfunc(F.x,F.y,BedName) ;
 
 if DoPlots
 
@@ -48,14 +54,14 @@ if DoPlots
     FindOrCreateFigure("B3") ; PlotMeshScalarVariable(CtrlVar,MUA,B);
 
     x=linspace(0,1000e3,100) ; y=x*0;
-    Bxprofile=Bfunc(x,y);
+    Bxprofile=Bfunc(x,y,BedName);
 
     FindOrCreateFigure("B: x-profile") ;
     plot(x/1000,Bxprofile) ;
     xlabel("x (km)") ; ylabel("B (m)")
 
     y=linspace(0,1000e3,100) ; x=y*0;
-    Bxprofile=Bfunc(x,y);
+    Bxprofile=Bfunc(x,y,BedName);
 
     FindOrCreateFigure("B: y-profile") ;
     plot(y/1000,Bxprofile) ;
@@ -65,26 +71,43 @@ if DoPlots
 end
 
 
-    function B=Bfunc(x,y)
+    function B=Bfunc(x,y,BedName)
 
 
 
-%%   new parameter set 
-        R=800e3 ;  
-        Bc=900; 
+
+
+        %%   new parameter set
+        R=800e3 ;
+        Bc=900;
         Bl=-2000;
         Ba=1100;
-%%
+        %%
 
-        r=sqrt(x.*x+y.*y) ;
-        theta=atan2(y,x);
-        
-        
-        rc=0;
-        l=R -  cos(2*theta).*R/2 ;            % theta-dependent wavelength 
-        a=Bc - (Bc-Bl)*(r-rc).^2./(R-rc).^2;  % quadratic term in r
-        B=Ba*cos(3*pi*r./l)+a ;               %
+        switch BedName
 
+            case "Lethu"
+
+                r=sqrt(x.*x+y.*y) ;
+                theta=atan2(y,x);
+
+
+                rc=0;
+                l=R -  cos(2*theta).*R/2 ;            % theta-dependent wavelength
+                a=Bc - (Bc-Bl)*(r-rc).^2./(R-rc).^2;  % quadratic term in r
+                B=Ba*cos(3*pi*r./l)+a ;               %
+
+            case "LethuNS"
+
+                r=sqrt(x.*x+y.*y) ;
+                theta=pi/2 ; 
+
+                rc=0;
+                l=R -  cos(2*theta).*R/2 ;            % theta-dependent wavelength
+                a=Bc - (Bc-Bl)*(r-rc).^2./(R-rc).^2;  % quadratic term in r
+                B=Ba*cos(3*pi*r./l)+a ;
+
+        end
 
     end
 

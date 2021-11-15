@@ -19,14 +19,15 @@ end
 %% UserVar
 
 UserVar.CalvingFrontInitRadius="750000" ;
-UserVar.Region="-circular-" ;
+UserVar.Region="-Lethu-" ;
+UserVar.Region="-LethuNS-" ;
 UserVar.CalvingLaw="-speed1-";
 UserVar.CalvingRateExtrapolated=0;
 UserVar.DefineOutputs="-ubvb-LSF-h-sbB-s-B-dhdt-save-";
 % UserVar.DefineOutputs="-ubvb-h-sbB-s-B-dhdt-";
 %%
 
-CtrlVar.LevelSetMethod=1;
+CtrlVar.LevelSetMethod=0;
 CtrlVar.LevelSetEvolution="-By solving the level set equation-"   ; % "-prescribed-",
 CtrlVar.LevelSetInitialisationInterval=100 ; CtrlVar.LevelSetReinitializePDist=true ;
 CtrlVar.DevelopmentVersion=true;
@@ -63,10 +64,10 @@ CtrlVar.TotalNumberOfForwardRunSteps=inf;
 %CtrlVar.LevelSetMethod=0;
 
 
-CtrlVar.dt=0.01;   CtrlVar.DefineOutputsDt=1;
+CtrlVar.dt=0.01;   CtrlVar.DefineOutputsDt=0;
 CtrlVar.time=0;
 
-CtrlVar.TotalTime=1000;
+CtrlVar.TotalTime=1;
 
 % Element type
 CtrlVar.TriNodes=3 ;
