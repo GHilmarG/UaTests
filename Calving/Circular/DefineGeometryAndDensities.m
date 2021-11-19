@@ -14,11 +14,11 @@ if isempty(Fs)
 
         case "-LethuNS-"
             
-
-            s=50*ones(MUA.Nnodes,1);
-            b=zeros(MUA.Nnodes,1);
-            Fs=scatteredInterpolant(F.x,F.y,s);
-            Fb=scatteredInterpolant(F.x,F.y,b);
+            load("SteadyStateInterpolantsLethuNS.mat","Fb","Fs")
+            %s=50*ones(MUA.Nnodes,1);
+            %b=zeros(MUA.Nnodes,1);
+            %Fs=scatteredInterpolant(F.x,F.y,s);
+            %Fb=scatteredInterpolant(F.x,F.y,b);
 
             % load("SteadyStateInterpolantsLethuNS.mat","Fb","Fs")
 

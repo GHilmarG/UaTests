@@ -2,6 +2,12 @@
 function [UserVar,CtrlVar,MeshBoundaryCoordinates]=DefineInitialInputs(UserVar,CtrlVar)
 
 
+%%
+%  ReadPlotSequenceOfResultFiles("FileNameSubstring","-ucl-muValue1-Ini100-PDist1-speed2-750000-cExtrapolation0-LethuNS-","PlotTimestep",100)
+
+%%
+
+
 %% Select the type of run by uncommenting one of the following options:
 %
 %
@@ -21,13 +27,13 @@ end
 UserVar.CalvingFrontInitRadius="750000" ;
 UserVar.Region="-Lethu-" ;
 UserVar.Region="-LethuNS-" ;
-UserVar.CalvingLaw="-speed1-";
+UserVar.CalvingLaw="-speed0.5-";
 UserVar.CalvingRateExtrapolated=0;
-UserVar.DefineOutputs="-ubvb-LSF-h-sbB-s-B-dhdt-";
+UserVar.DefineOutputs="-ubvb-LSF-h-sbB-s-B-dhdt-save-";
 % UserVar.DefineOutputs="-ubvb-h-sbB-s-B-dhdt-";
 %%
 
-CtrlVar.LevelSetMethod=0;
+CtrlVar.LevelSetMethod=1;
 CtrlVar.LevelSetEvolution="-By solving the level set equation-"   ; % "-prescribed-",
 CtrlVar.LevelSetInitialisationInterval=100 ; CtrlVar.LevelSetReinitializePDist=true ;
 CtrlVar.DevelopmentVersion=true;
@@ -65,7 +71,7 @@ CtrlVar.TotalNumberOfForwardRunSteps=inf;
 
 
 CtrlVar.dt=0.01;   CtrlVar.DefineOutputsDt=10;
-CtrlVar.TotalTime=5000;
+CtrlVar.TotalTime=1000;
 
 CtrlVar.time=0;
 
@@ -124,6 +130,7 @@ end
 
 CtrlVar.Experiment=replace(CtrlVar.Experiment,"--","-");
 CtrlVar.Experiment=replace(CtrlVar.Experiment,".","k");
+CtrlVar.Experiment=replace(CtrlVar.Experiment," ","");
 
 
 end

@@ -84,7 +84,10 @@ switch CtrlVar.LevelSetEvolution
         end
 
         speed=sqrt(F.ub.*F.ub+F.vb.*F.vb) ; 
-        c=speed;
+        % f=str2double(extract(UserVar.CalvingLaw,digitsPattern));
+        f=str2double(extractBetween(UserVar.CalvingLaw,"-speed","-"));
+
+        c=f*speed;
 
     otherwise
 
