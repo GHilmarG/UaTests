@@ -62,7 +62,7 @@ CtrlVar.SlidingLaw="Weertman" ; % "Umbi" ; % "Weertman" ; % "Tsai" ; % "Cornford
 
 CtrlVar.InverseRun=0;
 CtrlVar.TimeDependentRun=1;
-CtrlVar.Restart=0;
+CtrlVar.Restart=1;
 CtrlVar.InfoLevelNonLinIt=1;
 CtrlVar.ReadInitialMesh=0;
 CtrlVar.AdaptMesh=0;
