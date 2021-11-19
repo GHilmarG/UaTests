@@ -20,14 +20,14 @@ end
 
 UserVar.CalvingFrontInitRadius="750000" ;
 UserVar.Region="-Lethu-" ;
-UserVar.Region="-LethuNS-" ;
+% UserVar.Region="-LethuNS-" ;
 UserVar.CalvingLaw="-speed1-";
 UserVar.CalvingRateExtrapolated=0;
-UserVar.DefineOutputs="-ubvb-LSF-h-sbB-s-B-dhdt-";
+UserVar.DefineOutputs="-ubvb-LSF-h-sbB-s-B-dhdt-save-";
 % UserVar.DefineOutputs="-ubvb-h-sbB-s-B-dhdt-";
 %%
 
-CtrlVar.LevelSetMethod=0;
+CtrlVar.LevelSetMethod=1;
 CtrlVar.LevelSetEvolution="-By solving the level set equation-"   ; % "-prescribed-",
 CtrlVar.LevelSetInitialisationInterval=100 ; CtrlVar.LevelSetReinitializePDist=true ;
 CtrlVar.DevelopmentVersion=true;
@@ -56,7 +56,7 @@ CtrlVar.SlidingLaw="Weertman" ; % "Umbi" ; % "Weertman" ; % "Tsai" ; % "Cornford
 
 CtrlVar.InverseRun=0;
 CtrlVar.TimeDependentRun=1;
-CtrlVar.Restart=0;
+CtrlVar.Restart=1;
 CtrlVar.InfoLevelNonLinIt=1;
 CtrlVar.ReadInitialMesh=0;
 CtrlVar.AdaptMesh=0;
