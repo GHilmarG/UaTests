@@ -65,15 +65,31 @@ switch CtrlVar.LevelSetEvolution
 
         if F.time<eps
 
+          if contains(lower(UserVar.CalvingFrontInit),"Radius")
+              
+         
 
-            CR=str2double(extract(UserVar.CalvingFrontInitRadius,digitsPattern));
+
+            CR=str2double(extract(UserVar.CalvingFrontInit,digitsPattern));
             r=sqrt( F.x.*F.x+F.y.*F.y ) ;
 
             LSF=2*((r<CR)-0.5)  ;
             LSF(F.GF.node>0.5)=1 ;
-            % io=inpoly2([F.x F.y],UserVar.BedMachineBoundary);
-            % NodesSelected=~io ;
 
+          elseif contains(lower(UserVar.CalvingFrontInit),"wavy")
+
+              r=sqrt(F.x.*F.x+F.y.*F.y);
+              theta=atan2(F.y,F.x);
+              R=700e3; 
+
+              CR=R*(1/2+1/3*cos(2*theta));
+              LSF=2*((r<CR)-0.5)  ;
+
+
+              % io=inpoly2([F.x F.y],UserVar.BedMachineBoundary);
+              % NodesSelected=~io ;
+
+          end
 
             [xC,yC]=CalcMuaFieldsContourLine(CtrlVar,MUA,LSF,0);
             [LSF,UserVar]=SignedDistUpdate(UserVar,[],CtrlVar,MUA,LSF,xC,yC);

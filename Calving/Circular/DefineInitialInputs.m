@@ -15,24 +15,25 @@ function [UserVar,CtrlVar,MeshBoundaryCoordinates]=DefineInitialInputs(UserVar,C
 %
 if isempty(UserVar) || ~isfield(UserVar,'RunType')
 
-    UserVar.RunType='Inverse-MatOpt';
     % UserVar.RunType='Forward-Diagnostic' ;
     UserVar.RunType='Forward-Transient' ;
-    % UserVar.RunType='Inverse-UaOpt';meshb    % UserVar.RunType='Forward-Transient';
-    % UserVar.RunType='TestingMeshOptions';
+
 end
 
 %% UserVar
 
-UserVar.CalvingFrontInitRadius="750000" ;
+UserVar.CalvingFrontInit="Radius750000" ;
+UserVar.CalvingFrontInit="wavy" ; 
 UserVar.Region="-Lethu-" ;
 UserVar.Region="-LethuNS-" ;
-UserVar.CalvingLaw="-speed0.5-";
+UserVar.CalvingLaw="-speed0-";
 UserVar.CalvingRateExtrapolated=0;
+
 UserVar.DefineOutputs="-ubvb-LSF-h-sbB-s-B-dhdt-save-";
+
 % UserVar.DefineOutputs="-ubvb-h-sbB-s-B-dhdt-";
 %%
-
+CtrlVar.FlowApproximation="uvhPrescribed" ;
 CtrlVar.LevelSetMethod=1;
 CtrlVar.LevelSetEvolution="-By solving the level set equation-"   ; % "-prescribed-",
 CtrlVar.LevelSetInitialisationInterval=100 ; CtrlVar.LevelSetReinitializePDist=true ;
@@ -62,7 +63,7 @@ CtrlVar.SlidingLaw="Weertman" ; % "Umbi" ; % "Weertman" ; % "Tsai" ; % "Cornford
 
 CtrlVar.InverseRun=0;
 CtrlVar.TimeDependentRun=1;
-CtrlVar.Restart=1;
+CtrlVar.Restart=0;
 CtrlVar.InfoLevelNonLinIt=1;
 CtrlVar.ReadInitialMesh=0;
 CtrlVar.AdaptMesh=0;
@@ -70,8 +71,8 @@ CtrlVar.TotalNumberOfForwardRunSteps=inf;
 %CtrlVar.LevelSetMethod=0;
 
 
-CtrlVar.dt=0.01;   CtrlVar.DefineOutputsDt=10;
-CtrlVar.TotalTime=1000;
+CtrlVar.dt=10;   CtrlVar.DefineOutputsDt=10;
+CtrlVar.TotalTime=2*2*pi*1000;
 
 CtrlVar.time=0;
 
@@ -121,7 +122,7 @@ if CtrlVar.LevelSetMethod
         +"-Ini"+num2str(CtrlVar.LevelSetInitialisationInterval)...
         +"-PDist"+num2str(CtrlVar.LevelSetReinitializePDist)...
         +UserVar.CalvingLaw...
-        +UserVar.CalvingFrontInitRadius...
+        +UserVar.CalvingFrontInit...
         +"-cExtrapolation"+num2str(UserVar.CalvingRateExtrapolated)...
         +"-"+UserVar.Region ;
 else
