@@ -60,18 +60,19 @@ if contains(plots,'-save-')
 
     % save data in files with running names
     % check if folder 'ResultsFiles' exists, if not create
-   if CtrlVar.DefineOutputsInfostring == "First call" && exist(fullfile(cd,'ResultsFiles'),'dir')~=7 
+    if CtrlVar.DefineOutputsInfostring == "First call" && exist(fullfile(cd,'ResultsFiles'),'dir')~=7
         mkdir('ResultsFiles') ;
     end
-    
+
     if strcmp(CtrlVar.DefineOutputsInfostring,'Last call')==0
-                
-        FileName=sprintf('ResultsFiles/%07i-Nodes%i-Ele%i-Tri%i-kH%i-%s.mat',...
+
+        FileName=sprintf('%s%07i-Nodes%i-Ele%i-Tri%i-kH%i-%s.mat',...
+            UserVar.ResultsFileDirectory,...
             round(100*CtrlVar.time),MUA.Nnodes,MUA.Nele,MUA.nod,1000*CtrlVar.kH,CtrlVar.Experiment);
-        FileName=replace(FileName,"--","-"); 
+        FileName=replace(FileName,"--","-");
         fprintf(' Saving data in %s \n',FileName)
         save(FileName,"CtrlVar","MUA","F")
-        
+
     end
 end
 

@@ -31,12 +31,26 @@ UserVar.CalvingRateExtrapolated=0;
 
 UserVar.DefineOutputs="-ubvb-LSF-h-sbB-s-B-dhdt-save-";
 
+
+[~,hostname]=system('hostname') ;
+
+if contains(hostname,"DESKTOP-G5TCRTD")
+
+    UserVar.ResultsFileDirectory="F:\Runs\Calving\Circular\ResultsFiles\";
+
+else
+
+    error("case not implemented")
+
+end
+
+
 % UserVar.DefineOutputs="-ubvb-h-sbB-s-B-dhdt-";
 %%
 CtrlVar.FlowApproximation="uvhPrescribed" ;
 CtrlVar.LevelSetMethod=1;
 CtrlVar.LevelSetEvolution="-By solving the level set equation-"   ; % "-prescribed-",
-CtrlVar.LevelSetInitialisationInterval=100 ; CtrlVar.LevelSetReinitializePDist=true ;
+CtrlVar.LevelSetInitialisationInterval=inf ; CtrlVar.LevelSetReinitializePDist=true ;
 CtrlVar.DevelopmentVersion=true;
 CtrlVar.LevelSetFABmu.Scale="-ucl-" ; % "-constant-";
 CtrlVar.LevelSetFABmu.Value=1;
@@ -63,7 +77,7 @@ CtrlVar.SlidingLaw="Weertman" ; % "Umbi" ; % "Weertman" ; % "Tsai" ; % "Cornford
 
 CtrlVar.InverseRun=0;
 CtrlVar.TimeDependentRun=1;
-CtrlVar.Restart=0;
+CtrlVar.Restart=1;
 CtrlVar.InfoLevelNonLinIt=1;
 CtrlVar.ReadInitialMesh=0;
 CtrlVar.AdaptMesh=0;
@@ -72,7 +86,7 @@ CtrlVar.TotalNumberOfForwardRunSteps=inf;
 
 
 CtrlVar.dt=10;   CtrlVar.DefineOutputsDt=10;
-CtrlVar.TotalTime=2*2*pi*1000;
+CtrlVar.TotalTime=10*2*pi*1000;
 
 CtrlVar.time=0;
 
