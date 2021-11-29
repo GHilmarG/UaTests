@@ -60,8 +60,8 @@ if contains(plots,'-save-')
 
     % save data in files with running names
     % check if folder 'ResultsFiles' exists, if not create
-    if CtrlVar.DefineOutputsInfostring == "First call" && exist(fullfile(cd,'ResultsFiles'),'dir')~=7
-        mkdir('ResultsFiles') ;
+    if CtrlVar.DefineOutputsInfostring == "First call" && exist(fullfile(cd,UserVar.ResultsFileDirectory),'dir')~=7
+        mkdir(UserVar.ResultsFileDirectory)
     end
 
     if strcmp(CtrlVar.DefineOutputsInfostring,'Last call')==0

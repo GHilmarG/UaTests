@@ -65,6 +65,9 @@ switch CtrlVar.LevelSetEvolution
 
         if F.time<eps
 
+
+% Better to give the calving front either explicitly as xC yC or implicitly through LSF
+
           if contains(lower(UserVar.CalvingFrontInit),"Radius")
               
          
