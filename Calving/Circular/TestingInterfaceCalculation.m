@@ -167,60 +167,79 @@ if TestCase==1  % this has a know solution, so this must be equal to zeros row
 end
 
 
-if TestCase==3
-
-%     LSFFixedNode=[];
-%     LSFFixedValue=[];
-%     LSFTiedNodeA=[];
-%     LSFTiedNodeB=[];
-
-
-
-[LSF,UserVar]=SignedDistUpdate(UserVar,[],CtrlVar,MUA,LSF,xc,yc);
-ScaleL=1; 
-L=ScaleL*L;
-
-
-F0=UaFields ; F1=F0; 
-F0.LSF=LSF ; F1.LSF=LSF ;  
-
-F0.c=zeros(MUA.Nnodes,1) ; F1.c=zeros(MUA.Nnodes,1) ; 
-F0.ub=zeros(MUA.Nnodes,1) ; F1.ub=zeros(MUA.Nnodes,1) ; 
-F0.vb=zeros(MUA.Nnodes,1) ; F1.vb=zeros(MUA.Nnodes,1) ; 
-CtrlVar.InfoLevelLinSolve=0; CtrlVar.LinSolveTol=1e-6; 
-CtrlVar.LevelSetInfoLevel=1; 
-
-
-var her
-% l=[] ;
-% CtrlVar.LSF.P=1 ; CtrlVar.LSF.T=1 ; CtrlVar.LSF.L=0 ;
-% CtrlVar.LevelSetTheta=1; CtrlVar.LevelSetSolverMaxIterations=20;
-CtrlVar.LevelSetFABmu.Scale="constant" ;  % can't let the scale depend on velocity if I'm initializing and I want this to give me the distance
-CtrlVar.LevelSetFABmu.Value=1e7;
-
-
-BCs.LSFL=[] ; BCs.LSFrhs=[];
-[UserVar,RunInfo,LSF,Mask,l,LSFqx,LSFqy]=LevelSetEquationInitialisation(UserVar,RunInfo,CtrlVar,MUA,BCs,F0,F1,l);
-
-
-
-[UserVar,RunInfo,LSF,l]=LevelSetEquationNewtonRaphson(UserVar,RunInfo,CtrlVar,MUA,BCs,F0,F1,l);
-
-BCs.LSFL=L ; BCs.LSFrhs=zeros(size(L,1),1); F0.LSF=LSF ; F1.LSF=LSF ;  
-[UserVar,RunInfo,LSF,l]=LevelSetEquationNewtonRaphson(UserVar,RunInfo,CtrlVar,MUA,BCs,F0,F1,l);
-
-
-
-[xC,yC]=PlotCalvingFronts(CtrlVar,MUA,LSF);
-
 FindOrCreateFigure("LSF");
+tiledlayout(1,2)
+nexttile
 PlotMeshScalarVariable(CtrlVar,MUA,LSF);
 hold on
-
 plot(P1(:,1),P1(:,2),'-bo')
-plot(xC,yC,'w',LineWidth=2)
+plot(xc,yc,'+r',LineWidth=1)
+[xC,yC]=PlotCalvingFronts(CtrlVar,MUA,LSF,color="w");
+
+[LSF,UserVar,RunInfo]=SignedDistUpdate(UserVar,RunInfo,CtrlVar,MUA,LSF,xc,yc);
+
+nexttile
+PlotMeshScalarVariable(CtrlVar,MUA,LSF);
+hold on
+plot(P1(:,1),P1(:,2),'-bo')
+plot(xc,yc,'+r',LineWidth=1)
+[xC,yC]=PlotCalvingFronts(CtrlVar,MUA,LSF,color="w");
+
+
+title("after signed distance calculation")
+
+
+
+
+if TestCase==3
+
+    SubTestCase="-BCsOnNodalLinks-";
+    SubTestCase="-BCsOnNodalValues-";
+
+    switch SubTestCase
+
+        case  "-BCsOnNodalValues-"
+
+           CtrlVar.LevelSetInitBCsZeroLevel=true ; 
+           CtrlVar.LevelSetReinitializePDist=true;
+           CtrlVar.LevelSetFixPointSolverApproach="IFP" ; % ~~IFP = Initial fix point
+            F0=UaFields ; F1=F0;
+            F0.LSF=LSF ; F1.LSF=LSF ;  l=[];
+
+            F0.c=zeros(MUA.Nnodes,1) ; F1.c=zeros(MUA.Nnodes,1) ;
+            F0.ub=zeros(MUA.Nnodes,1) ; F1.ub=zeros(MUA.Nnodes,1) ;
+            F0.vb=zeros(MUA.Nnodes,1) ; F1.vb=zeros(MUA.Nnodes,1) ;
+            CtrlVar.InfoLevelLinSolve=0; CtrlVar.LinSolveTol=1e-6;
+            CtrlVar.LevelSetInfoLevel=1;
+
+
+            % Now try:
+            % 1) as before using (xc,yc) as calculated above, and with modified BCs to fix the level set over all elements that the LSF
+            % goes through>
+
+
+
+            CtrlVar.LevelSetFABmu.Scale="constant" ;  % can't let the scale depend on velocity if I'm initializing and I want this to give me the distance
+            CtrlVar.LevelSetFABmu.Value=1e7;
+
+            [UserVar,RunInfo,LSF,Mask,l,LSFqx,LSFqy]=LevelSetEquationInitialisation(UserVar,RunInfo,CtrlVar,MUA,BCs,F0,F1,l) ;
+
+        otherwise
+
+            error("not there yet")
+    end
+
+
+FindOrCreateFigure("LSF2");
+
+PlotMeshScalarVariable(CtrlVar,MUA,LSF);
+hold on
+plot(P1(:,1),P1(:,2),'-bo')
+plot(xc,yc,'+r',LineWidth=1)
+[xC,yC]=PlotCalvingFronts(CtrlVar,MUA,LSF,color="w");
+title("after LSF solve")
+
+
+
 
 end
-
-
-%[LSF,UserVar]=SignedDistUpdate(UserVar,[],CtrlVar,MUA,LSF,xC,yC);
