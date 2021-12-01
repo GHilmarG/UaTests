@@ -7,7 +7,8 @@ close all
 
 TestCase=3;
 
-CtrlVar.PlotXYscale=1;  RunInfo=UaRunInfo;
+CtrlVar.PlotXYscale=1;  
+RunInfo=UaRunInfo;
 
 switch TestCase
 
@@ -58,15 +59,31 @@ switch TestCase
 
         load TestingInterfaceCalculation.mat
 
+        CtrlVar.PlotXYscale=1000;  
         coo=MUA.coordinates ;
         con=MUA.connectivity;
 
         P1=1000*[-500 -500 ; -500 500 ; 500 500  ; 500 -500 ; -500 -500] ;
 
+
+        P1=1000*[-500 -500 ; -500 500 ; 500 500  ; 500 -500 ;  ...
+            200 -500 ;  200 -100 ; -200 -100 ; -200 -500 ;   ...
+            -500 -500] ;
+
+
         LSF=zeros(MUA.Nnodes,1)-1 ; 
         x=MUA.coordinates(:,1); y=MUA.coordinates(:,2); 
-        inside=x>-500e3 & x<500e3 & y>-500e3 & y< 500e3 ;
+
+        [inside,on] = inpoly2([x y],P1);
+
+
+
+        
         LSF(inside)=1;
+
+
+
+
 end
 
 
@@ -79,7 +96,7 @@ end
 
 
 FindOrCreateFigure("Mesh")
-CtrlVar.PlotLabels=0; CtrlVar.PlotNodes=0;CtrlVar.PlotXYscale=1;
+CtrlVar.PlotLabels=0; CtrlVar.PlotNodes=0;
 
 PlotFEmesh(coo,con,CtrlVar);
 hold on
@@ -104,7 +121,7 @@ end
 P2(end,:)=[] ; 
 
 hold on
-plot(P1(:,1),P1(:,2),'-bo')
+plot(P1(:,1)/CtrlVar.PlotXYscale,P1(:,2)/CtrlVar.PlotXYscale,'-bo')
 hold on
 % plot(P2(:,1),P2(:,2),'-go')
 
@@ -136,7 +153,7 @@ LineSegments(end-1:end,:)=[] ;
 [xc,yc,ii]=polyxpoly(P1(:,1),P1(:,2),P2(:,1),P2(:,2)); 
  Nconstraints=size(xc,1);
 
-plot(xc,yc,'*r')
+plot(xc/CtrlVar.PlotXYscale,yc/CtrlVar.PlotXYscale,'*r')
 
 NodPairs=[LineSegments(ii(:,2),1)  LineSegments(ii(:,2),2)];
 
@@ -166,28 +183,30 @@ if TestCase==1  % this has a know solution, so this must be equal to zeros row
 
 end
 
+CtrlVar.PlotNodes=0;
+
 
 FindOrCreateFigure("LSF");
-tiledlayout(1,2)
+tiledlayout(2,2)
 nexttile
-PlotMeshScalarVariable(CtrlVar,MUA,LSF);
+[~,cbar]=PlotMeshScalarVariable(CtrlVar,MUA,LSF/CtrlVar.PlotXYscale);
 hold on
-plot(P1(:,1),P1(:,2),'-bo')
-plot(xc,yc,'+r',LineWidth=1)
+plot(P1(:,1)/CtrlVar.PlotXYscale,P1(:,2)/CtrlVar.PlotXYscale,'-bo')
+plot(xc/CtrlVar.PlotXYscale,yc/CtrlVar.PlotXYscale,'+r',LineWidth=1)
 [xC,yC]=PlotCalvingFronts(CtrlVar,MUA,LSF,color="w");
 
 [LSF,UserVar,RunInfo]=SignedDistUpdate(UserVar,RunInfo,CtrlVar,MUA,LSF,xc,yc);
+title("LSF before distance solve",Interpreter="latex")
+xlabel("$x$ (km)",Interpreter="latex") ; ylabel("$y$ (km)",Interpreter="latex") ; title(cbar,"(km)",Interpreter="latex")
 
 nexttile
-PlotMeshScalarVariable(CtrlVar,MUA,LSF);
+[~,cbar]=PlotMeshScalarVariable(CtrlVar,MUA,LSF/CtrlVar.PlotXYscale);
 hold on
-plot(P1(:,1),P1(:,2),'-bo')
-plot(xc,yc,'+r',LineWidth=1)
+plot(P1(:,1)/CtrlVar.PlotXYscale,P1(:,2)/CtrlVar.PlotXYscale,'-bo')
+plot(xc/CtrlVar.PlotXYscale,yc/CtrlVar.PlotXYscale,'+r',LineWidth=1)
 [xC,yC]=PlotCalvingFronts(CtrlVar,MUA,LSF,color="w");
-
-
-title("after signed distance calculation")
-
+title("after signed distance calculation",Interpreter="latex")
+xlabel("$x$ (km)",Interpreter="latex") ; ylabel("$y$ (km)",Interpreter="latex") ; title(cbar,"(km)",Interpreter="latex")
 
 
 
@@ -202,7 +221,7 @@ if TestCase==3
 
            CtrlVar.LevelSetInitBCsZeroLevel=true ; 
            CtrlVar.LevelSetReinitializePDist=true;
-           CtrlVar.LevelSetFixPointSolverApproach="IFP" ; % ~~IFP = Initial fix point
+           CtrlVar.LevelSetFixPointSolverApproach="-IFP-FFP-" ; % ~~IFP = Initial fix point
             F0=UaFields ; F1=F0;
             F0.LSF=LSF ; F1.LSF=LSF ;  l=[];
 
@@ -221,7 +240,7 @@ if TestCase==3
 
             CtrlVar.LevelSetFABmu.Scale="constant" ;  % can't let the scale depend on velocity if I'm initializing and I want this to give me the distance
             CtrlVar.LevelSetFABmu.Value=1e7;
-
+             LSFold=LSF;
             [UserVar,RunInfo,LSF,Mask,l,LSFqx,LSFqy]=LevelSetEquationInitialisation(UserVar,RunInfo,CtrlVar,MUA,BCs,F0,F1,l) ;
 
         otherwise
@@ -230,16 +249,91 @@ if TestCase==3
     end
 
 
-FindOrCreateFigure("LSF2");
-
-PlotMeshScalarVariable(CtrlVar,MUA,LSF);
+nexttile
+[~,cbar]=PlotMeshScalarVariable(CtrlVar,MUA,LSF/CtrlVar.PlotXYscale);
 hold on
-plot(P1(:,1),P1(:,2),'-bo')
-plot(xc,yc,'+r',LineWidth=1)
+plot(P1(:,1)/CtrlVar.PlotXYscale,P1(:,2)/CtrlVar.PlotXYscale,'-bo')
+plot(xc/CtrlVar.PlotXYscale,yc/CtrlVar.PlotXYscale,'+r',LineWidth=1)
 [xC,yC]=PlotCalvingFronts(CtrlVar,MUA,LSF,color="w");
-title("after LSF solve")
+title("LSF after solve ",Interpreter="latex")
+xlabel("$x$ (km)",Interpreter="latex") ; ylabel("$y$ (km)",Interpreter="latex") ; title(cbar,"(km)",Interpreter="latex")
+
+
+nexttile
+[~,cbar]=PlotMeshScalarVariable(CtrlVar,MUA,(LSF-LSFold)/CtrlVar.PlotXYscale);
+hold on
+PlotMuaMesh(CtrlVar,MUA,[],'w') ;
+hold on
+plot(P1(:,1)/CtrlVar.PlotXYscale,P1(:,2)/CtrlVar.PlotXYscale,'-bo')
+plot(xc/CtrlVar.PlotXYscale,yc/CtrlVar.PlotXYscale,'or')
+plot(xc/CtrlVar.PlotXYscale,yc/CtrlVar.PlotXYscale,'.r')
+[xC,yC]=PlotCalvingFronts(CtrlVar,MUA,LSF,color="w");
+[xC,yC]=PlotCalvingFronts(CtrlVar,MUA,LSFold,"k--");
+title("LSF after solve - LSF before solve",Interpreter="latex")
+
+xlabel("$x$ (km)",Interpreter="latex") ; ylabel("$y$ (km)",Interpreter="latex") ; title(cbar,"(km)",Interpreter="latex")
+
+
+%%
+
+% load TestingInterfaceCalculationPlots.mat  % this is case 3
+load TestingInterfaceCalculationPlots2.mat  % this is case 3
+
+colormap(othercolor('BuOr_12',1024));
+FigLSF=FindOrCreateFigure("LSF Interface Problem") ; 
+hold off
+tiledlayout(1,2)
+
+for I=1:2
+    nexttile
+    [~,cbar]=PlotMeshScalarVariable(CtrlVar,MUA,LSF/CtrlVar.PlotXYscale);
+    hold on
+
+    if I==2
+        PlotMuaMesh(CtrlVar,MUA,[],'k') ;
+    end
+    hold on
+    plot(P1(:,1)/CtrlVar.PlotXYscale,P1(:,2)/CtrlVar.PlotXYscale,'-og',LineWidth=2,LineStyle='-')
+    %plot(xc/CtrlVar.PlotXYscale,yc/CtrlVar.PlotXYscale,'or')
+    plot(xc/CtrlVar.PlotXYscale,yc/CtrlVar.PlotXYscale,'or',MarkerSize=7,MarkerFaceColor="r")
+    [xC,yC]=PlotCalvingFronts(CtrlVar,MUA,LSF,color="k",LineWidth=2,LineStyle="--");
+    %title("LSF after solve - LSF before solve",Interpreter="latex")
+
+    xlabel("$x$ (km)",Interpreter="latex") ; ylabel("$y$ (km)",Interpreter="latex") ; title(cbar,"$\varphi$ (km)",Interpreter="latex")
 
 
 
+    if I==2
+
+        for k=1:numel(P.Anod)
+
+            plot([P.Acoo(k,1)  P.Bcoo(k,1)]/1000,[P.Acoo(k,2)  P.Bcoo(k,2)]/1000,color="r",LineWidth=2)
+            hold on
+        end
+    end
+
+    if I==2
+        Dist=120;
+        axis([410 410+Dist 410 410+Dist])
+    end
+
+
+    if I==1
+        lg=legend('','Prescribed $\varphi_0$ polygon corners','Calculated $\varphi_0$ edge values','$\varphi=0$ level-set curve');
+    else
+        lg=legend('','','Prescribed $\varphi_0$ polygon corners','Calculated $\varphi_0$ edge values','$\varphi=0$ level-set curve',"crossing edges",...
+            Location="southwest");
+        %    lg=legend('','','Prescribed $\varphi_0$ polygon corners','Calculated $\varphi_0$ edge values','$\varphi=0$ level-set curve');
+    end
+    set(lg,'Interpreter','latex');
+
+    caxis([-350 350])
+    title("")
+    FigLSF.Position=[800 600 1360 666];
+end
+
+
+
+%%
 
 end
