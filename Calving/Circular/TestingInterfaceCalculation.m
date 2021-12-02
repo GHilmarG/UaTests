@@ -240,8 +240,22 @@ if TestCase==3
 
             CtrlVar.LevelSetFABmu.Scale="constant" ;  % can't let the scale depend on velocity if I'm initializing and I want this to give me the distance
             CtrlVar.LevelSetFABmu.Value=1e7;
-             LSFold=LSF;
+            LSFold=LSF;
             [UserVar,RunInfo,LSF,Mask,l,LSFqx,LSFqy]=LevelSetEquationInitialisation(UserVar,RunInfo,CtrlVar,MUA,BCs,F0,F1,l) ;
+
+
+        case "-BCsOnNodalLinks-"
+
+             % not finalized
+             % The BCs on nodal values appears incorrect at corners
+            R=(MUA.M\L'*L*LSF )*MUA.Area;
+            figure ; PlotMeshScalarVariable(CtrlVar,MUA,R) ;
+
+            BCs.LSFL=L ; 
+            BCs.LSFrhs=zeros(size(L,1),1) ; 
+
+
+
 
         otherwise
 
@@ -277,7 +291,7 @@ xlabel("$x$ (km)",Interpreter="latex") ; ylabel("$y$ (km)",Interpreter="latex") 
 %%
 
 % load TestingInterfaceCalculationPlots.mat  % this is case 3
-load TestingInterfaceCalculationPlots2.mat  % this is case 3
+% load TestingInterfaceCalculationPlots2.mat  % this is case 3
 
 colormap(othercolor('BuOr_12',1024));
 FigLSF=FindOrCreateFigure("LSF Interface Problem") ; 
