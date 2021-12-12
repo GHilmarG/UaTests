@@ -113,7 +113,7 @@ switch CtrlVar.LevelSetEvolution
         elseif contains(UserVar.CalvingLaw,"CliffHeight")
 
             CliffHeight=min((F.s-F.S),F.h) ;
-            
+
 
 
             % FindOrCreateFigure("CliffHeightUnmodified") ; PlotMeshScalarVariable(CtrlVar,MUA,CliffHeightUnmodified) ;
@@ -127,17 +127,36 @@ switch CtrlVar.LevelSetEvolution
                 c=CR*CliffHeight ;
 
             elseif contains(UserVar.CalvingLaw,"CliffHeight-Crawford")
+
+
                 
 
-                CliffHeight(CliffHeight>500)=500 ;            % They had no data for anyting higher than this
-          
-                fI=3.2e-17*365.25 ; c=fI*CliffHeight.^(7.2) ; 
+                fI=3.2e-17*365.25 ; c=fI*CliffHeight.^(7.2) ;
+                % Now set calving rate to zero for cliff less than 135meters
                 c(CliffHeight<135)=0 ;
-                % c(F.B>F.S)=0 ;       % calving rate set to zero where B>S
-                cMax=fI*450.^(7.2) ; 
+                % and set maximum at at cliff height equalt to 450m 
+                cMax=fI*450.^(7.2) ;
+                c(c>cMax)=cMax ;
             end
 
-   
+            % For Plotting purposes: Get cliff height along calving front and the calving rate used
+            [xc,yc]=PlotCalvingFronts(CtrlVar,MUA,F,'b',LineWidth=2);
+
+            FCliffHeight=scatteredInterpolant(F.x,F.y,CliffHeight);
+            FCalvingRate=scatteredInterpolant(F.x,F.y,c);
+            UserVar.xc=xc ;
+            UserVar.yc=yc ;
+            UserVar.CliffHeight=FCliffHeight(xc,yc) ;
+            UserVar.CalvingRate=FCalvingRate(xc,yc) ;
+
+            %            if ~isempty(xc)
+            %                ch=UserVar.CliffHeight ;
+            %                cr=UserVar.CalvingRate ;
+            %                figure ; plot3([xc xc]'/1000,[yc yc]'/1000,[ch*0 ch]','or-') ; axis equal  ; title("cliff heigh (m)")
+            %
+            %                figure ; plot3([xc xc]'/1000,[yc yc]'/1000,[cr*0 cr]','or-') ; daspect([1 1 0.05]) ; title("calving rate (m/yr)")
+            %            end
+
 
         else
 
@@ -147,18 +166,43 @@ switch CtrlVar.LevelSetEvolution
         if UserVar.CalvingRateExtrapolated
             GFLSF.node=sign(LSF) ;
             GFLSF=IceSheetIceShelves(CtrlVar,MUA,GFLSF);
-            NodesA=GFLSF.NodesUpstreamOfGroundingLines ; %  & LSF < 100e3 ;  % these are actually nodes strickly upstream of the zero level in LSF
+            NodesA=GFLSF.NodesUpstreamOfGroundingLines ;  % these are actually nodes strickly upstream of the zero level in LSF
+            % this is too far upstream,
+            % not sure extrapolation is needed as the calving "melt" is
+            % applied strickly downstream of the calving fron
             NodesB=~NodesA;
+
+            cOld=c ;
             c=ExtrapolateFromNodesAtoNodesB(CtrlVar,F.x,F.y,NodesA,NodesB,c) ;
             c(c>cMax)=cMax ;
+
+
+            FCalvingRateExtrapolated=scatteredInterpolant(F.x,F.y,c);
+            UserVar.CalvingRateExtrapolatedValues=FCalvingRateExtrapolated(xc,yc) ;
+
+            if CtrlVar.doplots
+                FindOrCreateFigure("upstream nodes used for extrapolation ") ; PlotMuaMesh(CtrlVar,MUA) ;
+                hold on ; plot(F.x(NodesA)/CtrlVar.PlotXYscale,F.y(NodesA)/CtrlVar.PlotXYscale,'or')
+                PlotCalvingFronts(CtrlVar,MUA,F,color='b');
+
+                FindOrCreateFigure("Calving Rate : Extrapolated - Original")
+                PlotMeshScalarVariable(CtrlVar,MUA,c-cOld)
+                hold on ;  PlotCalvingFronts(CtrlVar,MUA,F,color='w');
+                title("Extrapolated - original calving rate")
+
+
+                % checking
+                CliffHeightExtrapolated=ExtrapolateFromNodesAtoNodesB(CtrlVar,F.x,F.y,NodesA,NodesB,CliffHeight) ;
+
+                FindOrCreateFigure("Cliff Height : Extrapolated - Original")
+                PlotMeshScalarVariable(CtrlVar,MUA,CliffHeightExtrapolated-CliffHeight);
+                hold on ; PlotMuaMesh(CtrlVar,MUA,[],color="w") ;
+                hold on ; plot(F.x(NodesA)/CtrlVar.PlotXYscale,F.y(NodesA)/CtrlVar.PlotXYscale,'or',MarkerFaceColor="w")
+                hold on ;  PlotCalvingFronts(CtrlVar,MUA,F,color='r',LineWidth=2);
+                title("Extrapolated - original cliff height")
+
+            end
         end
-%         % Rough limitation on calving migration
-%          speed=sqrt(F.ub.*F.ub+F.vb.*F.vb) ;
-%          vFrontMax=5e3 ;
-%          ii=c>(speed+vFrontMax) ;
-%          c(ii)=speed(ii)+vFrontMax ;
-
-
 
     case "-prescribed-"
 

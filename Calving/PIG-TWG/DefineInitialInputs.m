@@ -6,25 +6,53 @@ function [UserVar,CtrlVar,MeshBoundaryCoordinates]=DefineInitialInputs(UserVar,C
 %
 %  
 % close all ; job=batch("Ua","Pool",1)
-% 
+%
+
+
 if isempty(UserVar) || ~isfield(UserVar,'RunType')
     
     UserVar.RunType='Inverse-MatOpt';
     % UserVar.RunType='Forward-Diagnostic' ; 
     UserVar.RunType='Forward-Transient' ;
+    % UserVar.RunType='GenerateMesh' ;
     % UserVar.RunType='Inverse-UaOpt';meshb    % UserVar.RunType='Forward-Transient';
     % UserVar.RunType='TestingMeshOptions';
 end
 
+
+%% UserVar
+
 UserVar.Region="PIG" ; % "PIG-TWG" ; 
 UserVar.CalvingLaw="-FixedRate1-"  ;
 UserVar.CalvingLaw="-ScalesWithSpeed2-"  ;
-UserVar.CalvingRateExtrapolated=1; 
+UserVar.CalvingRateExtrapolated=0; 
+
+
 % UserVar.CalvingLaw="-IceThickness10-"  ;
 UserVar.CalvingLaw="-CliffHeight-Crawford"  ;
 UserVar.CalvingFront0="-GL0-" ; % "-BedMachineCalvingFronts-"  ;
 UserVar.Experiment=UserVar.CalvingLaw ; 
-UserVar.DefineOutputs="-ubvb-LSF-h-"; % '-ubvb-LSF-h-save-';
+UserVar.DefineOutputs="-ubvb-LSF-h-save-"; % '-ubvb-LSF-h-save-';
+UserVar.Descriptor=["This is a run where I set the extrapolation to false."... ; 
+                    "The idea is to compare this with same run done previously"] ; 
+
+
+[~,hostname]=system('hostname') ;
+
+if contains(hostname,"DESKTOP-G5TCRTD")
+
+    UserVar.ResultsFileDirectory="F:\Runs\Calving\PIG-TWG\ResultsFiles\";
+elseif contains(hostname,"DESKTOP-BU2IHIR")
+
+    UserVar.ResultsFileDirectory="D:\Runs\Calving\PIG-TWG\ResultsFiles\";
+
+else
+
+    error("case not implemented")
+
+end
+
+
 
 %%
 % This run requires some additional input files. They are too big to be kept on Github so you
@@ -51,9 +79,12 @@ UserVar.BasalMeltRate="MeltRate0" ;
 CtrlVar.LevelSetMethod=1;
 CtrlVar.LevelSetEvolution="-By solving the level set equation-"   ; % "-prescribed-", 
 CtrlVar.LevelSetInitialisationInterval=1 ; CtrlVar.LevelSetReinitializePDist=true ; 
+CtrlVar.LevelSetFixPointSolverApproach="-PTS-" ;   % pseudo forward stepping
+CtrlVar.LevelSetPseudoFixPointSolverTolerance=100;
+CtrlVar.LevelSetPseudoFixPointSolverMaxIterations=100;
 CtrlVar.DevelopmentVersion=true; 
 CtrlVar.LevelSetFABmu.Scale="-ucl-" ; % "-constant-"; 
-CtrlVar.LevelSetFABmu.Value=1;
+CtrlVar.LevelSetFABmu.Value=1000;
 CtrlVar.LevelSetInfoLevel=1 ; 
 CtrlVar.MeshAdapt.CFrange=[20e3 5e3 ; 10e3 2e3] ; % This refines the mesh around the calving front, but must set
 
@@ -71,7 +102,7 @@ CtrlVar.LevelSetEvolution="-By solving the level set equation-"  ; % "-prescribe
 
 
 %%
-
+CtrlVar.SaveInitialMeshFileName='MeshFile';
 CtrlVar.SlidingLaw="Weertman" ; % "Umbi" ; % "Weertman" ; % "Tsai" ; % "Cornford" ;  "Umbi" ; "Cornford" ; % "Tsai" , "Budd"
 
 switch CtrlVar.SlidingLaw
@@ -161,18 +192,20 @@ switch UserVar.RunType
         
         
     case 'Forward-Transient'
-        
+
         CtrlVar.InverseRun=0;
         CtrlVar.TimeDependentRun=1;
-        CtrlVar.Restart=1;
+        CtrlVar.Restart=0;
         CtrlVar.InfoLevelNonLinIt=1;
         UserVar.Slipperiness.ReadFromFile=1;
         UserVar.AGlen.ReadFromFile=1;
-        CtrlVar.ReadInitialMesh=1;
+        if ~CtrlVar.Restart
+            CtrlVar.ReadInitialMesh=1;
+        end
         CtrlVar.AdaptMesh=0;
-        CtrlVar.TotalNumberOfForwardRunSteps=inf; 
-        %CtrlVar.LevelSetMethod=0; 
-        
+        CtrlVar.TotalNumberOfForwardRunSteps=inf;
+        %CtrlVar.LevelSetMethod=0;
+
     case 'Forward-Diagnostic'
                
         CtrlVar.InverseRun=0;
@@ -184,13 +217,17 @@ switch UserVar.RunType
         CtrlVar.ReadInitialMesh=1;
         CtrlVar.AdaptMesh=0;
         
-    case 'TestingMeshOptions'
+    case 'GenerateMesh'
         
         CtrlVar.TimeDependentRun=0;  % {0|1} if true (i.e. set to 1) then the run is a forward transient one, if not
         CtrlVar.InverseRun=0;
         CtrlVar.Restart=0;
         CtrlVar.ReadInitialMesh=0;
+        CtrlVar.MeshGenerator="gmsh" ; % "mesh2d" ; % 'mesh2d';
+        CtrlVar.MeshSizeMax=20e3/16;  CtrlVar.SaveInitialMeshFileName="MeshFile1k25km"+CtrlVar.MeshGenerator ;
+        CtrlVar.OnlyMeshDomainAndThenStop=1;
         
+
         UserVar.Slipperiness.ReadFromFile=1;
         UserVar.AGlen.ReadFromFile=1;
         CtrlVar.TotalNumberOfForwardRunSteps=1; 
@@ -202,7 +239,7 @@ switch UserVar.RunType
 end
 
 
-CtrlVar.dt=0.01;   CtrlVar.DefineOutputsDt=0.05;
+CtrlVar.dt=0.01;   CtrlVar.DefineOutputsDt=0.1;
 CtrlVar.time=0;
 
 CtrlVar.TotalTime=100;
@@ -224,25 +261,29 @@ CtrlVar.doAdaptMeshPlots=5;
 switch UserVar.Region
 
     case "PIG-TWG"
-        CtrlVar.ReadInitialMeshFileName="MeshFile-20km-PIG-TWG.mat";
+        CtrlVar.ReadInitialMeshFileName="MeshFile-20km-PIG-TWG";
         % CtrlVar.ReadInitialMeshFileName='PIG-TWG-Mesh';
     case "PIG"
-        CtrlVar.ReadInitialMeshFileName='MeshFile10km';
+        
+        %CtrlVar.ReadInitialMeshFileName='MeshFile10km';
+        % CtrlVar.ReadInitialMeshFileName='MeshFile5km';
+        % CtrlVar.ReadInitialMeshFileName='MeshFile2k5km';
+        CtrlVar.ReadInitialMeshFileName='MeshFile1k25km';
 end
 
 
-CtrlVar.SaveInitialMeshFileName='MeshFile';
-CtrlVar.MaxNumberOfElements=70e3;
+
+CtrlVar.MaxNumberOfElements=700e3;
 
 CtrlVar.MeshRefinementMethod='explicit:local:newest vertex bisection';   
 % CtrlVar.MeshRefinementMethod='explicit:local:red-green';
 CtrlVar.MeshRefinementMethod='explicit:global';   
 
 
-CtrlVar.MeshGenerator='mesh2d' ; % 'mesh2d';
 
 
-CtrlVar.MeshSizeMax=20e3;
+
+
 CtrlVar.MeshSize=CtrlVar.MeshSizeMax/2;
 CtrlVar.MeshSizeMin=CtrlVar.MeshSizeMax/20;
 
@@ -310,22 +351,39 @@ CtrlVar.ResetThicknessToMinThickness=1;  % change this later on
 CtrlVar.ThickMin=5;
 
 %%
+if batchStartupOptionUsed
+    CtrlVar.doplots=0;   % disable plotting if running as batch
+    if contains(UserVar.DefineOutputs,"save")
+        UserVar.DefineOutputs="-save-";  % disable plotting in DefineOutputs as well
+    end
+end
+
+%%
 
 
-CtrlVar.NameOfRestartFiletoWrite=CtrlVar.Experiment+"-ForwardRestartFile.mat";
-CtrlVar.NameOfRestartFiletoRead=CtrlVar.NameOfRestartFiletoWrite;
 
 CtrlVar.Inverse.NameOfRestartOutputFile=CtrlVar.Experiment+"-InverseRestartFile.mat";
 CtrlVar.Inverse.NameOfRestartInputFile=CtrlVar.Inverse.NameOfRestartOutputFile; 
 
-CtrlVar.Experiment=CtrlVar.LevelSetFABmu.Scale+"-muValue"+num2str(CtrlVar.LevelSetFABmu.Value)...
+CtrlVar.Experiment= ...
+    UserVar.RunType...
+    +CtrlVar.LevelSetFABmu.Scale....
+    +"-muValue"+num2str(CtrlVar.LevelSetFABmu.Value)...
     +"-Ini"+num2str(CtrlVar.LevelSetInitialisationInterval)...
     +"-PDist"+num2str(CtrlVar.LevelSetReinitializePDist)...
     +UserVar.CalvingLaw...
     +UserVar.CalvingFront0...
+    +CtrlVar.LevelSetFixPointSolverApproach...
+    +"-FPtol"+num2str(CtrlVar.LevelSetPseudoFixPointSolverTolerance)...
+    +"-FPIt"+num2str(CtrlVar.LevelSetPseudoFixPointSolverMaxIterations)...
     +"-cExtrapolation"+num2str(UserVar.CalvingRateExtrapolated)...
-    +"-"+UserVar.Region ;
-CtrlVar.Experiment=replace(CtrlVar.Experiment,"--","-"); 
-CtrlVar.Experiment=replace(CtrlVar.Experiment,".","k"); 
+    +"-"+UserVar.Region...
+    +"-"+CtrlVar.ReadInitialMeshFileName;
+CtrlVar.Experiment=replace(CtrlVar.Experiment,"--","-");
+CtrlVar.Experiment=replace(CtrlVar.Experiment,".","k");
+
+CtrlVar.NameOfRestartFiletoWrite=CtrlVar.Experiment+"-ForwardRestartFile.mat";
+CtrlVar.NameOfRestartFiletoRead=CtrlVar.NameOfRestartFiletoWrite;
+
 
 end

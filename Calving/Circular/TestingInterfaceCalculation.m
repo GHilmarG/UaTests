@@ -58,6 +58,22 @@ switch TestCase
     case 3
 
         load TestingInterfaceCalculation.mat
+    
+         EleSubdivide=4;
+
+         for II=1:EleSubdivide
+             [MUA.coordinates,MUA.connectivity]=FE2dRefineMesh(MUA.coordinates,MUA.connectivity);
+             MUA=CreateMUA(CtrlVar,MUA.connectivity,MUA.coordinates);
+         end
+
+
+      %   Convergence=[ 0      1552      15555 ; 
+      %                 1      1187      4389  ;
+      %                 2       9.4      2064  ;
+      %                 3       9.4      1552  ;
+      %                 4       9.4      442   ; 
+      % figure ; plot([1 1/2 1/4 1/8],[15555 4389 2064 1553])
+
 
         CtrlVar.PlotXYscale=1000;  
         coo=MUA.coordinates ;
@@ -149,9 +165,14 @@ LineSegments(end-1:end,:)=[] ;
 
 
 
-
+% Here I calculate the (xc,yc) intersections, this helps with the distance calculation
+% 
 [xc,yc,ii]=polyxpoly(P1(:,1),P1(:,2),P2(:,1),P2(:,2)); 
- Nconstraints=size(xc,1);
+ 
+
+
+
+Nconstraints=size(xc,1);
 
 plot(xc/CtrlVar.PlotXYscale,yc/CtrlVar.PlotXYscale,'*r')
 
@@ -175,13 +196,22 @@ end
 
 
 [L,ia,ic]=unique(L,'rows');
-
+LSFRhs=zeros(size(L,1),1);
 
 if TestCase==1  % this has a know solution, so this must be equal to zeros row
 
   L*[3 ;3 ; -1 ; -1 ; -1 ; 3 ; 3]
 
 end
+
+% How close is (xC,yC) to P1?
+Dist=pdist2([xc(:) yc(:)],P1,'euclidean','Smallest',1) ;
+Dist=Dist(:) ;
+[min(Dist) max(Dist)]
+
+
+
+
 
 CtrlVar.PlotNodes=0;
 
@@ -193,24 +223,41 @@ nexttile
 hold on
 plot(P1(:,1)/CtrlVar.PlotXYscale,P1(:,2)/CtrlVar.PlotXYscale,'-bo')
 plot(xc/CtrlVar.PlotXYscale,yc/CtrlVar.PlotXYscale,'+r',LineWidth=1)
-[xC,yC]=PlotCalvingFronts(CtrlVar,MUA,LSF,color="w");
-
-[LSF,UserVar,RunInfo]=SignedDistUpdate(UserVar,RunInfo,CtrlVar,MUA,LSF,xc,yc);
+[xC,yC]=PlotCalvingFronts(CtrlVar,MUA,LSF,color="k",LineStyle="--");
 title("LSF before distance solve",Interpreter="latex")
 xlabel("$x$ (km)",Interpreter="latex") ; ylabel("$y$ (km)",Interpreter="latex") ; title(cbar,"(km)",Interpreter="latex")
+
+
+% but why not add in the corner nodes? Appears unlikely to change much, and in fact might cause deviaton
+% xc=[xc;P1(:,1)] ;  yc=[yc;P1(:,2)] ; 
+[LSF,UserVar,RunInfo]=SignedDistUpdate(UserVar,RunInfo,CtrlVar,MUA,LSF,xc,yc);
 
 nexttile
 [~,cbar]=PlotMeshScalarVariable(CtrlVar,MUA,LSF/CtrlVar.PlotXYscale);
 hold on
+PlotMuaMesh(CtrlVar,MUA,[],'w') ;
 plot(P1(:,1)/CtrlVar.PlotXYscale,P1(:,2)/CtrlVar.PlotXYscale,'-bo')
 plot(xc/CtrlVar.PlotXYscale,yc/CtrlVar.PlotXYscale,'+r',LineWidth=1)
-[xC,yC]=PlotCalvingFronts(CtrlVar,MUA,LSF,color="w");
+[xC,yC]=PlotCalvingFronts(CtrlVar,MUA,LSF,color="k",LineStyle="--");
 title("after signed distance calculation",Interpreter="latex")
 xlabel("$x$ (km)",Interpreter="latex") ; ylabel("$y$ (km)",Interpreter="latex") ; title(cbar,"(km)",Interpreter="latex")
 
 
 
+
+
 if TestCase==3
+
+    F0=UaFields ; F1=F0;
+    F0.LSF=LSF ; F1.LSF=LSF ;  l=[];
+
+    F0.c=zeros(MUA.Nnodes,1) ; F1.c=zeros(MUA.Nnodes,1) ;
+    F0.ub=zeros(MUA.Nnodes,1) ; F1.ub=zeros(MUA.Nnodes,1) ;
+    F0.vb=zeros(MUA.Nnodes,1) ; F1.vb=zeros(MUA.Nnodes,1) ;
+    CtrlVar.InfoLevelLinSolve=0; CtrlVar.LinSolveTol=1e-6;
+    CtrlVar.LevelSetInfoLevel=1;
+
+
 
     SubTestCase="-BCsOnNodalLinks-";
     SubTestCase="-BCsOnNodalValues-";
@@ -219,18 +266,18 @@ if TestCase==3
 
         case  "-BCsOnNodalValues-"
 
-           CtrlVar.LevelSetInitBCsZeroLevel=true ; 
-           CtrlVar.LevelSetReinitializePDist=true;
-           CtrlVar.LevelSetFixPointSolverApproach="-IFP-FFP-" ; % ~~IFP = Initial fix point
-            F0=UaFields ; F1=F0;
-            F0.LSF=LSF ; F1.LSF=LSF ;  l=[];
+            CtrlVar.LevelSetInitBCsZeroLevel=true ;
+            CtrlVar.LevelSetReinitializePDist=true;
+            CtrlVar.LevelSetFixPointSolverApproach="-IFP-FFP-" ; % ~~IFP = Initial fix point
 
-            F0.c=zeros(MUA.Nnodes,1) ; F1.c=zeros(MUA.Nnodes,1) ;
-            F0.ub=zeros(MUA.Nnodes,1) ; F1.ub=zeros(MUA.Nnodes,1) ;
-            F0.vb=zeros(MUA.Nnodes,1) ; F1.vb=zeros(MUA.Nnodes,1) ;
-            CtrlVar.InfoLevelLinSolve=0; CtrlVar.LinSolveTol=1e-6;
-            CtrlVar.LevelSetInfoLevel=1;
 
+%             %make feasable
+%             phi=LSF ;
+%             LSF=L\LSFRhs;  % this now feasable,
+%             [row,col,val]=find(L) ;
+%             phi(col)=LSF(col);  % only use the range
+%             LSF=phi ; F0.LSF=LSF ; F1.LSF=LSF;  % make feasable
+% 
 
             % Now try:
             % 1) as before using (xc,yc) as calculated above, and with modified BCs to fix the level set over all elements that the LSF
@@ -246,15 +293,65 @@ if TestCase==3
 
         case "-BCsOnNodalLinks-"
 
-             % not finalized
-             % The BCs on nodal values appears incorrect at corners
-            R=(MUA.M\L'*L*LSF )*MUA.Area;
-            figure ; PlotMeshScalarVariable(CtrlVar,MUA,R) ;
-
-            BCs.LSFL=L ; 
-            BCs.LSFrhs=zeros(size(L,1),1) ; 
 
 
+            % Notes: If I solve the fix-point problem where P=1 and T=L=0
+            %        the Hessian is rank deficit (by one)
+            %        This will not be solved by adding in the [K L' ; L 0] sysem
+            %        So unless an additional Dirichlet BCs is added, no solution is possible.
+            %
+            %        But P=1, T=1 and L=0 is full rank, so pseudo-stepping is possible
+
+            % not finalized
+            % The BCs on nodal values appears incorrect at corners
+            % R=(MUA.M\L'*L*LSF )*MUA.Area;
+            % figure ; PlotMeshScalarVariable(CtrlVar,MUA,R) ;
+
+
+            CtrlVar.LevelSetInitBCsZeroLevel=false ;
+            CtrlVar.LevelSetReinitializePDist=false;
+
+            %  Add direct BCs
+
+
+          
+
+            BCs.LSFFixedNode=MUA.Boundary.Nodes; 
+            BCs.LSFFixedValue=LSF(MUA.Boundary.Nodes);
+            MLC=BCs2MLC(CtrlVar,MUA,BCs);
+
+            % combined 
+            L=[L ; MLC.LSFL];
+            LSFRhs=[LSFRhs; MLC.LSFRhs] ; 
+            LScale=1e6;
+            L=LScale*L ; LSFRhs=LScale*LSFRhs ; 
+            
+
+            %make feasable
+            phi=LSF ;
+            LSF=L\LSFRhs;  % this now feasable,
+            [row,col,val]=find(L) ;
+            phi(col)=LSF(col);  % only use the range
+            LSF=phi ; F0.LSF=LSF ; F1.LSF=LSF;  % make feasable
+
+            % only the direct ones
+            % L=MLC.LSFL;
+            % LSFRhs=MLC.LSFRhs ; 
+            % T=[A B' ; B zeros(size(B,1),size(B,1))];
+            % rank(full(T),1e-14)  ; % full rank
+            %
+            
+            
+            BCs.LSFL=L ;
+            BCs.LSFrhs= LSFRhs ; 
+
+
+
+            CtrlVar.LevelSetFixPointSolverApproach="-PTS-" ; %"-IFP-FFP-" ; % ~~IFP = Initial fix point
+            CtrlVar.LevelSetFABmu.Scale="constant" ;  % can't let the scale depend on velocity if I'm initializing and I want this to give me the distance
+            CtrlVar.LevelSetFABmu.Value=1e7;
+            LSFold=LSF;
+            [UserVar,RunInfo,LSF,Mask,l,LSFqx,LSFqy]=LevelSetEquationInitialisation(UserVar,RunInfo,CtrlVar,MUA,BCs,F0,F1,l) ;
 
 
         otherwise

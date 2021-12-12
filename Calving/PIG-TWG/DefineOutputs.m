@@ -38,27 +38,25 @@ TRI=[]; DT=[]; xGL=[] ; yGL=[] ;
 x=MUA.coordinates(:,1);  y=MUA.coordinates(:,2);
 
 %%
-
 if contains(plots,'-save-')
 
     % save data in files with running names
     % check if folder 'ResultsFiles' exists, if not create
-   if CtrlVar.DefineOutputsInfostring == "First call" && exist(fullfile(cd,'ResultsFiles'),'dir')~=7 
-        mkdir('ResultsFiles') ;
+    if CtrlVar.DefineOutputsInfostring == "First call" && exist(fullfile(cd,UserVar.ResultsFileDirectory),'dir')~=7
+        mkdir(UserVar.ResultsFileDirectory)
     end
-    
+
     if strcmp(CtrlVar.DefineOutputsInfostring,'Last call')==0
-                
-        FileName=sprintf('ResultsFiles/%07i-Nodes%i-Ele%i-Tri%i-kH%i-%s.mat',...
+
+        FileName=sprintf('%s%07i-Nodes%i-Ele%i-Tri%i-kH%i-%s.mat',...
+            UserVar.ResultsFileDirectory,...
             round(100*CtrlVar.time),MUA.Nnodes,MUA.Nele,MUA.nod,1000*CtrlVar.kH,CtrlVar.Experiment);
-        FileName=replace(FileName,"--","-"); 
+        FileName=replace(FileName,"--","-");
         fprintf(' Saving data in %s \n',FileName)
         save(FileName,"CtrlVar","MUA","F")
-        
+
     end
 end
-
-
 
 % only do plots at end of run
 % if ~strcmp(CtrlVar.DefineOutputsInfostring,'Last call') ; return ; end
@@ -88,12 +86,12 @@ if contains(plots,'-LSF-')
 
 
     FindOrCreateFigure("Calving Rate") ;
-    [~,cbar]=PlotMeshScalarVariable(CtrlVar,MUA,F.c);
+    [~,cbar]=PlotMeshScalarVariable(CtrlVar,MUA,F.c/1000);  % km/yr
     title(sprintf('Calving Rate at t=%g (yr)',CtrlVar.time)) ;
     hold on
     [xGL,yGL,GLgeo]=PlotGroundingLines(CtrlVar,MUA,F.GF,GLgeo,xGL,yGL,"color","r");
     [xc,yc]=PlotCalvingFronts(CtrlVar,MUA,F,'b',LineWidth=2);
-    title(cbar,"(km)")
+    title(cbar,"(km/yr)")
     axis tight
     hold off
 
@@ -113,27 +111,55 @@ if contains(plots,'-LSF-')
     end
 
 
-    if isfield(UserVar,"CliffHeightExtrapolated") &&  isfield(UserVar,"CliffHeightUnmodified")
+    if isfield(UserVar,"CliffHeight")
 
-        FindOrCreateFigure("CliffHeightUnmodified") ;
-        [~,cbar]=PlotMeshScalarVariable(CtrlVar,MUA,UserVar.CliffHeightUnmodified);
-        title(sprintf('Cliff height, unmodified, at t=%g (yr)',CtrlVar.time)) ;
-        hold on
-        [xGL,yGL,GLgeo]=PlotGroundingLines(CtrlVar,MUA,F.GF,GLgeo,xGL,yGL,"color","r");
-        [xc,yc]=PlotCalvingFronts(CtrlVar,MUA,F,'b',LineWidth=2);
-        title(cbar,"(km)")
-        axis tight
-        hold off
 
-        FindOrCreateFigure("CliffHeightExtrapolated") ;
-        [~,cbar]=PlotMeshScalarVariable(CtrlVar,MUA,UserVar.CliffHeightExtrapolated);
-        title(sprintf('Cliff height, extrapolated, at t=%g (yr)',CtrlVar.time)) ;
-        hold on
-        [xGL,yGL,GLgeo]=PlotGroundingLines(CtrlVar,MUA,F.GF,GLgeo,xGL,yGL,"color","r");
-        [xc,yc]=PlotCalvingFronts(CtrlVar,MUA,F,'b',LineWidth=2);
-        title(cbar,"(km)")
-        axis tight
-        hold off
+        xc=UserVar.xc ;
+        yc=UserVar.yc ;
+        if ~isempty(xc) && isfield(UserVar,"CalvingRate")
+
+            ch=UserVar.CliffHeight ;
+            cr=UserVar.CalvingRate ;
+
+
+            if numel(xc)==numel(ch)   && numel(xc)==numel(cr)  && numel(xc)==numel(yc)
+
+                FindOrCreateFigure("Cliff height along calving front") ;
+                plot3([xc xc]'/1000,[yc yc]'/1000,[ch*0 ch]','or-') ; axis equal  ; title("cliff heigh (m)")
+
+                FindOrCreateFigure("Calving rate along a calving front") ;
+                plot3([xc xc]'/1000,[yc yc]'/1000,[cr*0 cr]','or-') ; daspect([1 1 200]) ; title("calving rate (m/yr)")
+
+                if isfield(UserVar,"CalvingRateExtrapolatedValues")
+                    crE=UserVar.CalvingRateExtrapolatedValues;
+
+                    FindOrCreateFigure("Calving Rate Extrapolated") ;
+                    plot3([xc xc]'/1000,[yc yc]'/1000,[crE*0 crE]','or-') ; daspect([1 1 200]) ; title("calving rate (m/yr)")
+                end
+            else
+                fprintf("not the same number of elements in xc and cr or ch \n")
+
+            end
+        end
+
+
+   
+
+        CliffHeight=min((F.s-F.S),F.h) ;  % nodal cliff height
+        CliffHeight(~F.LSFMask.NodesOn)=0;
+
+        FindOrCreateFigure("Map view of cliff height along calving front")
+        [~,cbar]=PlotMeshScalarVariable(CtrlVar,MUA,CliffHeight) ;
+        title("cliff height")
+        title(cbar,"(m)")
+
+        c=F.c ; c(~F.LSFMask.NodesOn)=0;
+        
+        FindOrCreateFigure("Map view of calving rate along calving front");
+        [~,cbar]=PlotMeshScalarVariable(CtrlVar,MUA,c) ;
+        title("calving rate")
+        title(cbar,"(m/yr)")
+
 
 
 
@@ -157,6 +183,16 @@ if contains(plots,'-LSF-')
    hold on
    plot(d/1000,bp,'-b')
    plot(d/1000,Bp,'-k')
+  
+
+   if ~isempty(F.LSF)
+       FLSF=Fs;
+       FLSF.Values=F.LSF;
+       LSFp=FLSF(xp,yp) ;
+       plot(d/1000,LSFp/1000,'r')
+   end
+
+
    title(sprintf('PIG profile at t=%g (yr)',CtrlVar.time),Interpreter="latex") ;
    xlabel(" distance (km) ",Interpreter="latex")
    ylabel("$s$, $b$ and $B$ (m) ",Interpreter="latex")
@@ -337,8 +373,10 @@ if contains(plots,'-h-')
     hold on
     
     [xGL,yGL,GLgeo]=PlotGroundingLines(CtrlVar,MUA,F.GF,GLgeo,xGL,yGL,"color","r");
-    [xc,yc]=PlotCalvingFronts(CtrlVar,MUA,F,'w',LineWidth=2);
-    
+    [xc,yc]=PlotCalvingFronts(CtrlVar,MUA,F,color="w",LineWidth=2);
+    [xp,yp,d]=CreatePIGprofile(2);
+    plot(xp/CtrlVar.PlotXYscale,yp/CtrlVar.PlotXYscale,'r') ; 
+
     I=F.h<=CtrlVar.ThickMin;
     plot(MUA.coordinates(I,1)/CtrlVar.PlotXYscale,MUA.coordinates(I,2)/CtrlVar.PlotXYscale,'.r')
     title(sprintf('h t=%-g ',CtrlVar.time)) ; xlabel('x (km)') ; ylabel('y (km)') ; title(colorbar,'(m/yr)')
