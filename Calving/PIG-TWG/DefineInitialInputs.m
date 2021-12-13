@@ -265,10 +265,11 @@ switch UserVar.Region
         % CtrlVar.ReadInitialMeshFileName='PIG-TWG-Mesh';
     case "PIG"
         
+        
         CtrlVar.ReadInitialMeshFileName='MeshFile10km';
-        % CtrlVar.ReadInitialMeshFileName='MeshFile5km';
+        CtrlVar.ReadInitialMeshFileName='MeshFile5km';
         % CtrlVar.ReadInitialMeshFileName='MeshFile2k5km';
-        CtrlVar.ReadInitialMeshFileName='MeshFile1k25km';
+        % CtrlVar.ReadInitialMeshFileName='MeshFile1k25km';
 end
 
 
