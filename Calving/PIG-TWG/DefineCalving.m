@@ -149,6 +149,63 @@ switch CtrlVar.LevelSetEvolution
             UserVar.CliffHeight=FCliffHeight(xc,yc) ;
             UserVar.CalvingRate=FCalvingRate(xc,yc) ;
 
+
+            
+            
+            
+
+            if UserVar.CalvingRateOutsideDist<inf
+
+                %%  Now consider doing some modifications to the calculated calving rate
+                % but do so only well outside the calving front area
+
+                cDist=UserVar.CalvingRateOutsideDist ; % no modification within this distance away from the calving front
+                cMin=UserVar.CalvingRateOutsideMin;  % set a minimum on absolut calving rate
+                cMax=UserVar.CalvingRateOutsideMax ;  % set a maximum on absolut calving rate
+                % and then taper the calving velocity towards the ice velocity over the distance
+                % 10 cDist
+
+                [dLSFdx,dLSFdy]=calcFEderivativesMUA(LSF,MUA,CtrlVar);
+                [nx,ny]=ProjectFintOntoNodes(MUA,dLSFdx,dLSFdy);
+                cx=c.*nx ; cy=c.*ny;
+                % FindOrCreateFigure("calving rate velocity") ;
+                % QuiverColorGHG(F.x,F.y,cx,cy,CtrlVar) ;
+                % hold on
+                % hold on ; PlotCalvingFronts(CtrlVar,MUA,LSF,'r') ;
+                
+                % ur=F.ub-cx ; % Retreat velocity
+                % vr=F.vb-cy ;
+                % RetreatSpeed=sqrt(ur.*ur+vr.*vr); % Retreat speed
+
+                cxMod=cx ; cyMod=cy ;
+                I=c>cMax ; cxMod(I)=nx(I).*cMax ;  cyMod(I)=ny(I).*cMax ;
+                I=c<cMin ; cxMod(I)=nx(I).*cMin ;  cyMod(I)=ny(I).*cMin ;
+                I=LSF<cDist ; cxMod(I)=cx(I) ;  cyMod(I)=cy(I);
+
+                % taper calving velocity to ice velocity with distance away from calving front
+
+                He = LinTaper(LSF,cDist,10*cDist);
+                cxNew=cxMod+He.*(F.ub-cxMod);
+                cyNew=cyMod+He.*(F.vb-cyMod);
+                cNew=sqrt(cxNew.*cxNew+cyNew.*cyNew) ;
+                c=cNew ; % set the calving rate to this new value
+
+
+% 
+%                 FindOrCreateFigure("New calving rate velocity") ;
+%                 QuiverColorGHG(F.x,F.y,cxNew,cyNew,CtrlVar) ;
+%                 hold on ; PlotCalvingFronts(CtrlVar,MUA,LSF,'r') ;
+% 
+%                 % FindOrCreateFigure("limited calving rate velocity") ;
+%                 % QuiverColorGHG(F.x,F.y,cxMod,cyMod,CtrlVar) ;
+%                 % hold on ; PlotCalvingFronts(CtrlVar,MUA,LSF,'r') ;
+% 
+%                 FindOrCreateFigure("c new")
+%                 PlotMeshScalarVariable(CtrlVar,MUA,cNew);
+%                 title(" c after having set some limits and tapered down away from calving front")
+
+            end
+            %%
             %            if ~isempty(xc)
             %                ch=UserVar.CliffHeight ;
             %                cr=UserVar.CalvingRate ;

@@ -26,7 +26,9 @@ UserVar.Region="PIG" ; % "PIG-TWG" ;
 UserVar.CalvingLaw="-FixedRate1-"  ;
 UserVar.CalvingLaw="-ScalesWithSpeed2-"  ;
 UserVar.CalvingRateExtrapolated=0; 
-
+UserVar.CalvingRateOutsideMax=50e3;
+UserVar.CalvingRateOutsideMin=1e3;
+UserVar.CalvingRateOutsideDist=10e3 ;
 
 % UserVar.CalvingLaw="-IceThickness10-"  ;
 UserVar.CalvingLaw="-CliffHeight-Crawford"  ;
@@ -84,7 +86,7 @@ CtrlVar.LevelSetPseudoFixPointSolverTolerance=100;
 CtrlVar.LevelSetPseudoFixPointSolverMaxIterations=100;
 CtrlVar.DevelopmentVersion=true; 
 CtrlVar.LevelSetFABmu.Scale="-ucl-" ; % "-constant-"; 
-CtrlVar.LevelSetFABmu.Value=1000;
+CtrlVar.LevelSetFABmu.Value=1;
 CtrlVar.LevelSetInfoLevel=1 ; 
 CtrlVar.MeshAdapt.CFrange=[20e3 5e3 ; 10e3 2e3] ; % This refines the mesh around the calving front, but must set
 
@@ -378,6 +380,9 @@ CtrlVar.Experiment= ...
     +"-FPtol"+num2str(CtrlVar.LevelSetPseudoFixPointSolverTolerance)...
     +"-FPIt"+num2str(CtrlVar.LevelSetPseudoFixPointSolverMaxIterations)...
     +"-cExtrapolation"+num2str(UserVar.CalvingRateExtrapolated)...
+    +"-cDist"+num2str(UserVar.CalvingRateOutsideDist)...
+    +"-cMax"+num2str(UserVar.CalvingRateOutsideMax)...
+    +"-cMin"+num2str(UserVar.CalvingRateOutsideMin)...
     +"-"+UserVar.Region...
     +"-"+CtrlVar.ReadInitialMeshFileName;
 CtrlVar.Experiment=replace(CtrlVar.Experiment,"--","-");
@@ -386,5 +391,6 @@ CtrlVar.Experiment=replace(CtrlVar.Experiment,".","k");
 CtrlVar.NameOfRestartFiletoWrite=CtrlVar.Experiment+"-ForwardRestartFile.mat";
 CtrlVar.NameOfRestartFiletoRead=CtrlVar.NameOfRestartFiletoWrite;
 
+CtrlVar.WriteRestartFileInterval=10;
 
 end
