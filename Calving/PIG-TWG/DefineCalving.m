@@ -135,8 +135,10 @@ switch CtrlVar.LevelSetEvolution
                 % Now set calving rate to zero for cliff less than 135meters
                 c(CliffHeight<135)=0 ;
                 % and set maximum at at cliff height equalt to 450m 
-                cMax=fI*450.^(7.2) ;
-                c(c>cMax)=cMax ;
+                %cMax=fI*450.^(7.2) ;
+                %c(c>cMax)=cMax ;
+
+                c(c>UserVar.CalvingRateMax)=UserVar.CalvingRateMax ; % set an upper max
             end
 
             % For Plotting purposes: Get cliff height along calving front and the calving rate used
@@ -191,6 +193,8 @@ switch CtrlVar.LevelSetEvolution
                 c=cNew ; % set the calving rate to this new value
 
 
+                c(c>UserVar.CalvingRateMax)=UserVar.CalvingRateMax ; % set an overall upper max
+
 % 
 %                 FindOrCreateFigure("New calving rate velocity") ;
 %                 QuiverColorGHG(F.x,F.y,cxNew,cyNew,CtrlVar) ;
@@ -231,8 +235,8 @@ switch CtrlVar.LevelSetEvolution
 
             cOld=c ;
             c=ExtrapolateFromNodesAtoNodesB(CtrlVar,F.x,F.y,NodesA,NodesB,c) ;
-            c(c>cMax)=cMax ;
-
+           % c(c>cMax)=cMax ;
+            c(c>UserVar.CalvingRateMax)=UserVar.CalvingRateMax ; % set an upper max
 
             FCalvingRateExtrapolated=scatteredInterpolant(F.x,F.y,c);
             UserVar.CalvingRateExtrapolatedValues=FCalvingRateExtrapolated(xc,yc) ;
