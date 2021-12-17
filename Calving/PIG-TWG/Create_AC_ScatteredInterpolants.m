@@ -21,7 +21,7 @@ save('FA-Umbi.mat','FA')
 
 %%
 clearvars
-load('C-Estimate.mat')
+load('InvEstimateFA-Weertman-PIG-TWG20km.mat')
 FC=scatteredInterpolant(xC,yC,C); 
 save('FC-Weertman-PIG-TWG-20km.mat','FC')
 

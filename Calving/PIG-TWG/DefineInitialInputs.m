@@ -13,8 +13,8 @@ if isempty(UserVar) || ~isfield(UserVar,'RunType')
     
     UserVar.RunType='Inverse-MatOpt';
     % UserVar.RunType='Forward-Diagnostic' ; 
-    UserVar.RunType='Forward-Transient' ;
-    UserVar.RunType='GenerateMesh' ;
+    % UserVar.RunType='Forward-Transient' ;
+    % UserVar.RunType='GenerateMesh' ;
     % UserVar.RunType='Inverse-UaOpt';meshb    % UserVar.RunType='Forward-Transient';
 
 end
@@ -30,6 +30,7 @@ UserVar.CalvingRateOutsideMax=5e3;
 UserVar.CalvingRateOutsideMin=1e3;
 UserVar.CalvingRateOutsideDist=10e3 ;
 UserVar.CalvingRateMax=5e3;
+UserVar.MeshResolution=20e3;
 
 % UserVar.CalvingLaw="-IceThickness10-"  ;
 UserVar.CalvingLaw="-CliffHeight-Crawford"  ;
@@ -112,12 +113,19 @@ switch CtrlVar.SlidingLaw
 
     case "Weertman"
 
-        UserVar.CFile='FC-Weertman.mat'; UserVar.AFile='FA-Weertman.mat';
+        AFile="Weertman-"+UserVar.Region+num2str(UserVar.MeshResolution/1000)+"km.mat";   %
+        CFile="Weertman-"+UserVar.Region+num2str(UserVar.MeshResolution/1000)+"km.mat";   %
 
-        if UserVar.Region=="PIG-TWG" 
-            UserVar.AFile="FA-Weertman-PIG-TWG-20km.mat";
-            UserVar.CFile="FC-Weertman-PIG-TWG-20km.mat";
-        end
+        UserVar.AFile="FA-"+AFile;
+        UserVar.CFile="FC-"+CFile;
+
+
+        CtrlVar.NameOfFileForSavingSlipperinessEstimate="InvEstimate"+AFile;
+        CtrlVar.NameOfFileForSavingAGlenEstimate="InvEstimate"+CFile;
+
+
+
+
     case "Umbi"
         UserVar.CFile='FC-Umbi.mat'; UserVar.AFile='FA-Umbi.mat';
     otherwise
@@ -144,18 +152,18 @@ switch UserVar.RunType
         
         CtrlVar.InverseRun=1;
         
-        CtrlVar.Restart=1;
+        CtrlVar.Restart=0;
         CtrlVar.Inverse.InfoLevel=1;
         CtrlVar.InfoLevelNonLinIt=0;
         CtrlVar.InfoLevel=0;
         
-        UserVar.Slipperiness.ReadFromFile=0;
-        UserVar.AGlen.ReadFromFile=0;
+        UserVar.Slipperiness.ReadFromFile=1;
+        UserVar.AGlen.ReadFromFile=1;
         
-        CtrlVar.ReadInitialMesh=1;
+        CtrlVar.ReadInitialMesh=0;
         CtrlVar.AdaptMesh=0;
         
-        CtrlVar.Inverse.Iterations=100;
+        CtrlVar.Inverse.Iterations=2;
         
         CtrlVar.Inverse.InvertFor="-logA-logC-" ; % {'C','logC','AGlen','logAGlen'}
         CtrlVar.Inverse.Regularize.Field=CtrlVar.Inverse.InvertFor;
@@ -228,13 +236,8 @@ switch UserVar.RunType
         CtrlVar.ReadInitialMesh=0;
         CtrlVar.MeshGenerator="mesh2d" ; % "mesh2d" ; % 'mesh2d';
         %CtrlVar.MeshSizeMax=20e3/16;  CtrlVar.SaveInitialMeshFileName="MeshFile1k25km"+CtrlVar.MeshGenerator ;
-        CtrlVar.MeshSizeMax=20e3 ;  
-        CtrlVar.SaveInitialMeshFileName=...
-            "MeshFile"...
-            +num2str(CtrlVar.MeshSizeMax/1000) ...
-            +"km"...
-            +CtrlVar.MeshGenerator ...
-            +UserVar.Region ; 
+       
+    
         CtrlVar.OnlyMeshDomainAndThenStop=1;
         
 
@@ -253,6 +256,14 @@ switch UserVar.RunType
 
 
 end
+
+CtrlVar.MeshSizeMax=UserVar.MeshResolution ;  
+CtrlVar.SaveInitialMeshFileName=...
+    "MeshFile"...
+    +num2str(CtrlVar.MeshSizeMax/1000) ...
+    +"km-"...  ; %%            +CtrlVar.MeshGenerator ...
+    +UserVar.Region ;
+
 
 
 CtrlVar.dt=0.01;   CtrlVar.DefineOutputsDt=0.1;
@@ -274,27 +285,19 @@ CtrlVar.doAdaptMeshPlots=5;
 %% Meshing 
 
 
-switch UserVar.Region
 
-    case "PIG-TWG"
-        CtrlVar.ReadInitialMeshFileName="MeshFile-20km-PIG-TWG";
-        % CtrlVar.ReadInitialMeshFileName='PIG-TWG-Mesh';
-    case "PIG"
-        
-        CtrlVar.ReadInitialMeshFileName='MeshFile100km';
-        % CtrlVar.ReadInitialMeshFileName='MeshFile10km';
-        % trlVar.ReadInitialMeshFileName='MeshFile5km';
-        % CtrlVar.ReadInitialMeshFileName='MeshFile2k5km';
-        % CtrlVar.ReadInitialMeshFileName='MeshFile1k25km';
-end
-
+CtrlVar.ReadInitialMeshFileName=...
+"MeshFile"...
+    +num2str(UserVar.MeshResolution/1000) ...
+    +"km-"...  ; %%            +CtrlVar.MeshGenerator ...
+    +UserVar.Region ;
 
 
 CtrlVar.MaxNumberOfElements=700e3;
 
-CtrlVar.MeshRefinementMethod='explicit:local:newest vertex bisection';   
+CtrlVar.MeshRefinementMethod='explicit:local:newest vertex bisection';
 % CtrlVar.MeshRefinementMethod='explicit:local:red-green';
-CtrlVar.MeshRefinementMethod='explicit:global';   
+CtrlVar.MeshRefinementMethod='explicit:global';
 
 
 

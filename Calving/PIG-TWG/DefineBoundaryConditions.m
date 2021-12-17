@@ -15,7 +15,6 @@ switch UserVar.Region
         I=F.x(MUA.Boundary.Nodes) <-1605e3 ...
             & F.y(MUA.Boundary.Nodes) < -400e3 ;
 
-
 end
 
 
