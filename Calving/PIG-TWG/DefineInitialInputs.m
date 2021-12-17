@@ -14,15 +14,15 @@ if isempty(UserVar) || ~isfield(UserVar,'RunType')
     UserVar.RunType='Inverse-MatOpt';
     % UserVar.RunType='Forward-Diagnostic' ; 
     UserVar.RunType='Forward-Transient' ;
-    % UserVar.RunType='GenerateMesh' ;
+    UserVar.RunType='GenerateMesh' ;
     % UserVar.RunType='Inverse-UaOpt';meshb    % UserVar.RunType='Forward-Transient';
-    % UserVar.RunType='TestingMeshOptions';
+
 end
 
 
 %% UserVar
 
-UserVar.Region="PIG" ; % "PIG-TWG" ; 
+UserVar.Region="PIG-TWG" ; "PIG" ; % "PIG-TWG" ; 
 UserVar.CalvingLaw="-FixedRate1-"  ;
 UserVar.CalvingLaw="-ScalesWithSpeed2-"  ;
 UserVar.CalvingRateExtrapolated=0; 
@@ -226,8 +226,15 @@ switch UserVar.RunType
         CtrlVar.InverseRun=0;
         CtrlVar.Restart=0;
         CtrlVar.ReadInitialMesh=0;
-        CtrlVar.MeshGenerator="gmsh" ; % "mesh2d" ; % 'mesh2d';
-        CtrlVar.MeshSizeMax=20e3/16;  CtrlVar.SaveInitialMeshFileName="MeshFile1k25km"+CtrlVar.MeshGenerator ;
+        CtrlVar.MeshGenerator="mesh2d" ; % "mesh2d" ; % 'mesh2d';
+        %CtrlVar.MeshSizeMax=20e3/16;  CtrlVar.SaveInitialMeshFileName="MeshFile1k25km"+CtrlVar.MeshGenerator ;
+        CtrlVar.MeshSizeMax=20e3 ;  
+        CtrlVar.SaveInitialMeshFileName=...
+            "MeshFile"...
+            +num2str(CtrlVar.MeshSizeMax/1000) ...
+            +"km"...
+            +CtrlVar.MeshGenerator ...
+            +UserVar.Region ; 
         CtrlVar.OnlyMeshDomainAndThenStop=1;
         
 
@@ -239,6 +246,12 @@ switch UserVar.RunType
         CtrlVar.AdaptMeshAndThenStop=1;    % if true, then mesh will be adapted but no further calculations performed
         % useful, for example, when trying out different remeshing options (then use CtrlVar.doAdaptMeshPlots=1 to get plots)
         CtrlVar.InfoLevelAdaptiveMeshing=10;
+
+    otherwise
+
+        error("case not found")
+
+
 end
 
 
@@ -268,9 +281,9 @@ switch UserVar.Region
         % CtrlVar.ReadInitialMeshFileName='PIG-TWG-Mesh';
     case "PIG"
         
-        
-        CtrlVar.ReadInitialMeshFileName='MeshFile10km';
-        CtrlVar.ReadInitialMeshFileName='MeshFile5km';
+        CtrlVar.ReadInitialMeshFileName='MeshFile100km';
+        % CtrlVar.ReadInitialMeshFileName='MeshFile10km';
+        % trlVar.ReadInitialMeshFileName='MeshFile5km';
         % CtrlVar.ReadInitialMeshFileName='MeshFile2k5km';
         % CtrlVar.ReadInitialMeshFileName='MeshFile1k25km';
 end
