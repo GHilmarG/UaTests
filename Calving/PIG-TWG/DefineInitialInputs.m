@@ -5,7 +5,7 @@ function [UserVar,CtrlVar,MeshBoundaryCoordinates]=DefineInitialInputs(UserVar,C
 %% Select the type of run by uncommenting one of the following options:
 %
 %  
-% close all ; job=batch("Ua","Pool",1)
+% close all ; job=batch("Ua;","Pool",1) ; 
 %
 
 
@@ -13,7 +13,7 @@ if isempty(UserVar) || ~isfield(UserVar,'RunType')
     
     UserVar.RunType='Inverse-MatOpt';
     % UserVar.RunType='Forward-Diagnostic' ; 
-    % UserVar.RunType='Forward-Transient' ;
+    UserVar.RunType='Forward-Transient' ;
     % UserVar.RunType='GenerateMesh' ;
     % UserVar.RunType='Inverse-UaOpt';meshb    % UserVar.RunType='Forward-Transient';
 
@@ -23,18 +23,21 @@ end
 %% UserVar
 
 UserVar.Region="PIG-TWG" ; "PIG" ; % "PIG-TWG" ; 
+
 UserVar.CalvingLaw="-FixedRate1-"  ;
-UserVar.CalvingLaw="-ScalesWithSpeed2-"  ;
+UserVar.CalvingLaw="-ScalesWithNormalVelocity1-"  ;
+% UserVar.CalvingLaw="-CliffHeight-Crawford"  ;
+
 UserVar.CalvingRateExtrapolated=0; 
 UserVar.CalvingRateOutsideMax=5e3;
 UserVar.CalvingRateOutsideMin=1e3;
 UserVar.CalvingRateOutsideDist=10e3 ;
 UserVar.CalvingRateMax=5e3;
-UserVar.MeshResolution=20e3;
+UserVar.MeshResolution=30e3;
 
-% UserVar.CalvingLaw="-IceThickness10-"  ;
-UserVar.CalvingLaw="-CliffHeight-Crawford"  ;
-UserVar.CalvingFront0="-GL0-" ; % "-BedMachineCalvingFronts-"  ;
+
+
+UserVar.CalvingFront0="-BedMachineCalvingFronts-"  ;  % "-GL0-" ; % "-BedMachineCalvingFronts-"  ;
 UserVar.Experiment=UserVar.CalvingLaw ; 
 UserVar.DefineOutputs="-ubvb-LSF-h-save-"; % '-ubvb-LSF-h-save-';
 UserVar.Descriptor=["This is a run where I set the extrapolation to false."... ; 
@@ -113,15 +116,15 @@ switch CtrlVar.SlidingLaw
 
     case "Weertman"
 
-        AFile="Weertman-"+UserVar.Region+num2str(UserVar.MeshResolution/1000)+"km.mat";   %
-        CFile="Weertman-"+UserVar.Region+num2str(UserVar.MeshResolution/1000)+"km.mat";   %
+        AFile="AWeertman-"+UserVar.Region+num2str(UserVar.MeshResolution/1000)+"km.mat";   %
+        CFile="CWeertman-"+UserVar.Region+num2str(UserVar.MeshResolution/1000)+"km.mat";   %
 
         UserVar.AFile="FA-"+AFile;
         UserVar.CFile="FC-"+CFile;
 
 
-        CtrlVar.NameOfFileForSavingSlipperinessEstimate="InvEstimate"+AFile;
-        CtrlVar.NameOfFileForSavingAGlenEstimate="InvEstimate"+CFile;
+        CtrlVar.NameOfFileForSavingSlipperinessEstimate="InvEstimate-"+CFile;
+        CtrlVar.NameOfFileForSavingAGlenEstimate="InvEstimate-"+AFile;
 
 
 
@@ -152,7 +155,7 @@ switch UserVar.RunType
         
         CtrlVar.InverseRun=1;
         
-        CtrlVar.Restart=0;
+        CtrlVar.Restart=1;
         CtrlVar.Inverse.InfoLevel=1;
         CtrlVar.InfoLevelNonLinIt=0;
         CtrlVar.InfoLevel=0;
@@ -163,7 +166,7 @@ switch UserVar.RunType
         CtrlVar.ReadInitialMesh=0;
         CtrlVar.AdaptMesh=0;
         
-        CtrlVar.Inverse.Iterations=2;
+        CtrlVar.Inverse.Iterations=1000;
         
         CtrlVar.Inverse.InvertFor="-logA-logC-" ; % {'C','logC','AGlen','logAGlen'}
         CtrlVar.Inverse.Regularize.Field=CtrlVar.Inverse.InvertFor;
@@ -206,7 +209,7 @@ switch UserVar.RunType
 
         CtrlVar.InverseRun=0;
         CtrlVar.TimeDependentRun=1;
-        CtrlVar.Restart=1;
+        CtrlVar.Restart=0;
         CtrlVar.InfoLevelNonLinIt=1;
         UserVar.Slipperiness.ReadFromFile=1;
         UserVar.AGlen.ReadFromFile=1;
@@ -382,8 +385,7 @@ end
 
 
 
-CtrlVar.Inverse.NameOfRestartOutputFile=CtrlVar.Experiment+"-InverseRestartFile.mat";
-CtrlVar.Inverse.NameOfRestartInputFile=CtrlVar.Inverse.NameOfRestartOutputFile; 
+
 
 CtrlVar.Experiment= ...
     UserVar.RunType...
@@ -403,8 +405,19 @@ CtrlVar.Experiment= ...
     +"-cMax"+num2str(UserVar.CalvingRateMax)...
     +"-"+UserVar.Region...
     +"-"+CtrlVar.ReadInitialMeshFileName;
+
 CtrlVar.Experiment=replace(CtrlVar.Experiment,"--","-");
 CtrlVar.Experiment=replace(CtrlVar.Experiment,".","k");
+
+CtrlVar.Inverse.NameOfRestartOutputFile="InverseRestartFile-"...
+    +UserVar.Region...
+    +"-"+num2str(UserVar.MeshResolution/1000)+"km";
+
+CtrlVar.Inverse.NameOfRestartOutputFile=replace(CtrlVar.Inverse.NameOfRestartOutputFile,"--","-");
+CtrlVar.Inverse.NameOfRestartOutputFile=replace(CtrlVar.Inverse.NameOfRestartOutputFile,".","k");
+
+
+CtrlVar.Inverse.NameOfRestartInputFile=CtrlVar.Inverse.NameOfRestartOutputFile; 
 
 CtrlVar.NameOfRestartFiletoWrite=CtrlVar.Experiment+"-ForwardRestartFile.mat";
 CtrlVar.NameOfRestartFiletoRead=CtrlVar.NameOfRestartFiletoWrite;

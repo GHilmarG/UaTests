@@ -59,7 +59,7 @@ else
             % create a FC file
             load('C-Estimate.mat','C','xC','yC')
             FC=scatteredInterpolant(xC,yC,C); 
-            save(UserVar.CFile,'FC')
+           % save(UserVar.CFile,'FC')
         end
     end
     

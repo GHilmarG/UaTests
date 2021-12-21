@@ -79,7 +79,7 @@ switch CtrlVar.LevelSetEvolution
 
                     LSF=zeros(MUA.Nnodes,1) + 1 ;
                     LSF(NodesSelected)=-1;
-                    LSF(F.x<-1660e3)=+1;  % get rid of the additional calving front to the east of the main trunk
+                    % LSF(F.x<-1660e3)=+1;  % get rid of the additional calving front to the east of the main trunk
 
                     % plot(F.x(~io)/1000,F.y(~io)/1000,'or')
             end
@@ -104,6 +104,19 @@ switch CtrlVar.LevelSetEvolution
 
             CR=str2double(extract(UserVar.CalvingLaw,digitsPattern));
             c=CR*speed;
+
+        elseif contains(UserVar.CalvingLaw,"ScalesWithNormalVelocity")
+
+            CR=str2double(extract(UserVar.CalvingLaw,digitsPattern));
+            u=CR*F.ub ;
+            v=CR*F.vb ;
+            [c,cx,cy]=IceVelocity2CalvingRate(CtrlVar,MUA,F,LSF,u,v) ;
+
+            FindOrCreateFigure("calving velocity")
+            QuiverColorGHG(F.x,F.y,cx,cy,CtrlVar) ;
+            hold on
+            [xc,yc]=PlotCalvingFronts(CtrlVar,MUA,F,'b',LineWidth=1);
+            PlotGroundingLines(CtrlVar,MUA,F.GF,[],[],[],'color','r','LineWidth',1);
 
         elseif contains(UserVar.CalvingLaw,"IceThickness")
 
@@ -144,19 +157,19 @@ switch CtrlVar.LevelSetEvolution
             % For Plotting purposes: Get cliff height along calving front and the calving rate used
             [xc,yc]=PlotCalvingFronts(CtrlVar,MUA,F,'b',LineWidth=2);
 
-            FCliffHeight=scatteredInterpolant(F.x,F.y,CliffHeight);
-            FCalvingRate=scatteredInterpolant(F.x,F.y,c);
-            UserVar.xc=xc ;
-            UserVar.yc=yc ;
-            UserVar.CliffHeight=FCliffHeight(xc,yc) ;
-            UserVar.CalvingRate=FCalvingRate(xc,yc) ;
+            if isempty(CliffHeight)  % this can happen if the geometry has not been defined yet in the run
+                CliffHeight=F.x+NaN;
+            end
+            if isempty(c)  % this can happen if the geometry has not been defined yet in the run
+                c=F.x+NaN;
+            end
 
-
+     
             
             
             
 
-            if UserVar.CalvingRateOutsideDist<inf
+            if UserVar.CalvingRateOutsideDist<inf  && ~isempty(c)  && ~isempty(LSF)  && ~isempty(F.ub)
 
                 %%  Now consider doing some modifications to the calculated calving rate
                 % but do so only well outside the calving front area
