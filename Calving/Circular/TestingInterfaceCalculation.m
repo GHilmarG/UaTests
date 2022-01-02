@@ -59,7 +59,7 @@ switch TestCase
 
         load TestingInterfaceCalculation.mat
     
-         EleSubdivide=4;
+         EleSubdivide=1;
 
          for II=1:EleSubdivide
              [MUA.coordinates,MUA.connectivity]=FE2dRefineMesh(MUA.coordinates,MUA.connectivity);

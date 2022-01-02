@@ -111,8 +111,9 @@ if contains(plots,'-LSF-')
     end
 
     if ~isempty(yc)
-
+        CtrlVar.PlotGLs=0;
         [xc,yc]=PlotCalvingFronts(CtrlVar,MUA,F,'b',LineWidth=2);
+        CtrlVar.PlotGLs=1;
         CliffHeight=min((F.s-F.S),F.h) ;
         FCliffHeight=scatteredInterpolant(F.x,F.y,CliffHeight);
         fcf=FCliffHeight(xc,yc);  % freeboard at calving front

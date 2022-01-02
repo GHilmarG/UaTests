@@ -7,5 +7,5 @@ Fs=scatteredInterpolant(F.x,F.y,F.s);
 Fb=scatteredInterpolant(F.x,F.y,F.b);
 
 
-save("SteadyStateInterpolantsLethuNS.mat","Fb","Fs") 
+save("SteadyStateInterpolantsThuleNS.mat","Fb","Fs") 
 

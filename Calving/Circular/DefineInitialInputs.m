@@ -3,7 +3,7 @@ function [UserVar,CtrlVar,MeshBoundaryCoordinates]=DefineInitialInputs(UserVar,C
 
 
 %%
-%  ReadPlotSequenceOfResultFiles("FileNameSubstring","-ucl-muValue1-Ini100-PDist1-speed2-750000-cExtrapolation0-LethuNS-","PlotTimestep",100)
+%  ReadPlotSequenceOfResultFiles("FileNameSubstring","-ucl-muValue1-Ini100-PDist1-speed2-750000-cExtrapolation0-ThuleNS-","PlotTimestep",100)
 
 %%
 
@@ -24,11 +24,14 @@ end
 
 UserVar.CalvingFrontInit="Radius750000" ;
 UserVar.CalvingFrontInit="wavy" ; 
-UserVar.Region="-Lethu-" ;
-UserVar.Region="-LethuNS-" ;
-UserVar.CalvingLaw="-speed0-";
-UserVar.CalvingRateExtrapolated=0;
+UserVar.Region="-Thule-" ;
+UserVar.Region="-ThuleNS-" ;
+UserVar.Region="-IceShelf-" ;
 
+UserVar.CalvingLaw.Scale="-NV-"  ; 
+UserVar.CalvingLaw.Factor=1;  
+CtrlVar.CalvingLaw.Evaluation="-int-";
+UserVar.ElementSize=5e3; 
 UserVar.DefineOutputs="-ubvb-LSF-h-sbB-s-B-dhdt-save-";
 
 
@@ -56,8 +59,13 @@ CtrlVar.LevelSetEvolution="-By solving the level set equation-"   ; % "-prescrib
 CtrlVar.LevelSetInitialisationInterval=inf ; CtrlVar.LevelSetReinitializePDist=true ;
 CtrlVar.DevelopmentVersion=true;
 CtrlVar.LevelSetFABmu.Scale="-ucl-" ; % "-constant-";
-CtrlVar.LevelSetFABmu.Value=1;
+CtrlVar.LevelSetFABmu.Value=0.01;
 CtrlVar.LevelSetInfoLevel=1 ;
+CtrlVar.LevelSetFixPointSolverApproach="-PTS-" ;   % Initial-fix point then pseudo-forward stepping if required
+CtrlVar.LevelSetMethodAutomaticallyDeactivateElements=0;
+CtrlVar.LevelSetMethodSolveOnAStrip=1;
+CtrlVar.LevelSetMethodStripWidth=150e3;
+
 CtrlVar.MeshAdapt.CFrange=[20e3 5e3 ; 10e3 2e3] ; % This refines the mesh around the calving front, but must set
 
 
@@ -82,14 +90,14 @@ CtrlVar.InverseRun=0;
 CtrlVar.TimeDependentRun=1;
 CtrlVar.Restart=0;
 CtrlVar.InfoLevelNonLinIt=1;
-CtrlVar.ReadInitialMesh=0;
+
 CtrlVar.AdaptMesh=0;
 CtrlVar.TotalNumberOfForwardRunSteps=inf;
 %CtrlVar.LevelSetMethod=0;
 
 
-CtrlVar.dt=10;   CtrlVar.DefineOutputsDt=10;
-CtrlVar.TotalTime=10*2*pi*1000;
+CtrlVar.dt=1;   CtrlVar.DefineOutputsDt=10;
+CtrlVar.TotalTime=1000;
 
 CtrlVar.time=0;
 
@@ -108,18 +116,20 @@ CtrlVar.doAdaptMeshPlots=5;
 
 %% Meshing
 
+CtrlVar.MeshSizeMax=NaN;
+CtrlVar.MeshSize=UserVar.ElementSize; 
+CtrlVar.MeshSizeMin=CtrlVar.MeshSizeMax/20;
 
-CtrlVar.ReadInitialMesh=1;
-CtrlVar.SaveInitialMeshFileName='MeshFile';
-CtrlVar.ReadInitialMeshFileName="MeshFileCircular50km.mat";
+CtrlVar.ReadInitialMesh=0;  CtrlVar.OnlyMeshDomainAndThenStop=1;
+CtrlVar.ReadInitialMesh=1;  CtrlVar.OnlyMeshDomainAndThenStop=0;
+CtrlVar.SaveInitialMeshFileName="MeshFile"+num2str(UserVar.ElementSize/1000)+"km" ; 
+CtrlVar.ReadInitialMeshFileName="MeshFile"+num2str(UserVar.ElementSize/1000)+"km" ; 
 CtrlVar.MaxNumberOfElements=70e3;
 
 CtrlVar.MeshGenerator='mesh2d' ; % 'mesh2d';
 
 
-CtrlVar.MeshSizeMax=50e3;
-CtrlVar.MeshSize=CtrlVar.MeshSizeMax/2;
-CtrlVar.MeshSizeMin=CtrlVar.MeshSizeMax/20;
+
 
 R=1000e3 ;
 theta=linspace(0,2*pi,100);
@@ -135,18 +145,26 @@ CtrlVar.ThickMin=1;
 %%
 if CtrlVar.LevelSetMethod
     CtrlVar.Experiment=CtrlVar.LevelSetFABmu.Scale+...
-        "-muValue"+num2str(CtrlVar.LevelSetFABmu.Value)...
+        "-mu"+num2str(CtrlVar.LevelSetFABmu.Value)...
         +"-Ini"+num2str(CtrlVar.LevelSetInitialisationInterval)...
         +"-PDist"+num2str(CtrlVar.LevelSetReinitializePDist)...
-        +UserVar.CalvingLaw...
-        +UserVar.CalvingFrontInit...
-        +"-cExtrapolation"+num2str(UserVar.CalvingRateExtrapolated)...
+        +"-AD"+num2str(CtrlVar.LevelSetMethodAutomaticallyDeactivateElements)...
+        +"Strip"+num2str(CtrlVar.LevelSetMethodSolveOnAStrip)...
+        +"SW="+num2str(CtrlVar.LevelSetMethodStripWidth)...
+        +"-"+UserVar.CalvingLaw.Scale...
+        +"="+sprintf("%+2.1f",UserVar.CalvingLaw.Factor)...
+        +"-"+UserVar.CalvingFrontInit...
+        +"-"+CtrlVar.CalvingLaw.Evaluation...
+        +"dt="+num2str(CtrlVar.dt)...
+        +"Ele"+num2str(UserVar.ElementSize/1000)+"km"...
+        +"T"+num2str(CtrlVar.TriNodes)...
         +"-"+UserVar.Region ;
 else
     CtrlVar.Experiment="NoCalving"+UserVar.Region ;
 end
 
 CtrlVar.Experiment=replace(CtrlVar.Experiment,"--","-");
+CtrlVar.Experiment=replace(CtrlVar.Experiment,"-+","+");
 CtrlVar.Experiment=replace(CtrlVar.Experiment,".","k");
 CtrlVar.Experiment=replace(CtrlVar.Experiment," ","");
 

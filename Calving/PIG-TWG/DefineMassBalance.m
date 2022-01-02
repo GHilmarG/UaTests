@@ -1,11 +1,52 @@
 function [UserVar,as,ab,dasdh,dabdh]=DefineMassBalance(UserVar,CtrlVar,MUA,F)
 
-
+persistent Fdh2000to2018 dhdtMeasured CurrentRunStepNumber
 
 as=zeros(MUA.Nnodes,1) ;
 ab=zeros(MUA.Nnodes,1) ;
 dasdh=zeros(MUA.Nnodes,1) ;
 dabdh=zeros(MUA.Nnodes,1) ;
+
+
+%% Surface mass balance
+
+if isempty(Fdh2000to2018)
+    load("FdhdtMeasuredRatesOfElevationChanges2000to2018.mat","Fdh2000to2018")
+    dhdtMeasured=Fdh2000to2018(F.x,F.y) ;  % I can do this here because in this run the mesh does not change
+    CurrentRunStepNumber=0 ; 
+end
+
+if contains(UserVar.RunType,"-I-")
+
+    if isempty(F.dhdt)
+        as=zeros(MUA.Nnodes,1) ;
+    else
+
+        if F.time < 0  ...  % only for neg times
+            && CtrlVar.CurrentRunStepNumber>1 ... % only once a uvh solve has been done
+            && CurrentRunStepNumber~=CtrlVar.CurrentRunStepNumber % not if already applied to the current run step
+
+            da=dhdtMeasured-F.dhdt ;
+            norm(da)
+            CurrentRunStepNumber=CtrlVar.CurrentRunStepNumber ;
+        else
+            da=0;
+        end
+
+        as=F.as+da ;
+
+        
+    end
+    return
+
+end
+
+
+
+
+
+
+
 
 %
 % When calculating dabdh from ab(b) for floating ice shelves:

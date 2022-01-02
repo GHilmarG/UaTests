@@ -51,86 +51,85 @@ function [UserVar,LSF,c]=DefineCalving(UserVar,CtrlVar,MUA,F,BCs)
 
 % LSF=F.LSF  ; %
 
-c=[] ;
+
+persistent nCalls isInitialized
 
 
 
-%[ValuesB,FA]=ExtrapolateFromNodesAtoNodesB(CtrlVar,xA,yA,ValuesA,xB,yB);
+if isempty(isInitialized)
+    isInitialized=false;
+    nCalls=0;
+else
+    nCalls=nCalls+1;
+end
+
+%% initialize LSF
+if ~isInitialized
+    isInitialized=true;
+    if contains(lower(UserVar.CalvingFrontInit),"wavy")
+
+        theta=linspace(0,2*pi,200);
+        R=700e3;
+
+        r=R*(1/2+1/3*cos(2*theta));
+
+        % boundary 1 : figure of 8
+        [Xc,Yc]=pol2cart(theta,r) ; Xc=Xc(:) ; Yc=Yc(:);
+        
+        % boundary 2 : square
+        
+        SL2=200 ; CP=[0 500 ]; % SideLength/2 and CentrePoint
+        B2=CP +  [-SL2 -SL2 ; SL2 -SL2 ; SL2 SL2 ; -SL2 SL2 ; -SL2 -SL2] ; B2=1000*B2 ; 
+        Xc=[Xc(:); NaN ; B2(:,1)]; Yc=[Yc(:); NaN ; B2(:,2)]; 
+
+        SL2=200 ; CP=[0 -500 ]; % SideLength/2 and CentrePoint
+        B3=CP +  [-SL2 -SL2 ; SL2 -SL2 ; 0 SL2 ; -SL2 -SL2] ;  B3=1000*B3;
+        Xc=[Xc(:); NaN ; B3(:,1)]; Yc=[Yc(:); NaN ; B3(:,2)]; 
+
+        % io=inpoly2([F.x F.y],[Xc Yc]);
+
+        io=InsideOutside([F.x F.y],[Xc Yc]);  % this deals with several seperated boundaries
+
+        NodesSelected=~io ;
+
+        LSF=zeros(MUA.Nnodes,1) + 1 ;
+        LSF(NodesSelected)=-1;
+
+    else
+
+        error('case not found')
+
+
+    end
+
+ 
+     
+     [xc,yc,LSF]=CalvingFrontLevelSetGeometricalInitialisation(CtrlVar,MUA,Xc,Yc,LSF,plot=true,ResampleCalvingFront=true);
 
 
 
-switch CtrlVar.LevelSetEvolution
+else
+    LSF=F.LSF ;
+end
 
-    case "-By solving the level set equation-"
+%% Define calving rate
 
-        if F.time<eps
+if  contains(CtrlVar.CalvingLaw.Evaluation,"-int-")
 
+    c=[];
 
-% Better to give the calving front either explicitly as xC yC or implicitly through LSF
+elseif contains(CtrlVar.CalvingLaw.Evaluation,"-nodes-")
 
-          if contains(lower(UserVar.CalvingFrontInit),"Radius")
-              
-         
+    speed=sqrt(F.ub.*F.ub+F.vb.*F.vb) ;
+    CR=UserVar.CalvingLaw.Factor;
+    c=CR*speed;
 
+else
 
-            CR=str2double(extract(UserVar.CalvingFrontInit,digitsPattern));
-            r=sqrt( F.x.*F.x+F.y.*F.y ) ;
-
-            LSF=2*((r<CR)-0.5)  ;
-            LSF(F.GF.node>0.5)=1 ;
-
-          elseif contains(lower(UserVar.CalvingFrontInit),"wavy")
-
-              r=sqrt(F.x.*F.x+F.y.*F.y);
-              theta=atan2(F.y,F.x);
-              R=700e3; 
-
-              CR=R*(1/2+1/3*cos(2*theta));
-              LSF=2*((r<CR)-0.5)  ;
-
-
-              % io=inpoly2([F.x F.y],UserVar.BedMachineBoundary);
-              % NodesSelected=~io ;
-
-          end
-
-            [xC,yC]=CalcMuaFieldsContourLine(CtrlVar,MUA,LSF,0);
-            [LSF,UserVar]=SignedDistUpdate(UserVar,[],CtrlVar,MUA,LSF,xC,yC);
-
-
-        else
-            LSF=F.LSF ;
-        end
-
-        speed=sqrt(F.ub.*F.ub+F.vb.*F.vb) ; 
-        % f=str2double(extract(UserVar.CalvingLaw,digitsPattern));
-        f=str2double(extractBetween(UserVar.CalvingLaw,"-speed","-"));
-
-        c=f*speed;
-
-    otherwise
-
-
-        error("no case")
-
+    error("no case")
 
 end
 
-% if UserVar.CalvingRateExtrapolated
-%     GFLSF.node=sign(LSF) ;
-%     GFLSF=IceSheetIceShelves(CtrlVar,MUA,GFLSF);
-%     NodesA=GFLSF.NodesUpstreamOfGroundingLines ; %  & LSF < 100e3 ;  % these are actually nodes strickly upstream of the zero level in LSF
-%     NodesB=~NodesA;
-%     c=ExtrapolateFromNodesAtoNodesB(CtrlVar,F.x,F.y,NodesA,NodesB,c) ;
-%     c(c>cMax)=cMax ;
-% end
-
-
-%         % Rough limitation on calving migration
-%          speed=sqrt(F.ub.*F.ub+F.vb.*F.vb) ;
-%          vFrontMax=5e3 ;
-%          ii=c>(speed+vFrontMax) ;
-%          c(ii)=speed(ii)+vFrontMax ;
 
 
 

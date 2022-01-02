@@ -7,7 +7,7 @@ if nargin<6
 end
 
 if nargin<5 || isempty(BedName)
-    BedName="Lethu" ;
+    BedName="Thula" ;
 end
 
 
@@ -86,7 +86,7 @@ end
 
         switch BedName
 
-            case "-Lethu-"
+            case "-Thule-"
 
                 r=sqrt(x.*x+y.*y) ;
                 theta=atan2(y,x);
@@ -97,7 +97,7 @@ end
                 a=Bc - (Bc-Bl)*(r-rc).^2./(R-rc).^2;  % quadratic term in r
                 B=Ba*cos(3*pi*r./l)+a ;               %
 
-            case "-LethuNS-"
+            case "-ThuleNS-"
 
                 r=sqrt(x.*x+y.*y) ;
                 theta=pi/2 ; 

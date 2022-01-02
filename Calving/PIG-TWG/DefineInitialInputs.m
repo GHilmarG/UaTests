@@ -14,6 +14,9 @@ if isempty(UserVar) || ~isfield(UserVar,'RunType')
     UserVar.RunType='Inverse-MatOpt';
     % UserVar.RunType='Forward-Diagnostic' ; 
     UserVar.RunType='Forward-Transient' ;
+    UserVar.RunType='Forward-Transient-Initialisation' ;
+    UserVar.RunType='-FT-I-' ;  % 'Forward-Transient-Initialisation' ;
+    UserVar.RunType='-FT-C-I-' ;  % 'Forward-Transient-Initialisation' ;
     % UserVar.RunType='GenerateMesh' ;
     % UserVar.RunType='Inverse-UaOpt';meshb    % UserVar.RunType='Forward-Transient';
 
@@ -24,8 +27,13 @@ end
 
 UserVar.Region="PIG-TWG" ; "PIG" ; % "PIG-TWG" ; 
 
-UserVar.CalvingLaw="-FixedRate1-"  ;
-UserVar.CalvingLaw="-ScalesWithNormalVelocity1-"  ;
+
+UserVar.CalvingLaw.Scale="-NV-"  ;  % "-ScalesWithNormalVelocity+1.0-"  ;
+UserVar.CalvingLaw.Factor=1;  
+
+CtrlVar.CalvingLaw.Evaluation="-nodes-";  
+
+
 % UserVar.CalvingLaw="-CliffHeight-Crawford"  ;
 
 UserVar.CalvingRateExtrapolated=0; 
@@ -37,7 +45,10 @@ UserVar.MeshResolution=30e3;
 
 
 
-UserVar.CalvingFront0="-BedMachineCalvingFronts-"  ;  % "-GL0-" ; % "-BedMachineCalvingFronts-"  ;
+UserVar.CalvingFront0="-BMCF-"; "-BedMachineCalvingFronts-"  ;  % "-GL0-" ; % "-BedMachineCalvingFronts-"  ;
+UserVar.CalvingLaw.String=UserVar.CalvingLaw.Scale+num2str(UserVar.CalvingLaw.Factor)+UserVar.CalvingFront0+CtrlVar.CalvingLaw.Evaluation;
+
+
 UserVar.Experiment=UserVar.CalvingLaw ; 
 UserVar.DefineOutputs="-ubvb-LSF-h-save-"; % '-ubvb-LSF-h-save-';
 UserVar.Descriptor=["This is a run where I set the extrapolation to false."... ; 
@@ -85,7 +96,7 @@ UserVar.BasalMeltRate="MeltRate0" ;
 
 CtrlVar.LevelSetMethod=1;
 CtrlVar.LevelSetEvolution="-By solving the level set equation-"   ; % "-prescribed-", 
-CtrlVar.LevelSetInitialisationInterval=1 ; CtrlVar.LevelSetReinitializePDist=true ; 
+CtrlVar.LevelSetInitialisationInterval=Inf ; CtrlVar.LevelSetReinitializePDist=true ; 
 CtrlVar.LevelSetFixPointSolverApproach="-PTS-" ;   % pseudo forward stepping
 CtrlVar.LevelSetPseudoFixPointSolverTolerance=100;
 CtrlVar.LevelSetPseudoFixPointSolverMaxIterations=100;
@@ -166,7 +177,7 @@ switch UserVar.RunType
         CtrlVar.ReadInitialMesh=0;
         CtrlVar.AdaptMesh=0;
         
-        CtrlVar.Inverse.Iterations=1000;
+        CtrlVar.Inverse.Iterations=500;
         
         CtrlVar.Inverse.InvertFor="-logA-logC-" ; % {'C','logC','AGlen','logAGlen'}
         CtrlVar.Inverse.Regularize.Field=CtrlVar.Inverse.InvertFor;
@@ -205,11 +216,11 @@ switch UserVar.RunType
         % ----------------------- ]end, testing adjoint parameters.
         
         
-    case 'Forward-Transient'
+    case {"FT-I","FT-C","-FT-C-I-"}
 
         CtrlVar.InverseRun=0;
         CtrlVar.TimeDependentRun=1;
-        CtrlVar.Restart=0;
+        CtrlVar.Restart=1;
         CtrlVar.InfoLevelNonLinIt=1;
         UserVar.Slipperiness.ReadFromFile=1;
         UserVar.AGlen.ReadFromFile=1;
@@ -269,8 +280,14 @@ CtrlVar.SaveInitialMeshFileName=...
 
 
 
-CtrlVar.dt=0.01;   CtrlVar.DefineOutputsDt=0.1;
-CtrlVar.time=0;
+CtrlVar.dt=0.01;   CtrlVar.DefineOutputsDt=0.5;
+
+if contains(UserVar.RunType,"-I-")
+    CtrlVar.time=-0.1;  % If I'm using a mass-balance initialisation set start time to a slighly neg value
+                        % In DefineMassBaloance, the initialisation is done for negative times.
+else
+    CtrlVar.time=0;
+end
 
 CtrlVar.TotalTime=100;
 
@@ -390,24 +407,20 @@ end
 CtrlVar.Experiment= ...
     UserVar.RunType...
     +CtrlVar.LevelSetFABmu.Scale....
-    +"-muValue"+num2str(CtrlVar.LevelSetFABmu.Value)...
+    +"-mu"+num2str(CtrlVar.LevelSetFABmu.Value)...
     +"-Ini"+num2str(CtrlVar.LevelSetInitialisationInterval)...
     +"-PDist"+num2str(CtrlVar.LevelSetReinitializePDist)...
-    +UserVar.CalvingLaw...
-    +UserVar.CalvingFront0...
-    +CtrlVar.LevelSetFixPointSolverApproach...
-    +"-FPtol"+num2str(CtrlVar.LevelSetPseudoFixPointSolverTolerance)...
-    +"-FPIt"+num2str(CtrlVar.LevelSetPseudoFixPointSolverMaxIterations)...
-    +"-cExtrapolation"+num2str(UserVar.CalvingRateExtrapolated)...
-    +"-cDist"+num2str(UserVar.CalvingRateOutsideDist)...
-    +"-cOutMax"+num2str(UserVar.CalvingRateOutsideMax)...
-    +"-cOutMin"+num2str(UserVar.CalvingRateOutsideMin)...
-    +"-cMax"+num2str(UserVar.CalvingRateMax)...
+    +UserVar.CalvingLaw.String...
     +"-"+UserVar.Region...
     +"-"+CtrlVar.ReadInitialMeshFileName;
 
 CtrlVar.Experiment=replace(CtrlVar.Experiment,"--","-");
 CtrlVar.Experiment=replace(CtrlVar.Experiment,".","k");
+CtrlVar.Experiment=replace(CtrlVar.Experiment,"+","p");
+
+if startsWith(CtrlVar.Experiment,"-")
+    CtrlVar.Experiment=replaceBetween(CtrlVar.Experiment,1,2,"");
+end
 
 CtrlVar.Inverse.NameOfRestartOutputFile="InverseRestartFile-"...
     +UserVar.Region...
@@ -419,7 +432,7 @@ CtrlVar.Inverse.NameOfRestartOutputFile=replace(CtrlVar.Inverse.NameOfRestartOut
 
 CtrlVar.Inverse.NameOfRestartInputFile=CtrlVar.Inverse.NameOfRestartOutputFile; 
 
-CtrlVar.NameOfRestartFiletoWrite=CtrlVar.Experiment+"-ForwardRestartFile.mat";
+CtrlVar.NameOfRestartFiletoWrite=CtrlVar.Experiment+"-FR.mat";
 CtrlVar.NameOfRestartFiletoRead=CtrlVar.NameOfRestartFiletoWrite;
 
 CtrlVar.WriteRestartFileInterval=10;
