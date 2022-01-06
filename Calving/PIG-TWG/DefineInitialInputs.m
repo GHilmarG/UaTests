@@ -30,17 +30,12 @@ UserVar.Region="PIG-TWG" ; "PIG" ; % "PIG-TWG" ;
 
 UserVar.CalvingLaw.Scale="-NV-"  ;  % "-ScalesWithNormalVelocity+1.0-"  ;
 UserVar.CalvingLaw.Factor=1;  
-
-CtrlVar.CalvingLaw.Evaluation="-nodes-";  
+CtrlVar.CalvingLaw.Evaluation="-int-";  
 
 
 % UserVar.CalvingLaw="-CliffHeight-Crawford"  ;
 
-UserVar.CalvingRateExtrapolated=0; 
-UserVar.CalvingRateOutsideMax=5e3;
-UserVar.CalvingRateOutsideMin=1e3;
-UserVar.CalvingRateOutsideDist=10e3 ;
-UserVar.CalvingRateMax=5e3;
+
 UserVar.MeshResolution=30e3;
 
 
@@ -51,9 +46,6 @@ UserVar.CalvingLaw.String=UserVar.CalvingLaw.Scale+num2str(UserVar.CalvingLaw.Fa
 
 UserVar.Experiment=UserVar.CalvingLaw ; 
 UserVar.DefineOutputs="-ubvb-LSF-h-save-"; % '-ubvb-LSF-h-save-';
-UserVar.Descriptor=["This is a run where I set the extrapolation to false."... ; 
-                    "The idea is to compare this with same run done previously"] ; 
-
 
 [~,hostname]=system('hostname') ;
 
@@ -89,7 +81,7 @@ UserVar.SurfaceVelocityInterpolant='../../../Interpolants/SurfVelMeasures990mInt
 UserVar.MeshBoundaryCoordinatesFile='../../../Interpolants/MeshBoundaryCoordinatesForAntarcticaBasedOnBedmachine'; 
 load(UserVar.MeshBoundaryCoordinatesFile,"Boundary") ; UserVar.BedMachineBoundary=Boundary;
 UserVar.DistanceBetweenPointsAlongBoundary=5e3 ; 
-UserVar.BasalMeltRate="MeltRate0" ;
+
 
 
 %%
@@ -102,7 +94,7 @@ CtrlVar.LevelSetPseudoFixPointSolverTolerance=100;
 CtrlVar.LevelSetPseudoFixPointSolverMaxIterations=100;
 CtrlVar.DevelopmentVersion=true; 
 CtrlVar.LevelSetFABmu.Scale="-ucl-" ; % "-constant-"; 
-CtrlVar.LevelSetFABmu.Value=1;
+CtrlVar.LevelSetFABmu.Value=0.1;
 CtrlVar.LevelSetInfoLevel=1 ; 
 CtrlVar.MeshAdapt.CFrange=[20e3 5e3 ; 10e3 2e3] ; % This refines the mesh around the calving front, but must set
 
@@ -220,7 +212,7 @@ switch UserVar.RunType
 
         CtrlVar.InverseRun=0;
         CtrlVar.TimeDependentRun=1;
-        CtrlVar.Restart=1;
+        CtrlVar.Restart=0;
         CtrlVar.InfoLevelNonLinIt=1;
         UserVar.Slipperiness.ReadFromFile=1;
         UserVar.AGlen.ReadFromFile=1;
@@ -278,7 +270,7 @@ CtrlVar.SaveInitialMeshFileName=...
     +"km-"...  ; %%            +CtrlVar.MeshGenerator ...
     +UserVar.Region ;
 
-
+%% Time step, total run time, run steps
 
 CtrlVar.dt=0.01;   CtrlVar.DefineOutputsDt=0.5;
 
@@ -314,74 +306,21 @@ CtrlVar.ReadInitialMeshFileName=...
 
 
 CtrlVar.MaxNumberOfElements=700e3;
-
-CtrlVar.MeshRefinementMethod='explicit:local:newest vertex bisection';
-% CtrlVar.MeshRefinementMethod='explicit:local:red-green';
-CtrlVar.MeshRefinementMethod='explicit:global';
-
-
-
-
-
-
 CtrlVar.MeshSize=CtrlVar.MeshSizeMax/2;
 CtrlVar.MeshSizeMin=CtrlVar.MeshSizeMax/20;
 
 UserVar.MeshSizeIceShelves=CtrlVar.MeshSizeMax/5;
 
 MeshBoundaryCoordinates=CreateMeshBoundaryCoordinatesForPIGandTWG(UserVar,CtrlVar);
-                                         
+                          
+%% Adapting mesh 
+
 CtrlVar.AdaptMeshInitial=0  ;       % remesh in first iteration (Itime=1)  even if mod(Itime,CtrlVar.AdaptMeshRunStepInterval)~=0.
 CtrlVar.AdaptMeshAndThenStop=1;    % if true, then mesh will be adapted but no further calculations performed
                                    % useful, for example, when trying out different remeshing options (then use CtrlVar.doAdaptMeshPlots=1 to get plots)
 CtrlVar.AdaptMeshMaxIterations=5;
 CtrlVar.SaveAdaptMeshFileName='MeshFileAdapt';    %  file name for saving adapt mesh. If left empty, no file is written
 CtrlVar.AdaptMeshRunStepInterval=1 ; % remesh whenever mod(Itime,CtrlVar.AdaptMeshRunStepInterval)==0
-
-
-
-I=1;
-CtrlVar.ExplicitMeshRefinementCriteria(I).Name='effective strain rates';
-CtrlVar.ExplicitMeshRefinementCriteria(I).Scale=0.001;
-CtrlVar.ExplicitMeshRefinementCriteria(I).EleMin=[];
-CtrlVar.ExplicitMeshRefinementCriteria(I).EleMax=[];
-CtrlVar.ExplicitMeshRefinementCriteria(I).p=[];
-CtrlVar.ExplicitMeshRefinementCriteria(I).InfoLevel=1;
-CtrlVar.ExplicitMeshRefinementCriteria(I).Use=true;
-
-
-I=I+1;
-CtrlVar.ExplicitMeshRefinementCriteria(I).Name='flotation';
-CtrlVar.ExplicitMeshRefinementCriteria(I).Scale=0.0001;
-CtrlVar.ExplicitMeshRefinementCriteria(I).EleMin=[];
-CtrlVar.ExplicitMeshRefinementCriteria(I).EleMax=[];
-CtrlVar.ExplicitMeshRefinementCriteria(I).p=[];
-CtrlVar.ExplicitMeshRefinementCriteria(I).InfoLevel=1;
-CtrlVar.ExplicitMeshRefinementCriteria(I).Use=false;
-
-I=I+1;
-CtrlVar.ExplicitMeshRefinementCriteria(I).Name='thickness gradient';
-CtrlVar.ExplicitMeshRefinementCriteria(I).Scale=0.01;
-CtrlVar.ExplicitMeshRefinementCriteria(I).EleMin=[];
-CtrlVar.ExplicitMeshRefinementCriteria(I).EleMax=[];
-CtrlVar.ExplicitMeshRefinementCriteria(I).p=[];
-CtrlVar.ExplicitMeshRefinementCriteria(I).InfoLevel=1;
-CtrlVar.ExplicitMeshRefinementCriteria(I).Use=false;
-
-
-I=I+1;
-CtrlVar.ExplicitMeshRefinementCriteria(I).Name='upper surface gradient';
-CtrlVar.ExplicitMeshRefinementCriteria(I).Scale=0.01;
-CtrlVar.ExplicitMeshRefinementCriteria(I).EleMin=[];
-CtrlVar.ExplicitMeshRefinementCriteria(I).EleMax=[];
-CtrlVar.ExplicitMeshRefinementCriteria(I).p=[];
-CtrlVar.ExplicitMeshRefinementCriteria(I).InfoLevel=1;
-CtrlVar.ExplicitMeshRefinementCriteria(I).Use=false;
-
-
-
-%%
-UserVar.AddDataErrors=0;
 
 
 

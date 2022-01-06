@@ -29,7 +29,7 @@ UserVar.Region="-ThuleNS-" ;
 UserVar.Region="-IceShelf-" ;
 
 UserVar.CalvingLaw.Scale="-NV-"  ; 
-UserVar.CalvingLaw.Factor=1;  
+UserVar.CalvingLaw.Factor=2;  
 CtrlVar.CalvingLaw.Evaluation="-int-";
 UserVar.ElementSize=5e3; 
 UserVar.DefineOutputs="-ubvb-LSF-h-sbB-s-B-dhdt-save-";

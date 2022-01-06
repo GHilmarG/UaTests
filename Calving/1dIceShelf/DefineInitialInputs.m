@@ -4,11 +4,7 @@ function [UserVar,CtrlVar,MeshBoundaryCoordinates]=DefineInitialInputs(UserVar,C
 
 %%
 %
-%   23/03/3021: New test with a constant prescribed constant calving rate
-%
-%
-%
-%
+%   23/03/2021: New test with a constant prescribed constant calving rate
 %
 %%
 
@@ -36,24 +32,25 @@ if isempty(UserVar)
     UserVar.RunType="CFAa10000CFAb10000CFBa5000CFBb5000-RTinf-FAB0k0001-CFp2q4-CubicMF-CAisConstant-LevelSetWithMeltFeedback-1dIceShelf-";
     UserVar.RunType="CFAa10000CFAb2000CFBa5000CFBb500-RTinf-FAB0k0001-CFp2q4-CubicMF-CAisConstant-LevelSetWithMeltFeedback-1dIceShelf-";
     
-    UserVar.RunType="-RT1-FAB1-CFp2q2-1dAnalyticalIceShelf-CAisConstant-";
+    UserVar.RunType="-RTinf-FAB0k1-CFp2q2-1dAnalyticalIceShelf-CAisConstant-";
     
     CtrlVar.doplots=0;
     %UserVar.RunType="-TravellingFront-1dAnalyticalIceShelf-"; CtrlVar.doplots=0;
     
     CtrlVar.AdaptiveTimeStepping=1 ;
-    
- 
     CtrlVar.DefineOutputsDt=1;
 end
 
+if contains(UserVar.RunType,"-1dAnalyticalIceShelf-")
+    CtrlVar.FlowApproximation="uvhPrescribed" ;
+end
 
 UserVar.Plots="-plot-save-Calving1dIceShelf-plotcalving-";
 % UserVar.Plots="-save-";
 
 
-CtrlVar.dt=0.01;
-CtrlVar.TriNodes=6;
+CtrlVar.dt=0.1;
+CtrlVar.TriNodes=3;
 UserVar.InitialGeometry="-MismipPlus-" ;  % default)
 
 if contains(UserVar.RunType,"-1dAnalyticalIceShelf-")
@@ -69,23 +66,42 @@ else
 end
 
 
-CtrlVar.TotalTime=50;
+CtrlVar.TotalTime=5000;
 CtrlVar.TotalNumberOfForwardRunSteps=inf;
 CtrlVar.AdaptMeshMaxIterations=1;  % Number of adapt mesh iterations within each run-step.
 CtrlVar.doplots=1;
 
 
 
-
+%% Leve-set parameters
 CtrlVar.LevelSetMethod=1; CtrlVar.DevelopmentVersion=1;
-
+CtrlVar.LevelSetEvolution="-By solving the level set equation-"  ; % "-prescribed-",
+CtrlVar.LevelSetFixPointSolverApproach="-PTS-" ;   % Initial-fix point then pseudo-forward stepping if required
 
 CtrlVar.LevelSetInitialisationInterval=str2double(replace(extractBetween(UserVar.RunType,"-RT","-"),"k","."));
-CtrlVar.LevelSetFAB=str2double(replace(extractBetween(UserVar.RunType,"-FAB","-"),"k","."));
 CtrlVar.LevelSetFABCostFunction=extractBetween(UserVar.RunType,"-CF","-") ;
 
+CtrlVar.LevelSetFABmu.Scale="-ucl-" ; % "-constant-";
+CtrlVar.LevelSetFABmu.Value=str2double(replace(extractBetween(UserVar.RunType,"-FAB","-"),"k","."));
+
+CtrlVar.LevelSetMethodSolveOnAStrip=1;
+CtrlVar.LevelSetMethodStripWidth=25e3;
+
+CtrlVar.CalvingLaw.Evaluation="-int-";
+
+CtrlVar.LevelSetMethodMassBalanceFeedbackCoeffLin=-10; 
+CtrlVar.LevelSetMinIceThickness=CtrlVar.ThickMin+1;   
+
+%% Calving law
+
+UserVar.CalvingLaw.Scale="-NV-"    ; UserVar.CalvingLaw.Factor=1;  
+UserVar.CalvingLaw.Scale="-hqk-"   ; UserVar.CalvingLaw.Factor=1;  
+ 
+
+
+%%
 CtrlVar.DefineOutputsDt=1;  % because I'm testing
-CtrlVar.dt=1e-3;
+
 
 CtrlVar.ATSdtMin=1e-2;
 CtrlVar.TotalNumberOfForwardRunSteps=inf;
@@ -95,30 +111,21 @@ CtrlVar.AdaptMeshMaxIterations=20;  % Number of adapt mesh iterations within eac
 CtrlVar.AdaptMeshUntilChangeInNumberOfElementsLessThan=20;
 
 
-CAis=extractBetween(UserVar.RunType,"-CAis","-") ;
-if CAis=="Ana"
-    UserVar.Calving="Function of analytical thickness" ; % "Function of analytical thickness" ;
-elseif CAis=="Num"
-    UserVar.Calving="Function of numerical thickness";
-elseif CAis=="NumTau"
-    UserVar.Calving="Function of numerical tauxx";
-elseif CAis=="Constant"
-    UserVar.Calving="Constant calving rate";
-elseif CAis=="Zero"
-    UserVar.Calving="Zero calving rate";
-end
-
-
-
-
-
-
 
 
 CtrlVar.InfoLevelNonLinIt=1; CtrlVar.uvhMinimisationQuantity="Force Residuals";
 %%
+[~,hostname]=system('hostname') ;
+if contains(hostname,"DESKTOP-G5TCRTD")
+    UserVar.ResultsFileDirectory="F:\Runs\Calving\1dIceShelf\ResultsFiles\";
+elseif contains(hostname,"DESKTOP-BU2IHIR")
+    UserVar.ResultsFileDirectory="D:\Runs\Calving\1dIceShelf\ResultsFiles\";
+else
+    error("case not implemented")
+end
 
-UserVar.Outputsdirectory='ResultsFiles'; % This I use in DefineOutputs
+%%
+
 UserVar.MassBalanceCase='ice0';
 
 %%
@@ -231,13 +238,33 @@ MeshBoundaryCoordinates=[xu yr ; xu yl ; xd yl ; xd yr];
 
 
 %% Experiment and file name
+if CtrlVar.LevelSetMethod
+    CtrlVar.Experiment=UserVar.RunType...
+        +"-muScale"+CtrlVar.LevelSetFABmu.Scale+...
+        "-muValue"+num2str(CtrlVar.LevelSetFABmu.Value)...
+        +"-Ini"+num2str(CtrlVar.LevelSetInitialisationInterval)...
+        +"-PDist"+num2str(CtrlVar.LevelSetReinitializePDist)...
+        +"-AD"+num2str(CtrlVar.LevelSetMethodAutomaticallyDeactivateElements)...
+        +"Strip"+num2str(CtrlVar.LevelSetMethodSolveOnAStrip)...
+        +"SW="+num2str(CtrlVar.LevelSetMethodStripWidth)...
+        +"-"+UserVar.CalvingLaw.Scale...
+        +"="+sprintf("%+2.1f",UserVar.CalvingLaw.Factor)...
+        +"-"+CtrlVar.CalvingLaw.Evaluation...
+        +"dt="+num2str(CtrlVar.dt)...
+        +"T"+num2str(CtrlVar.TriNodes)...
+        +"-Adapt"+num2str(CtrlVar.AdaptMesh);
+else
+    CtrlVar.Experiment="NoCalving"+UserVar.Region ;
+end
 
-CtrlVar.Experiment="Ex"+UserVar.RunType+"-MB"+UserVar.MassBalanceCase+"-SUPG"+CtrlVar.uvh.SUPG.tau+"-Adapt"+num2str(CtrlVar.AdaptMesh);
 CtrlVar.Experiment=replace(CtrlVar.Experiment,"--","-");
+CtrlVar.Experiment=replace(CtrlVar.Experiment,"-+","+");
+CtrlVar.Experiment=replace(CtrlVar.Experiment,".","k");
+CtrlVar.Experiment=replace(CtrlVar.Experiment," ","");
+
 CtrlVar.NameOfRestartFiletoWrite="Restart"+CtrlVar.Experiment+".mat";
 CtrlVar.NameOfRestartFiletoRead=CtrlVar.NameOfRestartFiletoWrite;
 
-CtrlVar.NameOfRestartFiletoRead="RestartExCFAa10000CFAb2000CFBa5000CFBb500-RTinf-FAB0k01-CFp2q4-CubicMF-CAisNumTau-LevelSetWithMeltFeedback-1dIceShelf-MBice0-SUPGtaus-Adapt1" ;
 
 end
 
