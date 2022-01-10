@@ -1,4 +1,3 @@
-
 function [UserVar,CtrlVar,MeshBoundaryCoordinates]=DefineInitialInputs(UserVar,CtrlVar)
 
 
@@ -13,13 +12,14 @@ function [UserVar,CtrlVar,MeshBoundaryCoordinates]=DefineInitialInputs(UserVar,C
 
 %%
 %
-% CalvingJobDW30=batch('Ua')
+% close all ; job=batch("Ua","Pool",1)
 %%
 
 % UserVar.RunType="Test-1dAnalyticalIceShelf-";
 
 CtrlVar.LevelSetInfoLevel=1;
-
+CtrlVar.doplots=0;
+ 
 if isempty(UserVar)
     UserVar.RunType="-ManuallyDeactivateElements-ManuallyModifyThickness-";
     UserVar.RunType="-ManuallyModifyThickness-";
@@ -32,13 +32,13 @@ if isempty(UserVar)
     UserVar.RunType="CFAa10000CFAb10000CFBa5000CFBb5000-RTinf-FAB0k0001-CFp2q4-CubicMF-CAisConstant-LevelSetWithMeltFeedback-1dIceShelf-";
     UserVar.RunType="CFAa10000CFAb2000CFBa5000CFBb500-RTinf-FAB0k0001-CFp2q4-CubicMF-CAisConstant-LevelSetWithMeltFeedback-1dIceShelf-";
     
-    UserVar.RunType="-RTinf-FAB0k1-CFp2q2-1dAnalyticalIceShelf-CAisConstant-";
-    
-    CtrlVar.doplots=0;
+    UserVar.RunType="-RT1-RMgeo-FAB0k1-CFp2q2-1dAnalyticalIceShelf-CAisConstant-";
+    UserVar.MeshSize=10e3 ; UserVar.TriNodes=10;
+  
     %UserVar.RunType="-TravellingFront-1dAnalyticalIceShelf-"; CtrlVar.doplots=0;
     
     CtrlVar.AdaptiveTimeStepping=1 ;
-    CtrlVar.DefineOutputsDt=1;
+    
 end
 
 if contains(UserVar.RunType,"-1dAnalyticalIceShelf-")
@@ -46,11 +46,11 @@ if contains(UserVar.RunType,"-1dAnalyticalIceShelf-")
 end
 
 UserVar.Plots="-plot-save-Calving1dIceShelf-plotcalving-";
-% UserVar.Plots="-save-";
+UserVar.Plots="-save-";
 
 
 CtrlVar.dt=0.1;
-CtrlVar.TriNodes=3;
+CtrlVar.TriNodes=UserVar.TriNodes ; 
 UserVar.InitialGeometry="-MismipPlus-" ;  % default)
 
 if contains(UserVar.RunType,"-1dAnalyticalIceShelf-")
@@ -58,18 +58,14 @@ if contains(UserVar.RunType,"-1dAnalyticalIceShelf-")
 end
 
 CtrlVar.Restart=0;
-
-if CtrlVar.Restart
-    CtrlVar.AdaptMesh=0;  % trying to speed things up by having not adapt in a restart
-else
-    CtrlVar.AdaptMesh=1;
-end
+CtrlVar.AdaptMesh=1;
 
 
-CtrlVar.TotalTime=5000;
+
+CtrlVar.TotalTime=10000;
 CtrlVar.TotalNumberOfForwardRunSteps=inf;
 CtrlVar.AdaptMeshMaxIterations=1;  % Number of adapt mesh iterations within each run-step.
-CtrlVar.doplots=1;
+
 
 
 
@@ -79,9 +75,15 @@ CtrlVar.LevelSetEvolution="-By solving the level set equation-"  ; % "-prescribe
 CtrlVar.LevelSetFixPointSolverApproach="-PTS-" ;   % Initial-fix point then pseudo-forward stepping if required
 
 CtrlVar.LevelSetInitialisationInterval=str2double(replace(extractBetween(UserVar.RunType,"-RT","-"),"k","."));
+if contains(UserVar.RunType,"RMgeo")
+    CtrlVar.LevelSetInitialisationMethod="geometric" ;
+else
+    CtrlVar.LevelSetInitialisationMethod="FAB" ;
+end
+
 CtrlVar.LevelSetFABCostFunction=extractBetween(UserVar.RunType,"-CF","-") ;
 
-CtrlVar.LevelSetFABmu.Scale="-ucl-" ; % "-constant-";
+CtrlVar.LevelSetFABmu.Scale="-u-cl-" ; % "-constant-";
 CtrlVar.LevelSetFABmu.Value=str2double(replace(extractBetween(UserVar.RunType,"-FAB","-"),"k","."));
 
 CtrlVar.LevelSetMethodSolveOnAStrip=1;
@@ -100,7 +102,7 @@ UserVar.CalvingLaw.Scale="-hqk-"   ; UserVar.CalvingLaw.Factor=1;
 
 
 %%
-CtrlVar.DefineOutputsDt=1;  % because I'm testing
+CtrlVar.DefineOutputsDt=10;  % because I'm testing
 
 
 CtrlVar.ATSdtMin=1e-2;
@@ -160,22 +162,12 @@ CtrlVar.PlotXYscale=1000;
 
 
 CtrlVar.MeshGenerator='mesh2d'   ;   % 'gmsh';  % possible values: {mesh2d|gmsh}
-CtrlVar.GmshMeshingAlgorithm=8;     % see gmsh manual
-% 1=MeshAdapt
-% 2=Automatic
-% 5=Delaunay
-% 6=Frontal
-% 7=bamg
-% 8=DelQuad (experimental)
-% very coarse mesh resolution
-CtrlVar.MeshSize=10e3;       % over-all desired element size
-CtrlVar.MeshSizeMax=10e3;    % max element size
+
+CtrlVar.MeshSize=UserVar.MeshSize; 
+CtrlVar.MeshSizeMax=UserVar.MeshSize;  % max element size
 CtrlVar.MeshSizeMin=0.01*CtrlVar.MeshSize;     % min element size
 
-% reasonably fine mesh resolution
-%CtrlVar.MeshSize=8e3;       % over-all desired element size
-%CtrlVar.MeshSizeMax=8e3;    % max element size
-%CtrlVar.MeshSizeMin=200;    % min element size
+
 
 CtrlVar.MaxNumberOfElements=250e3;           % max number of elements. If #elements larger then CtrlMeshSize/min/max are changed
 
@@ -239,19 +231,22 @@ MeshBoundaryCoordinates=[xu yr ; xu yl ; xd yl ; xd yr];
 
 %% Experiment and file name
 if CtrlVar.LevelSetMethod
-    CtrlVar.Experiment=UserVar.RunType...
-        +"-muScale"+CtrlVar.LevelSetFABmu.Scale+...
-        "-muValue"+num2str(CtrlVar.LevelSetFABmu.Value)...
+    CtrlVar.Experiment=...
+        CtrlVar.FlowApproximation...
+        +"-muScale"+CtrlVar.LevelSetFABmu.Scale...
+        +"-muValue"+num2str(CtrlVar.LevelSetFABmu.Value)...
+        +"-"+CtrlVar.LevelSetInitialisationMethod...
         +"-Ini"+num2str(CtrlVar.LevelSetInitialisationInterval)...
         +"-PDist"+num2str(CtrlVar.LevelSetReinitializePDist)...
         +"-AD"+num2str(CtrlVar.LevelSetMethodAutomaticallyDeactivateElements)...
-        +"Strip"+num2str(CtrlVar.LevelSetMethodSolveOnAStrip)...
-        +"SW="+num2str(CtrlVar.LevelSetMethodStripWidth)...
+        +"-Strip"+num2str(CtrlVar.LevelSetMethodSolveOnAStrip)...
+        +"-SW="+num2str(CtrlVar.LevelSetMethodStripWidth)...
         +"-"+UserVar.CalvingLaw.Scale...
         +"="+sprintf("%+2.1f",UserVar.CalvingLaw.Factor)...
         +"-"+CtrlVar.CalvingLaw.Evaluation...
-        +"dt="+num2str(CtrlVar.dt)...
-        +"T"+num2str(CtrlVar.TriNodes)...
+        +"-dt="+num2str(CtrlVar.dt)...
+        +"-MS="+num2str(CtrlVar.MeshSize/1000)+"km"...
+        +"-T"+num2str(CtrlVar.TriNodes)...
         +"-Adapt"+num2str(CtrlVar.AdaptMesh);
 else
     CtrlVar.Experiment="NoCalving"+UserVar.Region ;

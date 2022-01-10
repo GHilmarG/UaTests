@@ -374,6 +374,28 @@ if contains(plots,'-h-')
     %%
 end
 %%
+
+
+if contains(plots,'-dhdt-')
+    %%
+    FindOrCreateFigure("-dh/dt-");
+    PlotMeshScalarVariable(CtrlVar,MUA,F.dhdt);
+    hold on
+
+    [xGL,yGL,GLgeo]=PlotGroundingLines(CtrlVar,MUA,F.GF,GLgeo,xGL,yGL,"color","r");
+    [xc,yc]=PlotCalvingFronts(CtrlVar,MUA,F,color="w",LineWidth=2);
+    I=F.h<=CtrlVar.ThickMin;
+    plot(MUA.coordinates(I,1)/CtrlVar.PlotXYscale,MUA.coordinates(I,2)/CtrlVar.PlotXYscale,'.r')
+    title(sprintf('dh/dt t=%-g ',CtrlVar.time)) ; xlabel('x (km)') ; ylabel('y (km)') ; title(colorbar,'(m/yr)')
+    axis equal
+    %%
+end
+%%
+
+
+
+
+
 if contains(plots,'-stresses-')
 
     figure

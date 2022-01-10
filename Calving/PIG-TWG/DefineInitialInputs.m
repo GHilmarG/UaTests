@@ -17,6 +17,9 @@ if isempty(UserVar) || ~isfield(UserVar,'RunType')
     UserVar.RunType='Forward-Transient-Initialisation' ;
     UserVar.RunType='-FT-I-' ;  % 'Forward-Transient-Initialisation' ;
     UserVar.RunType='-FT-C-I-' ;  % 'Forward-Transient-Initialisation' ;
+
+    UserVar.RunType='-FT-C-I-P-DTW-' ;  % 'Forward-Transient-Initialisation-PrescribedSLF-DeactivateThwaitesGlacierIceShelf
+
     % UserVar.RunType='GenerateMesh' ;
     % UserVar.RunType='Inverse-UaOpt';meshb    % UserVar.RunType='Forward-Transient';
 
@@ -45,7 +48,7 @@ UserVar.CalvingLaw.String=UserVar.CalvingLaw.Scale+num2str(UserVar.CalvingLaw.Fa
 
 
 UserVar.Experiment=UserVar.CalvingLaw ; 
-UserVar.DefineOutputs="-ubvb-LSF-h-save-"; % '-ubvb-LSF-h-save-';
+UserVar.DefineOutputs="-ubvb-LSF-h-dhdt-save-"; % '-ubvb-LSF-h-save-';
 
 [~,hostname]=system('hostname') ;
 
@@ -84,10 +87,16 @@ UserVar.DistanceBetweenPointsAlongBoundary=5e3 ;
 
 
 
-%%
+%%  Level-set parameters
 
 CtrlVar.LevelSetMethod=1;
-CtrlVar.LevelSetEvolution="-By solving the level set equation-"   ; % "-prescribed-", 
+
+if contains(UserVar.RunType,"-P-")
+    CtrlVar.LevelSetEvolution="-Prescribed-"   ; % "-prescribed-",
+else
+    CtrlVar.LevelSetEvolution="-By solving the level set equation-"   ; % "-prescribed-",
+end
+
 CtrlVar.LevelSetInitialisationInterval=Inf ; CtrlVar.LevelSetReinitializePDist=true ; 
 CtrlVar.LevelSetFixPointSolverApproach="-PTS-" ;   % pseudo forward stepping
 CtrlVar.LevelSetPseudoFixPointSolverTolerance=100;
@@ -95,6 +104,10 @@ CtrlVar.LevelSetPseudoFixPointSolverMaxIterations=100;
 CtrlVar.DevelopmentVersion=true; 
 CtrlVar.LevelSetFABmu.Scale="-ucl-" ; % "-constant-"; 
 CtrlVar.LevelSetFABmu.Value=0.1;
+
+CtrlVar.LevelSetMethodSolveOnAStrip=1; CtrlVar.LevelSetMethodStripWidth=150e3;
+
+
 CtrlVar.LevelSetInfoLevel=1 ; 
 CtrlVar.MeshAdapt.CFrange=[20e3 5e3 ; 10e3 2e3] ; % This refines the mesh around the calving front, but must set
 
@@ -102,7 +115,7 @@ CtrlVar.MeshAdapt.CFrange=[20e3 5e3 ; 10e3 2e3] ; % This refines the mesh around
 % The melt is decribed as a= a_1 (h-hmin)
 CtrlVar.LevelSetMethodMassBalanceFeedbackCoeffLin=-10;  % This is the constant a1, it has units 1/time.
 % Default value is -1
-
+CtrlVar.ThickMin=1;
 CtrlVar.LevelSetMinIceThickness=CtrlVar.ThickMin+1;    % this is the hmin constant, i.e. the accepted min ice thickness
 % over the 'ice-free' areas.
 % Default value is CtrlVar.ThickMin+1
@@ -208,7 +221,7 @@ switch UserVar.RunType
         % ----------------------- ]end, testing adjoint parameters.
         
         
-    case {"FT-I","FT-C","-FT-C-I-"}
+    case {"FT-I","FT-C","-FT-C-I-","-FT-C-I-P-DTW-"}
 
         CtrlVar.InverseRun=0;
         CtrlVar.TimeDependentRun=1;
@@ -327,7 +340,7 @@ CtrlVar.AdaptMeshRunStepInterval=1 ; % remesh whenever mod(Itime,CtrlVar.AdaptMe
 %%
 CtrlVar.ThicknessConstraints=0;
 CtrlVar.ResetThicknessToMinThickness=1;  % change this later on
-CtrlVar.ThickMin=5;
+
 
 %%
 if batchStartupOptionUsed
@@ -348,7 +361,8 @@ CtrlVar.Experiment= ...
     +CtrlVar.LevelSetFABmu.Scale....
     +"-mu"+num2str(CtrlVar.LevelSetFABmu.Value)...
     +"-Ini"+num2str(CtrlVar.LevelSetInitialisationInterval)...
-    +"-PDist"+num2str(CtrlVar.LevelSetReinitializePDist)...
+    +"Strip"+num2str(CtrlVar.LevelSetMethodSolveOnAStrip)...
+    +"SW="+num2str(CtrlVar.LevelSetMethodStripWidth)...
     +UserVar.CalvingLaw.String...
     +"-"+UserVar.Region...
     +"-"+CtrlVar.ReadInitialMeshFileName;

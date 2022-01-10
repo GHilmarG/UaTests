@@ -86,7 +86,7 @@ if ~isInitialized
             % plot(F.x(~io)/1000,F.y(~io)/1000,'or')
     end
 
-    [xc,yc,LSF]=CalvingFrontLevelSetGeometricalInitialisation(CtrlVar,MUA,Xc,Yc,LSF,plot=true);
+    [xc,yc,LSF]=CalvingFrontLevelSetGeometricalInitialisation(CtrlVar,MUA,Xc,Yc,LSF,plot=false);
 
     %[xC,yC]=CalcMuaFieldsContourLine(CtrlVar,MUA,LSF,0);
     %[LSF,UserVar]=SignedDistUpdate(UserVar,[],CtrlVar,MUA,LSF,xC,yC);
@@ -132,11 +132,11 @@ else
             v=CR*F.vb ;
             [c,cx,cy]=IceVelocity2CalvingRate(CtrlVar,MUA,F,LSF,u,v) ;
 
-            FindOrCreateFigure("calving velocity")
-            QuiverColorGHG(F.x,F.y,cx,cy,CtrlVar) ;
-            hold on
-            [xc,yc]=PlotCalvingFronts(CtrlVar,MUA,F,'b',LineWidth=1);
-            PlotGroundingLines(CtrlVar,MUA,F.GF,[],[],[],'color','r','LineWidth',1);
+%             FindOrCreateFigure("calving velocity")
+%             QuiverColorGHG(F.x,F.y,cx,cy,CtrlVar) ;
+%             hold on
+%             [xc,yc]=PlotCalvingFronts(CtrlVar,MUA,F,'b',LineWidth=1);
+%             PlotGroundingLines(CtrlVar,MUA,F.GF,[],[],[],'color','r','LineWidth',1);
 
         case "IceThickness"
 

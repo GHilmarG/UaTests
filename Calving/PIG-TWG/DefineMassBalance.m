@@ -27,7 +27,7 @@ if contains(UserVar.RunType,"-I-")
             && CurrentRunStepNumber~=CtrlVar.CurrentRunStepNumber % not if already applied to the current run step
 
             da=dhdtMeasured-F.dhdt ;
-            norm(da)
+            fprintf("DefineMassBalance: norm(dhdtMeasured-F.dhdt)=%f \n ",norm(da))
             CurrentRunStepNumber=CtrlVar.CurrentRunStepNumber ;
         else
             da=0;

@@ -311,7 +311,7 @@ end
                     p=-2 ;
                     k=86320694.4400036;
                     dt=0.1;  % this is my rough dt for simple explicit integration
-                    tMax=1000 ;
+                    tMax=10000 ;
                     N=floor(tMax/dt);
                     xcAna=NaN(N,1) ;
                     tAna=NaN(N,1);
