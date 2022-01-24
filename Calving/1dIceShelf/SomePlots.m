@@ -50,35 +50,54 @@ isCollect=1;
 
 if isCollect
 
-               
-    SubString="uvhPrescribed-muScale-u-cl-muValue0k1-geometric-Ini1-PDist1-AD0-Strip1-SW=25000-hqk-=+1k0-int-dt=0k1-MS=10km-T3-Adapt1";  Text(1)=" (T3-10km)";
-    D{1}=ReadPlotSequenceOfResultFiles("FileNameSubstring",SubString,"PlotType","-collect-","PlotTimestep",10);
 
-    SubString="uvhPrescribed-muScale-u-cl-muValue0k1-geometric-Ini1-PDist1-AD0-Strip1-SW=25000-hqk-=+1k0-int-dt=0k1-MS=10km-T6-Adapt1";     Text(2)=" (T6-10km)";
-    D{2}=ReadPlotSequenceOfResultFiles("FileNameSubstring",SubString,"PlotType","-collect-","PlotTimestep",10);
+    IRange=[1 2 3];  % p-refinement
 
-    SubString="uvhPrescribed-muScale-u-cl-muValue0k1-geometric-Ini1-PDist1-AD0-Strip1-SW=25000-hqk-=+1k0-int-dt=0k1-MS=10km-T10-Adapt1";     Text(3)=" (T10-10km)";
-    D{3}=ReadPlotSequenceOfResultFiles("FileNameSubstring",SubString,"PlotType","-collect-","PlotTimestep",10);
+    IRange=[1 4 7];  % h-refinement
 
-    SubString="uvhPrescribed-muScale-u-cl-muValue0k1-geometric-Ini1-PDist1-AD0-Strip1-SW=25000-hqk-=+1k0-int-dt=0k1-MS=5km-T3-Adapt1";     Text(4)=" (T3-5km)";
-    D{4}=ReadPlotSequenceOfResultFiles("FileNameSubstring",SubString,"PlotType","-collect-","PlotTimestep",10);
+    IRange=[3 6];  % h-refinement
 
-    SubString="uvhPrescribed-muScale-u-cl-muValue0k1-geometric-Ini1-PDist1-AD0-Strip1-SW=25000-hqk-=+1k0-int-dt=0k1-MS=2km-T3-Adapt1";     Text(5)=" (T3-2km)";
-    D{5}=ReadPlotSequenceOfResultFiles("FileNameSubstring",SubString,"PlotType","-collect-","PlotTimestep",10);
+    IRange=[1 11 12];
 
-  %  SubString="uvhPrescribed-muScale-ucl-muValue0k1-IniInf-PDist1-AD0-Strip1-SW=25000-hqk-=+1k0-int-dt=0k1-MS=1km-T3-Adapt1";     Text(6)=" (T3-1km)";
-  %  D{6}=ReadPlotSequenceOfResultFiles("FileNameSubstring",SubString,"PlotType","-collect-","PlotTimestep",10);
+    SubString(1)="uvhPrescribed-muScale-u-cl-muValue0k1-geometric-Ini1-PDist1-AD0-Strip1-SW=25000-hqk-=+1k0-int-dt=0k1-MS=10km-T3-Adapt1";     Text(1)=" (T3-10km-I1)";
+    SubString(2)="uvhPrescribed-muScale-u-cl-muValue0k1-geometric-Ini1-PDist1-AD0-Strip1-SW=25000-hqk-=+1k0-int-dt=0k1-MS=10km-T6-Adapt1";     Text(2)=" (T6-10km)";
+    SubString(3)="uvhPrescribed-muScale-u-cl-muValue0k1-geometric-Ini1-PDist1-AD0-Strip1-SW=25000-hqk-=+1k0-int-dt=0k1-MS=10km-T10-Adapt1";    Text(3)=" (T10-10km)";
+    SubString(4)="uvhPrescribed-muScale-u-cl-muValue0k1-geometric-Ini1-PDist1-AD0-Strip1-SW=25000-hqk-=+1k0-int-dt=0k1-MS=5km-T3-Adapt1";      Text(4)=" (T3-5km)";
+    SubString(5)="uvhPrescribed-muScale-u-cl-muValue0k1-geometric-Ini1-PDist1-AD0-Strip1-SW=25000-hqk-=+1k0-int-dt=0k1-MS=5km-T6-Adapt1";      Text(5)=" (T6-5km)"; 
+    SubString(6)="uvhPrescribed-muScale-u-cl-muValue0k1-geometric-Ini1-PDist1-AD0-Strip1-SW=25000-hqk-=+1k0-int-dt=0k1-MS=5km-T10-Adapt1";     Text(6)=" (T10-5km)"; 
+    SubString(7)="uvhPrescribed-muScale-u-cl-muValue0k1-geometric-Ini1-PDist1-AD0-Strip1-SW=25000-hqk-=+1k0-int-dt=0k1-MS=2km-T3-Adapt1";      Text(7)=" (T3-2km)";
+    SubString(8)="uvhPrescribed-muScale-u-cl-muValue0k1-geometric-Ini1-PDist1-AD0-Strip1-SW=25000-hqk-=+1k0-int-dt=0k1-MS=1km-T3-Adapt1";      Text(8)=" (T3-1km)";
+    SubString(9)="uvhPrescribed-muScale-u-cl-muValue0k1-geometric-Ini1-PDist1-AD0-Strip1-SW=25000-hqk-=+1k0-int-dt=0k1-MS=2km-T10-Adapt1";     Text(9)=" (T10-2km)"; 
+    SubString(10)="uvhPrescribed-muScale-u-cl-muValue0k1-geometric-Ini1-PDist1-AD0-Strip1-SW=25000-hqk-=+1k0-int-dt=0k1-MS=2km-T6-Adapt1";     Text(10)=" (T6-2km)"; 
 
-    IRange=[1 2 3 4 5];
+    SubString(11)="uvhPrescribed-muScale-u-cl-muValue0k1-geometric-Ini10-PDist1-AD0-Strip1-SW=25000-hqk-=+1k0-int-dt=0k1-MS=10km-T3-Adapt1";     Text(11)=" (T3-10km-I10)"; 
+    SubString(12)="uvhPrescribed-muScale-u-cl-muValue0k1-geometric-Ini100-PDist1-AD0-Strip1-SW=25000-hqk-=+1k0-int-dt=0k1-MS=10km-T3-Adapt1";     Text(12)=" (T3-10km-I100)"; 
+ 
+
+    for I=IRange
+        D{I}=ReadPlotSequenceOfResultFiles("FileNameSubstring",SubString(I),"PlotType","-collect-","PlotTimestep",10);
+    end
+
+    %     D{1}=ReadPlotSequenceOfResultFiles("FileNameSubstring",SubString,"PlotType","-collect-","PlotTimestep",10);
+    %     D{2}=ReadPlotSequenceOfResultFiles("FileNameSubstring",SubString,"PlotType","-collect-","PlotTimestep",10);
+    %     D{3}=ReadPlotSequenceOfResultFiles("FileNameSubstring",SubString,"PlotType","-collect-","PlotTimestep",10);
+    %     D{5}=ReadPlotSequenceOfResultFiles("FileNameSubstring",SubString,"PlotType","-collect-","PlotTimestep",10);
+    %     D{6}=ReadPlotSequenceOfResultFiles("FileNameSubstring",SubString,"PlotType","-collect-","PlotTimestep",10);
+    %     D{7}=ReadPlotSequenceOfResultFiles("FileNameSubstring",SubString,"PlotType","-collect-","PlotTimestep",10);
+    %
+    %
+    %
 
     %%
 
 else
 
     % Create a video of one run
-    SubString="uvhPrescribed-muScale-ucl-muValue0k1-IniInf-PDist1-AD0-Strip1-SW=25000-hqk-=+1k0-int-dt=0k1-MS=5km-T3-Adapt1";     Text(4)=" (T3-5km)";
+    
+    SubString="uvhPrescribed-muScale-u-cl-muValue0k1-geometric-Ini1-PDist1-AD0-Strip1-SW=25000-hqk-=+1k0-int-dt=0k1-MS=5km-T10-Adapt1";     Text=" (T10-5km)"; % problem
     VideoFileName="Video-Circular"+SubString ;
     ReadPlotSequenceOfResultFiles(FileNameSubstring=SubString,PlotTimestep=100,VideoFileName="Video-1dAna-",PlotType="-1dIceShelf-") 
+    % ReadPlotSequenceOfResultFiles(FileNameSubstring=SubString,PlotTimestep=100,VideoFileName="Video-1dAna-",PlotType="-Level Set-") 
     return
 
 end
@@ -90,7 +109,7 @@ end
 p=-2 ; 
 k=86320694.4400036;
 dt=0.1;  % this is my rough dt for simple explicit integration
-tMax=max(D{1}.time);
+
 
 
 tMax=10000 ; 
@@ -118,20 +137,36 @@ while t(n)<=tMax
 end
 xcAna(xcAna<0)=NaN; 
 
+%% Norm estimates
+ii=0;
+for I=IRange
+   xcAnalytical = interp1(t,xcAna,D{I}.time,'spline');
+   ii=ii+1;
+   N(ii)=norm(D{I}.xcMean-xcAnalytical)/sqrt(numel(xcAnalytical));
+
+end
+fig=FindOrCreateFigure("Norm") ;  clf(fig) 
+loglog(N)
+%%
 fig=FindOrCreateFigure("Compare") ;  clf(fig) ; 
 
 plot(t,xcAna/1000,'k',LineWidth=2,DisplayName="Analytical")
 hold on; 
 
 col=["b","r","g","c","m"] ;
+sym=["o","+","x","s","h"] ;
+
 k=0;
 for I=IRange
-    I
+    
     k=k+1;
     Data=D{I};
-    plot(D{I}.time,D{I}.xcMean/1000,'--o',Color=col(k), DisplayName="Numerical"+Text(I))
+    plot(D{I}.time,D{I}.xcMean/1000,'-',Color=col(k),DisplayName="Numerical"+Text(I))
     hold on
 end
+plot(xlim,xlim*0+100,'-k',DisplayName="")
+leg=legend(Interpreter="latex") ; 
+leg.String(end:end)=[] ; 
 
 xlabel('$t$ (yr)','interpreter','latex')
 ylabel('$x_c$ (km)','interpreter','latex')
@@ -147,18 +182,19 @@ for I=IRange
 end
 
 
-ylabel('$x_c$ analytical-numerical  (km)','interpreter','latex')
+ylabel('$\Delta x_c$, Numerical-Analytical  (km)','interpreter','latex')
 
-plot(xlim,xlim*0,'-r',DisplayName="")
+plot(xlim,xlim*0,'-m',DisplayName="")
 
-leg=legend(Interpreter="latex") ; 
-leg.String(end)=[] ; 
+
+
+leg.String(end:end)=[] ; 
 
 
 ax = gca;
 ax.YAxis(1).Color = 'k';
-ax.YAxis(2).Color = 'k';
-
+ax.YAxis(2).Color = 'm';
+%%
 cd(CurDir)
 
 % exportgraphics(gca,ResultsFile+"-t"+num2str(round(CtrlVar.time))+".pdf") ;

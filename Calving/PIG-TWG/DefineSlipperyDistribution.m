@@ -51,14 +51,15 @@ else
     
     if isempty(FC)
         
-        if isfile(UserVar.CFile)
-            fprintf('DefineSlipperyDistribution: loading file: %-s ',UserVar.CFile)
+        if isfile(UserVar.CFile)  || isfile(UserVar.CFile+".mat")
+            fprintf('DefineSlipperyDistribution: loading file: %-s \n',UserVar.CFile)
             load(UserVar.CFile,'FC')
             fprintf(' done \n')
         else
+            error("DefineSlipperyDistribution:FileNotFound","Required input file not found")
             % create a FC file
-            load('C-Estimate.mat','C','xC','yC')
-            FC=scatteredInterpolant(xC,yC,C); 
+            %load('C-Estimate.mat','C','xC','yC')
+            %FC=scatteredInterpolant(xC,yC,C); 
            % save(UserVar.CFile,'FC')
         end
     end

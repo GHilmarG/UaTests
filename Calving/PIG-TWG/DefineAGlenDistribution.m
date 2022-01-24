@@ -14,16 +14,16 @@ else
     
     if isempty(FA)
         
-        if isfile(UserVar.AFile)
+        if isfile(UserVar.AFile) || isfile(UserVar.AFile+".mat")
             
-            fprintf('DefineSlipperyDistribution: loading file: %-s ',UserVar.AFile)
+            fprintf('DefineSlipperyDistribution: loading file: %-s \n',UserVar.AFile)
             load(UserVar.AFile,'FA')
             fprintf(' done \n')
             
         else
-            
-            load('AGlen-Estimate.mat','AGlen','xA','yA')
-            FA=scatteredInterpolant(xA,yA,AGlen);
+            error("DefineAGlenDistribution:FileNotFound","Required input file not found")
+            %load('AGlen-Estimate.mat','AGlen','xA','yA')
+            %FA=scatteredInterpolant(xA,yA,AGlen);
             % save(UserVar.AFile,'FA')
             
         end

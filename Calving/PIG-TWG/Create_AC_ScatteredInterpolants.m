@@ -31,7 +31,7 @@ load('InvEstimate-AWeertman-PIG-TWG10km.mat')
 FA=scatteredInterpolant(xA,yA,AGlen); 
 save('FA-Weertman-PIG-TWG-10km.mat','FA')
 
-
+      
 load('InvEstimate-CWeertman-PIG-TWG20km.mat')
 FC=scatteredInterpolant(xC,yC,C); 
 save('FC-Weertman-PIG-TWG-20km.mat','FC')

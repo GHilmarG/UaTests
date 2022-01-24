@@ -15,8 +15,6 @@ end
 
 
 
-
-
 %%
 if ~isfield(UserVar,'DefineOutputs')
 
@@ -74,7 +72,7 @@ end
 
 if contains(plots,'-LSF-')
 
-    FindOrCreateFigure("LSF") ;
+    fig= FindOrCreateFigure("LSF") ; clf(fig) ;
     [~,cbar]=PlotMeshScalarVariable(CtrlVar,MUA,F.LSF/1000);
     title(sprintf('LSF at t=%g (yr)',CtrlVar.time)) ;
     hold on
@@ -82,10 +80,11 @@ if contains(plots,'-LSF-')
     [xc,yc]=PlotCalvingFronts(CtrlVar,MUA,F,'b',LineWidth=2);
     title(cbar,"(km)")
     axis tight
+    ModifyColormap(0,1028);
     hold off
 
 
-    FindOrCreateFigure("Calving Rate") ;
+    fig= FindOrCreateFigure("Calving Rate")  ;  clf(fig) ;
     [~,cbar]=PlotMeshScalarVariable(CtrlVar,MUA,F.c/1000);  % km/yr
     title(sprintf('Calving Rate at t=%g (yr)',CtrlVar.time)) ;
     hold on
@@ -124,28 +123,22 @@ if contains(plots,'-LSF-')
             ccf=xc+NaN;
         end
 
-        speed=sqrt(F.ub.*F.ub+F.vb.*F.vb) ; 
+        speed=sqrt(F.ub.*F.ub+F.vb.*F.vb) ;
         Fspeed=scatteredInterpolant(F.x,F.y,speed);
-        ucf=Fspeed(xc,yc) ; 
+        ucf=Fspeed(xc,yc) ;
 
         if  ~isempty(F.c) && numel(xc)==numel(fcf)   && numel(xc)==numel(ccf)  && numel(xc)==numel(yc)
 
-            FindOrCreateFigure("Cliff height along calving fronts") ;
+            fig=FindOrCreateFigure("Cliff height along calving fronts") ; clf(fig) ;
             plot3([xc xc]'/1000,[yc yc]'/1000,[fcf*0 fcf]','or-') ; axis equal  ; title("cliff heigh (m)")
 
-            FindOrCreateFigure("Calving rate along calving fronts") ;
+            fig=FindOrCreateFigure("Calving rate along calving fronts") ; clf(fig) ;
             plot3([xc xc]'/1000,[yc yc]'/1000,[ccf*0 ccf]','or-') ; daspect([1 1 200]) ; title("calving rate (m/yr)")
 
-            FindOrCreateFigure("ice speed along calving fronts") ;
+            fig=FindOrCreateFigure("ice speed along calving fronts") ; clf(fig) ;
             plot3([xc xc]'/1000,[yc yc]'/1000,[ucf*0 ucf]','or-') ; daspect([1 1 200]) ; title("ice speed (m/yr)")
 
 
-            if isfield(UserVar,"CalvingRateExtrapolatedValues")
-                crE=UserVar.CalvingRateExtrapolatedValues;
-
-                FindOrCreateFigure("Calving Rate Extrapolated") ;
-                plot3([xc xc]'/1000,[yc yc]'/1000,[crE*0 crE]','or-') ; daspect([1 1 200]) ; title("calving rate (m/yr)")
-            end
         else
             fprintf("not the same number of elements in xc and cr or ch \n")
 
@@ -358,7 +351,8 @@ end
 
 if contains(plots,'-h-')
     %%
-    FindOrCreateFigure("Ice thickness");
+    fig=FindOrCreateFigure("Ice thickness");  clf(fig) ;
+
     PlotMeshScalarVariable(CtrlVar,MUA,F.h);
     hold on
 
@@ -378,10 +372,10 @@ end
 
 if contains(plots,'-dhdt-')
     %%
-    FindOrCreateFigure("-dh/dt-");
+    fig=FindOrCreateFigure("-dh/dt-"); clf(fig) ;
     PlotMeshScalarVariable(CtrlVar,MUA,F.dhdt);
     hold on
-
+    ModifyColormap(0,1028);
     [xGL,yGL,GLgeo]=PlotGroundingLines(CtrlVar,MUA,F.GF,GLgeo,xGL,yGL,"color","r");
     [xc,yc]=PlotCalvingFronts(CtrlVar,MUA,F,color="w",LineWidth=2);
     I=F.h<=CtrlVar.ThickMin;
@@ -393,6 +387,22 @@ end
 %%
 
 
+if contains(plots,'-speed-')
+    %%
+    speed=sqrt(F.ub.*F.ub+F.vb.*F.vb) ; 
+    fig=FindOrCreateFigure("-speed-"); clf(fig) ;
+    [~,cbar]=PlotMeshScalarVariable(CtrlVar,MUA,speed);
+    hold on
+
+    [xGL,yGL,GLgeo]=PlotGroundingLines(CtrlVar,MUA,F.GF,GLgeo,xGL,yGL,"color","r");
+    [xc,yc]=PlotCalvingFronts(CtrlVar,MUA,F,color="w",LineWidth=2);
+    %caxis([0 3000]);
+    ModifyColormap(0,1028);
+    title(cbar,"(m/yr)");
+    title(sprintf('speed t=%-g ',CtrlVar.time)) ; xlabel('x (km)') ; ylabel('y (km)') ; title(colorbar,'(m/yr)')
+    axis equal
+    %%
+end
 
 
 

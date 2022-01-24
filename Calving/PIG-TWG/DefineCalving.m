@@ -47,16 +47,16 @@ function [UserVar,LSF,c]=DefineCalving(UserVar,CtrlVar,MUA,F,BCs)
 
 % LSF=F.LSF  ; %
 
-persistent nCalls isInitialized
+persistent isInitialized
 
-
-
-if isempty(isInitialized)
+if isempty(isInitialized) && ~CtrlVar.Restart
     isInitialized=false;
-    nCalls=0;
 else
-    nCalls=nCalls+1;
+    isInitialized=true;
 end
+
+
+
 
 %[ValuesB,FA]=ExtrapolateFromNodesAtoNodesB(CtrlVar,xA,yA,ValuesA,xB,yB);
 

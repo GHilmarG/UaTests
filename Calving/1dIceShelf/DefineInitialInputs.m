@@ -32,8 +32,8 @@ if isempty(UserVar)
     UserVar.RunType="CFAa10000CFAb10000CFBa5000CFBb5000-RTinf-FAB0k0001-CFp2q4-CubicMF-CAisConstant-LevelSetWithMeltFeedback-1dIceShelf-";
     UserVar.RunType="CFAa10000CFAb2000CFBa5000CFBb500-RTinf-FAB0k0001-CFp2q4-CubicMF-CAisConstant-LevelSetWithMeltFeedback-1dIceShelf-";
     
-    UserVar.RunType="-RT1-RMgeo-FAB0k1-CFp2q2-1dAnalyticalIceShelf-CAisConstant-";
-    UserVar.MeshSize=10e3 ; UserVar.TriNodes=10;
+    UserVar.RunType="-RT100-RMgeo-FAB0k1-CFp2q2-1dAnalyticalIceShelf-CAisConstant-";
+    UserVar.MeshSize=10e3 ; UserVar.TriNodes=3;
   
     %UserVar.RunType="-TravellingFront-1dAnalyticalIceShelf-"; CtrlVar.doplots=0;
     
@@ -69,7 +69,7 @@ CtrlVar.AdaptMeshMaxIterations=1;  % Number of adapt mesh iterations within each
 
 
 
-%% Leve-set parameters
+%% Level-set parameters
 CtrlVar.LevelSetMethod=1; CtrlVar.DevelopmentVersion=1;
 CtrlVar.LevelSetEvolution="-By solving the level set equation-"  ; % "-prescribed-",
 CtrlVar.LevelSetFixPointSolverApproach="-PTS-" ;   % Initial-fix point then pseudo-forward stepping if required
@@ -86,8 +86,7 @@ CtrlVar.LevelSetFABCostFunction=extractBetween(UserVar.RunType,"-CF","-") ;
 CtrlVar.LevelSetFABmu.Scale="-u-cl-" ; % "-constant-";
 CtrlVar.LevelSetFABmu.Value=str2double(replace(extractBetween(UserVar.RunType,"-FAB","-"),"k","."));
 
-CtrlVar.LevelSetMethodSolveOnAStrip=1;
-CtrlVar.LevelSetMethodStripWidth=25e3;
+CtrlVar.LevelSetMethodSolveOnAStrip=1; CtrlVar.LevelSetMethodStripWidth=25e3;
 
 CtrlVar.CalvingLaw.Evaluation="-int-";
 
@@ -102,7 +101,7 @@ UserVar.CalvingLaw.Scale="-hqk-"   ; UserVar.CalvingLaw.Factor=1;
 
 
 %%
-CtrlVar.DefineOutputsDt=10;  % because I'm testing
+CtrlVar.DefineOutputsDt=1;  % because I'm testing
 
 
 CtrlVar.ATSdtMin=1e-2;
