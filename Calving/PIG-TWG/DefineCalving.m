@@ -68,7 +68,8 @@ function [UserVar,LSF,c]=DefineCalving(UserVar,CtrlVar,MUA,F,BCs)
 %% initialize LSF
 if isempty(F.LSF)   % Do I need to initialize the level set function?
 
-    [Xc,Yc]=CreateInitialCalvingFrontProfiles(CtrlVar,MUA,CalvingFront=UserVar.CalvingFront0);
+     
+    [UserVar,Xc,Yc]=CreateInitialCalvingFrontProfiles(UserVar,CtrlVar,MUA,F,CalvingFront=UserVar.CalvingFront0);
 
     % A rough sign-correct initialisation for the LSF
     io=inpoly2([F.x F.y],[Xc Yc]);
