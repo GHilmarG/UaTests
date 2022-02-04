@@ -1,6 +1,6 @@
 function [UserVar,as,ab,dasdh,dabdh]=DefineMassBalance(UserVar,CtrlVar,MUA,F)
 
-persistent Fdh2000to2018 dhdtMeasured CurrentRunStepNumber
+persistent Fdh2000to2018 dhdtMeasured CurrentRunStepNumber Fas
 
 as=zeros(MUA.Nnodes,1) ;
 ab=zeros(MUA.Nnodes,1) ;
@@ -15,7 +15,12 @@ if isempty(Fdh2000to2018)
     dhdtMeasured=Fdh2000to2018(F.x,F.y) ;  % I can do this here because in this run the mesh does not change
     CurrentRunStepNumber=0 ;
 end
-F.as=zeros(MUA.Nnodes,1) ; %  TestIng
+
+if isempty(Fas)
+    load(UserVar.FasFile,"Fas")
+end
+
+as=Fas(F.x,F.y); 
 
 
 % Most of the melt-rate parameterisations below are based on that old Favier 2014 paper:

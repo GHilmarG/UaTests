@@ -1,5 +1,16 @@
 function [UserVar,LSF,c]=DefineCalving(UserVar,CtrlVar,MUA,F,BCs)
 
+%% To-Do
+% Possibly better to write this as 
+%
+%  [UserVar,LSF,c]=DefineCalving(UserVar,CtrlVar,MUA,LSF,c,F,BCs)
+%
+% in which case LSF and c are always passed right through by default.
+%
+% 
+% 
+%
+%%
 
 %%
 %
@@ -47,13 +58,7 @@ function [UserVar,LSF,c]=DefineCalving(UserVar,CtrlVar,MUA,F,BCs)
 
 % LSF=F.LSF  ; %
 
-persistent isInitialized
 
-if isempty(isInitialized) && ~CtrlVar.Restart
-    isInitialized=false;
-else
-    isInitialized=true;
-end
 
 
 
@@ -61,44 +66,32 @@ end
 %[ValuesB,FA]=ExtrapolateFromNodesAtoNodesB(CtrlVar,xA,yA,ValuesA,xB,yB);
 
 %% initialize LSF
-if ~isInitialized
+if isempty(F.LSF)   % Do I need to initialize the level set function?
 
-    % Initialise the level-set funciton (LSF).
-    switch UserVar.CalvingFront0
+    [Xc,Yc]=CreateInitialCalvingFrontProfiles(CtrlVar,MUA,CalvingFront=UserVar.CalvingFront0);
 
-        case "-GL0-"
+    % A rough sign-correct initialisation for the LSF
+    io=inpoly2([F.x F.y],[Xc Yc]);
+    LSF=-ones(MUA.Nnodes,1) ;
+    LSF(io)=+1;
 
-            LSF=F.GF.node-0.5 ;
-            [Xc,Yc]=CalcMuaFieldsContourLine(CtrlVar,MUA,LSF,0);
+    % figure ; PlotMuaMesh(CtrlVar,MUA);   hold on ; plot(F.x(io)/1000,F.y(io)/1000,'or')
 
-        case  {"-BedMachineCalvingFronts-","-BMCF-"}
-
-
-            io=inpoly2([F.x F.y],UserVar.BedMachineBoundary);
-            NodesSelected=~io ;
-
-            LSF=zeros(MUA.Nnodes,1) + 1 ;
-            LSF(NodesSelected)=-1;
-            Xc=UserVar.BedMachineBoundary(:,1) ;
-            Yc=UserVar.BedMachineBoundary(:,2) ;
-            % LSF(F.x<-1660e3)=+1;  % get rid of the additional calving front to the east of the main trunk
-
-            % plot(F.x(~io)/1000,F.y(~io)/1000,'or')
-    end
-
-    [xc,yc,LSF]=CalvingFrontLevelSetGeometricalInitialisation(CtrlVar,MUA,Xc,Yc,LSF,plot=false);
-
-    %[xC,yC]=CalcMuaFieldsContourLine(CtrlVar,MUA,LSF,0);
-    %[LSF,UserVar]=SignedDistUpdate(UserVar,[],CtrlVar,MUA,LSF,xC,yC);
-
-    isInitialized=true;
-
+    [xc,yc,LSF]=CalvingFrontLevelSetGeometricalInitialisation(CtrlVar,MUA,Xc,Yc,LSF,plot=true);
 
 else
-    LSF=F.LSF ;
+    LSF=F.LSF ;  % rember to pass LSF through, in no initialisation is required
 end
 
-%% Define calving rate
+%% Define calving rate (if needed)
+
+if  CtrlVar.LevelSetEvolution=="-Prescribed-"  
+
+      
+    c=nan;   % setting the calving rate to nan implies that the level set is not evolved
+    return
+
+end
 
 
 if F.time< 0 
@@ -106,7 +99,9 @@ if F.time< 0
     c=nan;
 
 elseif  CtrlVar.CalvingLaw.Evaluation=="-int-" 
+
     c=0; % must not be nan or otherwise the LSF will not be evolved.  But otherwise these c values are of no importance and the c defined at int points the one used
+
 else
 
 
@@ -115,7 +110,7 @@ else
     %CR=str2double(extract(UserVar.CalvingLaw,("+"|"-")+digitsPattern+"."+digitsPattern));
     CR=UserVar.CalvingLaw.Factor;
 
-    switch UserVar.CalvingLaw.Scale
+    switch UserVar.CalvingLaw.Type
 
         case "-FixedRate-"
 

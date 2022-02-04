@@ -49,37 +49,64 @@ SubString="T-C-I-u-cl-mu0k1-Ini-geo-Inf-Strip1-SW=100km-AD=0-NV-1k5-BMCF-int-PIG
 SubString="T-C-MR4-u-cl-mu0k1-Ini-geo-Inf-Strip1-SW=100km-AD=0-NV-1k5-BMCF-int-PIG-TWG-MeshFile30km-PIG-TWG";
 
 SubString="T-C-MR4-u-cl-mu0k1-Ini-geo-100-Strip1-SW=100km-AD=0-NV-1k5-BMCF-int-PIG-TWG-MeshFile30km-PIG-TWG";
-% SubString="T-C-MR4-u-cl-mu0k1-Ini-geo-100-Strip1-SW=100km-AD=0-NV-1k5-BMCF-int-PIG-TWG-MeshFile20km-PIG-TWG";
-% SubString="T-C-MR4-u-cl-mu0k1-Ini-geo-100-Strip1-SW=100km-AD=0-NV-1k5-BMCF-int-PIG-TWG-MeshFile10km-PIG-TWG";
 
+SubString="T-C-MR4-u-cl-mu0k1-Ini-geo-100-Strip1-SW=100km-AD=0-NV-1k5-BMCF-int-PIG-TWG-MeshFile20km-PIG-TWG";
+%SubString="T-C-MR4-u-cl-mu0k1-Ini-geo-100-Strip1-SW=100km-AD=0-NV-1k5-BMCF-int-PIG-TWG-MeshFile10km-PIG-TWG";
 SubString="T-C-MR4-u-cl-mu0k1-Ini-geo-100-Strip1-SW=100km-AD=0-NV-1k5-BMCF-int-PIG-TWG-MeshFile5km-PIG-TWG";
 
+%  1.5 experiments
 
-CreateVideo=false;
-CalcVAF=true;
+fEx=1.1;
+
+switch fEx
+
+    case 1.5
+
+        SubString(1)="T-C-MR4-u-cl-mu0k1-Ini-geo-100-Strip1-SW=100km-AD=0-NV-1k5-BMCF-int-PIG-TWG-MeshFile30km-PIG-TWG";
+        SubString(2)="T-C-MR4-u-cl-mu0k1-Ini-geo-100-Strip1-SW=100km-AD=0-NV-1k5-BMCF-int-PIG-TWG-MeshFile20km-PIG-TWG";
+        SubString(3)="T-C-MR4-u-cl-mu0k1-Ini-geo-100-Strip1-SW=100km-AD=0-NV-1k5-BMCF-int-PIG-TWG-MeshFile10km-PIG-TWG";
+        SubString(4)="T-C-MR4-u-cl-mu0k1-Ini-geo-100-Strip1-SW=100km-AD=0-NV-1k5-BMCF-int-PIG-TWG-MeshFile5km-PIG-TWG";
+
+        IRange=4;
+    case 1.1
+        % 1.1 experiments
+
+        SubString(1)="T-C-MR4-u-cl-mu0k1-Ini-geo-100-Strip1-SW=100km-AD=0-NV-1k1-BMCF-int-asRacmo-dhdtLim1-PIG-TWG-MeshFile30km-PIG-TWG";
+        SubString(2)="T-C-MR4-u-cl-mu0k1-Ini-geo-100-Strip1-SW=100km-AD=0-NV-1k1-BMCF-int-asRacmo-dhdtLim1-PIG-TWG-MeshFile20km-PIG-TWG";
+        SubString(3)="T-C-MR4-u-cl-mu0k1-Ini-geo-100-Strip1-SW=100km-AD=0-NV-1k1-BMCF-int-asRacmo-dhdtLim1-PIG-TWG-MeshFile10km-PIG-TWG";
+        SubString(4)="T-C-MR4-u-cl-mu0k1-Ini-geo-100-Strip1-SW=100km-AD=0-NV-1k1-BMCF-int-asRacmo-dhdtLim1-PIG-TWG-MeshFile5km-PIG-TWG";
+        IRange=3;
+end
+
+
+CreateVideo=true;
+CalcVAF=false;
 
 if CreateVideo
 
-    ReadPlotSequenceOfResultFiles(FileNameSubstring=SubString,PlotTimestep=10) ;
+    for I=IRange
+        ReadPlotSequenceOfResultFiles(FileNameSubstring=SubString(I),PlotTimestep=0.25,PlotType="-ubvb-") ;
+    end
 
 end
 
-col=["r","b"] ;
+col=["r","b","g","m"] ;
 DataCollect=cell(2) ; 
+
 
 if CalcVAF
 
     fig=FindOrCreateFigure("VAF"); clf(fig);
 
-    for I=1:1
+    for I=IRange
 
         DataCollect{I}=ReadPlotSequenceOfResultFiles(FileNameSubstring=SubString(I),PlotType="-collect-",PlotTimestep=10) ;
 
     end
 
-    for I=1:2
+    for I=IRange
 
-        if I==1
+        if I==IRange(1)
             VAF0=DataCollect{I}.VAF(1);  % The ref value
         else
             hold on
@@ -87,9 +114,9 @@ if CalcVAF
 
 
         yyaxis left
-        plot(DataCollect{I}.time, (DataCollect{I}.VAF-VAF0)/1e9,'-or',color=col(I));
+        plot(DataCollect{I}.time, (DataCollect{I}.VAF-VAF0)/1e9,'-o',color=col(I));
         tt=ylim;
-        ylabel(" VAF (Gt)")
+        ylabel(" VAF (km^3)")
         yyaxis right
         AreaOfTheOcean=3.625e14; % units m^2.
         ylim(tt*100*1e9/3.62e14) ;
@@ -103,8 +130,13 @@ if CalcVAF
 
     end
 
+
+
+    legend("30km","20km","10km","5km")
+    title("VC=1.1")
+
+    % f=gcf; exportgraphics(f,'VAF-VC1k1.pdf')
+
 end
-
-
 
 cd(CurDir)

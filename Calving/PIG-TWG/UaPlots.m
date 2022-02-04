@@ -4,7 +4,7 @@ arguments
     CtrlVar struct
     MUA     struct
     F       UaFields
-    Variable   string = "speed"
+    Variable   {string, double}
     options.PlotGroundingLines  logical = true
     options.PlotCalvingFronts  logical = true
     options.CalvingFrontColor char = "k"
@@ -17,19 +17,27 @@ arguments
 end
 
 
-switch lower(Variable)
+if isnumeric(Variable)
 
-    case "speed"
+      [~,cbar]=PlotMeshScalarVariable(CtrlVar,MUA,Variable);
 
-        speed=sqrt(F.ub.*F.ub+F.vb.*F.vb) ;
-
-        [~,cbar]=PlotMeshScalarVariable(CtrlVar,MUA,speed);
-
-    otherwise
-
-        [~,cbar]=PlotMeshScalarVariable(CtrlVar,MUA,F.(Variable));
+else
 
 
+    switch lower(Variable)
+
+        case {"speed","-speed-"}
+
+            speed=sqrt(F.ub.*F.ub+F.vb.*F.vb) ;
+
+            [~,cbar]=PlotMeshScalarVariable(CtrlVar,MUA,speed);
+
+        otherwise
+
+            [~,cbar]=PlotMeshScalarVariable(CtrlVar,MUA,F.(Variable));
+
+
+    end
 end
 
 hold on ;

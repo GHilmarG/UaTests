@@ -11,15 +11,24 @@ function [UserVar,CtrlVar,MeshBoundaryCoordinates]=DefineInitialInputs(UserVar,C
 
 if isempty(UserVar) || ~isfield(UserVar,'RunType')
     
-    
-    % UserVar.RunType='Forward-Diagnostic' ; 
-    UserVar.RunType='Forward-Transient' ;
-    UserVar.RunType='Forward-Transient-Initialisation' ;
+
+    % UserVar.RunType='Forward-Diagnostic' ;
+ 
     UserVar.RunType='-FT-I-' ;  % 'Forward-Transient-Initialisation' ;
     UserVar.RunType='-FT-C-I-' ;  % 'Forward-Transient-Calving-Initialisation' ;
-    UserVar.RunType='-FT-C-MR4-' ;  % 'Forward-Transient-Calving-Initialisation' ;
-   % UserVar.RunType="-FT-C-I-Duvh-" ;  % 'Forward-Transient-Calving-Initialisation-Deactivate ahead of uvh solve' ;
+    UserVar.RunType="-FT-C-MR4-SM-" ;  % 'Forward-Transient-Calving with surface mass balance based on rachmo
+    UserVar.RunType="-FT-C-AC-BMGL-MR4-SM-" ;  % 'Forward-Transient-Calving-Anna Crawford- Initial calving fronts are Bedmachine grounding lines - ocean melt param #4
 
+
+    % UserVar.RunType="-FT-C-I-Duvh-" ;  % 'Forward-Transient-Calving-Initialisation-Deactivate ahead of uvh solve' ;
+
+    % Thwaites ice shelf experiments
+    UserVar.RunType="-FT-P-TWIS-MR4-SM-" ;  % -P-TWIS- is Thwaites Ice Shelf unmodified, ie all fronts kept as is, not calving not, simply a referene run
+    % UserVar.RunType="-FT-P-TWISC-MR4-SM-" ;  % -P-TWISC- is Thwaites Ice Shelf Calved off,
+    % the "-P-" stands for prescribed calving fronts
+
+
+    
     % UserVar.RunType='Inverse-MatOpt';
     % UserVar.RunType='GenerateMesh' ;
     % UserVar.RunType='Inverse-UaOpt';meshb    % UserVar.RunType='Forward-Transient';
@@ -29,19 +38,35 @@ end
 
 %% UserVar
 
-UserVar.Region="PIG-TWG" ; "PIG" ; % "PIG-TWG" ; 
+UserVar.Region="PIG-TWG" ; "PIG" ; % "PIG-TWG" ;
 
-UserVar.CalvingLaw.Scale="-NV-"  ;  % "-ScalesWithNormalVelocity+1.0-"  ;
-UserVar.CalvingLaw.Factor=1.5;  
+if contains(UserVar.RunType,"-C-NV-")
+    UserVar.CalvingLaw.Type="-NV-"  ;  % "-ScalesWithNormalVelocity+1.0-"  ;
+    UserVar.CalvingLaw.Factor=1.1;
+elseif contains(UserVar.RunType,"-C-AC-")
+    UserVar.CalvingLaw.Type="-AC-"  ;  % Anna Crawford
+else
+    UserVar.CalvingLaw.Type="-NoCalving-"  ;  % "-ScalesWithNormalVelocity+1.0-"  ;
+    UserVar.CalvingLaw.Factor=0 ; 
+end
 
-UserVar.MeshResolution=30e3;
+UserVar.MeshResolution=10e3;   % MESH RESOLUTION
 
-UserVar.CalvingFront0="-BMCF-"; "-BedMachineCalvingFronts-"  ;  % "-GL0-" ; % "-BedMachineCalvingFronts-"  ;
+if contains(UserVar.RunType,"-TWISC-")
+    UserVar.CalvingFront0="-TWISC-"; % calve off Thwaites Ice Shelf
+elseif contains(UserVar.RunType,"-BMGL-")
+    UserVar.CalvingFront0="-BMGL-";
+else
+    UserVar.CalvingFront0="-BMCF-"; "-BedMachineCalvingFronts-"  ;  % "-GL0-" ; % "-BedMachineCalvingFronts-"  ;
+end
+
 CtrlVar.CalvingLaw.Evaluation="-int-"  ; % nodal or integration-point evaluation  ["-int-","-node-"] 
-UserVar.CalvingLaw.String=UserVar.CalvingLaw.Scale+num2str(UserVar.CalvingLaw.Factor)+UserVar.CalvingFront0+CtrlVar.CalvingLaw.Evaluation;
+UserVar.CalvingLaw.String=UserVar.CalvingLaw.Type+num2str(UserVar.CalvingLaw.Factor)+UserVar.CalvingFront0+CtrlVar.CalvingLaw.Evaluation;
 UserVar.DefineOutputs="-ubvb-LSF-h-dhdt-speed-save-"; % '-ubvb-LSF-h-save-';
 % UserVar.DefineOutputs="-ubvb-LSF-h-dhdt-speed-"; % 
 % UserVar.DefineOutputs="-save-"; % 
+
+CtrlVar.LimitRangeInUpdateFtimeDerivatives=true ; 
 
 %% Set output files directory
 [~,hostname]=system('hostname') ;
@@ -74,6 +99,11 @@ UserVar.SurfaceVelocityInterpolant='../../../Interpolants/SurfVelMeasures990mInt
 UserVar.MeshBoundaryCoordinatesFile='../../../Interpolants/MeshBoundaryCoordinatesForAntarcticaBasedOnBedmachine'; 
 load(UserVar.MeshBoundaryCoordinatesFile,"Boundary") ; UserVar.BedMachineBoundary=Boundary;
 UserVar.DistanceBetweenPointsAlongBoundary=5e3 ; 
+
+UserVar.FasFile="Fas_SMB_RACMO2k3_1979_2011.mat" ; %  surface mass balance
+
+
+
 
 %% uvh tau; 
 CtrlVar.uvh.SUPG.tau="taus" ; % default,  issues with uvh convergence in the beginning
@@ -120,7 +150,7 @@ CtrlVar.LevelSetMinIceThickness=CtrlVar.ThickMin+1;    % this is the hmin consta
 % over the 'ice-free' areas.
 % Default value is CtrlVar.ThickMin+1
 
-CtrlVar.LevelSetEvolution="-By solving the level set equation-"  ; % "-prescribed-", 
+
 
 
 
@@ -216,7 +246,7 @@ switch UserVar.RunType
         % ----------------------- ]end, testing adjoint parameters.
         
         
-    case {"FT-I","FT-C","-FT-C-I-","-FT-C-I-P-DTW-","-FT-C-I-Duvh-","-FT-C-MR4-"}
+    case {"-FT-C-I-Duvh-","-FT-C-NV-MR4-","-FT-TWIS-MR4-","-FT-P-TWIS-MR4-","-FT-P-TWISC-MR4-","-FT-C-AC-MR4-","-FT-P-TWIS-MR4-SM-","-FT-P-TWISC-MR4-SM-"}
 
         CtrlVar.InverseRun=0;
         CtrlVar.TimeDependentRun=1;
@@ -281,7 +311,7 @@ CtrlVar.SaveInitialMeshFileName=...
 %% Time step, total run time, run steps
 
 CtrlVar.dt=0.0001;   CtrlVar.DefineOutputsDt=0.25;
-CtrlVar.ATSdtMax=0.025; 
+CtrlVar.ATSdtMax=0.05; 
 
 if contains(UserVar.RunType,"-I-")
     CtrlVar.time=-0.1;  % If I'm using a mass-balance initialisation set start time to a slighly neg value
@@ -290,7 +320,7 @@ else
     CtrlVar.time=0;
 end
 
-CtrlVar.TotalTime=50;
+CtrlVar.TotalTime=100;
 
 % Element type
 CtrlVar.TriNodes=3 ;
@@ -363,6 +393,8 @@ CtrlVar.Experiment= ...
     +"-SW="+num2str(CtrlVar.LevelSetMethodStripWidth/1000)+"km"...
     +"-AD="+num2str(CtrlVar.LevelSetMethodAutomaticallyDeactivateElements)...
     +UserVar.CalvingLaw.String...
+    +"-asRacmo"...
+    +"-dhdtLim"+num2str(CtrlVar.LimitRangeInUpdateFtimeDerivatives)...
     +"-"+UserVar.Region...
     +"-"+CtrlVar.ReadInitialMeshFileName;
 
