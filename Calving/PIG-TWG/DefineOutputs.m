@@ -147,39 +147,40 @@ if contains(plots,'-LSF-')
 
 end
 
+if contains(plots,'-PIGprofile-')
 
-[xp,yp,d]=CreatePIGprofile(2);
+    [xp,yp,d]=CreatePIGprofile(2);
 
-Fs=scatteredInterpolant() ;
-Fs.Points=[F.x(:) ,F.y(:)];
-Fb=Fs;
-FB=Fs;
-Fs.Values=F.s;
-Fb.Values=F.b;
-FB.Values=F.B;
-sp=Fs(xp,yp) ;
-bp=Fb(xp,yp) ;
-Bp=FB(xp,yp) ;
+    Fs=scatteredInterpolant() ;
+    Fs.Points=[F.x(:) ,F.y(:)];
+    Fb=Fs;
+    FB=Fs;
+    Fs.Values=F.s;
+    Fb.Values=F.b;
+    FB.Values=F.B;
+    sp=Fs(xp,yp) ;
+    bp=Fb(xp,yp) ;
+    Bp=FB(xp,yp) ;
 
-FindOrCreateFigure("profile")
-plot(d/1000,sp,'-b')
-hold on
-plot(d/1000,bp,'-b')
-plot(d/1000,Bp,'-k')
+    FindOrCreateFigure("profile")
+    plot(d/1000,sp,'-b')
+    hold on
+    plot(d/1000,bp,'-b')
+    plot(d/1000,Bp,'-k')
 
 
-if ~isempty(F.LSF)
-    FLSF=Fs;
-    FLSF.Values=F.LSF;
-    LSFp=FLSF(xp,yp) ;
-    plot(d/1000,LSFp/1000,'r')
+    if ~isempty(F.LSF)
+        FLSF=Fs;
+        FLSF.Values=F.LSF;
+        LSFp=FLSF(xp,yp) ;
+        plot(d/1000,LSFp/1000,'r')
+    end
+
+
+    title(sprintf('PIG profile at t=%g (yr)',CtrlVar.time),Interpreter="latex") ;
+    xlabel(" distance (km) ",Interpreter="latex")
+    ylabel("$s$, $b$ and $B$ (m) ",Interpreter="latex")
 end
-
-
-title(sprintf('PIG profile at t=%g (yr)',CtrlVar.time),Interpreter="latex") ;
-xlabel(" distance (km) ",Interpreter="latex")
-ylabel("$s$, $b$ and $B$ (m) ",Interpreter="latex")
-
 
 
 if contains(plots,'-sbB-')

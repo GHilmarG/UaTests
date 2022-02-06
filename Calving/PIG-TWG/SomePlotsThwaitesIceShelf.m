@@ -66,15 +66,37 @@ SubString(2)="T-P-TWIS-MR4-u-cl-mu0k1-Ini-geo-100-Strip1-SW=100km-AD=0-NoCalving
 SubString(1)="T-P-TWISC-MR4-u-cl-mu0k1-Ini-geo-100-Strip1-SW=100km-AD=0-NoCalving-0-TWISC-int-asRacmo-dhdtLim1-PIG-TWG-MeshFile5km-PIG-TWG";
 SubString(2)="T-P-TWIS-MR4-u-cl-mu0k1-Ini-geo-100-Strip1-SW=100km-AD=0-NoCalving-0-BMCF-int-asRacmo-dhdtLim1-PIG-TWG-MeshFile5km-PIG-TWG";
 
+
+% 10km
 SubString(1)="T-P-TWIS-MR4-SM-u-cl-mu0k1-Ini-geo-100-Strip1-SW=100km-AD=0-NoCalving-0-BMCF-int-asRacmo-dhdtLim1-PIG-TWG-MeshFile10km-PIG-TWG";
 SubString(2)="T-P-TWISC-MR4-SM-u-cl-mu0k1-Ini-geo-100-Strip1-SW=100km-AD=0-NoCalving-0-TWISC-int-asRacmo-dhdtLim1-PIG-TWG-MeshFile10km-PIG-TWG";
+SubString(3)="T-P-TWISC2-MR4-SM-u-cl-mu0k1-Ini-geo-100-Strip1-SW=100km-AD=0-NoCalving-0-TWISC2-int-asRacmo-dhdtLim1-PIG-TWG-MeshFile10km-PIG-TWG";
+SubString(4)="T-P-TWISC5-MR4-SM-u-cl-mu0k1-Ini-geo-100-Strip1-SW=100km-AD=0-NoCalving-0-TWISC5-int-asRacmo-dhdtLim1-PIG-TWG-MeshFile10km-PIG-TWG";
+SubString(5)="T-P-TWISC10-MR4-SM-u-cl-mu0k1-Ini-geo-100-Strip1-SW=100km-AD=0-NoCalving-0-TWISC10-int-asRacmo-dhdtLim1-PIG-TWG-MeshFile10km-PIG-TWG";
+LegendEntry=["Thwaites ice shelf","Thwaites ice shelf removed","Thwaites ice shelf removed 2km downstream","Thwaites ice shelf removed 5km downstream","Thwaites ice shelf removed 10km downstream"] ;
 
 
-CreateVideo=true;
-CalcVAF=false;
+% 5 km
+SubString(6)="T-P-TWIS-MR4-SM-u-cl-mu0k1-Ini-geo-100-Strip1-SW=100km-AD=0-NoCalving-0-BMCF-int-asRacmo-dhdtLim1-PIG-TWG-MeshFile5km-PIG-TWG";
+SubString(7)="T-P-TWISC-MR4-SM-u-cl-mu0k1-Ini-geo-100-Strip1-SW=100km-AD=0-NoCalving-0-TWISC-int-asRacmo-dhdtLim1-PIG-TWG-MeshFile5km-PIG-TWG";
+SubString(8)="T-P-TWISC2-MR4-SM-u-cl-mu0k1-Ini-geo-100-Strip1-SW=100km-AD=0-NoCalving-0-TWISC2-int-asRacmo-dhdtLim1-PIG-TWG-MeshFile5km-PIG-TWG";
+SubString(9)="T-P-TWISC5-MR4-SM-u-cl-mu0k1-Ini-geo-100-Strip1-SW=100km-AD=0-NoCalving-0-TWISC5-int-asRacmo-dhdtLim1-PIG-TWG-MeshFile5km-PIG-TWG";
+SubString(10)="T-P-TWISC10-MR4-SM-u-cl-mu0k1-Ini-geo-100-Strip1-SW=100km-AD=0-NoCalving-0-TWISC10-int-asRacmo-dhdtLim1-PIG-TWG-MeshFile5km-PIG-TWG";
+
+
+LegendEntry=[...
+    "10km: Thwaites ice shelf","10km: Thwaites ice shelf removed","10km: Thwaites ice shelf removed 2km downstream","10km: Thwaites ice shelf removed 5km downstream","10km: Thwaites ice shelf removed 10km downstream",...
+    "5km: Thwaites ice shelf","5km: Thwaites ice shelf removed","5km: Thwaites ice shelf removed 2km downstream","5km: Thwaites ice shelf removed 5km downstream","5km: Thwaites ice shelf removed 10km downstream",...
+    ];
+
+
+
+CreateVideo=false;
+CalcVAF=true;
 ComparisionPlots=false;
-Step=1;
-IRange=1:2;
+Step=20;
+IRange=1:10;
+
 if CreateVideo
 
     for I=IRange
@@ -84,30 +106,36 @@ if CreateVideo
     end
 end
 
-col=["r","b"] ;
-DataCollect=cell(2) ; 
-LegendEntry=["Thwaites ice shelf removed","Thwaites ice shelf not removed"] ;
+col=["k","c","g","m","y","k","c","g","m","y"]  ;
+
+lw=[1 1 1 1 1 2 2 2 2 2 ];
+
+DataCollect=cell(10) ; 
+
+
 if CalcVAF
+
+    
+
+    for I=IRange
+        fprintf("\n Reading %s \n",SubString(I))
+        DataCollect{I}=ReadPlotSequenceOfResultFiles(FileNameSubstring=SubString(I),PlotType="-collect-",PlotTimestep=Step) ;
+        fprintf("done. \n \n")
+    end
 
     fig=FindOrCreateFigure("VAF"); clf(fig);
 
     for I=IRange
 
-        DataCollect{I}=ReadPlotSequenceOfResultFiles(FileNameSubstring=SubString(I),PlotType="-collect-",PlotTimestep=Step) ;
-
-    end
-
-    for I=1:2
-
         if I==1
-            VAF0=DataCollect{I}.VAF(1);  % The ref value
+            VAF0=DataCollect{I}.VAF(1);  % The ref value, but this could be re-defined for each run in princple
         else
             hold on
         end
 
 
         yyaxis left
-        plot(DataCollect{I}.time, (DataCollect{I}.VAF-VAF0)/1e9,'-o',color=col(I),DisplayName=LegendEntry(I));
+        plot(DataCollect{I}.time, (DataCollect{I}.VAF-VAF0)/1e9,'-o',color=col(I),DisplayName=LegendEntry(I),LineWidth=lw(I));
         tt=ylim;
         ylabel(" VAF (km^3)")
         yyaxis right
