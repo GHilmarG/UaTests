@@ -6,7 +6,7 @@ arguments
     UserVar struct
     CtrlVar struct
     MUA     struct
-    F       struct
+    F       UaFields
     options.CalvingFront string="-BedmachineCalvingFronts-"
     options.Plot logical=false
 

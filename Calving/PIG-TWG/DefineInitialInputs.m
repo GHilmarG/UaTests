@@ -18,12 +18,12 @@ if isempty(UserVar) || ~isfield(UserVar,'RunType')
     UserVar.RunType='-FT-C-I-' ;  % 'Forward-Transient-Calving-Initialisation' ;
     UserVar.RunType="-FT-C-MR4-SM-" ;  % 'Forward-Transient-Calving with surface mass balance based on rachmo
     UserVar.RunType="-FT-C-AC-BMGL-MR4-SM-" ;  % 'Forward-Transient-Calving-Anna Crawford- Initial calving fronts are Bedmachine grounding lines - ocean melt param #4
-
+    UserVar.RunType="-FT-C-RR-BMCF-MR4-SM-" ;  % 'Forward-Transient , Retreat-Rate prescribed , Initial calving fronts are Bedmachine grounding lines , ocean melt param #4
 
     % UserVar.RunType="-FT-C-I-Duvh-" ;  % 'Forward-Transient-Calving-Initialisation-Deactivate ahead of uvh solve' ;
 
     % Thwaites ice shelf experiments
-    UserVar.RunType="-FT-P-TWIS-MR4-SM-" ;  % -P-TWIS- is Thwaites Ice Shelf unmodified, ie all fronts kept as is, not calving not, simply a referene run
+    % UserVar.RunType="-FT-P-TWIS-MR4-SM-" ;  % -P-TWIS- is Thwaites Ice Shelf unmodified, ie all fronts kept as is, not calving not, simply a referene run
     % UserVar.RunType="-FT-P-TWISC-MR4-SM-" ;  % -P-TWISC- is Thwaites Ice Shelf Calved off,
     % UserVar.RunType="-FT-P-TWISC10-MR4-SM-" ;  % -P-TWISC- is Thwaites Ice Shelf Calved off,
     % UserVar.RunType="-FT-P-TWISC5-MR4-SM-" ;  % -P-TWISC- is Thwaites Ice Shelf Calved off,
@@ -46,6 +46,9 @@ UserVar.Region="PIG-TWG" ; "PIG" ; % "PIG-TWG" ;
 if contains(UserVar.RunType,"-C-NV-")
     UserVar.CalvingLaw.Type="-NV-"  ;  % "-ScalesWithNormalVelocity+1.0-"  ;
     UserVar.CalvingLaw.Factor=1.1;
+elseif contains(UserVar.RunType,"-C-RR-")
+    UserVar.CalvingLaw.Type="-RR-"  ;  %  prescribed retreat rate
+    UserVar.CalvingLaw.Factor="";
 elseif contains(UserVar.RunType,"-C-AC-")
     UserVar.CalvingLaw.Type="-AC-"  ;  % Anna Crawford
 else
@@ -53,7 +56,7 @@ else
     UserVar.CalvingLaw.Factor=0 ;
 end
 
-UserVar.MeshResolution=2.5e3;   % MESH RESOLUTION
+UserVar.MeshResolution=5e3;   % MESH RESOLUTION
 
 if contains(UserVar.RunType,"-TWISC")
     UserVar.CalvingFront0=extract(UserVar.RunType,"-TWISC"+digitsPattern+"-");

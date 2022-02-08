@@ -56,11 +56,11 @@ SubString="T-C-MR4-u-cl-mu0k1-Ini-geo-100-Strip1-SW=100km-AD=0-NV-1k5-BMCF-int-P
 
 %  1.5 experiments
 
-fEx=1.1;
-
+fEx="1.1";
+fEx="RR"; 
 switch fEx
 
-    case 1.5
+    case "1.5"
 
         SubString(1)="T-C-MR4-u-cl-mu0k1-Ini-geo-100-Strip1-SW=100km-AD=0-NV-1k5-BMCF-int-PIG-TWG-MeshFile30km-PIG-TWG";
         SubString(2)="T-C-MR4-u-cl-mu0k1-Ini-geo-100-Strip1-SW=100km-AD=0-NV-1k5-BMCF-int-PIG-TWG-MeshFile20km-PIG-TWG";
@@ -68,7 +68,7 @@ switch fEx
         SubString(4)="T-C-MR4-u-cl-mu0k1-Ini-geo-100-Strip1-SW=100km-AD=0-NV-1k5-BMCF-int-PIG-TWG-MeshFile5km-PIG-TWG";
 
         IRange=4;
-    case 1.1
+    case "1.1"
         % 1.1 experiments
 
         SubString(1)="T-C-MR4-u-cl-mu0k1-Ini-geo-100-Strip1-SW=100km-AD=0-NV-1k1-BMCF-int-asRacmo-dhdtLim1-PIG-TWG-MeshFile30km-PIG-TWG";
@@ -76,6 +76,13 @@ switch fEx
         SubString(3)="T-C-MR4-u-cl-mu0k1-Ini-geo-100-Strip1-SW=100km-AD=0-NV-1k1-BMCF-int-asRacmo-dhdtLim1-PIG-TWG-MeshFile10km-PIG-TWG";
         SubString(4)="T-C-MR4-u-cl-mu0k1-Ini-geo-100-Strip1-SW=100km-AD=0-NV-1k1-BMCF-int-asRacmo-dhdtLim1-PIG-TWG-MeshFile5km-PIG-TWG";
         IRange=3;
+
+
+    case "RR"
+
+        SubString(1)="T-C-RR-BMCF-MR4-SM-u-cl-mu0k1-Ini-geo-100-Strip1-SW=100km-AD=0-RR-BMCF-int-asRacmo-dhdtLim1-PIG-TWG-MeshFile20km-PIG-TWG";
+        SubString(2)="T-C-RR-BMCF-MR4-SM-u-cl-mu0k1-Ini-geo-100-Strip1-SW=100km-AD=0-RR-BMCF-int-asRacmo-dhdtLim1-PIG-TWG-MeshFile10km-PIG-TWG";
+        IRange=1;
 end
 
 
@@ -85,7 +92,7 @@ CalcVAF=false;
 if CreateVideo
 
     for I=IRange
-        ReadPlotSequenceOfResultFiles(FileNameSubstring=SubString(I),PlotTimestep=0.25,PlotType="-ubvb-") ;
+        ReadPlotSequenceOfResultFiles(FileNameSubstring=SubString(I),PlotTimestep=0.25,PlotType="-ubvb-B-") ;
     end
 
 end
