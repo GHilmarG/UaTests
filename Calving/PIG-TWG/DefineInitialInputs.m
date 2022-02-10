@@ -23,7 +23,7 @@ if isempty(UserVar) || ~isfield(UserVar,'RunType')
     % UserVar.RunType="-FT-C-I-Duvh-" ;  % 'Forward-Transient-Calving-Initialisation-Deactivate ahead of uvh solve' ;
 
     % Thwaites ice shelf experiments
-    % UserVar.RunType="-FT-P-TWIS-MR4-SM-" ;  % -P-TWIS- is Thwaites Ice Shelf unmodified, ie all fronts kept as is, not calving not, simply a referene run
+    UserVar.RunType="-FT-P-TWIS-MR4-SM-" ;  % -P-TWIS- is Thwaites Ice Shelf unmodified, ie all fronts kept as is, not calving not, simply a referene run
     % UserVar.RunType="-FT-P-TWISC-MR4-SM-" ;  % -P-TWISC- is Thwaites Ice Shelf Calved off,
     % UserVar.RunType="-FT-P-TWISC10-MR4-SM-" ;  % -P-TWISC- is Thwaites Ice Shelf Calved off,
     % UserVar.RunType="-FT-P-TWISC5-MR4-SM-" ;  % -P-TWISC- is Thwaites Ice Shelf Calved off,
@@ -114,6 +114,11 @@ UserVar.FasFile="Fas_SMB_RACMO2k3_1979_2011.mat" ; %  surface mass balance
 %% uvh tau;
 CtrlVar.uvh.SUPG.tau="taus" ; % default,  issues with uvh convergence in the beginning
 % CtrlVar.uvh.SUPG.tau="tau1" ; % testing
+
+
+%%
+
+CtrlVar.kH=10; 
 
 %%  Level-set parameters
 
@@ -316,7 +321,8 @@ CtrlVar.SaveInitialMeshFileName=...
 %% Time step, total run time, run steps
 
 CtrlVar.dt=0.0001;   CtrlVar.DefineOutputsDt=0.25;
-CtrlVar.ATSdtMax=0.05;
+CtrlVar.ATSdtMax=0.1;
+CtrlVar.ATSdtMin=0.01;
 
 if contains(UserVar.RunType,"-I-")
     CtrlVar.time=-0.1;  % If I'm using a mass-balance initialisation set start time to a slighly neg value
@@ -398,6 +404,7 @@ CtrlVar.Experiment= ...
     +"-SW="+num2str(CtrlVar.LevelSetMethodStripWidth/1000)+"km"...
     +"-AD="+num2str(CtrlVar.LevelSetMethodAutomaticallyDeactivateElements)...
     +UserVar.CalvingLaw.String...
+    +"-kH="+num2str(CtrlVar.kH)...
     +"-asRacmo"...
     +"-dhdtLim"+num2str(CtrlVar.LimitRangeInUpdateFtimeDerivatives)...
     +"-"+UserVar.Region...
@@ -430,6 +437,6 @@ UserVar.AFile=replace(UserVar.AFile,".","k");
 CtrlVar.NameOfRestartFiletoWrite=CtrlVar.Experiment+"-FR.mat";
 CtrlVar.NameOfRestartFiletoRead=CtrlVar.NameOfRestartFiletoWrite;
 
-CtrlVar.WriteRestartFileInterval=1000;
+CtrlVar.WriteRestartFileInterval=100;
 
 end

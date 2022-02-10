@@ -80,19 +80,20 @@ switch fEx
 
     case "RR"
 
-        SubString(1)="T-C-RR-BMCF-MR4-SM-u-cl-mu0k1-Ini-geo-100-Strip1-SW=100km-AD=0-RR-BMCF-int-asRacmo-dhdtLim1-PIG-TWG-MeshFile20km-PIG-TWG";
-        SubString(2)="T-C-RR-BMCF-MR4-SM-u-cl-mu0k1-Ini-geo-100-Strip1-SW=100km-AD=0-RR-BMCF-int-asRacmo-dhdtLim1-PIG-TWG-MeshFile10km-PIG-TWG";
-        IRange=1;
+        SubString(1)="T-C-RR-BMCF-MR4-SM-u-cl-mu0k1-Ini-geo-100-Strip1-SW=100km-AD=0-RR-BMCF-int-asRacmo-dhdtLim1-PIG-TWG-MeshFile30km-PIG-TWG";
+        SubString(2)="T-C-RR-BMCF-MR4-SM-u-cl-mu0k1-Ini-geo-100-Strip1-SW=100km-AD=0-RR-BMCF-int-asRacmo-dhdtLim1-PIG-TWG-MeshFile20km-PIG-TWG";
+        SubString(3)="T-C-RR-BMCF-MR4-SM-u-cl-mu0k1-Ini-geo-100-Strip1-SW=100km-AD=0-RR-BMCF-int-asRacmo-dhdtLim1-PIG-TWG-MeshFile10km-PIG-TWG";
+        IRange=1:3;
 end
 
 
-CreateVideo=true;
+CreateVideo=true;  TimeStep=0.25;
 CalcVAF=false;
 
 if CreateVideo
 
     for I=IRange
-        ReadPlotSequenceOfResultFiles(FileNameSubstring=SubString(I),PlotTimestep=0.25,PlotType="-ubvb-B-") ;
+        ReadPlotSequenceOfResultFiles(FileNameSubstring=SubString(I),PlotTimestep=TimeStep,PlotType="-ubvb-B-") ;
     end
 
 end
@@ -107,7 +108,7 @@ if CalcVAF
 
     for I=IRange
 
-        DataCollect{I}=ReadPlotSequenceOfResultFiles(FileNameSubstring=SubString(I),PlotType="-collect-",PlotTimestep=10) ;
+        DataCollect{I}=ReadPlotSequenceOfResultFiles(FileNameSubstring=SubString(I),PlotType="-collect-",PlotTimestep=TimeStep) ;
 
     end
 
@@ -139,8 +140,8 @@ if CalcVAF
 
 
 
-    legend("30km","20km","10km","5km")
-    title("VC=1.1")
+    %legend("30km","20km","10km","5km") ;   title("VC=1.1")
+    legend("30km","20km","10km") ;   title("Retreat rate = 1k/yr if v > 1km/yr")
 
     % f=gcf; exportgraphics(f,'VAF-VC1k1.pdf')
 

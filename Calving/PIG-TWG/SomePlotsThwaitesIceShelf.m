@@ -85,8 +85,13 @@ SubString(10)="T-P-TWISC10-MR4-SM-u-cl-mu0k1-Ini-geo-100-Strip1-SW=100km-AD=0-No
 
 
 LegendEntry=[...
-    "10km: Thwaites ice shelf","4.6km: Thwaites ice shelf removed","4.6km: Thwaites ice shelf removed 2km downstream","4.6km: Thwaites ice shelf removed 5km downstream","4.6km: Thwaites ice shelf removed 10km downstream",...
-    "5km: Thwaites ice shelf","2.3km: Thwaites ice shelf removed","2.3km: Thwaites ice shelf removed 2.3km downstream","2.3km: Thwaites ice shelf removed 5km downstream","2.3km: Thwaites ice shelf removed 10km downstream",...
+    "4.6km: Thwaites ice shelf","4.6km: Thwaites ice shelf removed","4.6km: Thwaites ice shelf removed 2km downstream","4.6km: Thwaites ice shelf removed 5km downstream","4.6km: Thwaites ice shelf removed 10km downstream",...
+    "2.3km: Thwaites ice shelf","2.3km: Thwaites ice shelf removed","2.3km: Thwaites ice shelf removed 2km downstream","2.3km: Thwaites ice shelf removed 5km downstream","2.3km: Thwaites ice shelf removed 10km downstream",...
+    ];
+
+
+LegendEntry=[...
+    "2.3km: Thwaites ice shelf","2.3km: Thwaites ice shelf removed","2.3km: Thwaites ice shelf removed 2km downstream","2.3km: Thwaites ice shelf removed 5km downstream","2.3km: Thwaites ice shelf removed 10km downstream",...
     ];
 
 
@@ -95,14 +100,15 @@ CreateVideo=false;
 CalcVAF=true;
 ComparisionPlots=false;
 Step=20;
-IRange=1:10;
+IRange=6:10;
 
 if CreateVideo
 
     for I=IRange
-        %ReadPlotSequenceOfResultFiles(FileNameSubstring=SubString(I),PlotTimestep=10) ;
-        % ReadPlotSequenceOfResultFiles(FileNameSubstring=SubString(I),PlotTimestep=10,PlotType="-ubvb-B-") ;
-        ReadPlotSequenceOfResultFiles(FileNameSubstring=SubString(I),PlotTimestep=Step,PlotType="-ubvb-h-") ;
+        
+        
+        %ReadPlotSequenceOfResultFiles(FileNameSubstring=SubString(I),PlotTimestep=Step,PlotType="-ubvb-h-") ;
+        ReadPlotSequenceOfResultFiles(FileNameSubstring=SubString(I),PlotTimestep=Step,PlotType="-ubvb-B-") ;
     end
 end
 
