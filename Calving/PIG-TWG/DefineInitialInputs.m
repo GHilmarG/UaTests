@@ -18,7 +18,7 @@ if isempty(UserVar) || ~isfield(UserVar,'RunType')
     UserVar.RunType='-FT-C-I-' ;  % 'Forward-Transient-Calving-Initialisation' ;
     UserVar.RunType="-FT-C-MR4-SM-" ;  % 'Forward-Transient-Calving with surface mass balance based on rachmo
     UserVar.RunType="-FT-C-AC-BMGL-MR4-SM-" ;  % 'Forward-Transient-Calving-Anna Crawford- Initial calving fronts are Bedmachine grounding lines - ocean melt param #4
-
+    UserVar.RunType="-FT-C-RR-BMCF-MR4-SM-" ;  % 'Forward-Transient , Retreat-Rate prescribed , Initial calving fronts are Bedmachine grounding lines , ocean melt param #4
 
     % UserVar.RunType="-FT-C-I-Duvh-" ;  % 'Forward-Transient-Calving-Initialisation-Deactivate ahead of uvh solve' ;
 
@@ -46,6 +46,9 @@ UserVar.Region="PIG-TWG" ; "PIG" ; % "PIG-TWG" ;
 if contains(UserVar.RunType,"-C-NV-")
     UserVar.CalvingLaw.Type="-NV-"  ;  % "-ScalesWithNormalVelocity+1.0-"  ;
     UserVar.CalvingLaw.Factor=1.1;
+elseif contains(UserVar.RunType,"-C-RR-")
+    UserVar.CalvingLaw.Type="-RR-"  ;  %  prescribed retreat rate
+    UserVar.CalvingLaw.Factor="";
 elseif contains(UserVar.RunType,"-C-AC-")
     UserVar.CalvingLaw.Type="-AC-"  ;  % Anna Crawford
 else
@@ -53,7 +56,7 @@ else
     UserVar.CalvingLaw.Factor=0 ;
 end
 
-UserVar.MeshResolution=2.5e3;   % MESH RESOLUTION
+UserVar.MeshResolution=5e3;   % MESH RESOLUTION
 
 if contains(UserVar.RunType,"-TWISC")
     UserVar.CalvingFront0=extract(UserVar.RunType,"-TWISC"+digitsPattern+"-");
@@ -111,6 +114,11 @@ UserVar.FasFile="Fas_SMB_RACMO2k3_1979_2011.mat" ; %  surface mass balance
 %% uvh tau;
 CtrlVar.uvh.SUPG.tau="taus" ; % default,  issues with uvh convergence in the beginning
 % CtrlVar.uvh.SUPG.tau="tau1" ; % testing
+
+
+%%
+
+CtrlVar.kH=10; 
 
 %%  Level-set parameters
 
@@ -313,7 +321,8 @@ CtrlVar.SaveInitialMeshFileName=...
 %% Time step, total run time, run steps
 
 CtrlVar.dt=0.0001;   CtrlVar.DefineOutputsDt=0.25;
-CtrlVar.ATSdtMax=0.05;
+CtrlVar.ATSdtMax=0.1;
+CtrlVar.ATSdtMin=0.01;
 
 if contains(UserVar.RunType,"-I-")
     CtrlVar.time=-0.1;  % If I'm using a mass-balance initialisation set start time to a slighly neg value
@@ -395,6 +404,7 @@ CtrlVar.Experiment= ...
     +"-SW="+num2str(CtrlVar.LevelSetMethodStripWidth/1000)+"km"...
     +"-AD="+num2str(CtrlVar.LevelSetMethodAutomaticallyDeactivateElements)...
     +UserVar.CalvingLaw.String...
+    +"-kH="+num2str(CtrlVar.kH)...
     +"-asRacmo"...
     +"-dhdtLim"+num2str(CtrlVar.LimitRangeInUpdateFtimeDerivatives)...
     +"-"+UserVar.Region...
@@ -427,6 +437,6 @@ UserVar.AFile=replace(UserVar.AFile,".","k");
 CtrlVar.NameOfRestartFiletoWrite=CtrlVar.Experiment+"-FR.mat";
 CtrlVar.NameOfRestartFiletoRead=CtrlVar.NameOfRestartFiletoWrite;
 
-CtrlVar.WriteRestartFileInterval=1000;
+CtrlVar.WriteRestartFileInterval=100;
 
 end
