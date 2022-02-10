@@ -32,7 +32,7 @@ if isempty(UserVar) || ~isfield(UserVar,'RunType')
 
 
 
-    % UserVar.RunType='Inverse-MatOpt';
+    UserVar.RunType="Inverse-MatOpt-Cornford";
     % UserVar.RunType='GenerateMesh' ;
     % UserVar.RunType='Inverse-UaOpt';meshb    % UserVar.RunType='Forward-Transient';
 
@@ -56,7 +56,7 @@ else
     UserVar.CalvingLaw.Factor=0 ;
 end
 
-UserVar.MeshResolution=5e3;   % MESH RESOLUTION
+UserVar.MeshResolution=20e3;   % MESH RESOLUTION
 
 if contains(UserVar.RunType,"-TWISC")
     UserVar.CalvingFront0=extract(UserVar.RunType,"-TWISC"+digitsPattern+"-");
@@ -70,7 +70,7 @@ CtrlVar.CalvingLaw.Evaluation="-int-"  ; % nodal or integration-point evaluation
 UserVar.CalvingLaw.String=UserVar.CalvingLaw.Type+num2str(UserVar.CalvingLaw.Factor)+UserVar.CalvingFront0+CtrlVar.CalvingLaw.Evaluation;
 UserVar.DefineOutputs="-ubvb-LSF-h-dhdt-speed-save-"; % '-ubvb-LSF-h-save-';
 % UserVar.DefineOutputs="-ubvb-LSF-h-dhdt-speed-"; %
-% UserVar.DefineOutputs="-save-"; %
+UserVar.DefineOutputs="-save-"; %
 
 CtrlVar.LimitRangeInUpdateFtimeDerivatives=true ;
 
@@ -167,7 +167,14 @@ CtrlVar.LevelSetMinIceThickness=CtrlVar.ThickMin+1;    % this is the hmin consta
 
 %%
 CtrlVar.SaveInitialMeshFileName='MeshFile';
-CtrlVar.SlidingLaw="Weertman" ; % "Umbi" ; % "Weertman" ; % "Tsai" ; % "Cornford" ;  "Umbi" ; "Cornford" ; % "Tsai" , "Budd"
+
+
+if contains(UserVar.RunType,"Cornford")
+    CtrlVar.SlidingLaw="Cornford" ;
+else
+    CtrlVar.SlidingLaw="Weertman" ;
+end
+% "Umbi" ; % "Weertman" ; % "Tsai" ; % "Cornford" ;  "Umbi" ; "Cornford" ; % "Tsai" , "Budd"
 
 switch CtrlVar.SlidingLaw
 
@@ -184,6 +191,17 @@ switch CtrlVar.SlidingLaw
         CtrlVar.NameOfFileForSavingAGlenEstimate="InvEstimate-"+AFile;
 
 
+    case "Cornford"
+
+        AFile="Cornford-"+UserVar.Region+"-"+num2str(UserVar.MeshResolution/1000)+"km";   %
+        CFile="Cornford-"+UserVar.Region+"-"+num2str(UserVar.MeshResolution/1000)+"km";   %
+
+        UserVar.AFile="FA-"+AFile;
+        UserVar.CFile="FC-"+CFile;
+
+
+        CtrlVar.NameOfFileForSavingSlipperinessEstimate="InvEstimate-"+CFile;
+        CtrlVar.NameOfFileForSavingAGlenEstimate="InvEstimate-"+AFile;
 
 
     case "Umbi"
@@ -201,23 +219,23 @@ end
 
 %% UserVar.RunType
 
-if contains(UserVar.RunType,"'Inverse-MatOpt")
+if contains(UserVar.RunType,"Inverse-MatOpt")
 
 
     CtrlVar.InverseRun=1;
 
-    CtrlVar.Restart=1;
+    CtrlVar.Restart=0;
     CtrlVar.Inverse.InfoLevel=1;
     CtrlVar.InfoLevelNonLinIt=0;
     CtrlVar.InfoLevel=0;
 
-    UserVar.Slipperiness.ReadFromFile=1;
-    UserVar.AGlen.ReadFromFile=1;
+    UserVar.Slipperiness.ReadFromFile=0;
+    UserVar.AGlen.ReadFromFile=0;
 
     CtrlVar.ReadInitialMesh=1;
     CtrlVar.AdaptMesh=0;
 
-    CtrlVar.Inverse.Iterations=1000;
+    CtrlVar.Inverse.Iterations=10000;
 
     CtrlVar.Inverse.InvertFor="-logA-logC-" ; % {'C','logC','AGlen','logAGlen'}
     CtrlVar.Inverse.Regularize.Field=CtrlVar.Inverse.InvertFor;
