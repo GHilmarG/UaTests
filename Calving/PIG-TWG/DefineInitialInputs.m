@@ -56,7 +56,7 @@ else
     UserVar.CalvingLaw.Factor=0 ;
 end
 
-UserVar.MeshResolution=20e3;   % MESH RESOLUTION
+UserVar.MeshResolution=30e3;   % MESH RESOLUTION
 
 if contains(UserVar.RunType,"-TWISC")
     UserVar.CalvingFront0=extract(UserVar.RunType,"-TWISC"+digitsPattern+"-");
