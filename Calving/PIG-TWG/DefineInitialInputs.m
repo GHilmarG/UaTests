@@ -24,6 +24,8 @@ if isempty(UserVar) || ~isfield(UserVar,'RunType')
 
     % Thwaites ice shelf experiments
     UserVar.RunType="-FT-P-TWIS-MR4-SM-" ;  % -P-TWIS- is Thwaites Ice Shelf unmodified, ie all fronts kept as is, not calving not, simply a referene run
+    UserVar.RunType="-FT-P-TWIS-MR4-SM-" ;  % -P-TWIS- is Thwaites Ice Shelf unmodified, ie all fronts kept as is, not calving not, simply a referene run
+    UserVar.RunType="-FT-P-TWIS-Duvh-MR4-SM-" ;  % -P-TWIS- is Thwaites Ice Shelf unmodified, ie all fronts kept as is, not calving not, simply a referene run, Deactive Elements
     % UserVar.RunType="-FT-P-TWISC-MR4-SM-" ;  % -P-TWISC- is Thwaites Ice Shelf Calved off,
     % UserVar.RunType="-FT-P-TWISC10-MR4-SM-" ;  % -P-TWISC- is Thwaites Ice Shelf Calved off,
     % UserVar.RunType="-FT-P-TWISC5-MR4-SM-" ;  % -P-TWISC- is Thwaites Ice Shelf Calved off,
@@ -32,7 +34,7 @@ if isempty(UserVar) || ~isfield(UserVar,'RunType')
 
 
 
-    UserVar.RunType="Inverse-MatOpt-Cornford";
+    % UserVar.RunType="Inverse-MatOpt-Cornford";
     % UserVar.RunType='GenerateMesh' ;
     % UserVar.RunType='Inverse-UaOpt';meshb    % UserVar.RunType='Forward-Transient';
 
@@ -56,7 +58,7 @@ else
     UserVar.CalvingLaw.Factor=0 ;
 end
 
-UserVar.MeshResolution=30e3;   % MESH RESOLUTION
+UserVar.MeshResolution=5e3;   % MESH RESOLUTION
 
 if contains(UserVar.RunType,"-TWISC")
     UserVar.CalvingFront0=extract(UserVar.RunType,"-TWISC"+digitsPattern+"-");
@@ -70,7 +72,7 @@ CtrlVar.CalvingLaw.Evaluation="-int-"  ; % nodal or integration-point evaluation
 UserVar.CalvingLaw.String=UserVar.CalvingLaw.Type+num2str(UserVar.CalvingLaw.Factor)+UserVar.CalvingFront0+CtrlVar.CalvingLaw.Evaluation;
 UserVar.DefineOutputs="-ubvb-LSF-h-dhdt-speed-save-"; % '-ubvb-LSF-h-save-';
 % UserVar.DefineOutputs="-ubvb-LSF-h-dhdt-speed-"; %
-UserVar.DefineOutputs="-save-"; %
+% UserVar.DefineOutputs="-save-"; %
 
 CtrlVar.LimitRangeInUpdateFtimeDerivatives=true ;
 

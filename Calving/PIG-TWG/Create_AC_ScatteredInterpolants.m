@@ -56,6 +56,10 @@ save('FC-Weertman-PIG-TWG-5km.mat','FC')
 load('InvEstimate-AWeertman-PIG-TWG5km.mat')
 FA=scatteredInterpolant(xA,yA,AGlen); 
 save('FA-Weertman-PIG-TWG-5km.mat','FA')
+%%
+
+
+
 
 
 %%
