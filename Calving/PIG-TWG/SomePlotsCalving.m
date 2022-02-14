@@ -127,7 +127,7 @@ if CalcVAF
         ylabel(" VAF (km^3)")
         yyaxis right
         AreaOfTheOcean=3.625e14; % units m^2.
-        ylim(tt*100*1e9/3.62e14) ;
+        ylim(tt*1000*1e9/3.62e14) ;
         ylabel(" Equvivalent global sea level change (mm)")
 
         xlabel("time (yr)") ;

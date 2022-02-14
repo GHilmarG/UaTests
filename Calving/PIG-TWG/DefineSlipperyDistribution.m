@@ -67,5 +67,15 @@ else
     C=FC(MUA.coordinates(:,1),MUA.coordinates(:,2));
     m=3;
     
+   if contains(UserVar.RunType,"-Clim-")
+    
+       CminFloating=1e-2; 
+       I=F.GF.node<0.5 & C < CminFloating ; 
+
+       C(I)=CminFloating;
+        
+   end
+
+
     
 end
