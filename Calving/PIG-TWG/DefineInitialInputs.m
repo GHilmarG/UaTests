@@ -34,9 +34,9 @@ if isempty(UserVar) || ~isfield(UserVar,'RunType')
 
 
 
-    % UserVar.RunType="Inverse-MatOpt-Cornford";
+    
     % UserVar.RunType='GenerateMesh' ;
-    % UserVar.RunType='Inverse-UaOpt';meshb    % UserVar.RunType='Forward-Transient';
+    UserVar.RunType='Inverse-MatOpt';
 
 end
 
@@ -58,7 +58,7 @@ else
     UserVar.CalvingLaw.Factor=0 ;
 end
 
-UserVar.MeshResolution=5e3;   % MESH RESOLUTION
+UserVar.MeshResolution=20e3;   % MESH RESOLUTION
 
 if contains(UserVar.RunType,"-TWISC")
     UserVar.CalvingFront0=extract(UserVar.RunType,"-TWISC"+digitsPattern+"-");
@@ -126,7 +126,7 @@ CtrlVar.kH=10;
 
 CtrlVar.LevelSetMethod=1;
 
-if contains(UserVar.RunType,"-P-")
+if contains(UserVar.RunType,"-P-")  || contains(UserVar.RunType,"-Inverse-")
     CtrlVar.LevelSetEvolution="-Prescribed-"   ; % "-prescribed-",
 else
     CtrlVar.LevelSetEvolution="-By solving the level set equation-"   ; % "-prescribed-",
@@ -189,9 +189,7 @@ switch CtrlVar.SlidingLaw
         UserVar.CFile="FC-"+CFile;
 
 
-        CtrlVar.NameOfFileForSavingSlipperinessEstimate="InvEstimate-"+CFile;
-        CtrlVar.NameOfFileForSavingAGlenEstimate="InvEstimate-"+AFile;
-
+     
 
     case "Cornford"
 
@@ -202,8 +200,7 @@ switch CtrlVar.SlidingLaw
         UserVar.CFile="FC-"+CFile;
 
 
-        CtrlVar.NameOfFileForSavingSlipperinessEstimate="InvEstimate-"+CFile;
-        CtrlVar.NameOfFileForSavingAGlenEstimate="InvEstimate-"+AFile;
+       
 
 
     case "Umbi"
@@ -223,7 +220,7 @@ end
 
 if contains(UserVar.RunType,"Inverse-MatOpt")
 
-
+    UserVar.DefineOutputs="-"; %
     CtrlVar.InverseRun=1;
 
     CtrlVar.Restart=0;
@@ -246,9 +243,22 @@ if contains(UserVar.RunType,"Inverse-MatOpt")
 
 
     CtrlVar.Inverse.Regularize.logC.ga=1;
-    CtrlVar.Inverse.Regularize.logC.gs=1e3 ;
+    CtrlVar.Inverse.Regularize.logC.gs=1000 ;
     CtrlVar.Inverse.Regularize.logAGlen.ga=1;
-    CtrlVar.Inverse.Regularize.logAGlen.gs=1e3 ;
+    CtrlVar.Inverse.Regularize.logAGlen.gs=1e7 ;
+
+    InvFile=CtrlVar.SlidingLaw...
+        +"-Ca"+num2str(CtrlVar.Inverse.Regularize.logC.ga)...
+        +"-Cs"+num2str(CtrlVar.Inverse.Regularize.logC.gs)...
+        +"-Aa"+num2str(CtrlVar.Inverse.Regularize.logAGlen.ga)...
+        +"+As"+num2str(CtrlVar.Inverse.Regularize.logAGlen.gs)...
+        +"-"+num2str(UserVar.MeshResolution/1000)+"km";
+
+
+
+    CtrlVar.NameOfFileForSavingSlipperinessEstimate="InvA-"+InvFile;
+    CtrlVar.NameOfFileForSavingAGlenEstimate="InvC-"+InvFile;
+
 
 
     if contains(UserVar.RunType,"UaOpt")
@@ -438,9 +448,8 @@ if startsWith(CtrlVar.Experiment,"-")
     CtrlVar.Experiment=replaceBetween(CtrlVar.Experiment,1,2,"");
 end
 
-CtrlVar.Inverse.NameOfRestartOutputFile="InverseRestartFile-"...
-    +UserVar.Region...
-    +"-"+num2str(UserVar.MeshResolution/1000)+"km";
+CtrlVar.Inverse.NameOfRestartOutputFile="InverseRestartFile-"+InvFile;
+    
 
 CtrlVar.Inverse.NameOfRestartOutputFile=replace(CtrlVar.Inverse.NameOfRestartOutputFile,"--","-");
 CtrlVar.Inverse.NameOfRestartOutputFile=replace(CtrlVar.Inverse.NameOfRestartOutputFile,".","k");
