@@ -1,7 +1,7 @@
 function  UserVar=DefineOutputs(UserVar,CtrlVar,MUA,BCs,F,l,GF,InvStartValues,InvFinalValues,Priors,Meas,BCsAdjoint,RunInfo)
 
 
-persistent cyMax cTime iCounter
+persistent cyMax cTime iCounter  xBMGL yBMGL
 
 
 if isempty(cyMax)
@@ -12,7 +12,13 @@ if isempty(cyMax)
 
 end
 
+if isempty(xBMGL)
 
+    load("GroundingLineForAntarcticaBasedOnBedmachine.mat","xGL","yGL") ;
+
+    xBMGL=xGL ; yBMGL=yGL ;
+    xGL=[] ; yGL=[] ; 
+end
 
 
 %%
@@ -40,7 +46,7 @@ if contains(plots,'-save-')
 
     % save data in files with running names
     % check if folder 'ResultsFiles' exists, if not create
-    if CtrlVar.DefineOutputsInfostring == "First call" && exist(fullfile(cd,UserVar.ResultsFileDirectory),'dir')~=7
+    if CtrlVar.DefineOutputsInfostring == "First call" && ~isfolder(UserVar.ResultsFileDirectory) %  exist(fullfile(cd,UserVar.ResultsFileDirectory),'dir')~=7
         mkdir(UserVar.ResultsFileDirectory)
     end
 
@@ -206,7 +212,7 @@ end
 if contains(plots,'-ubvb-')
     % plotting horizontal velocities
     %%
-    FindOrCreateFigure("(ub,vb)") ;
+    figubvb=FindOrCreateFigure("(ub,vb)") ; clf(figubvb)
     N=1;
     %speed=sqrt(ub.*ub+vb.*vb);
     %CtrlVar.MinSpeedWhenPlottingVelArrows=0; CtrlVar.MaxPlottedSpeed=max(speed); %
@@ -217,8 +223,11 @@ if contains(plots,'-ubvb-')
     QuiverColorGHG(F.x(1:N:end),F.y(1:N:end),F.ub(1:N:end),F.vb(1:N:end),CtrlVar);
     hold on ;
     [xGL,yGL,GLgeo]=PlotGroundingLines(CtrlVar,MUA,F.GF,GLgeo,xGL,yGL,'k');
-    [xc,yc]=PlotCalvingFronts(CtrlVar,MUA,F,'b',LineWidth=2);
-    PlotMuaBoundary(CtrlVar,MUA,'b')
+    [xc,yc]=PlotCalvingFronts(CtrlVar,MUA,F,'b',LineWidth=1);
+    tt=axis;
+    plot(xBMGL/CtrlVar.PlotXYscale,yBMGL/CtrlVar.PlotXYscale,'r');
+    PlotMuaBoundary(CtrlVar,MUA,'k')
+    axis(tt)
     title(sprintf('(ub,vb) t=%-g ',CtrlVar.time)) ; xlabel('x (km)') ; ylabel('y (km)')
     %%
 
