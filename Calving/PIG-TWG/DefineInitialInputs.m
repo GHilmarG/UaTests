@@ -39,7 +39,7 @@ if isempty(UserVar) || ~isfield(UserVar,'RunType')
 
     
     % UserVar.RunType='GenerateMesh' ;
-    UserVar.RunType='Inverse-MatOpt';
+    % UserVar.RunType='Inverse-MatOpt';
 
 end
 
@@ -62,7 +62,7 @@ else
 end
 
 
-UserVar.MeshResolution=20e3;   % MESH RESOLUTION
+UserVar.MeshResolution=10e3;   % MESH RESOLUTION
 
 if contains(UserVar.RunType,"-TWISC")
     UserVar.CalvingFront0=extract(UserVar.RunType,"-TWISC"+digitsPattern+"-");
@@ -76,7 +76,7 @@ CtrlVar.CalvingLaw.Evaluation="-int-"  ; % nodal or integration-point evaluation
 UserVar.CalvingLaw.String=UserVar.CalvingLaw.Type+num2str(UserVar.CalvingLaw.Factor)+UserVar.CalvingFront0+CtrlVar.CalvingLaw.Evaluation;
 UserVar.DefineOutputs="-ubvb-LSF-h-dhdt-speed-save-"; % '-ubvb-LSF-h-save-';
 % UserVar.DefineOutputs="-ubvb-LSF-h-dhdt-speed-"; %
-% UserVar.DefineOutputs="-save-"; %
+UserVar.DefineOutputs="-save-"; %
 
 CtrlVar.LimitRangeInUpdateFtimeDerivatives=true ;
 
@@ -262,7 +262,7 @@ if contains(UserVar.RunType,"Inverse-MatOpt")
 
     CtrlVar.NameOfFileForSavingSlipperinessEstimate="InvA-"+InvFile;
     CtrlVar.NameOfFileForSavingAGlenEstimate="InvC-"+InvFile;
-
+CtrlVar.Inverse.NameOfRestartOutputFile="InverseRestartFile-"+InvFile;
 
 
     if contains(UserVar.RunType,"UaOpt")
@@ -452,7 +452,8 @@ if startsWith(CtrlVar.Experiment,"-")
     CtrlVar.Experiment=replaceBetween(CtrlVar.Experiment,1,2,"");
 end
 
-CtrlVar.Inverse.NameOfRestartOutputFile="InverseRestartFile-"+InvFile;
+
+
     
 
 CtrlVar.Inverse.NameOfRestartOutputFile=replace(CtrlVar.Inverse.NameOfRestartOutputFile,"--","-");

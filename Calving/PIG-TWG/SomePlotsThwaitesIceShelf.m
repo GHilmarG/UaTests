@@ -69,16 +69,20 @@ SubString(2)="T-P-TWIS-MR4-u-cl-mu0k1-Ini-geo-100-Strip1-SW=100km-AD=0-NoCalving
 
 
 Experiment="AC-lim" ;
+Experiment= "ConvergenceStudy";
 
 switch Experiment
 
     case "AC-lim"
 
         MS="5km"; LM=" 2.3km" ;
-        %MS="10km"; LM=" 4.6km" ;
-        %MS="20km"; LM=" 9.3km" ;
+        MS="10km"; LM=" 4.6km" ;
+        MS="20km"; LM=" 9.3km" ;
+        MS="30km"; LM=" 14km" ;
 
         SubString(1)="T-P-TWIS-MR4-SM-u-cl-mu0k1-Ini-geo-100-Strip1-SW=100km-AD=0-NoCalving-0-BMCF-int-kH=10-asRacmo-dhdtLim1-PIG-TWG-MeshFile"+MS+"-PIG-TWG";
+        %SubString(1)="T-P-TWIS-MR4-SM-u-cl-mu0k1-Ini-geo-100-Strip1-SW=100km-AD=0-NoCalving-0-BMCF-int-asRacmo-dhdtLim1-PIG-TWG-MeshFile"+MS+"-PIG-TWG";
+
         SubString(2)="T-P-TWIS-MR4-SM-Clim-Alim-u-cl-mu0k1-Ini-geo-100-Strip1-SW=100km-AD=0-NoCalving-0-BMCF-int-kH=10-asRacmo-dhdtLim1-PIG-TWG-MeshFile"+MS+"-PIG-TWG";
         SubString(3)="T-P-TWISC0-MR4-SM-Clim-Alim-u-cl-mu0k1-Ini-geo-100-Strip1-SW=100km-AD=0-NoCalving-0-TWISC0-int-kH=10-asRacmo-dhdtLim1-PIG-TWG-MeshFile"+MS+"-PIG-TWG";
         IRange=1:3;
@@ -87,6 +91,20 @@ switch Experiment
             "TWIS"+LM,"TWIS AClim"+LM, "TWISC AClim"+LM
             ];
 
+    case "ConvergenceStudy"
+
+
+        SubString(1)="T-P-TWIS-MR4-SM-Clim-Alim-u-cl-mu0k1-Ini-geo-100-Strip1-SW=100km-AD=0-NoCalving-0-BMCF-int-kH=10-asRacmo-dhdtLim1-PIG-TWG-MeshFile30km-PIG-TWG";
+        SubString(2)="T-P-TWIS-MR4-SM-Clim-Alim-u-cl-mu0k1-Ini-geo-100-Strip1-SW=100km-AD=0-NoCalving-0-BMCF-int-kH=10-asRacmo-dhdtLim1-PIG-TWG-MeshFile20km-PIG-TWG";
+        SubString(3)="T-P-TWIS-MR4-SM-Clim-Alim-u-cl-mu0k1-Ini-geo-100-Strip1-SW=100km-AD=0-NoCalving-0-BMCF-int-kH=10-asRacmo-dhdtLim1-PIG-TWG-MeshFile10km-PIG-TWG";
+        SubString(4)="T-P-TWIS-MR4-SM-Clim-Alim-u-cl-mu0k1-Ini-geo-100-Strip1-SW=100km-AD=0-NoCalving-0-BMCF-int-kH=10-asRacmo-dhdtLim1-PIG-TWG-MeshFile5km-PIG-TWG";
+
+
+        LegendEntry=[...
+            "14km","9.3km","4.6km","2.3km",...
+            ];
+
+        IRange=1:4;
 
     case "10km"
         % 10km
@@ -136,8 +154,8 @@ Step=5;
 if CreateVideo
 
     for I=IRange
-        
-        
+
+
         %ReadPlotSequenceOfResultFiles(FileNameSubstring=SubString(I),PlotTimestep=Step,PlotType="-ubvb-h-") ;
         ReadPlotSequenceOfResultFiles(FileNameSubstring=SubString(I),PlotTimestep=Step,PlotType="-ubvb-B-") ;
     end
@@ -147,12 +165,12 @@ col=["k","r","g","m","y","k","c","g","m","y"]  ;
 
 lw=[1 1 1 1 1 2 2 2 2 2 ];
 M=["+","o","*","^","s","<"];
-DataCollect=cell(10) ; 
+DataCollect=cell(10) ;
 
 
 if CalcVAF
 
-    
+
 
     for I=IRange
         fprintf("\n Reading %s \n",SubString(I))
@@ -176,10 +194,10 @@ if CalcVAF
         tt=ylim;
         ylabel(" VAF (km^3)")
         yyaxis right
-        
-        
+
+
         % ax=gca(); linkprop([ax.YAxis(1) ax.YAxis(2)],'limits') ;
-        
+
         ylabel(" Equvivalent global sea level change (mm)")
 
         xlabel("time (yr)") ;
@@ -190,9 +208,11 @@ if CalcVAF
 
     end
     AreaOfTheOcean=3.625e14; % units m^2.
-    ax=gca();  ax.YAxis(2).Limits=ax.YAxis(1).Limits*1000*1e9/AreaOfTheOcean; 
+    ax=gca();  ax.YAxis(2).Limits=ax.YAxis(1).Limits*1000*1e9/AreaOfTheOcean;
     % linkprop([ax.YAxis(1) ax.YAxis(2)],'limits') ;
     legend
+    yyaxis left
+    fig.YAxis(1).Exponent=0 ; 
 end
 
 
@@ -216,11 +236,11 @@ if ComparisionPlots
 
     Files(1)="0000000-Nodes83632-Ele166223-Tri3-kH1000-T-P-TWIS-MR4-u-cl-mu0k1-Ini-geo-100-Strip1-SW=100km-AD=0-NoCalving-0-BMCF-int-asRacmo-dhdtLim1-PIG-TWG-MeshFile5km-PIG-TWG";
     Files(2)="0007000-Nodes83632-Ele166223-Tri3-kH1000-T-P-TWIS-MR4-u-cl-mu0k1-Ini-geo-100-Strip1-SW=100km-AD=0-NoCalving-0-BMCF-int-asRacmo-dhdtLim1-PIG-TWG-MeshFile5km-PIG-TWG";
-    
-       
+
+
     Files(3)="0000000-Nodes83632-Ele166223-Tri3-kH1000-T-P-TWISC-MR4-u-cl-mu0k1-Ini-geo-100-Strip1-SW=100km-AD=0-NoCalving-0-TWISC-int-asRacmo-dhdtLim1-PIG-TWG-MeshFile5km-PIG-TWG";
     Files(4)="0007000-Nodes83632-Ele166223-Tri3-kH1000-T-P-TWISC-MR4-u-cl-mu0k1-Ini-geo-100-Strip1-SW=100km-AD=0-NoCalving-0-TWISC-int-asRacmo-dhdtLim1-PIG-TWG-MeshFile5km-PIG-TWG";
-    
+
 
     %Files(1)="0000000-Nodes21094-Ele41666-Tri3-kH1000-T-P-TWIS-MR4-u-cl-mu0k1-Ini-geo-100-Strip1-SW=100km-AD=0-NoCalving-0-BMCF-int-PIG-TWG-MeshFile10km-PIG-TWG";
     %Files(2)="0007000-Nodes21094-Ele41666-Tri3-kH1000-T-P-TWIS-MR4-u-cl-mu0k1-Ini-geo-100-Strip1-SW=100km-AD=0-NoCalving-0-BMCF-int-PIG-TWG-MeshFile10km-PIG-TWG";
@@ -259,7 +279,7 @@ if ComparisionPlots
 
     leg.String=LS;
 
-   
+
 
 
     title(cbar,"(m a.s.l.)")
