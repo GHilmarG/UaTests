@@ -3,27 +3,20 @@
 
 
 Experiment="As";
+%Experiment="Cs";
+MR="10km";
+
 
 switch Experiment
 
     case "As"
 
-        FileNames(1)="InverseRestartFile-Weertman-Ca1-Cs1000-Aa1+As1-20km" ;
-        FileNames(2)="InverseRestartFile-Weertman-Ca1-Cs1000-Aa1+As10-20km" ;
-        FileNames(3)="InverseRestartFile-Weertman-Ca1-Cs1000-Aa1+As100-20km" ;
-        FileNames(4)="InverseRestartFile-Weertman-Ca1-Cs1000-Aa1+As1000-20km" ;
-        FileNames(5)="InverseRestartFile-Weertman-Ca1-Cs1000-Aa1+As10000-20km" ;
-        FileNames(6)="InverseRestartFile-Weertman-Ca1-Cs1000-Aa1+As100000-20km" ;
-        FileNames(7)="InverseRestartFile-Weertman-Ca1-Cs1000-Aa1+As1000000-20km" ;
-        FileNames(8)="InverseRestartFile-Weertman-Ca1-Cs1000-Aa1+As10000000-20km" ;
-        FileNames(9)="InverseRestartFile-Weertman-Ca1-Cs1000-Aa1+As100000000-20km" ;
-
-        iRange=1:9;
+        files=dir("InverseRestartFile-Weertman-Ca1-Cs1000-Aa1+As*-"+MR+".mat") ;
 
 
     case "Cs"
 
-
+        files=dir("InverseRestartFile-Weertman-Ca1-Cs*-Aa1+As1000-"+MR+".mat") ;
 
     otherwise
 
@@ -31,14 +24,19 @@ switch Experiment
 
 end
 
+DataID=strings(numel(files),1) ;
 
 
-for i=iRange
+for i=1:numel(files)
 
-    load(FileNames(i))
+    load(files(i).name)
 
 
     UserVar=UserVarInRestartFile ; CtrlVar=CtrlVarInRestartFile; CtrlVar.Inverse.CalcGradI=false ;
+
+
+    
+
 
     J(i)=RunInfo.Inverse.J(end);
     R(i)=Regularisation(UserVar,CtrlVar,MUA,BCs,F,l,Priors,Meas,BCsAdjoint,RunInfo) ;
@@ -60,7 +58,20 @@ for i=iRange
     CtrlVar.Inverse.Regularize.logAGlen.gs=0;
 
 
-    CtrlVar.Inverse.Regularize.logAGlen.gs=1;
+    switch Experiment
+
+        case "As"
+            CtrlVar.Inverse.Regularize.logAGlen.gs=1;
+            DataID(i)= sprintf("%g",CtrlVarInRestartFile.Inverse.Regularize.logAGlen.gs);
+        case "Cs"
+            CtrlVar.Inverse.Regularize.logC.gs=1;
+            DataID(i)= sprintf("%g",CtrlVarInRestartFile.Inverse.Regularize.logC.gs);
+        otherwise
+            error("case not found")
+    end
+
+
+
     RCs(i)=Regularisation(UserVar,CtrlVar,MUA,BCs,F,l,Priors,Meas,BCsAdjoint,RunInfo) ;
 
 end
@@ -69,8 +80,15 @@ end
 % PlotResultsFromInversion(UserVar,CtrlVar,MUA,BCs,F,l,F.GF,InvStartValues,InvFinalValues,Priors,Meas,BCsAdjoint,RunInfo);
 
 %%
-fig=FindOrCreateFigure("LCurve Analysis") ;clf(fig) ; loglog(I,RCs,'o-r') ;
-xlabel("I")
-ylabel("R")
+fig=FindOrCreateFigure("LCurve Analysis") ;clf(fig) ;
+loglog(RCs,I,'o-r') ;
+xlabel("R") ; ylabel("I")
 
+text(RCs,I,DataID)
 % J must be equal to R+I if all is as is should be
+
+
+%%
+
+
+
