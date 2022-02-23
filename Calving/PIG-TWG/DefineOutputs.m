@@ -65,6 +65,45 @@ end
 % only do plots at end of run
 % if ~strcmp(CtrlVar.DefineOutputsInfostring,'Last call') ; return ; end
 
+switch UserVar.MeshResolution
+
+ case 2500
+
+     MRT="1.16 km";
+
+    case 5000
+
+        MRT="2.3 km";
+
+    case 10000
+
+        MRT="4.6 km";
+
+    case 20000
+
+        MRT="9.3 km";
+
+    case 30000
+
+        MRT="14 km";
+
+    otherwise
+
+        error("case not found")
+
+end
+
+
+
+
+
+
+
+
+
+
+
+
 if contains(plots,'-BCs-')
     %%
     FindOrCreateFigure("BCs");
@@ -89,6 +128,112 @@ if contains(plots,'-LSF-')
     ModifyColormap(0,1028);
     hold off
 
+end
+
+
+
+
+
+if contains(plots,'-AC-')  && UserVar.CalvingLaw.Type=="-AC-"
+
+
+
+
+
+    % Plot cliff height and calving rate
+    dfdx=[] ; dfdy=[] ;
+    CliffHeight=min((F.s-F.S),F.h) ;
+    c=DefineCalvingAtIntegrationPoints(UserVar,CtrlVar,dfdx,dfdy,F.ub,F.vb,F.h,F.s,F.S,F.x,F.y) ;
+
+    c(~F.LSFMask.NodesOn)=NaN ;
+    CliffHeight(~F.LSFMask.NodesOn)=NaN ;
+
+
+    FigCR=FindOrCreateFigure("Calving rate");
+    PlotMuaMesh(CtrlVar,MUA); hold on
+    cbar=UaPlots(CtrlVar,MUA,F,c/1000);
+    T=sprintf("Calving rate at t=%g for mesh resolution %s",CtrlVar.time,MRT);
+    title(T,Interpreter="latex")
+    title(cbar,("(km/yr)"))
+    FigCR.Children(1).Label.String="Calving Rate";
+    xlabel("xps (km)",Interpreter="latex"); ylabel("yps (km)",Interpreter="latex");
+    axis tight
+    FigCR.Position=[1000 490 900 820] ; 
+
+    % exportgraphics(FigCR,"CalvingRate.PDF")
+    % exportgraphics(FigCH,"CliffHeight.PDF")
+
+
+    FigCH=FindOrCreateFigure("Cliff height");
+    PlotMuaMesh(CtrlVar,MUA); hold on
+    cbar=UaPlots(CtrlVar,MUA,F,CliffHeight);
+    
+    T=sprintf("Cliff Height at t=%g and for mesh resolution %s",CtrlVar.time,MRT);
+    title(T)
+    title(cbar,("(m)"))
+    FigCH.Children(1).Label.String="Cliff Height";
+    xlabel("xps (km)",Interpreter="latex"); ylabel("yps (km)",Interpreter="latex");
+    axis tight
+    FigCH.Position=[15,490 900 820];
+
+    FigCRvCH=FindOrCreateFigure("Calving versus Cliff Height") ;
+    clf(FigCRvCH)
+    plot(CliffHeight,c/1000,'.r')
+    xlabel("Cliff Height (m)",Interpreter="latex") ;
+    ylabel("Calving Rate (km/yr)",Interpreter="latex") ;
+    title("Anna Crawford et al, 2021, T=-20 C $\alpha$=7.2",Interpreter="latex")
+    text(30,14,"Mesh Resolution"+MRT,Interpreter="latex")
+
+    save("CliffCalving"+MRT+".mat","CliffHeight","c")
+
+    if ~isempty(F.ub)
+
+        FigSpeed=FindOrCreateFigure("Speed along calving front") ;
+        clf(FigSpeed)
+        speed=sqrt(F.ub.*F.ub+F.vb.*F.vb) ;
+        speed(~F.LSFMask.NodesOn)=NaN ;
+        PlotMuaMesh(CtrlVar,MUA); hold on
+        cbar=UaPlots(CtrlVar,MUA,F,speed/1000);
+        xlabel("xps (km)",Interpreter="latex"); ylabel("yps (km)",Interpreter="latex");
+        axis tight
+        T=sprintf("Speed along calving front, time=%g, Mesh=%s",CtrlVar.time,MRT);
+        title(T,Interpreter="latex")
+
+        title(cbar,"(km/yr)")
+
+
+        FigSpeedvCH=FindOrCreateFigure("Speed and Cliff Height") ;
+        clf(FigSpeedvCH)
+        plot(CliffHeight,c/1000,'or')
+        hold on
+        plot(CliffHeight,speed/1000,'.k')
+        xlabel("Cliff Height (m)",Interpreter="latex") ;
+        ylabel("Speed and Calving Rate (km/yr)",Interpreter="latex") ;
+        T=sprintf("Anna Crawford et al, 2021, T=-20 C $\\alpha$=7.2 at t=%g (yr), Mesh=%s",CtrlVar.time,MRT) ;
+        title(T,Interpreter="latex") ;
+        
+        text(0.1,0.9,"Mesh Resolution "+MRT,Interpreter="latex",Units="normalized")
+        legend("Calving rate","Ice speed")
+
+
+
+
+    end
+
+
+
+
+
+
+ %    exportgraphics(FigCR,"CalvingRate.PDF")
+ %    exportgraphics(FigCH,"CliffHeight.PDF")
+ %    exportgraphics(FigCRvCH,"AnnaCrawfordCalvingLaw2k3km.jpg")
+
+end
+
+if contains(plots,'-CR-')  % calving rate
+
+    
 
     fig= FindOrCreateFigure("Calving Rate")  ;  clf(fig) ;
     [~,cbar]=PlotMeshScalarVariable(CtrlVar,MUA,F.c/1000);  % km/yr
@@ -224,10 +369,10 @@ if contains(plots,'-ubvb-')
     hold on ;
     [xGL,yGL,GLgeo]=PlotGroundingLines(CtrlVar,MUA,F.GF,GLgeo,xGL,yGL,'k');
     [xc,yc]=PlotCalvingFronts(CtrlVar,MUA,F,'b',LineWidth=1);
-    tt=axis;
+    
     plot(xBMGL/CtrlVar.PlotXYscale,yBMGL/CtrlVar.PlotXYscale,'r');
     PlotMuaBoundary(CtrlVar,MUA,'k')
-    axis(tt)
+    axis([min(MUA.Boundary.x) max(MUA.Boundary.x)    min(MUA.Boundary.y) max(MUA.Boundary.y)]/CtrlVar.PlotXYscale)
     title(sprintf('(ub,vb) t=%-g ',CtrlVar.time)) ; xlabel('x (km)') ; ylabel('y (km)')
     %%
 

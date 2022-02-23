@@ -29,7 +29,20 @@ if contains(options.CalvingFront,"-BMCF-")    % Initial calving front will be th
 elseif contains(options.CalvingFront,"-BMGL-")  % Initial calving front will be the Bedmachine grounding lines
 
 
-    Xc=xGL ; Yc=yGL ;
+    
+
+    % Now do we want all the Bedmachine groundign lines to be calving fronts?
+    % This would potentially create calving fronts upstream of the main grounding line, and all nunataks would become calving
+    % fronts.
+    %
+    % Clearly this is not desirable.  Here I just take the single longest, and first, grounding line.
+
+    inans=find(isnan(xGL));
+    ikeep=1:(inans(1)-1) ;
+    Xc=xGL(ikeep) ; Yc=yGL(ikeep) ; 
+
+
+
 
 elseif  contains(options.CalvingFront,"-TWISC")  % Thwaites ice shelf to be (partly) eliminated
 
@@ -156,9 +169,11 @@ if options.Plot
     plot(xGL/CtrlVar.PlotXYscale,yGL/CtrlVar.PlotXYscale,'r')
     hold on
     plot(Boundary(:,1)/CtrlVar.PlotXYscale,Boundary(:,2)/CtrlVar.PlotXYscale,'b')
-    plot(Xc/CtrlVar.PlotXYscale,Yc/CtrlVar.PlotXYscale,'k')
+    plot(Xc/CtrlVar.PlotXYscale,Yc/CtrlVar.PlotXYscale,'k',LineWidth=2)
     axis equal
-    legend("BM Grounding lines","BM Calving Fronts","Returned Calving Front")
+    legend("Bedmachine Grounding Lines","Bedmachine Calving Fronts","Returned Calving Front")
+    xlabel("xps (km)",Interpreter="latex"); ylabel("yps (km)",Interpreter="latex");
+    % axis([-1800 -1400 -700 -200])
 end
 
 

@@ -69,16 +69,16 @@ SubString(2)="T-P-TWIS-MR4-u-cl-mu0k1-Ini-geo-100-Strip1-SW=100km-AD=0-NoCalving
 
 
 Experiment="AC-lim" ;
-Experiment= "ConvergenceStudy";
+% Experiment= "ConvergenceStudy";
 
 switch Experiment
 
     case "AC-lim"
 
         MS="5km"; LM=" 2.3km" ;
-        MS="10km"; LM=" 4.6km" ;
-        MS="20km"; LM=" 9.3km" ;
-        MS="30km"; LM=" 14km" ;
+        % MS="10km"; LM=" 4.6km" ;
+        % MS="20km"; LM=" 9.3km" ;
+        % MS="30km"; LM=" 14km" ;
 
         SubString(1)="T-P-TWIS-MR4-SM-u-cl-mu0k1-Ini-geo-100-Strip1-SW=100km-AD=0-NoCalving-0-BMCF-int-kH=10-asRacmo-dhdtLim1-PIG-TWG-MeshFile"+MS+"-PIG-TWG";
         %SubString(1)="T-P-TWIS-MR4-SM-u-cl-mu0k1-Ini-geo-100-Strip1-SW=100km-AD=0-NoCalving-0-BMCF-int-asRacmo-dhdtLim1-PIG-TWG-MeshFile"+MS+"-PIG-TWG";
@@ -212,7 +212,7 @@ if CalcVAF
     % linkprop([ax.YAxis(1) ax.YAxis(2)],'limits') ;
     legend
     yyaxis left
-    fig.YAxis(1).Exponent=0 ; 
+    fig.CurrentAxes.YAxis(1).Exponent=0;
 end
 
 

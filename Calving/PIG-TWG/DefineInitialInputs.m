@@ -19,11 +19,13 @@ if isempty(UserVar) || ~isfield(UserVar,'RunType')
     UserVar.RunType="-FT-C-MR4-SM-" ;  % 'Forward-Transient-Calving with surface mass balance based on rachmo
     UserVar.RunType="-FT-C-AC-BMGL-MR4-SM-" ;  % 'Forward-Transient-Calving-Anna Crawford- Initial calving fronts are Bedmachine grounding lines - ocean melt param #4
     UserVar.RunType="-FT-C-RR-BMCF-MR4-SM-" ;  % 'Forward-Transient , Retreat-Rate prescribed , Initial calving fronts are Bedmachine grounding lines , ocean melt param #4
+    % UserVar.RunType="-FT-C-AC-BMGL-MR4-SM-" ;  % 'Forward-Transient , Retreat-Rate prescribed , Initial calving fronts are Bedmachine grounding lines , ocean melt param #4    
+
 
     % UserVar.RunType="-FT-C-I-Duvh-" ;  % 'Forward-Transient-Calving-Initialisation-Deactivate ahead of uvh solve' ;
 
     % Thwaites ice shelf experiments
-    UserVar.RunType="-FT-P-TWIS-MR4-SM-" ;  % -P-TWIS- is Thwaites Ice Shelf unmodified, ie all fronts kept as is, not calving not, simply a referene run
+    % UserVar.RunType="-FT-P-TWIS-MR4-SM-" ;  % -P-TWIS- is Thwaites Ice Shelf unmodified, ie all fronts kept as is, not calving not, simply a referene run
     %UserVar.RunType="-FT-P-TWIS-MR4-SM-Clim-Alim-" ;  % -P-TWIS- is Thwaites Ice Shelf unmodified, ie all fronts kept as is, not calving not, simply a referene run
     %UserVar.RunType="-FT-P-TWISC0-MR4-SM-Clim-Alim-" ;  % -P-TWIS- is Thwaites Ice Shelf unmodified, ie all fronts kept as is, not calving not, simply a referene run
 
@@ -56,13 +58,19 @@ elseif contains(UserVar.RunType,"-C-RR-")
     UserVar.CalvingLaw.Factor="";
 elseif contains(UserVar.RunType,"-C-AC-")
     UserVar.CalvingLaw.Type="-AC-"  ;  % Anna Crawford
+    UserVar.CalvingLaw.Factor="";
 else
     UserVar.CalvingLaw.Type="-NoCalving-"  ;  % "-ScalesWithNormalVelocity+1.0-"  ;
     UserVar.CalvingLaw.Factor=0 ;
 end
 
 
-UserVar.MeshResolution=10e3;   % MESH RESOLUTION
+UserVar.MeshResolution=5e3;   % MESH RESOLUTION  mesh size
+% 30km = 14km
+% 20km = 9.3km
+% 10km = 4.6km
+%  5km = 2.3km
+% 2.5km = 1.16km
 
 if contains(UserVar.RunType,"-TWISC")
     UserVar.CalvingFront0=extract(UserVar.RunType,"-TWISC"+digitsPattern+"-");
@@ -74,9 +82,9 @@ end
 
 CtrlVar.CalvingLaw.Evaluation="-int-"  ; % nodal or integration-point evaluation  ["-int-","-node-"]
 UserVar.CalvingLaw.String=UserVar.CalvingLaw.Type+num2str(UserVar.CalvingLaw.Factor)+UserVar.CalvingFront0+CtrlVar.CalvingLaw.Evaluation;
-UserVar.DefineOutputs="-ubvb-LSF-h-dhdt-speed-save-"; % '-ubvb-LSF-h-save-';
+UserVar.DefineOutputs="-ubvb-LSF-h-dhdt-speed-save-AC-"; % '-ubvb-LSF-h-save-';
 % UserVar.DefineOutputs="-ubvb-LSF-h-dhdt-speed-"; %
-UserVar.DefineOutputs="-save-"; %
+% UserVar.DefineOutputs="-save-"; %
 
 CtrlVar.LimitRangeInUpdateFtimeDerivatives=true ;
 
@@ -137,6 +145,19 @@ else
 end
 
 CtrlVar.LevelSetInitialisationInterval=100 ;
+
+if UserVar.CalvingLaw.Type=="-AC-"   % Anna Crawford
+    CtrlVar.LevelSetInitialisationInterval=1 ;
+    CtrlVar.DefineOutputsDt=0.001;
+    CtrlVar.LevelSetMethodMassBalanceFeedbackCoeffLin=-1000;  % This is the constant a1, it has units 1/time.
+    CtrlVar.LevelSetMethodMassBalanceFeedbackCoeffCubic=-1; 
+else
+    CtrlVar.DefineOutputsDt=0.25;
+
+    CtrlVar.LevelSetMethodMassBalanceFeedbackCoeffLin=-10;  % This is the constant a1, it has units 1/time.
+    CtrlVar.LevelSetMethodMassBalanceFeedbackCoeffCubic=0; 
+end
+
 CtrlVar.LevelSetInitialisationMethod="-geo-" ;
 
 CtrlVar.LevelSetReinitializePDist=true ;
@@ -160,7 +181,7 @@ CtrlVar.MeshAdapt.CFrange=[20e3 5e3 ; 10e3 2e3] ; % This refines the mesh around
 
 
 % The melt is decribed as a= a_1 (h-hmin)
-CtrlVar.LevelSetMethodMassBalanceFeedbackCoeffLin=-10;  % This is the constant a1, it has units 1/time.
+
 % Default value is -1
 CtrlVar.ThickMin=1;
 CtrlVar.LevelSetMinIceThickness=CtrlVar.ThickMin+1;    % this is the hmin constant, i.e. the accepted min ice thickness
@@ -354,9 +375,9 @@ CtrlVar.SaveInitialMeshFileName=...
 
 %% Time step, total run time, run steps
 
-CtrlVar.dt=0.0001;   CtrlVar.DefineOutputsDt=0.25;
+CtrlVar.dt=0.00001;   
 CtrlVar.ATSdtMax=0.1;
-CtrlVar.ATSdtMin=0.01;
+CtrlVar.ATSdtMin=0.0001;
 
 if contains(UserVar.RunType,"-I-")
     CtrlVar.time=-0.1;  % If I'm using a mass-balance initialisation set start time to a slighly neg value
