@@ -42,7 +42,7 @@ if isempty(UserVar) || ~isfield(UserVar,'RunType')
 
     
     % UserVar.RunType='GenerateMesh' ;
-    % UserVar.RunType='Inverse-MatOpt';
+    UserVar.RunType='Inverse-MatOpt';
 
 end
 
@@ -67,12 +67,17 @@ else
 end
 
 
-UserVar.MeshResolution=10e3;   % MESH RESOLUTION  mesh size
+
+if isempty(UserVar) || ~isfield(UserVar,'MeshResolution')
+    UserVar.MeshResolution=10e3;   % MESH RESOLUTION
+end
+
 % 30km = 14km
 % 20km = 9.3km
 % 10km = 4.6km
 %  5km = 2.3km
 % 2.5km = 1.16km
+
 
 if contains(UserVar.RunType,"-TWISC")
     UserVar.CalvingFront0=extract(UserVar.RunType,"-TWISC"+digitsPattern+"-");
@@ -268,11 +273,11 @@ if contains(UserVar.RunType,"Inverse-MatOpt")
     CtrlVar.Inverse.DataMisfit.GradientCalculation="-adjoint-" ; % "-FixpointC-"; "adjoint";
     CtrlVar.Inverse.Measurements="-uv-" ;  % {'-uv-,'-uv-dhdt-','-dhdt-'}
 
-
-    CtrlVar.Inverse.Regularize.logC.ga=1;
-    CtrlVar.Inverse.Regularize.logC.gs=1000 ;
-    CtrlVar.Inverse.Regularize.logAGlen.ga=1;
-    CtrlVar.Inverse.Regularize.logAGlen.gs=1e7 ;
+    %
+    %     CtrlVar.Inverse.Regularize.logC.ga=1;
+    %     CtrlVar.Inverse.Regularize.logC.gs=1000 ;
+    %     CtrlVar.Inverse.Regularize.logAGlen.ga=1;
+    %     CtrlVar.Inverse.Regularize.logAGlen.gs=1e7 ;
 
     InvFile=CtrlVar.SlidingLaw...
         +"-Ca"+num2str(CtrlVar.Inverse.Regularize.logC.ga)...
@@ -282,13 +287,10 @@ if contains(UserVar.RunType,"Inverse-MatOpt")
         +"-"+num2str(UserVar.MeshResolution/1000)+"km";
 
 
-
     CtrlVar.NameOfFileForSavingSlipperinessEstimate="InvC-"+InvFile;
     CtrlVar.NameOfFileForSavingAGlenEstimate="InvA-"+InvFile;
 
-
-CtrlVar.Inverse.NameOfRestartOutputFile="InverseRestartFile-"+InvFile;
-
+    CtrlVar.Inverse.NameOfRestartOutputFile="InverseRestartFile-"+InvFile;
 
     if contains(UserVar.RunType,"UaOpt")
 
