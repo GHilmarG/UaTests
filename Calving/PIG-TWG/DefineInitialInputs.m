@@ -1,4 +1,5 @@
 
+
 function [UserVar,CtrlVar,MeshBoundaryCoordinates]=DefineInitialInputs(UserVar,CtrlVar)
 
 
@@ -17,17 +18,17 @@ if isempty(UserVar) || ~isfield(UserVar,'RunType')
     UserVar.RunType='-FT-I-' ;  % 'Forward-Transient-Initialisation' ;
     UserVar.RunType='-FT-C-I-' ;  % 'Forward-Transient-Calving-Initialisation' ;
     UserVar.RunType="-FT-C-MR4-SM-" ;  % 'Forward-Transient-Calving with surface mass balance based on rachmo
-    UserVar.RunType="-FT-C-AC-BMGL-MR4-SM-" ;  % 'Forward-Transient-Calving-Anna Crawford- Initial calving fronts are Bedmachine grounding lines - ocean melt param #4
+   
     UserVar.RunType="-FT-C-RR-BMCF-MR4-SM-" ;  % 'Forward-Transient , Retreat-Rate prescribed , Initial calving fronts are Bedmachine grounding lines , ocean melt param #4
-    % UserVar.RunType="-FT-C-AC-BMGL-MR4-SM-" ;  % 'Forward-Transient , Retreat-Rate prescribed , Initial calving fronts are Bedmachine grounding lines , ocean melt param #4    
+    UserVar.RunType="-FT-C-AC-BMGL-MR4-SM-" ;  % 'Forward-Transient , Anna Crawford
 
 
     % UserVar.RunType="-FT-C-I-Duvh-" ;  % 'Forward-Transient-Calving-Initialisation-Deactivate ahead of uvh solve' ;
 
     % Thwaites ice shelf experiments
     % UserVar.RunType="-FT-P-TWIS-MR4-SM-" ;  % -P-TWIS- is Thwaites Ice Shelf unmodified, ie all fronts kept as is, not calving not, simply a referene run
-    %UserVar.RunType="-FT-P-TWIS-MR4-SM-Clim-Alim-" ;  % -P-TWIS- is Thwaites Ice Shelf unmodified, ie all fronts kept as is, not calving not, simply a referene run
-    %UserVar.RunType="-FT-P-TWISC0-MR4-SM-Clim-Alim-" ;  % -P-TWIS- is Thwaites Ice Shelf unmodified, ie all fronts kept as is, not calving not, simply a referene run
+    %  UserVar.RunType="-FT-P-TWIS-MR4-SM-Clim-Alim-" ;   % Thwaites Ice Shelf unmodified, ie all fronts kept as is, not calving not, simply a referene run
+    %UserVar.RunType="-FT-P-TWISC0-MR4-SM-Clim-Alim-" ;  % Thwaites Ice Shelf calved off
 
 
     % UserVar.RunType="-FT-P-TWIS-Duvh-MR4-SM-" ;  % -P-TWIS- is Thwaites Ice Shelf unmodified, ie all fronts kept as is, not calving not, simply a referene run, Deactive Elements
@@ -59,13 +60,14 @@ elseif contains(UserVar.RunType,"-C-RR-")
 elseif contains(UserVar.RunType,"-C-AC-")
     UserVar.CalvingLaw.Type="-AC-"  ;  % Anna Crawford
     UserVar.CalvingLaw.Factor="";
+     CtrlVar.Implicituvh=false;
 else
     UserVar.CalvingLaw.Type="-NoCalving-"  ;  % "-ScalesWithNormalVelocity+1.0-"  ;
     UserVar.CalvingLaw.Factor=0 ;
 end
 
 
-UserVar.MeshResolution=5e3;   % MESH RESOLUTION  mesh size
+UserVar.MeshResolution=10e3;   % MESH RESOLUTION  mesh size
 % 30km = 14km
 % 20km = 9.3km
 % 10km = 4.6km
@@ -148,7 +150,7 @@ CtrlVar.LevelSetInitialisationInterval=100 ;
 
 if UserVar.CalvingLaw.Type=="-AC-"   % Anna Crawford
     CtrlVar.LevelSetInitialisationInterval=1 ;
-    CtrlVar.DefineOutputsDt=0.001;
+    CtrlVar.DefineOutputsDt=0;
     CtrlVar.LevelSetMethodMassBalanceFeedbackCoeffLin=-1000;  % This is the constant a1, it has units 1/time.
     CtrlVar.LevelSetMethodMassBalanceFeedbackCoeffCubic=-1; 
 else
@@ -281,8 +283,10 @@ if contains(UserVar.RunType,"Inverse-MatOpt")
 
 
 
-    CtrlVar.NameOfFileForSavingSlipperinessEstimate="InvA-"+InvFile;
-    CtrlVar.NameOfFileForSavingAGlenEstimate="InvC-"+InvFile;
+    CtrlVar.NameOfFileForSavingSlipperinessEstimate="InvC-"+InvFile;
+    CtrlVar.NameOfFileForSavingAGlenEstimate="InvA-"+InvFile;
+
+
 CtrlVar.Inverse.NameOfRestartOutputFile="InverseRestartFile-"+InvFile;
 
 
@@ -431,8 +435,8 @@ CtrlVar.AdaptMeshRunStepInterval=1 ; % remesh whenever mod(Itime,CtrlVar.AdaptMe
 
 
 %%
-CtrlVar.ThicknessConstraints=0;
-CtrlVar.ResetThicknessToMinThickness=1;  % change this later on
+CtrlVar.ThicknessConstraints=1;
+CtrlVar.ResetThicknessToMinThickness=0;
 
 
 %%
