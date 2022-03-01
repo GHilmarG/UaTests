@@ -1,8 +1,8 @@
 %%
 
 
-CtrlVar.Inverse.Iterations=2;
-CtrlVar.Restart=0;
+CtrlVar.Inverse.Iterations=2000;
+CtrlVar.Restart=1;
 
 CtrlVar.Inverse.Regularize.logC.ga=1;
 CtrlVar.Inverse.Regularize.logC.gs=1000 ;
@@ -20,7 +20,7 @@ for I=1:8
     I
 
     CtrlVar.Inverse.Regularize.logC.gs=c*10^I;
-    job{I}=batch("Ua",1,{UserVar,CtrlVar},"Pool",1) ;
+    job{I}=batch("Ua",0,{UserVar,CtrlVar},"Pool",1) ;
     pause(30)
 
 end
@@ -35,7 +35,7 @@ for I=1:8
 
     CtrlVar.Inverse.Regularize.logAGlen.gs=c*10^I ;
     %Ua(UserVar,CtrlVar) ;
-    job{I+10}=batch("Ua",1,{UserVar,CtrlVar},"Pool",1) ;
+    job{I+10}=batch("Ua",0,{UserVar,CtrlVar},"Pool",1) ;
     pause(30)
 
 end

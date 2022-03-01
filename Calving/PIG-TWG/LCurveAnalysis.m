@@ -11,12 +11,12 @@ switch Experiment
 
     case "As"
 
-        files=dir("InverseRestartFile-Weertman-Ca1-Cs1000-Aa1+As*-"+MR+".mat") ;
+        files=dir("InverseRestartFile-Weertman-Ca1-Cs1000-Aa1-As*-"+MR+".mat") ;
 
 
     case "Cs"
 
-        files=dir("InverseRestartFile-Weertman-Ca1-Cs*-Aa1+As1000-"+MR+".mat") ;
+        files=dir("InverseRestartFile-Weertman-Ca1-Cs*-Aa1-As1000-"+MR+".mat") ;
 
     otherwise
 
@@ -81,6 +81,9 @@ end
 
 %%
 fig=FindOrCreateFigure("LCurve Analysis") ;clf(fig) ;
+
+[~,isort]=sort(RCs) ; RCs=RCs(isort) ; I=I(isort); DataID=DataID(isort);
+
 loglog(RCs,I,'o-r') ;
 xlabel("R") ; ylabel("I")
 
