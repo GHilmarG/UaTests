@@ -7,7 +7,7 @@ if nargin<6
 end
 
 if nargin<5 || isempty(BedName)
-    BedName="Thula" ;
+    BedName="Thule" ;
 end
 
 
