@@ -7,6 +7,8 @@ function  [c,dcDdfdx,dcDdfdy]=DefineCalvingAtIntegrationPoints(UserVar,CtrlVar,d
 %
 % cint=DefineCalvingAtIntegrationPoints(UserVar,CtrlVar,nx,ny,uint,vint)
 
+% keep this
+
 narginchk(11,11)
 
 switch UserVar.CalvingLaw.Type
