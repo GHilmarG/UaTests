@@ -190,7 +190,7 @@ CtrlVar.MeshAdapt.CFrange=[20e3 5e3 ; 10e3 2e3] ; % This refines the mesh around
 
 % The melt is decribed as a= a_1 (h-hmin)
 
-% Default value is -1
+% Default value is 1
 CtrlVar.ThickMin=1;
 CtrlVar.LevelSetMinIceThickness=CtrlVar.ThickMin+1;    % this is the hmin constant, i.e. the accepted min ice thickness
 % over the 'ice-free' areas.

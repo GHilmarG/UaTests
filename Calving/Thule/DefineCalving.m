@@ -1,5 +1,16 @@
 function [UserVar,LSF,c]=DefineCalving(UserVar,CtrlVar,MUA,F,BCs)
 
+%% To-Do
+% Possibly better to write this as 
+%
+%  [UserVar,LSF,c]=DefineCalving(UserVar,CtrlVar,MUA,LSF,c,F,BCs)
+%
+% in which case LSF and c are always passed right through by default.
+%
+% 
+% 
+%
+%%
 
 %%
 %
@@ -35,155 +46,56 @@ function [UserVar,LSF,c]=DefineCalving(UserVar,CtrlVar,MUA,F,BCs)
 % input variable similar to the input as and ab for upper and lower surface balance,
 % etc.)
 %
-% Initilizing the LSF is the task of the user and needs to be done in this m-file.
-% Typically LSF is defined as a signed distance function from the initial calving
-% front position. There are various ways of doing this and you might find the matlab
-% function
+% If c is returned as a NaN, ie
 %
-%   pdist2
+%       c=NaN;
 %
-% usefull to do this.
+% then the level-set is NOT evolved in time using by solving the level-set equation. This can be usefull if, for example, the
+% user simply wants to manually prescribe the calving front position at each time step. 
 %
-% Note: Currenlty only prescribed calving front movements are allowed.
-%       So define LSF in every call.
 %%
 
-
-% LSF=F.LSF  ; %
-
-c=[] ;
+%% initialize LSF
+if isempty(F.LSF)   % Do I need to initialize the level set function?
 
 
+    Xc=UserVar.CalvingFront0.Xc;
+    Yc=UserVar.CalvingFront0.Yc;
 
-%[ValuesB,FA]=ExtrapolateFromNodesAtoNodesB(CtrlVar,xA,yA,ValuesA,xB,yB);
+    % A rough sign-correct initialisation for the LSF
+    io=inpoly2([F.x F.y],[Xc(:) Yc(:)]);
+    LSF=-ones(MUA.Nnodes,1) ;
+    LSF(io)=+1;
 
+    % figure ; PlotMuaMesh(CtrlVar,MUA);   hold on ; plot(F.x(io)/1000,F.y(io)/1000,'or')
 
+    [xc,yc,LSF]=CalvingFrontLevelSetGeometricalInitialisation(CtrlVar,MUA,Xc,Yc,LSF,plot=true);
 
-switch CtrlVar.LevelSetEvolution
+else
+    LSF=F.LSF ;  % rember to pass LSF through, in no initialisation is required
+end
 
-    case "-By solving the level set equation-"
+%% Define calving rate (if needed)
 
-        if F.time<eps
-            % Prescribe initial LSF
+if  CtrlVar.LevelSetEvolution=="-Prescribed-"  
 
-            io=inpoly2([F.x F.y],UserVar.BedMachineBoundary);
-            NodesSelected=~io ;
-
-            LSF=zeros(MUA.Nnodes,1) + 1 ;
-            LSF(NodesSelected)=-1;
-            LSF(F.x<-1660e3)=+1;  % get rid of the additional calving front to the east of the main trunk
-
-            % plot(F.x(~io)/1000,F.y(~io)/1000,'or')
-
-            [xC,yC]=CalcMuaFieldsContourLine(CtrlVar,MUA,LSF,0);
-            [LSF,UserVar]=SignedDistUpdate(UserVar,[],CtrlVar,MUA,LSF,xC,yC);
-
-        else
-            LSF=F.LSF ;
-        end
-
-
-
-        % c=sqrt(F.ub.*F.ub+F.vb.*F.vb);  % the idea here is that the calving front does not move
-        c=sqrt(F.ub.*F.ub+F.vb.*F.vb) ;
-        if contains(UserVar.CalvingLaw,"FixedRate")
-            CR=str2double(extract(UserVar.CalvingLaw,digitsPattern));
-            c=c+CR;
-
-        elseif contains(UserVar.CalvingLaw,"ScalesWithSpeed")
-
-            CR=str2double(extract(UserVar.CalvingLaw,digitsPattern));
-            c=CR*c;
-
-        elseif contains(UserVar.CalvingLaw,"IceThickness")
-
-            CR=str2double(extract(UserVar.CalvingLaw,digitsPattern));
-            c=c+CR*F.h ;
-
-        elseif contains(UserVar.CalvingLaw,"CliffHeight")
-
-            CliffHeight=min((F.s-F.S),F.h) ;
-            % CliffHeightUnmodified=CliffHeight;
-            UserVar.CliffHeightUnmodified=CliffHeight; 
-
-            GFLSF.node=sign(LSF) ;
-            GFLSF=IceSheetIceShelves(CtrlVar,MUA,GFLSF);
-            NodesA=GFLSF.NodesUpstreamOfGroundingLines;
-            NodesB=~NodesA;
-
-            CliffHeight=ExtrapolateFromNodesAtoNodesB(CtrlVar,F.x,F.y,NodesA,NodesB,CliffHeight) ;
-             
-
-            UserVar.CliffHeightExtrapolated=CliffHeight; 
-
-
-            % FindOrCreateFigure("CliffHeightUnmodified") ; PlotMeshScalarVariable(CtrlVar,MUA,CliffHeightUnmodified) ;
-            % FindOrCreateFigure("CliffHeight") ; PlotMeshScalarVariable(CtrlVar,MUA,CliffHeight) ;
-            % FindOrCreateFigure("CliffHeight-CliffHeightUnmodified") ; PlotMeshScalarVariable(CtrlVar,MUA,CliffHeight-CliffHeightUnmodified) ;
-
-            if contains(UserVar.CalvingLaw,"CliffHeight-Linear")
-
-
-                CR=str2double(extract(UserVar.CalvingLaw,digitsPattern));
-                c=CR*CliffHeight ;
-                % c=1000;
-                cMax=5000;
-                c(c>cMax)=cMax;
-
-            elseif contains(UserVar.CalvingLaw,"CliffHeight-Crawford")
-
-                fI=1e-17 ; % Units m/d
-                fI=fI*365.25 ;
-                c= fI*CliffHeight.^7 ;
-                c(CliffHeight<135)=0 ;
-
-                NodesA=abs(LSF) < 50e3 ;
-                NodesB=~NodesA;
-                c=ExtrapolateFromNodesAtoNodesB(CtrlVar,F.x,F.y,NodesA,NodesB,c) ;
-                cMax=5000;
-                c(c>cMax)=cMax;
-
-
-
-                CliffHeightPlot=CliffHeight ; CliffHeightPlot(NodesB)=NaN ;
-                cPlot=c ; cPlot(NodesB)=NaN;
-              
-                % FindOrCreateFigure("CliffHeight") ; PlotMeshScalarVariable(CtrlVar,MUA,CliffHeightPlot) ;
-                % FindOrCreateFigure("Calving Rate") ; PlotMeshScalarVariable(CtrlVar,MUA,cPlot) ;
-
-
-
-            end
-
-
-
-        else
-
-            error("asfda")
-        end
-
-
-
-
-    case "-prescribed-"
-
-        if F.time > 2
-
-            F.GF=IceSheetIceShelves(CtrlVar,MUA,F.GF);
-            NodesSelected=F.x>500e3 & F.GF.NodesDownstreamOfGroundingLines;
-            LSF=zeros(MUA.Nnodes,1)+ 1 ;
-            LSF(NodesSelected)=-1;
-
-        else
-
-            LSF=1 ; % just some positive number to indicate that there is ice in all of the domain
-
-        end
-
-    otherwise
-
-        error("case not found")
+      
+    c=nan;   % setting the calving rate to nan implies that the level set is not evolved
+    return
 
 end
 
 
+if F.time< 0 
+
+    c=nan;
+
+elseif  CtrlVar.CalvingLaw.Evaluation=="-int-" 
+
+    c=0; % must not be nan or otherwise the LSF will not be evolved.  But otherwise these c values are of no importance and the c defined at int points the one used
+
+else
+
+    error("Define calving rate at integratin points")
+
+end

@@ -1,31 +1,49 @@
 function  UserVar=DefineOutputs(UserVar,CtrlVar,MUA,BCs,F,l,GF,InvStartValues,InvFinalValues,Priors,Meas,BCsAdjoint,RunInfo)
 
 
-persistent cyMax cTime iCounter 
+persistent cyMax ctime icCounter iGLCounter GLMax GLtime    
 
 
 if isempty(cyMax)
 
-    iCounter=0 ;
-    cyMax=NaN(1000,1) ; 
-    cTime=NaN(1000,1) ;
+    icCounter=0 ;
+    cyMax=NaN(10000,1) ; 
+    ctime=NaN(10000,1) ;
+    iGLCounter=0 ;
+    GLMax=NaN(10000,1) ; 
+    GLtime=NaN(10000,1) ; 
+
+end
+
+if icCounter > numel(cyMax)
+   
+    cyMax=[cyMax;cyMax+NaN];
+    ctime=[ctime;ctime+NaN];
+
+end
+
+if iGLCounter > numel(GLMax)
+   
+    GLMax=[GLMax;GLMax+NaN];
+    GLtime=[GLtime;GLtime+NaN];
 
 end
 
 
-CtrlVar.DefineOutputs='-sbB-ubvb-BCs-LSF-h-';
-CtrlVar.DefineOutputs='-ubvb-LSF-h-';
+
 
 
 %%
-if ~isfield(CtrlVar,'DefineOutputs')
-    CtrlVar.uvPlotScale=[];
-    %plots='-ubvb-udvd-log10(C)-log10(Klear )-log10(DeformationalSpeed)-log10(BasalSpeed)-log10(AGlen)-';
-    plots='-ubvb-log10(BasalSpeed)-sbB-ab-log10(C)-log10(AGlen)-';
-    plots='-save-';
+if ~isfield(UserVar,'DefineOutputs')
+    
+    UserVar.DefineOutputs="-ubvb-LSF-h-sbB-s-";
+    plots=UserVar.DefineOutputs  ; 
+    % plots='-ubvb-log10(BasalSpeed)-sbB-ab-log10(C)-log10(AGlen)-save-';
+    % plots='-save-';
 else
-    plots=CtrlVar.DefineOutputs;
+    plots=UserVar.DefineOutputs;
 end
+ 
 
 
 
@@ -42,17 +60,22 @@ if contains(plots,'-save-')
 
     % save data in files with running names
     % check if folder 'ResultsFiles' exists, if not create
-   if strcmp(CtrlVar.DefineOutputsInfostring,'First call ') && exist(fullfile(cd,'ResultsFiles'),'dir')~=7 ;
-        mkdir('ResultsFiles') ;
+
+
+    if CtrlVar.DefineOutputsInfostring == "First call" && ~isfolder(UserVar.ResultsFileDirectory)
+        mkdir(UserVar.ResultsFileDirectory)
     end
-    
+
+
     if strcmp(CtrlVar.DefineOutputsInfostring,'Last call')==0
-                
-        FileName=sprintf('ResultsFiles/%07i-Nodes%i-Ele%i-Tri%i-kH%i-%s.mat',...
+
+        FileName=sprintf('%s%07i-Nodes%i-Ele%i-Tri%i-kH%i-%s.mat',...
+            UserVar.ResultsFileDirectory,...
             round(100*CtrlVar.time),MUA.Nnodes,MUA.Nele,MUA.nod,1000*CtrlVar.kH,CtrlVar.Experiment);
+        FileName=replace(FileName,"--","-");
         fprintf(' Saving data in %s \n',FileName)
         save(FileName,"CtrlVar","MUA","F")
-        
+
     end
 end
 
@@ -74,7 +97,9 @@ end
 
 if contains(plots,'-LSF-')
 
-    FindOrCreateFigure("LSF") ;
+    FLSF=FindOrCreateFigure("LSF") ;
+    clf(FLSF) ; 
+    hold off
     [~,cbar]=PlotMeshScalarVariable(CtrlVar,MUA,F.LSF/1000);
     title(sprintf('LSF at t=%g (yr)',CtrlVar.time)) ;
     hold on
@@ -86,6 +111,7 @@ if contains(plots,'-LSF-')
 
 
     FindOrCreateFigure("Calving Rate") ;
+    hold off
     [~,cbar]=PlotMeshScalarVariable(CtrlVar,MUA,F.c);
     title(sprintf('Calving Rate at t=%g (yr)',CtrlVar.time)) ;
     hold on
@@ -97,23 +123,42 @@ if contains(plots,'-LSF-')
 
 
     if ~isempty(yc)
-        iCounter=iCounter+1;
-        cyMax(iCounter)=max(yc) ;
-        cTime(iCounter)=F.time ;
+        icCounter=icCounter+1;
+        cyMax(icCounter)=max(yc) ;
+        ctime(icCounter)=F.time ;
 
 
         FindOrCreateFigure(" yc(t)")
         hold off
-        plot(cTime,cyMax/1000,'or')
+        plot(ctime,cyMax/1000,'or')
         xlabel("t (yr)")
         ylabel(" y-calving front (km) ")
 
     end
 
 
+    if ~isempty(yGL)
+
+        iGLCounter=iGLCounter+1;
+        GLMax(iGLCounter)=max(yGL) ;
+        GLtime(iGLCounter)=F.time ;
+
+
+        FindOrCreateFigure(" yGL(t)")
+        hold off
+        plot(GLtime,GLMax/1000,'or')
+        xlabel("t (yr)")
+        ylabel(" y-GL  (km) ")
+
+    end
+
+
+
+
     if isfield(UserVar,"CliffHeightExtrapolated") &&  isfield(UserVar,"CliffHeightUnmodified")
 
         FindOrCreateFigure("CliffHeightUnmodified") ;
+        hold off
         [~,cbar]=PlotMeshScalarVariable(CtrlVar,MUA,UserVar.CliffHeightUnmodified);
         title(sprintf('Cliff height, unmodified, at t=%g (yr)',CtrlVar.time)) ;
         hold on
@@ -124,6 +169,7 @@ if contains(plots,'-LSF-')
         hold off
 
         FindOrCreateFigure("CliffHeightExtrapolated") ;
+        hold off
         [~,cbar]=PlotMeshScalarVariable(CtrlVar,MUA,UserVar.CliffHeightExtrapolated);
         title(sprintf('Cliff height, extrapolated, at t=%g (yr)',CtrlVar.time)) ;
         hold on
@@ -137,32 +183,98 @@ if contains(plots,'-LSF-')
 
     end
 
+
+   FindOrCreateFigure("sbB")
+
+
+
+
+%    [xp,yp,d]=CreatePIGprofile(2);
+% 
+%    Fs=scatteredInterpolant() ; 
+%    Fs.Points=[F.x(:) ,F.y(:)];
+%    Fb=Fs;
+%    FB=Fs;
+%    Fs.Values=F.s;
+%    Fb.Values=F.b;
+%    FB.Values=F.B;
+%    sp=Fs(xp,yp) ; 
+%    bp=Fb(xp,yp) ; 
+%    Bp=FB(xp,yp) ; 
+%    
+%    FindOrCreateFigure("profile")
+%    plot(d/1000,sp,'-b')
+%    hold on
+%    plot(d/1000,bp,'-b')
+%    plot(d/1000,Bp,'-k')
+%    title(sprintf('PIG profile at t=%g (yr)',CtrlVar.time),Interpreter="latex") ;
+%    xlabel(" distance (km) ",Interpreter="latex")
+%    ylabel("$s$, $b$ and $B$ (m) ",Interpreter="latex")
+
 end
 
 if contains(plots,'-sbB-')
 %%
-    FindOrCreateFigure("sbB");
+    FIGsbB=FindOrCreateFigure("sbB"); clf(FIGsbB);
     hold off
     AspectRatio=3; 
     ViewAndLight(1)=-40 ;  ViewAndLight(2)=20 ;
     ViewAndLight(3)=30 ;  ViewAndLight(4)=50;
-    [TRI,DT]=Plot_sbB(CtrlVar,MUA,F.s,F.b,F.B,TRI,DT,AspectRatio,ViewAndLight);
+    sCol=[1 1 1]; bCol=[0 0 1]; BCol=[0.5 0.5 0.5] ; 
+    [TRI,DT]=Plot_sbB(CtrlVar,MUA,F.s,F.b,F.B,TRI,DT,AspectRatio,ViewAndLight,[],sCol,bCol,BCol);
 %%   
 end
 
+
+
 if contains(plots,'-B-')
     FindOrCreateFigure("B");
-    PlotMeshScalarVariable(CtrlVar,MUA,F.B);
+    hold off
+    [~,cbar]=PlotMeshScalarVariable(CtrlVar,MUA,F.B);
     hold on ;
-    [xGL,yGL,GLgeo]=PlotGroundingLines(CtrlVar,MUA,F.GF,GLgeo,xGL,yGL,'g');
+    [xGL,yGL,GLgeo]=PlotGroundingLines(CtrlVar,MUA,F.GF,GLgeo,xGL,yGL,'r');
+    [xc,yc]=PlotCalvingFronts(CtrlVar,MUA,F,'w',LineWidth=2);
     PlotMuaBoundary(CtrlVar,MUA,'b')
+    title(colorbar,'(m)')
+    title("Bedrock")
+
 end
+
+
+
+if contains(plots,'-dhdt-')
+    Fdhdt=FindOrCreateFigure("dh/dt");  clf(Fdhdt); 
+    hold off
+    [~,cbar]=PlotMeshScalarVariable(CtrlVar,MUA,F.dhdt);
+    hold on ;
+    [xGL,yGL,GLgeo]=PlotGroundingLines(CtrlVar,MUA,F.GF,GLgeo,xGL,yGL,'r');
+    [xc,yc]=PlotCalvingFronts(CtrlVar,MUA,F,'w',LineWidth=2);
+    PlotMuaBoundary(CtrlVar,MUA,'b')
+    title(colorbar,'(m/yr)')
+    title("$dh/dt$",Interpreter="latex")
+
+end
+
+
+
+if contains(plots,'-s-')
+    FIGs=FindOrCreateFigure("s");  clf(FIGs)  ; hold off
+    [~,cbar]=PlotMeshScalarVariable(CtrlVar,MUA,F.s);
+    hold on ;
+    [xGL,yGL,GLgeo]=PlotGroundingLines(CtrlVar,MUA,F.GF,GLgeo,xGL,yGL,'r');
+    [xc,yc]=PlotCalvingFronts(CtrlVar,MUA,F,'w',LineWidth=2);
+    PlotMuaBoundary(CtrlVar,MUA,'b')
+    title(colorbar,'(m)')
+    title("upper surface")
+end
+
 
 
 if contains(plots,'-ubvb-')
     % plotting horizontal velocities
 %%
-    FindOrCreateFigure("(ub,vb)") ; 
+    FIGubvb=FindOrCreateFigure("(ub,vb)") ; clf(FIGubvb);
+    hold off
     N=1;
     %speed=sqrt(ub.*ub+vb.*vb);
     %CtrlVar.MinSpeedWhenPlottingVelArrows=0; CtrlVar.MaxPlottedSpeed=max(speed); %
@@ -170,6 +282,7 @@ if contains(plots,'-ubvb-')
     %CtrlVar.VelColorMap='hot';
     %CtrlVar.RelativeVelArrowSize=10;
     
+    I=F.LSF<0 ; F.ub(I)=0; F.vb(I)=0; 
     QuiverColorGHG(F.x(1:N:end),F.y(1:N:end),F.ub(1:N:end),F.vb(1:N:end),CtrlVar);
     hold on ; 
     [xGL,yGL,GLgeo]=PlotGroundingLines(CtrlVar,MUA,F.GF,GLgeo,xGL,yGL,'k');
@@ -196,6 +309,14 @@ if contains(plots,'-udvd-')
     title(sprintf('(ud,vd) t=%-g ',CtrlVar.time)) ; xlabel('xps (km)') ; ylabel('yps (km)')
     axis equal tight
     
+end
+
+if contains(plots,'-log10speed-')
+    FindOrCreateFigure("-log10speed-")
+    cbar=UaPlots(CtrlVar,MUA,F,"-log10speed-") ;
+    title(sprintf('log10(speed) at t=%-g ',CtrlVar.time)) ; xlabel('xps (km)') ; ylabel('yps (km)')
+    title(cbar,"$\log_{10}(\| \mathbf{v} \|)$",Interpreter="latex")
+  
 end
 
 if contains(plots,'-e-')
@@ -308,7 +429,8 @@ end
 
 if contains(plots,'-h-')
 %%
-    FindOrCreateFigure("Ice thickness");
+    FIGh=FindOrCreateFigure("Ice thickness");   clf(FIGh) ;
+    hold off
     PlotMeshScalarVariable(CtrlVar,MUA,F.h);
     hold on
     
@@ -317,7 +439,9 @@ if contains(plots,'-h-')
     
     I=F.h<=CtrlVar.ThickMin;
     plot(MUA.coordinates(I,1)/CtrlVar.PlotXYscale,MUA.coordinates(I,2)/CtrlVar.PlotXYscale,'.r')
-    title(sprintf('h t=%-g ',CtrlVar.time)) ; xlabel('x (km)') ; ylabel('y (km)') ; title(colorbar,'(m/yr)')
+    title(sprintf('h t=%-g ',CtrlVar.time)) ; 
+    xlabel('x (km)') ; ylabel('y (km)') ; 
+    title(colorbar,'(m)')
     axis equal
 %%
 end
@@ -345,4 +469,7 @@ if contains(plots,'-stresses-')
     ylabel(CtrlVar.PlotsYaxisLabel) ;
     
 end
+
+drawnow limitrate 
+
 end

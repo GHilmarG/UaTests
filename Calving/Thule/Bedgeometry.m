@@ -7,7 +7,7 @@ if nargin<6
 end
 
 if nargin<5 || isempty(BedName)
-    BedName="Thule" ;
+    BedName="-Thule-" ;
 end
 
 
@@ -15,6 +15,7 @@ end
 if nargin == 0 || isempty(MUA)  || isempty(F)
 
     %%
+    DoPlots=true;
     R=1000e3 ;
     theta=linspace(0,2*pi,100);
     x=R*cos(theta); y=R*sin(theta) ; x(end)=[] ; y(end )=[];
@@ -45,6 +46,7 @@ if nargin == 0 || isempty(MUA)  || isempty(F)
 
 
 end
+
 
 B=Bfunc(F.x,F.y,BedName) ;
 
@@ -100,12 +102,16 @@ end
             case "-ThuleNS-"
 
                 r=sqrt(x.*x+y.*y) ;
-                theta=pi/2 ; 
+                theta=pi/2 ;
 
                 rc=0;
                 l=R -  cos(2*theta).*R/2 ;            % theta-dependent wavelength
                 a=Bc - (Bc-Bl)*(r-rc).^2./(R-rc).^2;  % quadratic term in r
                 B=Ba*cos(3*pi*r./l)+a ;
+
+            otherwise
+
+                error("Case not found")
 
         end
 
