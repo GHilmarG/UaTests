@@ -34,6 +34,14 @@ end
 
 
 
+R=750e3 ;
+theta=linspace(0,2*pi,400);
+Xc=R*cos(theta); Yc=R*sin(theta) ; Xc(end)=[] ; Yc(end)=[];
+UserVar.CalvingFront0.Xc=Xc;
+UserVar.CalvingFront0.Yc=Yc;
+
+
+
 UserVar.ElementSize=50e3; 
 UserVar.DefineOutputs="-ubvb-LSF-h-sbB-s-B-dhdt-save-";
 

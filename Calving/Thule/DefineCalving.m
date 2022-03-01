@@ -1,5 +1,16 @@
 function [UserVar,LSF,c]=DefineCalving(UserVar,CtrlVar,MUA,F,BCs)
 
+%% To-Do
+% Possibly better to write this as 
+%
+%  [UserVar,LSF,c]=DefineCalving(UserVar,CtrlVar,MUA,LSF,c,F,BCs)
+%
+% in which case LSF and c are always passed right through by default.
+%
+% 
+% 
+%
+%%
 
 %%
 %
@@ -35,103 +46,56 @@ function [UserVar,LSF,c]=DefineCalving(UserVar,CtrlVar,MUA,F,BCs)
 % input variable similar to the input as and ab for upper and lower surface balance,
 % etc.)
 %
-% Initilizing the LSF is the task of the user and needs to be done in this m-file.
-% Typically LSF is defined as a signed distance function from the initial calving
-% front position. There are various ways of doing this and you might find the matlab
-% function
+% If c is returned as a NaN, ie
 %
-%   pdist2
+%       c=NaN;
 %
-% usefull to do this.
+% then the level-set is NOT evolved in time using by solving the level-set equation. This can be usefull if, for example, the
+% user simply wants to manually prescribe the calving front position at each time step. 
 %
-% Note: Currenlty only prescribed calving front movements are allowed.
-%       So define LSF in every call.
 %%
 
-
-% LSF=F.LSF  ; %
-
-
-persistent nCalls isInitialized
-
-
-
-if isempty(isInitialized)
-    isInitialized=false;
-    nCalls=0;
-else
-    nCalls=nCalls+1;
-end
-
 %% initialize LSF
-if ~isInitialized
-    isInitialized=true;
-    if contains(lower(UserVar.CalvingFrontInit),"wavy")
-
-        theta=linspace(0,2*pi,200);
-        R=700e3;
-
-        r=R*(1/2+1/3*cos(2*theta));
-
-        % boundary 1 : figure of 8
-        [Xc,Yc]=pol2cart(theta,r) ; Xc=Xc(:) ; Yc=Yc(:);
-        
-        % boundary 2 : square
-        
-        SL2=200 ; CP=[0 500 ]; % SideLength/2 and CentrePoint
-        B2=CP +  [-SL2 -SL2 ; SL2 -SL2 ; SL2 SL2 ; -SL2 SL2 ; -SL2 -SL2] ; B2=1000*B2 ; 
-        Xc=[Xc(:); NaN ; B2(:,1)]; Yc=[Yc(:); NaN ; B2(:,2)]; 
-
-        SL2=200 ; CP=[0 -500 ]; % SideLength/2 and CentrePoint
-        B3=CP +  [-SL2 -SL2 ; SL2 -SL2 ; 0 SL2 ; -SL2 -SL2] ;  B3=1000*B3;
-        Xc=[Xc(:); NaN ; B3(:,1)]; Yc=[Yc(:); NaN ; B3(:,2)]; 
-
-        % io=inpoly2([F.x F.y],[Xc Yc]);
-
-        io=InsideOutside([F.x F.y],[Xc Yc]);  % this deals with several seperated boundaries
-
-        NodesSelected=~io ;
-
-        LSF=zeros(MUA.Nnodes,1) + 1 ;
-        LSF(NodesSelected)=-1;
-
-    else
-
-        error('case not found')
+if isempty(F.LSF)   % Do I need to initialize the level set function?
 
 
-    end
+    Xc=UserVar.CalvingFront0.Xc;
+    Yc=UserVar.CalvingFront0.Yc;
 
- 
-     
-     [xc,yc,LSF]=CalvingFrontLevelSetGeometricalInitialisation(CtrlVar,MUA,Xc,Yc,LSF,plot=true,ResampleCalvingFront=true);
+    % A rough sign-correct initialisation for the LSF
+    io=inpoly2([F.x F.y],[Xc Yc]);
+    LSF=-ones(MUA.Nnodes,1) ;
+    LSF(io)=+1;
 
+    % figure ; PlotMuaMesh(CtrlVar,MUA);   hold on ; plot(F.x(io)/1000,F.y(io)/1000,'or')
 
+    [xc,yc,LSF]=CalvingFrontLevelSetGeometricalInitialisation(CtrlVar,MUA,Xc,Yc,LSF,plot=true);
 
 else
-    LSF=F.LSF ;
+    LSF=F.LSF ;  % rember to pass LSF through, in no initialisation is required
 end
 
-%% Define calving rate
+%% Define calving rate (if needed)
 
-if  contains(CtrlVar.CalvingLaw.Evaluation,"-int-")
+if  CtrlVar.LevelSetEvolution=="-Prescribed-"  
 
-    c=[];
+      
+    c=nan;   % setting the calving rate to nan implies that the level set is not evolved
+    return
 
-elseif contains(CtrlVar.CalvingLaw.Evaluation,"-nodes-")
+end
 
-    speed=sqrt(F.ub.*F.ub+F.vb.*F.vb) ;
-    CR=UserVar.CalvingLaw.Factor;
-    c=CR*speed;
+
+if F.time< 0 
+
+    c=nan;
+
+elseif  CtrlVar.CalvingLaw.Evaluation=="-int-" 
+
+    c=0; % must not be nan or otherwise the LSF will not be evolved.  But otherwise these c values are of no importance and the c defined at int points the one used
 
 else
 
-    error("no case")
+    error("Define calving rate at integratin points")
 
 end
-
-
-
-
-end
-
