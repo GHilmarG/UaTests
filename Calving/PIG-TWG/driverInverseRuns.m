@@ -1,7 +1,7 @@
 %%
 
 
-CtrlVar.Inverse.Iterations=1000;
+CtrlVar.Inverse.Iterations=2000;
 CtrlVar.Restart=1;
 
 CtrlVar.Inverse.Regularize.logC.ga=1;
@@ -15,13 +15,13 @@ UserVar.RunType='Inverse-MatOpt';
 %UserVar=Ua(UserVar,CtrlVar) ;
 
 UserVar.MeshResolution=10e3;   % MESH RESOLUTION
-
+c=5; 
 for I=1:8
     I
 
-    CtrlVar.Inverse.Regularize.logC.gs=10^I;
-    job{I}=batch("Ua",1,{UserVar,CtrlVar},"Pool",1) ;
-    pause(60)
+    CtrlVar.Inverse.Regularize.logC.gs=c*10^I;
+    job{I}=batch("Ua",0,{UserVar,CtrlVar},"Pool",1) ;
+    pause(30)
 
 end
 
@@ -33,9 +33,10 @@ CtrlVar.Inverse.Regularize.logAGlen.gs=1000;
 for I=1:8
     I+10
 
-    CtrlVar.Inverse.Regularize.logAGlen.gs=10^I ;
-    job{I+10}=batch("Ua",1,{UserVar,CtrlVar},"Pool",1) ;
-    pause(60)
+    CtrlVar.Inverse.Regularize.logAGlen.gs=c*10^I ;
+    %Ua(UserVar,CtrlVar) ;
+    job{I+10}=batch("Ua",0,{UserVar,CtrlVar},"Pool",1) ;
+    pause(30)
 
 end
 

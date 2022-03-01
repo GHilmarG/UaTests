@@ -38,8 +38,6 @@ if isempty(UserVar) || ~isfield(UserVar,'RunType')
     % UserVar.RunType="-FT-P-TWISC2-MR4-SM-" ;  % -P-TWISC- is Thwaites Ice Shelf Calved off,
     % the "-P-" stands for prescribed calving fronts
 
-
-
     
     % UserVar.RunType='GenerateMesh' ;
     UserVar.RunType='Inverse-MatOpt';
@@ -69,8 +67,11 @@ end
 
 
 if isempty(UserVar) || ~isfield(UserVar,'MeshResolution')
-    UserVar.MeshResolution=10e3;   % MESH RESOLUTION
+
+    UserVar.MeshResolution=5e3;   % MESH RESOLUTION
+
 end
+
 
 % 30km = 14km
 % 20km = 9.3km
@@ -283,7 +284,7 @@ if contains(UserVar.RunType,"Inverse-MatOpt")
         +"-Ca"+num2str(CtrlVar.Inverse.Regularize.logC.ga)...
         +"-Cs"+num2str(CtrlVar.Inverse.Regularize.logC.gs)...
         +"-Aa"+num2str(CtrlVar.Inverse.Regularize.logAGlen.ga)...
-        +"+As"+num2str(CtrlVar.Inverse.Regularize.logAGlen.gs)...
+        +"-As"+num2str(CtrlVar.Inverse.Regularize.logAGlen.gs)...
         +"-"+num2str(UserVar.MeshResolution/1000)+"km";
 
 
