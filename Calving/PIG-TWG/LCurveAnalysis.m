@@ -7,6 +7,8 @@ Experiment="Cs";
 MR="10km";
 
 
+%% first read in all the restart files, just make sure that this finds all of them
+
 switch Experiment
 
     case "As"
@@ -26,7 +28,9 @@ end
 
 DataID=strings(numel(files),1) ;
 
+%% So now we have all the restart files in the structure 'files'
 
+% loop over inverse restart files and calculate I and R
 for i=1:numel(files)
 
     load(files(i).name)
@@ -50,7 +54,7 @@ for i=1:numel(files)
     Aa(i)=CtrlVar.Inverse.Regularize.logAGlen.ga;
     As(i)=CtrlVar.Inverse.Regularize.logAGlen.gs;
 
-
+    % all other regularisation parameters set to zero to exclude them being included in the sum
     CtrlVar.Inverse.Regularize.logC.ga=0;
     CtrlVar.Inverse.Regularize.logC.gs=0;
 
@@ -61,10 +65,10 @@ for i=1:numel(files)
     switch Experiment
 
         case "As"
-            CtrlVar.Inverse.Regularize.logAGlen.gs=1;
+            CtrlVar.Inverse.Regularize.logAGlen.gs=1;  % this is the regularisation paramter we are interested in
             DataID(i)= sprintf("%g",CtrlVarInRestartFile.Inverse.Regularize.logAGlen.gs);
         case "Cs"
-            CtrlVar.Inverse.Regularize.logC.gs=1;
+            CtrlVar.Inverse.Regularize.logC.gs=1; % this is the regularisation paramter we are interested in
             DataID(i)= sprintf("%g",CtrlVarInRestartFile.Inverse.Regularize.logC.gs);
         otherwise
             error("case not found")
@@ -79,7 +83,7 @@ end
 
 % PlotResultsFromInversion(UserVar,CtrlVar,MUA,BCs,F,l,F.GF,InvStartValues,InvFinalValues,Priors,Meas,BCsAdjoint,RunInfo);
 
-%%
+%% And now plot the L curve (which may or may not actually look like an L)
 fig=FindOrCreateFigure("LCurve Analysis") ;clf(fig) ;
 
 [~,isort]=sort(RCs) ; RCs=RCs(isort) ; I=I(isort); DataID=DataID(isort);
