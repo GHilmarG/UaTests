@@ -311,13 +311,13 @@ if contains(plots,'-udvd-')
     
 end
 
-if contains(plots,'-log10speed-')
-    FindOrCreateFigure("-log10speed-")
-    cbar=UaPlots(CtrlVar,MUA,F,"-log10speed-") ;
-    title(sprintf('log10(speed) at t=%-g ',CtrlVar.time)) ; xlabel('xps (km)') ; ylabel('yps (km)')
-    title(cbar,"$\log_{10}(\| \mathbf{v} \|)$",Interpreter="latex")
-  
-end
+% if contains(plots,'-log10speed-')
+%     FindOrCreateFigure("-log10speed-")
+%     cbar=UaPlots(CtrlVar,MUA,F,"-log10speed-") ;
+%     title(sprintf('log10(speed) at t=%-g ',CtrlVar.time)) ; xlabel('xps (km)') ; ylabel('yps (km)')
+%     title(cbar,"$\log_{10}(\| \mathbf{v} \|)$",Interpreter="latex")
+%   
+% end
 
 if contains(plots,'-e-')
     % plotting effectiv strain rates
