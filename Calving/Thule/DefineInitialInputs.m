@@ -18,7 +18,6 @@ function [UserVar,CtrlVar,MeshBoundaryCoordinates]=DefineInitialInputs(UserVar,C
 %% UserVar
 
 UserVar.RunType="-Thule-C-NV-10km-" ;  %  % prescribed, to get steady state
-UserVar.RunType="-Thule-P-10km-" ;  %  % prescribed, to get steady state
 
 
 UserVar.Region="-Thule-" ;
@@ -112,7 +111,7 @@ CtrlVar.SlidingLaw="Weertman" ; % "Umbi" ; % "Weertman" ; % "Tsai" ; % "Cornford
 
 CtrlVar.InverseRun=0;
 CtrlVar.TimeDependentRun=1;
-CtrlVar.Restart=0;
+CtrlVar.Restart=1;
 CtrlVar.InfoLevelNonLinIt=1;
 
 CtrlVar.AdaptMesh=0;
