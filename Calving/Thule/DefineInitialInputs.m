@@ -13,16 +13,11 @@ function [UserVar,CtrlVar,MeshBoundaryCoordinates]=DefineInitialInputs(UserVar,C
 %
 % close all ; job=batch("Ua","Pool",1)
 %
-if isempty(UserVar) || ~isfield(UserVar,'RunType')
 
-    % UserVar.RunType='Forward-Diagnostic' ;
-    UserVar.RunType='Forward-Transient' ;
-
-end
 
 %% UserVar
 
-UserVar.RunType="-Thule-C-NV-" ;  % 'Forward-Transient , Anna Crawford
+UserVar.RunType="-Thule-C-NV-10km-" ;  %  % prescribed, to get steady state
 
 
 UserVar.Region="-Thule-" ;
@@ -30,6 +25,9 @@ UserVar.Region="-Thule-" ;
 if contains(UserVar.RunType,"-C-NV-")
     UserVar.CalvingLaw.Type="-NV-"  ;  % "-ScalesWithNormalVelocity+1.0-"  ;
     UserVar.CalvingLaw.Factor=1.1;
+else
+    UserVar.CalvingLaw.Type=""  ;  % "-ScalesWithNormalVelocity+1.0-"  ;
+    UserVar.CalvingLaw.Factor=0;
 end
 
 
@@ -37,13 +35,17 @@ end
 R=750e3 ;
 theta=linspace(0,2*pi,400);
 Xc=R*cos(theta); Yc=R*sin(theta) ; Xc(end)=[] ; Yc(end)=[];
-UserVar.CalvingFront0.Xc=Xc;
-UserVar.CalvingFront0.Yc=Yc;
+UserVar.CalvingFront0.Xc=Xc(:);
+UserVar.CalvingFront0.Yc=Yc(:);
 
 
+if contains(UserVar.RunType,"-10km-")
+    UserVar.ElementSize=10e3; % Mesh size
+else
+    error("not done")
+end
 
-UserVar.ElementSize=50e3; 
-UserVar.DefineOutputs="-ubvb-LSF-h-sbB-s-B-dhdt-save-";
+UserVar.DefineOutputs="-ubvb-LSF-h-sbB-s-B-dhdt-save-log10speed-";
 
 
 [~,hostname]=system('hostname') ;
@@ -109,7 +111,7 @@ CtrlVar.SlidingLaw="Weertman" ; % "Umbi" ; % "Weertman" ; % "Tsai" ; % "Cornford
 
 CtrlVar.InverseRun=0;
 CtrlVar.TimeDependentRun=1;
-CtrlVar.Restart=0;
+CtrlVar.Restart=1;
 CtrlVar.InfoLevelNonLinIt=1;
 
 CtrlVar.AdaptMesh=0;
@@ -117,8 +119,8 @@ CtrlVar.TotalNumberOfForwardRunSteps=inf;
 %CtrlVar.LevelSetMethod=0;
 
 
-CtrlVar.dt=1;   CtrlVar.DefineOutputsDt=0;
-CtrlVar.TotalTime=1000;
+CtrlVar.dt=1e-3;   CtrlVar.DefineOutputsDt=1;
+CtrlVar.TotalTime=3;
 
 CtrlVar.time=0;
 
@@ -142,7 +144,7 @@ CtrlVar.MeshSize=UserVar.ElementSize;
 CtrlVar.MeshSizeMin=CtrlVar.MeshSizeMax/20;
 
 CtrlVar.ReadInitialMesh=0;  CtrlVar.OnlyMeshDomainAndThenStop=0;
-%CtrlVar.ReadInitialMesh=1;  CtrlVar.OnlyMeshDomainAndThenStop=0;
+CtrlVar.ReadInitialMesh=1;  CtrlVar.OnlyMeshDomainAndThenStop=0;
 CtrlVar.SaveInitialMeshFileName="MeshFile"+num2str(UserVar.ElementSize/1000)+"km" ; 
 CtrlVar.ReadInitialMeshFileName="MeshFile"+num2str(UserVar.ElementSize/1000)+"km" ; 
 CtrlVar.MaxNumberOfElements=70e3;
@@ -161,6 +163,7 @@ MeshBoundaryCoordinates=[x(:) y(:)];
 
 %%
 CtrlVar.ResetThicknessToMinThickness=1;  % change this later on
+CtrlVar.ThicknessConstraints=0; 
 CtrlVar.ThickMin=1;
 
 %%
@@ -183,6 +186,10 @@ CtrlVar.Experiment=replace(CtrlVar.Experiment,"--","-");
 CtrlVar.Experiment=replace(CtrlVar.Experiment,"-+","+");
 CtrlVar.Experiment=replace(CtrlVar.Experiment,".","k");
 CtrlVar.Experiment=replace(CtrlVar.Experiment," ","");
+
+CtrlVar.NameOfRestartFiletoRead="Restart"+UserVar.RunType+".mat"; 
+CtrlVar.NameOfRestartFiletoWrite="Restart"+UserVar.RunType+".mat"; 
+
 
 
 end

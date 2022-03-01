@@ -60,9 +60,12 @@ if contains(plots,'-save-')
 
     % save data in files with running names
     % check if folder 'ResultsFiles' exists, if not create
-    if CtrlVar.DefineOutputsInfostring == "First call" && exist(fullfile(cd,UserVar.ResultsFileDirectory),'dir')~=7
+
+
+    if CtrlVar.DefineOutputsInfostring == "First call" && ~isfolder(UserVar.ResultsFileDirectory)
         mkdir(UserVar.ResultsFileDirectory)
     end
+
 
     if strcmp(CtrlVar.DefineOutputsInfostring,'Last call')==0
 
@@ -279,6 +282,7 @@ if contains(plots,'-ubvb-')
     %CtrlVar.VelColorMap='hot';
     %CtrlVar.RelativeVelArrowSize=10;
     
+    I=F.LSF<0 ; F.ub(I)=0; F.vb(I)=0; 
     QuiverColorGHG(F.x(1:N:end),F.y(1:N:end),F.ub(1:N:end),F.vb(1:N:end),CtrlVar);
     hold on ; 
     [xGL,yGL,GLgeo]=PlotGroundingLines(CtrlVar,MUA,F.GF,GLgeo,xGL,yGL,'k');
@@ -305,6 +309,14 @@ if contains(plots,'-udvd-')
     title(sprintf('(ud,vd) t=%-g ',CtrlVar.time)) ; xlabel('xps (km)') ; ylabel('yps (km)')
     axis equal tight
     
+end
+
+if contains(plots,'-log10speed-')
+    FindOrCreateFigure("-log10speed-")
+    cbar=UaPlots(CtrlVar,MUA,F,"-log10speed-") ;
+    title(sprintf('log10(speed) at t=%-g ',CtrlVar.time)) ; xlabel('xps (km)') ; ylabel('yps (km)')
+    title(cbar,"$\log_{10}(\| \mathbf{v} \|)$",Interpreter="latex")
+  
 end
 
 if contains(plots,'-e-')
