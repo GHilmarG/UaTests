@@ -17,14 +17,17 @@ function [UserVar,CtrlVar,MeshBoundaryCoordinates]=DefineInitialInputs(UserVar,C
 
 %% UserVar
 
-UserVar.RunType="-Thule-C-NV-10km-" ;  %  % prescribed, to get steady state
+UserVar.RunType="-Thule-C-NV1.1-10km-" ;  %  % prescribed, to get steady state
+UserVar.RunType="-Thule-C-NV2.0-10km-" ;  %  % 
 
 
 UserVar.Region="-Thule-" ;
 
-if contains(UserVar.RunType,"-C-NV-")
+if contains(UserVar.RunType,"-C-NV")
     UserVar.CalvingLaw.Type="-NV-"  ;  % "-ScalesWithNormalVelocity+1.0-"  ;
-    UserVar.CalvingLaw.Factor=1.1;
+    UserVar.CalvingLaw.Factor=str2double(extract(extract(UserVar.RunType,"NV"+digitsPattern+"."+digitsPattern+"-"),digitsPattern+"."+digitsPattern));
+    %UserVar.CalvingLaw.Factor=1.1;
+    %UserVar.CalvingLaw.Factor=2.0;
 else
     UserVar.CalvingLaw.Type=""  ;  % "-ScalesWithNormalVelocity+1.0-"  ;
     UserVar.CalvingLaw.Factor=0;
@@ -111,7 +114,7 @@ CtrlVar.SlidingLaw="Weertman" ; % "Umbi" ; % "Weertman" ; % "Tsai" ; % "Cornford
 
 CtrlVar.InverseRun=0;
 CtrlVar.TimeDependentRun=1;
-CtrlVar.Restart=1;
+CtrlVar.Restart=0;
 CtrlVar.InfoLevelNonLinIt=1;
 
 CtrlVar.AdaptMesh=0;
@@ -120,7 +123,7 @@ CtrlVar.TotalNumberOfForwardRunSteps=inf;
 
 
 CtrlVar.dt=1e-3;   CtrlVar.DefineOutputsDt=1;
-CtrlVar.TotalTime=3;
+CtrlVar.TotalTime=1000;
 
 CtrlVar.time=0;
 
@@ -187,8 +190,9 @@ CtrlVar.Experiment=replace(CtrlVar.Experiment,"-+","+");
 CtrlVar.Experiment=replace(CtrlVar.Experiment,".","k");
 CtrlVar.Experiment=replace(CtrlVar.Experiment," ","");
 
-CtrlVar.NameOfRestartFiletoRead="Restart"+UserVar.RunType+".mat"; 
-CtrlVar.NameOfRestartFiletoWrite="Restart"+UserVar.RunType+".mat"; 
+CtrlVar.NameOfRestartFiletoRead="Restart"+UserVar.RunType; 
+CtrlVar.NameOfRestartFiletoRead=replace(CtrlVar.NameOfRestartFiletoRead,".","k")+".mat";
+CtrlVar.NameOfRestartFiletoWrite=CtrlVar.NameOfRestartFiletoRead;
 
 
 
