@@ -120,7 +120,7 @@ CtrlVar.TotalNumberOfForwardRunSteps=inf;
 
 
 CtrlVar.dt=1e-3;   CtrlVar.DefineOutputsDt=1;
-CtrlVar.TotalTime=3;
+CtrlVar.TotalTime=1000;
 
 CtrlVar.time=0;
 
