@@ -18,7 +18,7 @@ function [UserVar,CtrlVar,MeshBoundaryCoordinates]=DefineInitialInputs(UserVar,C
 %% UserVar
 
 UserVar.RunType="-Thule-C-NV1.1-10km-" ;  %  % prescribed, to get steady state
-UserVar.RunType="-Thule-C-NV2.0-10km-" ;  %  % 
+% UserVar.RunType="-Thule-C-NV2.0-10km-" ;  %  % 
 
 
 UserVar.Region="-Thule-" ;
@@ -55,10 +55,11 @@ UserVar.DefineOutputs="-ubvb-LSF-h-sbB-s-B-dhdt-save-log10speed-";
 
 if contains(hostname,"DESKTOP-G5TCRTD")
 
-    UserVar.ResultsFileDirectory="F:\Runs\Calving\Circular\ResultsFiles\";
+    UserVar.ResultsFileDirectory="F:\Runs\Calving\Thule\ResultsFiles\";
 elseif contains(hostname,"DESKTOP-BU2IHIR")
 
-    UserVar.ResultsFileDirectory="D:\Runs\Calving\Circular\ResultsFiles\";
+    UserVar.ResultsFileDirectory="D:\Runs\Calving\Thule\ResultsFiles\";
+
 elseif contains(hostname,"C17777347")
 
     UserVar.ResultsFileDirectory="D:\Runs\Calving\Thule\ResultsFiles";
@@ -114,7 +115,7 @@ CtrlVar.SlidingLaw="Weertman" ; % "Umbi" ; % "Weertman" ; % "Tsai" ; % "Cornford
 
 CtrlVar.InverseRun=0;
 CtrlVar.TimeDependentRun=1;
-CtrlVar.Restart=0;
+CtrlVar.Restart=1;
 CtrlVar.InfoLevelNonLinIt=1;
 
 CtrlVar.AdaptMesh=0;
