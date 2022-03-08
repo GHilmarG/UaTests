@@ -17,14 +17,19 @@ function [UserVar,CtrlVar,MeshBoundaryCoordinates]=DefineInitialInputs(UserVar,C
 
 %% UserVar
 
-UserVar.RunType="-Thule-C-NV-10km-" ;  %  % prescribed, to get steady state
+UserVar.RunType="-Thule-C-NV1.1-10km-" ;  %  
+UserVar.RunType="-Thule-P-SSmin-10km-" ;  NewFileNameFormat=1 ;  %  prescribed calving front, steady state grown from zero initial ice thickness  
+UserVar.RunType="-Thule-P-SSmax-10km-" ;  NewFileNameFormat=1 ;  %  prescribed calving front, steady state grown from zero initial ice thickness  
+% UserVar.RunType="-Thule-C-NV2.0-10km-" ;  %  % 
 
 
 UserVar.Region="-Thule-" ;
 
-if contains(UserVar.RunType,"-C-NV-")
+if contains(UserVar.RunType,"-C-NV")
     UserVar.CalvingLaw.Type="-NV-"  ;  % "-ScalesWithNormalVelocity+1.0-"  ;
-    UserVar.CalvingLaw.Factor=1.1;
+    UserVar.CalvingLaw.Factor=str2double(extract(extract(UserVar.RunType,"NV"+digitsPattern+"."+digitsPattern+"-"),digitsPattern+"."+digitsPattern));
+    %UserVar.CalvingLaw.Factor=1.1;
+    %UserVar.CalvingLaw.Factor=2.0;
 else
     UserVar.CalvingLaw.Type=""  ;  % "-ScalesWithNormalVelocity+1.0-"  ;
     UserVar.CalvingLaw.Factor=0;
@@ -52,10 +57,11 @@ UserVar.DefineOutputs="-ubvb-LSF-h-sbB-s-B-dhdt-save-log10speed-";
 
 if contains(hostname,"DESKTOP-G5TCRTD")
 
-    UserVar.ResultsFileDirectory="F:\Runs\Calving\Circular\ResultsFiles\";
+    UserVar.ResultsFileDirectory="F:\Runs\Calving\Thule\ResultsFiles\";
 elseif contains(hostname,"DESKTOP-BU2IHIR")
 
-    UserVar.ResultsFileDirectory="D:\Runs\Calving\Circular\ResultsFiles\";
+    UserVar.ResultsFileDirectory="D:\Runs\Calving\Thule\ResultsFiles\";
+
 elseif contains(hostname,"C17777347")
 
     UserVar.ResultsFileDirectory="D:\Runs\Calving\Thule\ResultsFiles";
@@ -111,7 +117,7 @@ CtrlVar.SlidingLaw="Weertman" ; % "Umbi" ; % "Weertman" ; % "Tsai" ; % "Cornford
 
 CtrlVar.InverseRun=0;
 CtrlVar.TimeDependentRun=1;
-CtrlVar.Restart=1;
+
 CtrlVar.InfoLevelNonLinIt=1;
 
 CtrlVar.AdaptMesh=0;
@@ -119,8 +125,8 @@ CtrlVar.TotalNumberOfForwardRunSteps=inf;
 %CtrlVar.LevelSetMethod=0;
 
 
-CtrlVar.dt=1e-3;   CtrlVar.DefineOutputsDt=1;
-CtrlVar.TotalTime=3;
+CtrlVar.dt=1e-6;   CtrlVar.DefineOutputsDt=1;
+CtrlVar.TotalTime=10000;
 
 CtrlVar.time=0;
 
@@ -143,11 +149,19 @@ CtrlVar.MeshSizeMax=NaN;
 CtrlVar.MeshSize=UserVar.ElementSize; 
 CtrlVar.MeshSizeMin=CtrlVar.MeshSizeMax/20;
 
-CtrlVar.ReadInitialMesh=0;  CtrlVar.OnlyMeshDomainAndThenStop=0;
-CtrlVar.ReadInitialMesh=1;  CtrlVar.OnlyMeshDomainAndThenStop=0;
-CtrlVar.SaveInitialMeshFileName="MeshFile"+num2str(UserVar.ElementSize/1000)+"km" ; 
-CtrlVar.ReadInitialMeshFileName="MeshFile"+num2str(UserVar.ElementSize/1000)+"km" ; 
+
+CtrlVar.SaveInitialMeshFileName="MeshFile"+num2str(UserVar.ElementSize/1000)+"km.mat"; 
+CtrlVar.ReadInitialMeshFileName="MeshFile"+num2str(UserVar.ElementSize/1000)+"km.mat" ; 
 CtrlVar.MaxNumberOfElements=70e3;
+
+if isfile(CtrlVar.ReadInitialMeshFileName)
+    CtrlVar.ReadInitialMesh=1;  
+    CtrlVar.OnlyMeshDomainAndThenStop=0;
+else
+    CtrlVar.ReadInitialMesh=0;  
+    CtrlVar.OnlyMeshDomainAndThenStop=1;
+end
+
 
 CtrlVar.MeshGenerator='mesh2d' ; % 'mesh2d';
 
@@ -168,18 +182,22 @@ CtrlVar.ThickMin=1;
 
 %%
 if CtrlVar.LevelSetMethod
-    CtrlVar.Experiment=CtrlVar.LevelSetFABmu.Scale+...
-        "-mu"+num2str(CtrlVar.LevelSetFABmu.Value)...
-        +"-Ini"+num2str(CtrlVar.LevelSetInitialisationInterval)...
-        +"-PDist"+num2str(CtrlVar.LevelSetReinitializePDist)...
-        +"-AD"+num2str(CtrlVar.LevelSetMethodAutomaticallyDeactivateElements)...
-        +"Strip"+num2str(CtrlVar.LevelSetMethodSolveOnAStrip)...
-        +"SW="+num2str(CtrlVar.LevelSetMethodStripWidth)...
-        +"-"+UserVar.CalvingLaw.Type...
-        +"="+sprintf("%+2.1f",UserVar.CalvingLaw.Factor)...
-        +"-"+UserVar.Region ;
+    if NewFileNameFormat
+        CtrlVar.Experiment=UserVar.RunType;
+    else
+        CtrlVar.Experiment=CtrlVar.LevelSetFABmu.Scale+...
+            "-mu"+num2str(CtrlVar.LevelSetFABmu.Value)...
+            +"-Ini"+num2str(CtrlVar.LevelSetInitialisationInterval)...
+            +"-PDist"+num2str(CtrlVar.LevelSetReinitializePDist)...
+            +"-AD"+num2str(CtrlVar.LevelSetMethodAutomaticallyDeactivateElements)...
+            +"Strip"+num2str(CtrlVar.LevelSetMethodSolveOnAStrip)...
+            +"SW="+num2str(CtrlVar.LevelSetMethodStripWidth)...
+            +"-"+UserVar.CalvingLaw.Type...
+            +"="+sprintf("%+2.1f",UserVar.CalvingLaw.Factor)...
+            +"-"+UserVar.Region ;
+    end
 else
-    CtrlVar.Experiment="NoCalving"+UserVar.Region ;
+    CtrlVar.Experiment=UserVar.RunType;
 end
 
 CtrlVar.Experiment=replace(CtrlVar.Experiment,"--","-");
@@ -187,9 +205,14 @@ CtrlVar.Experiment=replace(CtrlVar.Experiment,"-+","+");
 CtrlVar.Experiment=replace(CtrlVar.Experiment,".","k");
 CtrlVar.Experiment=replace(CtrlVar.Experiment," ","");
 
-CtrlVar.NameOfRestartFiletoRead="Restart"+UserVar.RunType+".mat"; 
-CtrlVar.NameOfRestartFiletoWrite="Restart"+UserVar.RunType+".mat"; 
+CtrlVar.NameOfRestartFiletoRead="Restart"+UserVar.RunType; 
+CtrlVar.NameOfRestartFiletoRead=replace(CtrlVar.NameOfRestartFiletoRead,".","k")+".mat";
+CtrlVar.NameOfRestartFiletoWrite=CtrlVar.NameOfRestartFiletoRead;
 
-
+if isfile(CtrlVar.NameOfRestartFiletoRead)
+    CtrlVar.Restart=1;
+else
+    CtrlVar.Restart=0;
+end
 
 end

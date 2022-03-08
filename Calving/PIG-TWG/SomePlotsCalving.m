@@ -54,10 +54,19 @@ SubString="T-C-MR4-u-cl-mu0k1-Ini-geo-100-Strip1-SW=100km-AD=0-NV-1k5-BMCF-int-P
 %SubString="T-C-MR4-u-cl-mu0k1-Ini-geo-100-Strip1-SW=100km-AD=0-NV-1k5-BMCF-int-PIG-TWG-MeshFile10km-PIG-TWG";
 SubString="T-C-MR4-u-cl-mu0k1-Ini-geo-100-Strip1-SW=100km-AD=0-NV-1k5-BMCF-int-PIG-TWG-MeshFile5km-PIG-TWG";
 
+
+
+
+% 30km = 14km
+% 20km = 9.3km
+% 10km = 4.6km
+%  5km = 2.3km
+% 2.5km = 1.16km
+
 %  1.5 experiments
 
 fEx="1.1";
-fEx="RR"; 
+% fEx="RR"; 
 switch fEx
 
     case "1.5"
@@ -67,7 +76,7 @@ switch fEx
         SubString(3)="T-C-MR4-u-cl-mu0k1-Ini-geo-100-Strip1-SW=100km-AD=0-NV-1k5-BMCF-int-PIG-TWG-MeshFile10km-PIG-TWG";
         SubString(4)="T-C-MR4-u-cl-mu0k1-Ini-geo-100-Strip1-SW=100km-AD=0-NV-1k5-BMCF-int-PIG-TWG-MeshFile5km-PIG-TWG";
 
-        IRange=4;
+        IRange=1:4;
     case "1.1"
         % 1.1 experiments
 
@@ -75,7 +84,8 @@ switch fEx
         SubString(2)="T-C-MR4-u-cl-mu0k1-Ini-geo-100-Strip1-SW=100km-AD=0-NV-1k1-BMCF-int-asRacmo-dhdtLim1-PIG-TWG-MeshFile20km-PIG-TWG";
         SubString(3)="T-C-MR4-u-cl-mu0k1-Ini-geo-100-Strip1-SW=100km-AD=0-NV-1k1-BMCF-int-asRacmo-dhdtLim1-PIG-TWG-MeshFile10km-PIG-TWG";
         SubString(4)="T-C-MR4-u-cl-mu0k1-Ini-geo-100-Strip1-SW=100km-AD=0-NV-1k1-BMCF-int-asRacmo-dhdtLim1-PIG-TWG-MeshFile5km-PIG-TWG";
-        IRange=3;
+        SubString(5)="T-C-MR4-u-cl-mu0k1-Ini-geo-100-Strip1-SW=100km-AD=0-NV-1k1-BMCF-int-asRacmo-dhdtLim1-PIG-TWG-MeshFile2k5km-PIG-TWG"; % not done, consider submitting
+        IRange=1:4;
 
 
     case "RR"
@@ -84,13 +94,18 @@ switch fEx
         SubString(2)="T-C-RR-BMCF-MR4-SM-u-cl-mu0k1-Ini-geo-100-Strip1-SW=100km-AD=0-RR-BMCF-int-asRacmo-dhdtLim1-PIG-TWG-MeshFile20km-PIG-TWG";
         SubString(3)="T-C-RR-BMCF-MR4-SM-u-cl-mu0k1-Ini-geo-100-Strip1-SW=100km-AD=0-RR-BMCF-int-asRacmo-dhdtLim1-PIG-TWG-MeshFile10km-PIG-TWG";
         SubString(4)="T-C-RR-BMCF-MR4-SM-u-cl-mu0k1-Ini-geo-100-Strip1-SW=100km-AD=0-RR-BMCF-int-asRacmo-dhdtLim1-PIG-TWG-MeshFile5km-PIG-TWG";  % not done
-        IRange=1:3;
+        IRange=4;
 end
 
 
-CreateVideo=true;  
-TimeStep=1;
+CreateVideo=true;
 CalcVAF=false;
+
+if CalcVAF
+    TimeStep=5;
+else
+    TimeStep=1;
+end
 
 if CreateVideo
 
@@ -100,8 +115,8 @@ if CreateVideo
 
 end
 
-col=["r","b","g","m"] ;
-DataCollect=cell(2) ; 
+col=["r","b","g","m","c"] ;
+DataCollect=cell(5,1) ; 
 
 
 if CalcVAF
@@ -140,10 +155,21 @@ if CalcVAF
 
     end
 
+fig.CurrentAxes.YAxis(1).Exponent=0;
 
-
+% 30km = 14km
+% 20km = 9.3km
+% 10km = 4.6km
+%  5km = 2.3km
+% 2.5km = 1.16km
     %legend("30km","20km","10km","5km") ;   title("VC=1.1")
-    legend("30km","20km","10km") ;   title("Retreat rate = 1k/yr if v > 1km/yr")
+    legend("14 km","9.3 km","4.6 km","2.3 km") ;
+
+    if  fEx=="RR"
+        title("Retreat rate = 1k/yr if v > 1km/yr")
+    elseif fEx=="1.1"
+        title("$c= 1.1 \times \boldmath{v} \cdot \boldmath{n} $",Interpreter="latex")
+    end
 
     % f=gcf; exportgraphics(f,'VAF-VC1k1.pdf')
 
