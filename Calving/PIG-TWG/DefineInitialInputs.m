@@ -293,6 +293,9 @@ if contains(UserVar.RunType,"Inverse-MatOpt")
 
     CtrlVar.Inverse.NameOfRestartOutputFile="InverseRestartFile-"+InvFile;
 
+  
+
+
     if contains(UserVar.RunType,"UaOpt")
 
 
@@ -455,8 +458,6 @@ end
 
 
 
-
-
 CtrlVar.Experiment= ...
     UserVar.RunType...
     +CtrlVar.LevelSetFABmu.Scale....
@@ -482,22 +483,34 @@ end
 
 
 
-    
+
 
 CtrlVar.Inverse.NameOfRestartOutputFile=replace(CtrlVar.Inverse.NameOfRestartOutputFile,"--","-");
 CtrlVar.Inverse.NameOfRestartOutputFile=replace(CtrlVar.Inverse.NameOfRestartOutputFile,".","k");
+CtrlVar.Inverse.NameOfRestartInputFile=CtrlVar.Inverse.NameOfRestartOutputFile;
+
+if isfile(CtrlVar.Inverse.NameOfRestartInputFile+".mat")
+    CtrlVar.Restart=1;
+else
+    CtrlVar.Restart=0;
+    fprintf("No restart file found. Starting a new run. \n")
+end
+
 
 CtrlVar.ReadInitialMeshFileName=replace(CtrlVar.ReadInitialMeshFileName,".","k");
 CtrlVar.SaveInitialMeshFileName=replace(CtrlVar.SaveInitialMeshFileName,".","k");
 
-CtrlVar.Inverse.NameOfRestartInputFile=CtrlVar.Inverse.NameOfRestartOutputFile;
+
 
 UserVar.CFile=replace(UserVar.CFile,".","k");
 UserVar.AFile=replace(UserVar.AFile,".","k");
 
 
-CtrlVar.NameOfRestartFiletoWrite=CtrlVar.Experiment+"-FR.mat";
+CtrlVar.NameOfRestartFiletoWrite="IR-"+InvFile+".mat";
 CtrlVar.NameOfRestartFiletoRead=CtrlVar.NameOfRestartFiletoWrite;
+
+
+
 
 CtrlVar.WriteRestartFileInterval=100;
 

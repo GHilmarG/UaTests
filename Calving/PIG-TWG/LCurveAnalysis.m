@@ -1,9 +1,29 @@
 
 %%
+% 
+%  rename  Aa+As Aa1-As InverseRestartFile-Weertman-Ca1-Cs*.mat
+
+%
+%
+%
+%
+%
+% Ca1-Cs500000000-Aa1As1000 : singular issues
+% Ca1-Cs500000000-Aa1As1000 : singular issues 
+% Ca1-Cs50000000-Aa1-As1000 : singular
+% Ca1-Cs500000000-Aa1-As1000 : singular
+% Ca1-Cs1000000000-Aa1-As1000 : singular
+% Ca1-Cs5000000000-Aa1-As1000 : singular
+% Ca1-Cs10000000000-Aa1-As1000 : singular
+% Ca1-Cs50000000000-Aa1-As1000 : singular
+% Ca1-Cs50000000-Aa1-As1000 : sungular
+% Ca1-Cs500000000-Aa1-As1000 : singular
+% So for Cs> 5e7 all are singular
+
 
 
 Experiment="As";
-Experiment="Cs";
+% Experiment="Cs";
 MR="10km";
 
 
