@@ -1,21 +1,22 @@
 
-function [B,UserVar,CtrlVar,MUA,F]=Bedgeometry(UserVar,CtrlVar,MUA,F,BedName,DoPlots)
+function [B,UserVar,CtrlVar,MUA,F]=Bedgeometry(UserVar,CtrlVar,MUA,F,options)
 
 
-if nargin<6
-    DoPlots=false;
+
+arguments
+    UserVar struct=[]
+    CtrlVar struct=[]
+    MUA     struct=[]
+    F       {mustBeA(F,{'struct','UaFields','numeric'})}=[]
+    options.Plot  logical = false
+    options.BedName string="-Thule-"
 end
-
-if nargin<5 || isempty(BedName)
-    BedName="-Thule-" ;
-end
-
 
 
 if nargin == 0 || isempty(MUA)  || isempty(F)
 
     %%
-    DoPlots=true;
+    options.Plot=true;
     R=1000e3 ;
     theta=linspace(0,2*pi,100);
     x=R*cos(theta); y=R*sin(theta) ; x(end)=[] ; y(end )=[];
@@ -48,22 +49,22 @@ if nargin == 0 || isempty(MUA)  || isempty(F)
 end
 
 
-B=Bfunc(F.x,F.y,BedName) ;
+B=Bfunc(F.x,F.y,options.BedName) ;
 
-if DoPlots
+if options.Plot
 
 
     FindOrCreateFigure("B3") ; PlotMeshScalarVariable(CtrlVar,MUA,B);
 
     x=linspace(0,1000e3,100) ; y=x*0;
-    Bxprofile=Bfunc(x,y,BedName);
+    Bxprofile=Bfunc(x,y,options.BedName);
 
     FindOrCreateFigure("B: x-profile") ;
     plot(x/1000,Bxprofile) ;
     xlabel("x (km)") ; ylabel("B (m)")
 
     y=linspace(0,1000e3,100) ; x=y*0;
-    Bxprofile=Bfunc(x,y,BedName);
+    Bxprofile=Bfunc(x,y,options.BedName);
 
     FindOrCreateFigure("B: y-profile") ;
     plot(y/1000,Bxprofile) ;
