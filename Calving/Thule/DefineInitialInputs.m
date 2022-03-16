@@ -17,10 +17,15 @@ function [UserVar,CtrlVar,MeshBoundaryCoordinates]=DefineInitialInputs(UserVar,C
 
 %% UserVar
 
-UserVar.RunType="-Thule-C-NV1.1-10km-" ;  %  
-UserVar.RunType="-Thule-P-SSmin-10km-" ;  NewFileNameFormat=1 ;  %  prescribed calving front, steady state grown from zero initial ice thickness  
-UserVar.RunType="-Thule-P-SSmax-10km-" ;  NewFileNameFormat=1 ;  %  prescribed calving front, steady state grown from zero initial ice thickness  
-% UserVar.RunType="-Thule-C-NV2.0-10km-" ;  %  % 
+
+ UserVar.RunType="-Thule-C-NV1.1-10km-" ;  %  % prescribed, to get steady state
+ UserVar.RunType="-Thule-C-NV2.0-10km-" ;  %  % 
+
+
+%UserVar.RunType="-Thule-P-SSmin-10km-" ;  NewFileNameFormat=1 ;  %  prescribed calving front, steady state grown from zero initial ice thickness  
+%UserVar.RunType="-Thule-P-SSmax-10km-" ;  NewFileNameFormat=1 ;  %  prescribed calving front, steady state grown from zero initial ice thickness  
+
+
 
 
 UserVar.Region="-Thule-" ;
@@ -121,12 +126,16 @@ CtrlVar.TimeDependentRun=1;
 CtrlVar.InfoLevelNonLinIt=1;
 
 CtrlVar.AdaptMesh=0;
-CtrlVar.TotalNumberOfForwardRunSteps=inf;
+CtrlVar.TotalNumberOfForwardRunSteps=inf; 
 %CtrlVar.LevelSetMethod=0;
 
 
-CtrlVar.dt=1e-6;   CtrlVar.DefineOutputsDt=1;
-CtrlVar.TotalTime=10000;
+
+
+
+CtrlVar.dt=1e-3;   CtrlVar.DefineOutputsDt=1;  CtrlVar.ATSdtMin=1e-4  ; 
+CtrlVar.TotalTime=2000;
+
 
 CtrlVar.time=0;
 
@@ -209,10 +218,16 @@ CtrlVar.NameOfRestartFiletoRead="Restart"+UserVar.RunType;
 CtrlVar.NameOfRestartFiletoRead=replace(CtrlVar.NameOfRestartFiletoRead,".","k")+".mat";
 CtrlVar.NameOfRestartFiletoWrite=CtrlVar.NameOfRestartFiletoRead;
 
+
+%% Testing
+
+ CtrlVar.UseMexFiles=true ;  % CtrlVar.Restart=1;  CtrlVar.WriteRestartFile=0;     
+
 if isfile(CtrlVar.NameOfRestartFiletoRead)
     CtrlVar.Restart=1;
 else
     CtrlVar.Restart=0;
 end
+
 
 end
