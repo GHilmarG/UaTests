@@ -41,6 +41,7 @@ if isempty(UserVar) || ~isfield(UserVar,'RunType')
     
     % UserVar.RunType='GenerateMesh' ;
     UserVar.RunType='Inverse-MatOpt';
+    
 
 end
 
@@ -251,7 +252,12 @@ end
 
 %% UserVar.RunType
 
-if contains(UserVar.RunType,"Inverse-MatOpt")
+if contains(UserVar.RunType,"Inverse")
+
+    if contains(UserVar.RunType,"Inverse-UaOpt")
+        % Testing
+        CtrlVar.Inverse.MinimisationMethod='UaOptimization-Hessian'; % {'MatlabOptimization','UaOptimization'}
+    end
 
     UserVar.DefineOutputs="-"; %
     CtrlVar.InverseRun=1;
@@ -267,7 +273,7 @@ if contains(UserVar.RunType,"Inverse-MatOpt")
     CtrlVar.ReadInitialMesh=1;
     CtrlVar.AdaptMesh=0;
 
-    CtrlVar.Inverse.Iterations=10000;
+    CtrlVar.Inverse.Iterations=2;
 
     CtrlVar.Inverse.InvertFor="-logA-logC-" ; % {'C','logC','AGlen','logAGlen'}
     CtrlVar.Inverse.Regularize.Field=CtrlVar.Inverse.InvertFor;
@@ -287,7 +293,7 @@ if contains(UserVar.RunType,"Inverse-MatOpt")
         +"-As"+num2str(CtrlVar.Inverse.Regularize.logAGlen.gs)...
         +"-"+num2str(UserVar.MeshResolution/1000)+"km";
 
-
+    InvFile=replace(InvFile,".","k");
     CtrlVar.NameOfFileForSavingSlipperinessEstimate="InvC-"+InvFile;
     CtrlVar.NameOfFileForSavingAGlenEstimate="InvA-"+InvFile;
 
@@ -296,18 +302,9 @@ if contains(UserVar.RunType,"Inverse-MatOpt")
   
 
 
-    if contains(UserVar.RunType,"UaOpt")
 
 
-        CtrlVar.Inverse.InvertFor="-logA-" ;
-        CtrlVar.Inverse.Iterations=5;
-        CtrlVar.Inverse.Regularize.Field=CtrlVar.Inverse.InvertFor;
-        CtrlVar.Inverse.MinimisationMethod='UaOptimization-Hessian'; % {'MatlabOptimization','UaOptimization'}
 
-
-        CtrlVar.Inverse.DataMisfit.Multiplier=1;
-        CtrlVar.Inverse.Regularize.Multiplier=1;
-    end
 
     % [----------- Testing adjoint gradents
     CtrlVar.Inverse.TestAdjoint.isTrue=0; % If true then perform a brute force calculation
@@ -488,6 +485,10 @@ end
 CtrlVar.Inverse.NameOfRestartOutputFile=replace(CtrlVar.Inverse.NameOfRestartOutputFile,"--","-");
 CtrlVar.Inverse.NameOfRestartOutputFile=replace(CtrlVar.Inverse.NameOfRestartOutputFile,".","k");
 CtrlVar.Inverse.NameOfRestartInputFile=CtrlVar.Inverse.NameOfRestartOutputFile;
+
+if CtrlVar.InverseRun
+    fprintf(" Inverse restarr file: %s \n",CtrlVar.Inverse.NameOfRestartOutputFile)
+end
 
 if isfile(CtrlVar.Inverse.NameOfRestartInputFile+".mat")
     CtrlVar.Restart=1;

@@ -1,5 +1,14 @@
 
 
+
+% Finds all batch jobs on the local cluster. Writes the diary into a text file, and then displays
+% the contents for the diary files. 
+% 
+%
+%
+
+
+
 c=parcluster("local");
 
 
@@ -14,11 +23,13 @@ for I=1:N    % numel(running)
     diary(running(I),DiaryFileName(I))
 end
 
-more on
+more on   % turn on paged display
 
 for I=1:N
     fprintf("\n \n #######################################################\n")
     fprintf("%i/%i \t Job ID: %i \n",I,N,running(I).ID)
     type(DiaryFileName(I))
+    % to move to next file enter 'q' on the keyborad (this is similar to the unix behaviour of the
+    % 'more' command.
 end
 
