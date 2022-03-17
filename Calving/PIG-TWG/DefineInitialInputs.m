@@ -41,7 +41,6 @@ if isempty(UserVar) || ~isfield(UserVar,'RunType')
     
     % UserVar.RunType='GenerateMesh' ;
     UserVar.RunType='Inverse-MatOpt';
-    
 
 end
 

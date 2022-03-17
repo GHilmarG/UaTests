@@ -3,12 +3,12 @@ Klear
 more off
 job=cell(100,1);
 
-CtrlVar.Inverse.Iterations=5;
+CtrlVar.Inverse.Iterations=2;
 
 
-CtrlVar.Inverse.Regularize.logC.ga=10;
+CtrlVar.Inverse.Regularize.logC.ga=1;
 CtrlVar.Inverse.Regularize.logC.gs=1000 ;
-CtrlVar.Inverse.Regularize.logAGlen.ga=10;
+CtrlVar.Inverse.Regularize.logAGlen.ga=1;
 CtrlVar.Inverse.Regularize.logAGlen.gs=1000;
 
 
@@ -25,8 +25,8 @@ for I=-1:5   % anything above 7 does not appear to converge I think
     I
 
     CtrlVar.Inverse.Regularize.logC.gs=c*10^I;
-    % job{J}=batch("Ua",0,{UserVar,CtrlVar},"Pool",1) ; J=J+1;
-    Ua(UserVar,CtrlVar) ;
+    job{J}=batch("Ua",0,{UserVar,CtrlVar},"Pool",1) ; J=J+1;
+    %Ua(UserVar,CtrlVar) ;
     pause(30)
     
     CtrlVar.Inverse.Regularize.logC.gs=5*c*10^I;
@@ -35,9 +35,9 @@ for I=-1:5   % anything above 7 does not appear to converge I think
 
 end
 
-CtrlVar.Inverse.Regularize.logC.ga=1000;
+CtrlVar.Inverse.Regularize.logC.ga=10;
 CtrlVar.Inverse.Regularize.logC.gs=1000 ;
-CtrlVar.Inverse.Regularize.logAGlen.ga=1000;
+CtrlVar.Inverse.Regularize.logAGlen.ga=10;
 CtrlVar.Inverse.Regularize.logAGlen.gs=1000;
 
 % A
