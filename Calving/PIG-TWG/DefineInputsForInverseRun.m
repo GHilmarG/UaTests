@@ -90,10 +90,16 @@ switch CtrlVar.SlidingLaw
         error("Ua:DefineInputsForInverseRund:CaseNotFound","Sliding law prior for this sliding law not implemented")
 end
 
+Priors.C=kk_proj(Priors.C,CtrlVar.Cmax,CtrlVar.Cmin) ;
+Priors.AGlen=kk_proj(Priors.AGlen,CtrlVar.AGlenmax,CtrlVar.AGlenmin) ;
 
 %% Define Start Values
 % This is only used at the very start of the inversion. (In an inverse restart run the initial value is always the last values from
 % previous run.)
+
+
+
+
 InvStartValues.C=Priors.C ;
 InvStartValues.m=F.m ;
 InvStartValues.q=F.q;

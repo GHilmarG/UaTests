@@ -35,7 +35,7 @@ cd(UserVar.ResultsFileDirectory) ;
 %  1.5 experiments
 
 fEx="1.1";
-% fEx="2.0";
+fEx="2.0";
 % fEx="RR"; 
 fEx="Max"; 
 % fEx="Min"; 
