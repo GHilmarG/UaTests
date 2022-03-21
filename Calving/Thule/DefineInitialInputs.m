@@ -64,7 +64,7 @@ elseif contains(hostname,"DESKTOP-BU2IHIR")
 
 elseif contains(hostname,"C17777347")
 
-    UserVar.ResultsFileDirectory="D:\Runs\Calving\Thule\ResultsFiles";
+    UserVar.ResultsFileDirectory="D:\Runs\Calving\Thule\ResultsFiles\";
 
 else
 

@@ -16,7 +16,7 @@ elseif contains(hostname,"DESKTOP-BU2IHIR")
 
 elseif contains(hostname,"C17777347")
 
-    UserVar.ResultsFileDirectory="D:\Runs\Calving\Thule\ResultsFiles";
+    UserVar.ResultsFileDirectory="D:\Runs\Calving\Thule\ResultsFiles\";
 
 else
 
@@ -37,6 +37,8 @@ cd(UserVar.ResultsFileDirectory) ;
 fEx="1.1";
 % fEx="2.0";
 % fEx="RR"; 
+fEx="Max"; 
+% fEx="Min"; 
 switch fEx
 
     case "2.0"
@@ -62,6 +64,18 @@ switch fEx
 
         IRange=4;
 
+    case "Max"
+
+        SubString(1)="Thule-P-SSmax-10km";
+
+        IRange=1:1;
+
+    case "Min"
+
+        SubString(1)="Thule-P-SSmin-10km";
+
+        IRange=1:1;
+
 
     otherwise
 
@@ -75,7 +89,7 @@ CalcVAF=false;
 if CalcVAF
     TimeStep=5;
 else
-    TimeStep=5;
+    TimeStep=50;
 end
 
 if CreateVideo
