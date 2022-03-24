@@ -82,6 +82,7 @@ if ~isInitialized
         B2=CP +  [-SL2 -SL2 ; SL2 -SL2 ; SL2 SL2 ; -SL2 SL2 ; -SL2 -SL2] ; B2=1000*B2 ; 
         Xc=[Xc(:); NaN ; B2(:,1)]; Yc=[Yc(:); NaN ; B2(:,2)]; 
 
+        % Triangle 
         SL2=200 ; CP=[0 -500 ]; % SideLength/2 and CentrePoint
         B3=CP +  [-SL2 -SL2 ; SL2 -SL2 ; 0 SL2 ; -SL2 -SL2] ;  B3=1000*B3;
         Xc=[Xc(:); NaN ; B3(:,1)]; Yc=[Yc(:); NaN ; B3(:,2)]; 
