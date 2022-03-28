@@ -34,16 +34,16 @@ switch Experiment
 
     case "As"
 
-        % files=dir("InverseRestartFile-Weertman-Ca1-Cs1000-Aa1-As*-"+MR+".mat") ;
-        %files=dir("InverseRestartFile-Weertman-Ca1000-Cs1000-Aa1000-As*-"+MR+".mat") ;
-        files=dir("InverseRestartFile-Weertman-Ca10-Cs1000-Aa10-As*-"+MR+".mat") ;
+        files=dir("InverseRestartFile-Weertman-Ca1-Cs1000-Aa1-As*-"+MR+".mat") ;
+        % files=dir("InverseRestartFile-Weertman-Ca1000-Cs1000-Aa1000-As*-"+MR+".mat") ;
+        % files=dir("InverseRestartFile-Weertman-Ca10-Cs1000-Aa10-As*-"+MR+".mat") ;
 
 
     case "Cs"
 
-        %files=dir("InverseRestartFile-Weertman-Ca1-Cs*-Aa1-As1000-"+MR+".mat") ;
-        %files=dir("InverseRestartFile-Weertman-Ca1000-Cs*-Aa1000-As1000-"+MR+".mat") ;
-        files=dir("InverseRestartFile-Weertman-Ca10-Cs*-Aa10-As1000-"+MR+".mat") ;
+        files=dir("InverseRestartFile-Weertman-Ca1-Cs*-Aa1-As1000-"+MR+".mat") ;
+        % files=dir("InverseRestartFile-Weertman-Ca1000-Cs*-Aa1000-As1000-"+MR+".mat") ;
+        % files=dir("InverseRestartFile-Weertman-Ca10-Cs*-Aa10-As1000-"+MR+".mat") ;
 
     otherwise
 
@@ -130,10 +130,24 @@ end
 figlog=FindOrCreateFigure("LCurve Analysis (log-log)"+Experiment) ;clf(figlog) ;
 
 
-Experiment="As";
+switch Experiment
 
-RTerm=RAs; 
-% RTerm(isnan(RTerm))=[]; 
+    case "As"
+
+        RTerm=RAs;
+
+    case "Cs"
+
+        RTerm=RCs;
+
+    otherwise
+
+        error("case not found")
+
+end
+
+
+% RTerm(isnan(RTerm))=[];
 
 [~,isort]=sort(RTerm) ; 
 RTerm=RTerm(isort) ; 
