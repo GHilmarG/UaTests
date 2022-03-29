@@ -44,7 +44,7 @@ end
 
 if contains(UserVar.RunType,"-Alim-")
 
-    Box=[ -1616.3      -1491.8      -493.24      -395.07]*1000;
+    Box=[ -1616.3      -1491.8      -530.00      -395.07]*1000;
     In=IsInBox(Box,F.x,F.y) ;
 
     AminTWIS=AGlenVersusTemp(-20) ;
