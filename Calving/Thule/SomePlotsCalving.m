@@ -39,6 +39,9 @@ fEx="2.0";
 % fEx="RR"; 
 fEx="Max"; 
 % fEx="Min"; 
+fEx="Thule-C-Tmin-C-NV2k0-10km" ;
+% fEx="Thule-C-Tmax-C-NV2k0-10km" ;
+
 switch fEx
 
     case "2.0"
@@ -76,6 +79,17 @@ switch fEx
 
         IRange=1:1;
 
+    case "Thule-C-Tmin-C-NV2k0-10km" 
+
+
+        SubString(1)="Thule-C-Tmin-C-NV2k0-10km" ;
+        IRange=1:1 ;
+
+  case "Thule-C-Tmax-C-NV2k0-10km" 
+
+
+        SubString(1)="Thule-C-Tmax-C-NV2k0-10km" ;
+        IRange=1:1 ;
 
     otherwise
 
@@ -89,7 +103,7 @@ CalcVAF=false;
 if CalcVAF
     TimeStep=5;
 else
-    TimeStep=50;
+    TimeStep=1;
 end
 
 if CreateVideo
