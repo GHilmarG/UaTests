@@ -71,7 +71,32 @@ FC=scatteredInterpolant(xC,yC,C);
 save("FC-Weertman-Ca1-Cs100000-Aa1-As100000-10km.mat") ;
 
 %%
-figure ; PlotMeshScalarVariable(CtrlVarInRestartFile,MUA,log10(AGlen));
+
+Klear
+
+load("InvA-Weertman-Ca1-Cs100000-Aa1-As100000-10km") ;
+load("InvA-Weertman-Ca1-Cs1000-Aa1-As1000-10km") ;
+
+
+FindOrCreateFigure("A") ;
+PlotMeshScalarVariable(CtrlVarInRestartFile,MUA,log10(AGlen));
 hold on ; PlotGroundingLines(CtrlVarInRestartFile,"Bedmachine",[],[],[],[],"r");
 hold on ; PlotMuaBoundary(CtrlVarInRestartFile,MUA) ;
 hold on ; PlotMuaBoundary(CtrlVarInRestartFile,MUA) ;
+
+
+Box=[ -1616.3      -1491.8      -530.00      -395.07]*1000;
+F.x=MUA.coordinates(:,1); F.y=MUA.coordinates(:,2); 
+
+In=IsInBox(Box,F.x,F.y) ;
+AminTWIS=AGlenVersusTemp(-20) ;
+I= AGlen < AminTWIS & In ;
+AGlen(I)=AminTWIS;
+
+FindOrCreateFigure("A lim") ;
+PlotMeshScalarVariable(CtrlVarInRestartFile,MUA,log10(AGlen));
+hold on ; PlotGroundingLines(CtrlVarInRestartFile,"Bedmachine",[],[],[],[],"r");
+hold on ; PlotMuaBoundary(CtrlVarInRestartFile,MUA) ;
+hold on ; PlotMuaBoundary(CtrlVarInRestartFile,MUA) ;
+
+
