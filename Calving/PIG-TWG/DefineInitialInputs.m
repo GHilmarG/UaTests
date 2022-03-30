@@ -38,9 +38,9 @@ if isempty(UserVar) || ~isfield(UserVar,'RunType')
     % UserVar.RunType="-FT-P-TWISC2-MR4-SM-" ;  % -P-TWISC- is Thwaites Ice Shelf Calved off, 2km away
     UserVar.RunType="-FT-P-TWISC0-MR4-SM-10km" ;  % -P-TWISC- is Thwaites Ice Shelf Calved off, 0km away
     % the "-P-" stands for prescribed calving fronts
-    UserVar.RunType="-FT-P-TWIS-MR4-SM-10km" ;  % not calved off
+    UserVar.RunType="-FT-P-TWIS-MR4-SM-10km" ;       % not calved off
     UserVar.RunType="-FT-P-TWIS-MR4-SM-10km-Alim-" ;  % not calved off
-    
+    UserVar.RunType="-FT-P-TWISC0-MR4-SM-10km-Alim" ;  % -P-TWISC- is Thwaites Ice Shelf Calved off, 0km away
     % UserVar.RunType='GenerateMesh' ;
     % UserVar.RunType='Inverse-MatOpt';
 
