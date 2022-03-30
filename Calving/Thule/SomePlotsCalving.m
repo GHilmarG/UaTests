@@ -40,7 +40,7 @@ fEx="2.0";
 fEx="Max"; 
 % fEx="Min"; 
 fEx="Thule-C-Tmin-C-NV2k0-10km" ;
-% fEx="Thule-C-Tmax-C-NV2k0-10km" ;
+fEx="Thule-C-Tmax-C-NV2k0-10km" ;
 
 switch fEx
 
