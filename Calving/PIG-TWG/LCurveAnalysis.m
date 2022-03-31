@@ -26,6 +26,7 @@
 Experiment="As";
 Experiment="Cs";
 MR="10km";
+%MR="5km";
 
 
 %% First read in all the restart files, just make sure that this finds all of them

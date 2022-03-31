@@ -5,16 +5,24 @@ SubmitBathJobs=true;
 IRCase="AandC" ;
 more off
 
+UserVar.RunType='Inverse-MatOpt';
+
+UserVar.MeshResolution=10e3; IRange=0:7 ; JRange=0:7 ;
+UserVar.MeshResolution=5e3; IRange=4:5 ; JRange=4:5 ;
+
+
+CtrlVar.Inverse.Iterations=500;
 
 if SubmitBathJobs
 
-    IRange=0:7 ;
-    JRange=0:7 ;
-    CtrlVar.Inverse.Iterations=500;
+    
+    
+    
     job=cell(100,1);
 
-    UserVar.RunType='Inverse-MatOpt';
-    UserVar.MeshResolution=10e3;   % MESH RESOLUTION
+    
+    
+
 
 
     switch IRCase
@@ -106,6 +114,7 @@ else
     UserVar.RunType='Inverse-MatOpt';
     % UserVar.RunType='Inverse-UaOpt';
     UserVar.MeshResolution=10e3;   % MESH RESOLUTION
+    UserVar.MeshResolution=5e3;   % MESH RESOLUTION
 
     CtrlVar.Inverse.Iterations=2;
     CtrlVar.Inverse.Regularize.logC.ga=1;
