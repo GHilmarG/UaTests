@@ -29,3 +29,13 @@ zlabel("z (m a.s.l.)",Interpreter="latex") ;
 title("")
 
  ax=gca; exportgraphics(ax,'ThulesbBmin.pdf')
+
+ %%
+
+FIGuv=FindOrCreateFigure("uv"); clf(FIGuv);
+
+UaPlots(CtrlVar,MUA,F,"-ubvb-")
+xlabel("x (km)",Interpreter="latex") ; 
+ylabel("y (km)",Interpreter="latex") ;
+axis tight
+ax=gca; exportgraphics(ax,'ThuleMinVel.pdf')

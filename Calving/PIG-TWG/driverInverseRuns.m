@@ -103,7 +103,7 @@ else
 
     %% Test Run
     Klear
-    UserVar.RunType='Inverse-MatOpt';
+    UserVar.RunType='Inverse-MatOpt-Alim-';
     % UserVar.RunType='Inverse-UaOpt';
     UserVar.MeshResolution=10e3;   % MESH RESOLUTION
 

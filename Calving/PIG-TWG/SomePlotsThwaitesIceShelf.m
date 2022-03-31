@@ -76,16 +76,18 @@ switch Experiment
     case "10km-New"
 
         SubString(1)="FT-P-TWIS-MR4-SM-10km.mat";
-        SubString(2)="FT-P-TWISC0-MR4-SM-10km";
-        SubString(3)="FT-P-TWIS-MR4-SM-10km-Alim-"; 
-
+        SubString(2)="FT-P-TWISC0-MR4-SM-10km.mat";
+        SubString(3)="FT-P-TWIS-MR4-SM-10km-Alim-.mat"; 
+        SubString(4)="FT-P-TWISC0-MR4-SM-10km-Alim.mat"; 
+                     
         LegendEntry=[...
             "4.6km: Thwaites ice shelf",...
             "4.6km: Thwaites ice shelf removed",...
             "4.6km: Thwaites ice shelf (Alim)",...
+            "4.6km: Thwaites ice shelf removed (Alim)",...
             ];
 
-        IRange=1:3 ;
+        IRange=1:4 ;
 
     case "5km"
 
