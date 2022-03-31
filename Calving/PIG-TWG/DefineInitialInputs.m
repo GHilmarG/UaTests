@@ -224,18 +224,21 @@ switch CtrlVar.SlidingLaw
 
     case "Weertman"
 
-        %AFile="Weertman-"+UserVar.Region+"-"+num2str(UAserVar.MeshResolution/1000)+"km";   %
-        %CFile="Weertman-"+UserVar.Region+"-"+num2str(UserVar.MeshResolution/1000)+"km";   %
 
-        AFile="Weertman-Ca1-Cs100000-Aa1-As100000-10km" ;
-        CFile="Weertman-Ca1-Cs100000-Aa1-As100000-10km" ;
-        
+        InvFile=CtrlVar.SlidingLaw...
+            +"-Ca"+num2str(CtrlVar.Inverse.Regularize.logC.ga)...
+            +"-Cs"+num2str(CtrlVar.Inverse.Regularize.logC.gs)...
+            +"-Aa"+num2str(CtrlVar.Inverse.Regularize.logAGlen.ga)...
+            +"-As"+num2str(CtrlVar.Inverse.Regularize.logAGlen.gs)...
+            +"-"+num2str(UserVar.MeshResolution/1000)+"km";
+
         if contains(UserVar.RunType,"-Alim-")
-            AFile=AFile+"-Alim-";
+            InvFile=InvFile+"-Alim-";
         end
+        InvFile=replace(InvFile,".","k");
 
-        UserVar.AFile="FA-"+AFile;
-        UserVar.CFile="FC-"+CFile;
+        UserVar.AFile="FA-"+InvFile;
+        UserVar.CFile="FC-"+InvFile;
 
 
      
@@ -295,25 +298,9 @@ if contains(UserVar.RunType,"Inverse")
     CtrlVar.Inverse.DataMisfit.GradientCalculation="-adjoint-" ; % "-FixpointC-"; "adjoint";
     CtrlVar.Inverse.Measurements="-uv-" ;  % {'-uv-,'-uv-dhdt-','-dhdt-'}
 
-    %
-    %     CtrlVar.Inverse.Regularize.logC.ga=1;
-    %     CtrlVar.Inverse.Regularize.logC.gs=1000 ;
-    %     CtrlVar.Inverse.Regularize.logAGlen.ga=1;
-    %     CtrlVar.Inverse.Regularize.logAGlen.gs=1e7 ;
+  
 
-    InvFile=CtrlVar.SlidingLaw...
-        +"-Ca"+num2str(CtrlVar.Inverse.Regularize.logC.ga)...
-        +"-Cs"+num2str(CtrlVar.Inverse.Regularize.logC.gs)...
-        +"-Aa"+num2str(CtrlVar.Inverse.Regularize.logAGlen.ga)...
-        +"-As"+num2str(CtrlVar.Inverse.Regularize.logAGlen.gs)...
-        +"-"+num2str(UserVar.MeshResolution/1000)+"km";
-
-    if contains(UserVar.RunType,"-Alim-")
-        InvFile=InvFile+"-Alim-";
-    end
-
-
-    InvFile=replace(InvFile,".","k");
+    
     CtrlVar.NameOfFileForSavingSlipperinessEstimate="InvC-"+InvFile;
     CtrlVar.NameOfFileForSavingAGlenEstimate="InvA-"+InvFile;
 
