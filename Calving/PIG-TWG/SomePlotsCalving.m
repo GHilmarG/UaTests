@@ -55,7 +55,7 @@ SubString="T-C-MR4-u-cl-mu0k1-Ini-geo-100-Strip1-SW=100km-AD=0-NV-1k5-BMCF-int-P
 SubString="T-C-MR4-u-cl-mu0k1-Ini-geo-100-Strip1-SW=100km-AD=0-NV-1k5-BMCF-int-PIG-TWG-MeshFile5km-PIG-TWG";
 
 
-
+0010000-Nodes21094-Ele41666-Tri3-kH10000-FT-P-TWISC0-MR4-SM-10km
 
 % 30km = 14km
 % 20km = 9.3km

@@ -33,17 +33,20 @@ if isempty(UserVar) || ~isfield(UserVar,'RunType')
 
     % UserVar.RunType="-FT-P-TWIS-Duvh-MR4-SM-" ;  % -P-TWIS- is Thwaites Ice Shelf unmodified, ie all fronts kept as is, not calving not, simply a referene run, Deactive Elements
     % UserVar.RunType="-FT-P-TWISC-MR4-SM-" ;  % -P-TWISC- is Thwaites Ice Shelf Calved off,
-    % UserVar.RunType="-FT-P-TWISC10-MR4-SM-" ;  % -P-TWISC- is Thwaites Ice Shelf Calved off,
-    % UserVar.RunType="-FT-P-TWISC5-MR4-SM-" ;  % -P-TWISC- is Thwaites Ice Shelf Calved off,
-    % UserVar.RunType="-FT-P-TWISC2-MR4-SM-" ;  % -P-TWISC- is Thwaites Ice Shelf Calved off,
+    % UserVar.RunType="-FT-P-TWISC10-MR4-SM-" ;  % -P-TWISC- is Thwaites Ice Shelf Calved off, 10km away
+    % UserVar.RunType="-FT-P-TWISC5-MR4-SM-" ;  % -P-TWISC- is Thwaites Ice Shelf Calved off, 5km away
+    % UserVar.RunType="-FT-P-TWISC2-MR4-SM-" ;  % -P-TWISC- is Thwaites Ice Shelf Calved off, 2km away
+    UserVar.RunType="-FT-P-TWISC0-MR4-SM-10km" ;  % -P-TWISC- is Thwaites Ice Shelf Calved off, 0km away
     % the "-P-" stands for prescribed calving fronts
-
-    
+    UserVar.RunType="-FT-P-TWIS-MR4-SM-10km" ;       % not calved off
+    UserVar.RunType="-FT-P-TWIS-MR4-SM-10km-Alim-" ;  % not calved off
+    UserVar.RunType="-FT-P-TWISC0-MR4-SM-10km-Alim" ;  % -P-TWISC- is Thwaites Ice Shelf Calved off, 0km away
     % UserVar.RunType='GenerateMesh' ;
-    UserVar.RunType='Inverse-MatOpt';
+    % UserVar.RunType='Inverse-MatOpt';
 
 end
 
+FileNameFormat="new" ; 
 
 %% UserVar
 
@@ -68,8 +71,14 @@ end
 
 if isempty(UserVar) || ~isfield(UserVar,'MeshResolution')
 
-    UserVar.MeshResolution=5e3;   % MESH RESOLUTION
+    pat="-"+digitsPattern+"km";
+    MR=str2double(extract(extract(UserVar.RunType,pat),digitsPattern));
 
+    if ~isempty(MR)
+        UserVar.MeshResolution=MR*1000;   % MESH RESOLUTION
+    else
+        UserVar.MeshResolution=5e3;   % MESH RESOLUTION
+    end
 end
 
 
@@ -215,8 +224,15 @@ switch CtrlVar.SlidingLaw
 
     case "Weertman"
 
-        AFile="Weertman-"+UserVar.Region+"-"+num2str(UserVar.MeshResolution/1000)+"km";   %
-        CFile="Weertman-"+UserVar.Region+"-"+num2str(UserVar.MeshResolution/1000)+"km";   %
+        %AFile="Weertman-"+UserVar.Region+"-"+num2str(UAserVar.MeshResolution/1000)+"km";   %
+        %CFile="Weertman-"+UserVar.Region+"-"+num2str(UserVar.MeshResolution/1000)+"km";   %
+
+        AFile="Weertman-Ca1-Cs100000-Aa1-As100000-10km" ;
+        CFile="Weertman-Ca1-Cs100000-Aa1-As100000-10km" ;
+        
+        if contains(UserVar.RunType,"-Alim-")
+            AFile=AFile+"-Alim-";
+        end
 
         UserVar.AFile="FA-"+AFile;
         UserVar.CFile="FC-"+CFile;
@@ -292,13 +308,18 @@ if contains(UserVar.RunType,"Inverse")
         +"-As"+num2str(CtrlVar.Inverse.Regularize.logAGlen.gs)...
         +"-"+num2str(UserVar.MeshResolution/1000)+"km";
 
+    if contains(UserVar.RunType,"-Alim-")
+        InvFile=InvFile+"-Alim-";
+    end
+
+
     InvFile=replace(InvFile,".","k");
     CtrlVar.NameOfFileForSavingSlipperinessEstimate="InvC-"+InvFile;
     CtrlVar.NameOfFileForSavingAGlenEstimate="InvA-"+InvFile;
 
     CtrlVar.Inverse.NameOfRestartOutputFile="InverseRestartFile-"+InvFile;
 
-  
+
 
 
 
@@ -440,7 +461,10 @@ CtrlVar.AdaptMeshRunStepInterval=1 ; % remesh whenever mod(Itime,CtrlVar.AdaptMe
 CtrlVar.ThicknessConstraints=1;
 CtrlVar.ResetThicknessToMinThickness=0;
 
-
+%% A C constraints
+if contains(UserVar.RunType,"-Alim-")
+    CtrlVar.AGlenmin=AGlenVersusTemp(-20) ;
+end
 %%
 if batchStartupOptionUsed
     CtrlVar.doplots=0;   % disable plotting if running as batch
@@ -453,28 +477,31 @@ end
 %%
 
 
+if FileNameFormat=="new"
+    CtrlVar.Experiment=UserVar.RunType ;
+else
+    CtrlVar.Experiment= ...
+        UserVar.RunType...
+        +CtrlVar.LevelSetFABmu.Scale....
+        +"-mu"+num2str(CtrlVar.LevelSetFABmu.Value)...
+        +"-Ini"+CtrlVar.LevelSetInitialisationMethod+num2str(CtrlVar.LevelSetInitialisationInterval)...
+        +"-Strip"+num2str(CtrlVar.LevelSetMethodSolveOnAStrip)...
+        +"-SW="+num2str(CtrlVar.LevelSetMethodStripWidth/1000)+"km"...
+        +"-AD="+num2str(CtrlVar.LevelSetMethodAutomaticallyDeactivateElements)...
+        +UserVar.CalvingLaw.String...
+        +"-kH="+num2str(CtrlVar.kH)...
+        +"-asRacmo"...
+        +"-dhdtLim"+num2str(CtrlVar.LimitRangeInUpdateFtimeDerivatives)...
+        +"-"+UserVar.Region...
+        +"-"+CtrlVar.ReadInitialMeshFileName;
 
-CtrlVar.Experiment= ...
-    UserVar.RunType...
-    +CtrlVar.LevelSetFABmu.Scale....
-    +"-mu"+num2str(CtrlVar.LevelSetFABmu.Value)...
-    +"-Ini"+CtrlVar.LevelSetInitialisationMethod+num2str(CtrlVar.LevelSetInitialisationInterval)...
-    +"-Strip"+num2str(CtrlVar.LevelSetMethodSolveOnAStrip)...
-    +"-SW="+num2str(CtrlVar.LevelSetMethodStripWidth/1000)+"km"...
-    +"-AD="+num2str(CtrlVar.LevelSetMethodAutomaticallyDeactivateElements)...
-    +UserVar.CalvingLaw.String...
-    +"-kH="+num2str(CtrlVar.kH)...
-    +"-asRacmo"...
-    +"-dhdtLim"+num2str(CtrlVar.LimitRangeInUpdateFtimeDerivatives)...
-    +"-"+UserVar.Region...
-    +"-"+CtrlVar.ReadInitialMeshFileName;
-
+end
 CtrlVar.Experiment=replace(CtrlVar.Experiment,"--","-");
 CtrlVar.Experiment=replace(CtrlVar.Experiment,".","k");
 CtrlVar.Experiment=replace(CtrlVar.Experiment,"+","p");
 
 if startsWith(CtrlVar.Experiment,"-")
-    CtrlVar.Experiment=replaceBetween(CtrlVar.Experiment,1,2,"");
+    CtrlVar.Experiment=replaceBetween(CtrlVar.Experiment,1,1,"");
 end
 
 
@@ -486,7 +513,7 @@ CtrlVar.Inverse.NameOfRestartOutputFile=replace(CtrlVar.Inverse.NameOfRestartOut
 CtrlVar.Inverse.NameOfRestartInputFile=CtrlVar.Inverse.NameOfRestartOutputFile;
 
 if CtrlVar.InverseRun
-    fprintf(" Inverse restarr file: %s \n",CtrlVar.Inverse.NameOfRestartOutputFile)
+    fprintf(" Inverse restart file: %s \n",CtrlVar.Inverse.NameOfRestartOutputFile)
 end
 
 if isfile(CtrlVar.Inverse.NameOfRestartInputFile+".mat")
@@ -506,7 +533,8 @@ UserVar.CFile=replace(UserVar.CFile,".","k");
 UserVar.AFile=replace(UserVar.AFile,".","k");
 
 
-CtrlVar.NameOfRestartFiletoWrite="IR-"+InvFile+".mat";
+CtrlVar.NameOfRestartFiletoWrite="Restart-"+UserVar.RunType+".mat";
+CtrlVar.NameOfRestartFiletoWrite=replace(CtrlVar.NameOfRestartFiletoWrite,"--","-");
 CtrlVar.NameOfRestartFiletoRead=CtrlVar.NameOfRestartFiletoWrite;
 
 

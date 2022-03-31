@@ -28,7 +28,7 @@ if nargin == 0 || isempty(MUA)  || isempty(F)
     % Note; When creating this mesh using Úa, only the following
     % three lines are required in the Ua2D_InitialUserInput.m
     CtrlVar.MeshSizeMax=50e3;
-    CtrlVar.MeshSizeMin=50e3;
+    CtrlVar.MeshSizeMin=10e3;
     CtrlVar.MeshSize=10e3 ;
 
     MeshBoundaryCoordinates=[x(:) y(:)];
@@ -54,7 +54,14 @@ B=Bfunc(F.x,F.y,options.BedName) ;
 if options.Plot
 
 
-    FindOrCreateFigure("B3") ; PlotMeshScalarVariable(CtrlVar,MUA,B);
+    FindOrCreateFigure("B Thule") ; 
+    [~,cbar]=PlotMeshScalarVariable(CtrlVar,MUA,B);
+    xlabel("x (km)",Interpreter="latex") ; 
+    ylabel("y (km)",Interpreter="latex")
+    ModifyColormap
+    axis tight
+    title(cbar,"(m a.s.l.)",Interpreter="latex")
+    ax=gca; exportgraphics(ax,'ThuleB.pdf')
 
     x=linspace(0,1000e3,100) ; y=x*0;
     Bxprofile=Bfunc(x,y,options.BedName);
