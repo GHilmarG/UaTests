@@ -28,7 +28,7 @@ function [UserVar,CtrlVar,MeshBoundaryCoordinates]=DefineInitialInputs(UserVar,C
 UserVar.RunType="-Thule-C-Tmax-C-NV2.0-10km-" ;  NewFileNameFormat=1 ;  %  prescribed calving front, steady state grown from zero initial ice thickness  
 UserVar.RunType="-Thule-C-Tmin-C-NV2.0-10km-" ;  NewFileNameFormat=1 ;  %  prescribed calving front, steady state grown from zero initial ice thickness  
 
-
+UserVar.RunType="-Thule-P-SSmin-10km-Cxy-" ;  NewFileNameFormat=1 ;  %  prescribed calving front, steady state grown from zero initial ice thickness  
 
 UserVar.Region="-Thule-" ;
 
