@@ -226,10 +226,14 @@ switch CtrlVar.SlidingLaw
 
         %AFile="Weertman-"+UserVar.Region+"-"+num2str(UAserVar.MeshResolution/1000)+"km";   %
         %CFile="Weertman-"+UserVar.Region+"-"+num2str(UserVar.MeshResolution/1000)+"km";   %
+
+        AFile="Weertman-Ca1-Cs100000-Aa1-As100000-10km" ;
+        CFile="Weertman-Ca1-Cs100000-Aa1-As100000-10km" ;
         
-        AFile="Weertman-Ca1-Cs100000-Aa1-As100000-10km" ; 
-        CFile="Weertman-Ca1-Cs100000-Aa1-As100000-10km" ; 
-        
+        if contains(UserVar.RunType,"-Alim-")
+            AFile=AFile+"-Alim-";
+        end
+
         UserVar.AFile="FA-"+AFile;
         UserVar.CFile="FC-"+CFile;
 
@@ -304,13 +308,18 @@ if contains(UserVar.RunType,"Inverse")
         +"-As"+num2str(CtrlVar.Inverse.Regularize.logAGlen.gs)...
         +"-"+num2str(UserVar.MeshResolution/1000)+"km";
 
+    if contains(UserVar.RunType,"-Alim-")
+        InvFile=InvFile+"-Alim-";
+    end
+
+
     InvFile=replace(InvFile,".","k");
     CtrlVar.NameOfFileForSavingSlipperinessEstimate="InvC-"+InvFile;
     CtrlVar.NameOfFileForSavingAGlenEstimate="InvA-"+InvFile;
 
     CtrlVar.Inverse.NameOfRestartOutputFile="InverseRestartFile-"+InvFile;
 
-  
+
 
 
 
@@ -452,7 +461,10 @@ CtrlVar.AdaptMeshRunStepInterval=1 ; % remesh whenever mod(Itime,CtrlVar.AdaptMe
 CtrlVar.ThicknessConstraints=1;
 CtrlVar.ResetThicknessToMinThickness=0;
 
-
+%% A C constraints
+if contains(UserVar.RunType,"-Alim-")
+    CtrlVar.AGlenmin=AGlenVersusTemp(-20) ;
+end
 %%
 if batchStartupOptionUsed
     CtrlVar.doplots=0;   % disable plotting if running as batch
@@ -501,7 +513,7 @@ CtrlVar.Inverse.NameOfRestartOutputFile=replace(CtrlVar.Inverse.NameOfRestartOut
 CtrlVar.Inverse.NameOfRestartInputFile=CtrlVar.Inverse.NameOfRestartOutputFile;
 
 if CtrlVar.InverseRun
-    fprintf(" Inverse restarr file: %s \n",CtrlVar.Inverse.NameOfRestartOutputFile)
+    fprintf(" Inverse restart file: %s \n",CtrlVar.Inverse.NameOfRestartOutputFile)
 end
 
 if isfile(CtrlVar.Inverse.NameOfRestartInputFile+".mat")
