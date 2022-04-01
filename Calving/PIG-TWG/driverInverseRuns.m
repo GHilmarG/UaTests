@@ -12,7 +12,7 @@ UserVar.MeshResolution=10e3; IRange=0:7 ; JRange=0:7 ;
 UserVar.MeshResolution=5e3; IRange=3:6 ; JRange=3:6 ;
 
 
-CtrlVar.Inverse.Iterations=500;
+CtrlVar.Inverse.Iterations=2500;
 
 if SubmitBathJobs
 
