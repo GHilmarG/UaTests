@@ -30,10 +30,14 @@ function [UserVar,C,m,q,muk]=DefineSlipperyDistribution(UserVar,CtrlVar,MUA,time
 
 
 m=3;
+C0=3.16e6^(-m)*1000^m*365.2422*24*60*60; % = 0.001
+
+% tau=80kPa -> ub=C tau^3 = 512 m/yr
 
 if contains(UserVar.RunType,"-Cxy-")
-    log10Cmax=1e2;
-    log10Cmin=1e-2;
+
+    log10Cmax=-1;
+    log10Cmin=-3 ; 
     Bmax=2000;
     Bmin=-500;
 
@@ -45,7 +49,7 @@ if contains(UserVar.RunType,"-Cxy-")
     C=10.^(log10C) ;
 
 else
-    C=3.16e6^(-m)*1000^m*365.2422*24*60*60;
+    C=C0;
 end
 
 C=C+zeros(MUA.Nnodes,1);

@@ -29,6 +29,7 @@ UserVar.RunType="-Thule-C-Tmax-C-NV2.0-10km-" ;  NewFileNameFormat=1 ;  %  presc
 UserVar.RunType="-Thule-C-Tmin-C-NV2.0-10km-" ;  NewFileNameFormat=1 ;  %  prescribed calving front, steady state grown from zero initial ice thickness  
 
 UserVar.RunType="-Thule-P-SSmin-10km-Cxy-" ;  NewFileNameFormat=1 ;  %  prescribed calving front, steady state grown from zero initial ice thickness  
+UserVar.RunType="-Thule-P-SSmax-10km-Cxy-" ;  NewFileNameFormat=1 ;  %  prescribed calving front, steady state grown from zero initial ice thickness  
 
 UserVar.Region="-Thule-" ;
 
@@ -73,9 +74,13 @@ elseif contains(hostname,"C17777347")
 
     UserVar.ResultsFileDirectory="D:\Runs\Calving\Thule\ResultsFiles\";
 
+elseif contains(hostname,"DESKTOP-014ILS5")
+
+    UserVar.ResultsFileDirectory=".\ResultsFiles\";
+
 else
 
-    error("case not implemented")
+    error("PC platform not known")
 
 end
 
@@ -223,10 +228,17 @@ CtrlVar.NameOfRestartFiletoWrite=CtrlVar.NameOfRestartFiletoRead;
 
 %% Testing
 
- CtrlVar.UseMexFiles=true ;  % CtrlVar.Restart=1;  CtrlVar.WriteRestartFile=0;     
+CtrlVar.UseMexFiles=true ;  % CtrlVar.Restart=1;  CtrlVar.WriteRestartFile=0;
 
 if isfile(CtrlVar.NameOfRestartFiletoRead)
     CtrlVar.Restart=1;
+
+    CtrlVar.ResetTime=true ;                    % set to 1 to reset (model) time at start of restart run
+    CtrlVar.RestartTime=0;                 % if ResetTime is true, then this is the model time at the start of the restart run
+    CtrlVar.ResetTimeStep=1;                 % true if time step should be reset to dt given in the DefineInitialUserInputFile
+    CtrlVar.ResetRunStepNumber=true;            % if true, RunStepNumber is set to zero at the beginning of a restart run.
+    CtrlVar.InitialDiagnosticStep=1; % Start a transient run with an initial diagnostic step, even if the step is a restart step.
+    
 else
     CtrlVar.Restart=0;
 end
