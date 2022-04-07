@@ -31,6 +31,9 @@ UserVar.RunType="-Thule-C-Tmin-C-NV2.0-10km-" ;  NewFileNameFormat=1 ;  %  presc
 UserVar.RunType="-Thule-P-SSmin-10km-Cxy-" ;  NewFileNameFormat=1 ;  %  prescribed calving front, steady state grown from zero initial ice thickness  
 UserVar.RunType="-Thule-P-SSmax-10km-Cxy-" ;  NewFileNameFormat=1 ;  %  prescribed calving front, steady state grown from zero initial ice thickness  
 
+UserVar.RunType="-Thule-C-Tmin-C-Fq1Fk30Fmin80cmin0Fmax100cmax3000-Ini10-10km-" ;  NewFileNameFormat=1 ;  %  prescribed calving front, steady state grown from zero initial ice thickness  
+% copyfile Restart-Thule-P-SSmin-10km-.mat Restart-Thule-C-Tmin-C-Fq1Fk30Fmin80cmin0Fmax100cmax3000-10km-.mat
+
 UserVar.Region="-Thule-" ;
 
 if contains(UserVar.RunType,"-C-NV")
@@ -38,6 +41,18 @@ if contains(UserVar.RunType,"-C-NV")
     UserVar.CalvingLaw.Factor=str2double(extract(extract(UserVar.RunType,"NV"+digitsPattern+"."+digitsPattern+"-"),digitsPattern+"."+digitsPattern));
     %UserVar.CalvingLaw.Factor=1.1;
     %UserVar.CalvingLaw.Factor=2.0;
+elseif contains(UserVar.RunType,"-C-Fq")
+
+  
+    UserVar.CalvingLaw.Type="-Fqk-"  ;  
+    UserVar.CalvingLaw.Fqk.q=str2double(extract(extract(UserVar.RunType,"-Fq"+digitsPattern+"Fk"),digitsPattern));
+    UserVar.CalvingLaw.Fqk.k=str2double(extract(extract(UserVar.RunType,"Fk"+digitsPattern+"Fmin"),digitsPattern));
+    UserVar.CalvingLaw.Fqk.Fmin=str2double(extract(extract(UserVar.RunType,"Fmin"+digitsPattern+"cmin"),digitsPattern));
+    UserVar.CalvingLaw.Fqk.cmin=str2double(extract(extract(UserVar.RunType,"cmin"+digitsPattern+"Fmax"),digitsPattern));
+    UserVar.CalvingLaw.Fqk.Fmax=str2double(extract(extract(UserVar.RunType,"Fmax"+digitsPattern+"cmax"),digitsPattern));
+    UserVar.CalvingLaw.Fqk.cmax=str2double(extract(extract(UserVar.RunType,"cmax"+digitsPattern+"-"),digitsPattern));
+
+
 else
     UserVar.CalvingLaw.Type=""  ;  % "-ScalesWithNormalVelocity+1.0-"  ;
     UserVar.CalvingLaw.Factor=0;
@@ -59,6 +74,7 @@ else
 end
 
 UserVar.DefineOutputs="-ubvb-LSF-h-sbB-s-B-dhdt-save-log10speed-";
+UserVar.DefineOutputs="-ubvb-LSF-h-sbB-s-B-dhdt-log10speed-";
 
 
 [~,hostname]=system('hostname') ;
@@ -69,7 +85,6 @@ if contains(hostname,"DESKTOP-G5TCRTD")
 elseif contains(hostname,"DESKTOP-BU2IHIR")
 
     UserVar.ResultsFileDirectory="D:\Runs\Calving\Thule\ResultsFiles\";
-
 elseif contains(hostname,"C17777347")
 
     UserVar.ResultsFileDirectory="D:\Runs\Calving\Thule\ResultsFiles\";
@@ -96,7 +111,18 @@ else
     CtrlVar.LevelSetEvolution="-By solving the level set equation-"   ; % "-prescribed-",
 end
 
-CtrlVar.LevelSetInitialisationInterval=inf ; CtrlVar.LevelSetReinitializePDist=true ;
+
+CtrlVar.LevelSetReinitializePDist=true ; CtrlVar.LevelSetInitialisationInterval=inf;
+if contains(UserVar.RunType,"-Ini")
+    IniInt=str2double(extract(extract(UserVar.RunType,"-Ini"+digitsPattern+"-"),digitsPattern));
+
+    if ~isempty(IniInt)
+        CtrlVar.LevelSetInitialisationInterval=IniInt;
+    
+    end
+end
+
+
 CtrlVar.DevelopmentVersion=true;
 
 CtrlVar.LevelSetFABmu.Scale="-u-cl-" ; % "-constant-";
@@ -116,7 +142,7 @@ CtrlVar.MeshAdapt.CFrange=[20e3 5e3 ; 10e3 2e3] ; % This refines the mesh around
 CtrlVar.LevelSetMethodMassBalanceFeedbackCoeffLin=-10;  % This is the constant a1, it has units 1/time.
 % Default value is -1
 
-CtrlVar.LevelSetMinIceThickness=CtrlVar.ThickMin+1;    % this is the hmin constant, i.e. the accepted min ice thickness
+
 % over the 'ice-free' areas.
 % Default value is CtrlVar.ThickMin+1
 
@@ -140,7 +166,7 @@ CtrlVar.TotalNumberOfForwardRunSteps=inf;
 
 
 
-CtrlVar.dt=1e-3;   CtrlVar.DefineOutputsDt=1;  CtrlVar.ATSdtMin=1e-4  ; 
+CtrlVar.dt=1e-3;   CtrlVar.DefineOutputsDt=0;  CtrlVar.ATSdtMin=1e-4  ; 
 CtrlVar.TotalTime=2000;
 
 
@@ -194,8 +220,9 @@ MeshBoundaryCoordinates=[x(:) y(:)];
 %%
 CtrlVar.ResetThicknessToMinThickness=1;  % change this later on
 CtrlVar.ThicknessConstraints=0; 
-CtrlVar.ThickMin=1;
-
+CtrlVar.ThickMin=0.1;
+CtrlVar.LevelSetMinIceThickness=CtrlVar.ThickMin+0.1;   
+CtrlVar.LevelSetDownstreamAGlen=AGlenVersusTemp(-20) ; 
 %%
 if CtrlVar.LevelSetMethod
     if NewFileNameFormat
@@ -234,10 +261,10 @@ if isfile(CtrlVar.NameOfRestartFiletoRead)
     CtrlVar.Restart=1;
 
     CtrlVar.ResetTime=true ;                    % set to 1 to reset (model) time at start of restart run
-    CtrlVar.RestartTime=0;                 % if ResetTime is true, then this is the model time at the start of the restart run
-    CtrlVar.ResetTimeStep=1;                 % true if time step should be reset to dt given in the DefineInitialUserInputFile
-    CtrlVar.ResetRunStepNumber=true;            % if true, RunStepNumber is set to zero at the beginning of a restart run.
-    CtrlVar.InitialDiagnosticStep=1; % Start a transient run with an initial diagnostic step, even if the step is a restart step.
+     CtrlVar.RestartTime=0;                 % if ResetTime is true, then this is the model time at the start of the restart run
+     CtrlVar.ResetTimeStep=1;                 % true if time step should be reset to dt given in the DefineInitialUserInputFile
+     CtrlVar.ResetRunStepNumber=true;            % if true, RunStepNumber is set to zero at the beginning of a restart run.
+     CtrlVar.InitialDiagnosticStep=1; % Start a transient run with an initial diagnostic step, even if the step is a restart step.
     
 else
     CtrlVar.Restart=0;

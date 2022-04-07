@@ -90,6 +90,7 @@ switch UserVar.CalvingLaw.Type
 
     case "-hqk-"
 
+        % this is the inverse-thickness calving law used in the ice-shelf 1D verification experiment
         q=-2;
 
         k=86320694.4400036;
@@ -97,6 +98,31 @@ switch UserVar.CalvingLaw.Type
 
         dcDdfdx=0;
         dcDdfdy=0;
+
+    case "-Fqk-"  % c = k f^q
+
+        % power law as a function of cliff height (freeboard f)
+
+        % The DeConto cliff law seems to have been:
+        % c=3000 m/yr for F>=100
+        % c=0 for F < 80 
+
+
+        F=min((s-S),h) ;
+
+        k=UserVar.CalvingLaw.Fqk.k ;
+        q=UserVar.CalvingLaw.Fqk.q ;
+
+
+        c=k.*F.^q; 
+
+        c(F<UserVar.CalvingLaw.Fqk.Fmin)= UserVar.CalvingLaw.Fqk.cmin;
+        c(F>UserVar.CalvingLaw.Fqk.Fmax)= UserVar.CalvingLaw.Fqk.cmax;
+
+        dcDdfdx=0;
+        dcDdfdy=0;
+
+
 
     otherwise
 

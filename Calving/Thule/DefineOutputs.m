@@ -282,7 +282,7 @@ if contains(plots,'-ubvb-')
     %CtrlVar.VelColorMap='hot';
     %CtrlVar.RelativeVelArrowSize=10;
     
-    I=F.LSF<0 ; F.ub(I)=0; F.vb(I)=0; 
+    % I=F.LSF<0 ; F.ub(I)=0; F.vb(I)=0; 
     QuiverColorGHG(F.x(1:N:end),F.y(1:N:end),F.ub(1:N:end),F.vb(1:N:end),CtrlVar);
     hold on ; 
     [xGL,yGL,GLgeo]=PlotGroundingLines(CtrlVar,MUA,F.GF,GLgeo,xGL,yGL,'k');
@@ -435,7 +435,7 @@ if contains(plots,'-h-')
     hold on
     
     [xGL,yGL,GLgeo]=PlotGroundingLines(CtrlVar,MUA,F.GF,GLgeo,xGL,yGL,"color","r");
-    [xc,yc]=PlotCalvingFronts(CtrlVar,MUA,F,'w',LineWidth=2);
+    [xc,yc]=PlotCalvingFronts(CtrlVar,MUA,F,'w',LineWidth=0.5);
     
     I=F.h<=CtrlVar.ThickMin;
     plot(MUA.coordinates(I,1)/CtrlVar.PlotXYscale,MUA.coordinates(I,2)/CtrlVar.PlotXYscale,'.r')
