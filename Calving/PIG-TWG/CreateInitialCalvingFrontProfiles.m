@@ -15,7 +15,8 @@ end
 %%  Here I am assuming we have files with the current groundign lines and calving fronts of of Antarctia
 
 
-load("GroundingLineForAntarcticaBasedOnBedmachine.mat","xGL","yGL") ;
+% load("GroundingLineForAntarcticaBasedOnBedmachine.mat","xGL","yGL") ;
+load("GroundingLineForAntarcticaBasedOnBedmachine","GroundingLines") ; xGL=GroundingLines(:,1) ;   yGL=GroundingLines(:,2) ;
 load("MeshBoundaryCoordinatesForAntarcticaBasedOnBedmachine.mat","Boundary");
 
 %%

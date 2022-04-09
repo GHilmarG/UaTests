@@ -14,7 +14,8 @@ end
 
 if isempty(xBMGL)
 
-    load("GroundingLineForAntarcticaBasedOnBedmachine.mat","xGL","yGL") ;
+    
+    load("GroundingLineForAntarcticaBasedOnBedmachine","GroundingLines") ; xGL=GroundingLines(:,1) ;   yGL=GroundingLines(:,2) ;
 
     xBMGL=xGL ; yBMGL=yGL ;
     xGL=[] ; yGL=[] ; 

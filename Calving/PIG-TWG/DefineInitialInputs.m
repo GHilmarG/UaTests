@@ -115,14 +115,11 @@ CtrlVar.LimitRangeInUpdateFtimeDerivatives=true ;
 %% Set output files directory
 [~,hostname]=system('hostname') ;
 if contains(hostname,"DESKTOP-G5TCRTD")
-
     UserVar.ResultsFileDirectory="F:\Runs\Calving\PIG-TWG\ResultsFiles\";
 elseif contains(hostname,"DESKTOP-BU2IHIR")
-
     UserVar.ResultsFileDirectory="D:\Runs\Calving\PIG-TWG\ResultsFiles\";
-
 else
-    error("case not implemented")
+    UserVar.ResultsFileDirectory=".\ResultsFiles\";
 end
 
 
@@ -227,45 +224,40 @@ else
 end
 % "Umbi" ; % "Weertman" ; % "Tsai" ; % "Cornford" ;  "Umbi" ; "Cornford" ; % "Tsai" , "Budd"
 
-switch CtrlVar.SlidingLaw
+if ~isfield(UserVar,'AFile') ||  isempty(UserVar.AFile)
+    switch CtrlVar.SlidingLaw
 
-    case "Weertman"
+        case "Weertman"
 
+            InvFile=CtrlVar.SlidingLaw...
+                +"-Ca"+num2str(CtrlVar.Inverse.Regularize.logC.ga)...
+                +"-Cs"+num2str(CtrlVar.Inverse.Regularize.logC.gs)...
+                +"-Aa"+num2str(CtrlVar.Inverse.Regularize.logAGlen.ga)...
+                +"-As"+num2str(CtrlVar.Inverse.Regularize.logAGlen.gs)...
+                +"-"+num2str(UserVar.MeshResolution/1000)+"km";
 
-        InvFile=CtrlVar.SlidingLaw...
-            +"-Ca"+num2str(CtrlVar.Inverse.Regularize.logC.ga)...
-            +"-Cs"+num2str(CtrlVar.Inverse.Regularize.logC.gs)...
-            +"-Aa"+num2str(CtrlVar.Inverse.Regularize.logAGlen.ga)...
-            +"-As"+num2str(CtrlVar.Inverse.Regularize.logAGlen.gs)...
-            +"-"+num2str(UserVar.MeshResolution/1000)+"km";
+            if contains(UserVar.RunType,"-Alim-")
+                InvFile=InvFile+"-Alim-";
+            end
+            InvFile=replace(InvFile,".","k");
 
-        if contains(UserVar.RunType,"-Alim-")
-            InvFile=InvFile+"-Alim-";
-        end
-        InvFile=replace(InvFile,".","k");
+            UserVar.AFile="FA-"+InvFile;
+            UserVar.CFile="FC-"+InvFile;
 
-        UserVar.AFile="FA-"+InvFile;
-        UserVar.CFile="FC-"+InvFile;
+        case "Cornford"
 
+            AFile="Cornford-"+UserVar.Region+"-"+num2str(UserVar.MeshResolution/1000)+"km";   %
+            CFile="Cornford-"+UserVar.Region+"-"+num2str(UserVar.MeshResolution/1000)+"km";   %
 
-     
+            UserVar.AFile="FA-"+AFile;
+            UserVar.CFile="FC-"+CFile;
 
-    case "Cornford"
+        case "Umbi"
+            UserVar.CFile='FC-Umbi'; UserVar.AFile='FA-Umbi';
+        otherwise
+            error('A and C fields not available')
+    end
 
-        AFile="Cornford-"+UserVar.Region+"-"+num2str(UserVar.MeshResolution/1000)+"km";   %
-        CFile="Cornford-"+UserVar.Region+"-"+num2str(UserVar.MeshResolution/1000)+"km";   %
-
-        UserVar.AFile="FA-"+AFile;
-        UserVar.CFile="FC-"+CFile;
-
-
-       
-
-
-    case "Umbi"
-        UserVar.CFile='FC-Umbi'; UserVar.AFile='FA-Umbi';
-    otherwise
-        error('A and C fields not available')
 end
 
 if ~isfile(UserVar.GeometryInterpolant) || ~isfile(UserVar.SurfaceVelocityInterpolant)
