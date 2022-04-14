@@ -5,39 +5,137 @@ function [UserVar,CtrlVar,MeshBoundaryCoordinates]=DefineInitialInputs(UserVar,C
 %
 %%
 
+
+UserVar.RunType="-MismipPlus-C-Fq1Fk30Fmin80cmin0Fmax100cmax3000-" ;  
+CtrlVar.Experiment=UserVar.RunType; 
+
 UserVar.Outputsdirectory='ResultsFiles'; % This I use in UaOutputs
 UserVar.MassBalanceCase='ice0';
-UserVar.InitialGeometry="-MismipPlus-"; 
-UserVar.CalvingLaw="-FixedRate1000-"  ;
-% UserVar.CalvingLaw="-IceThickness10-"  ;
-UserVar.CalvingLaw="-CliffHeight-Crawford"  ;
-UserVar.MisExperiment=UserVar.CalvingLaw ; 
+
+if contains(UserVar.RunType,"-MismipPlus-") % Extract info on geometry from RunType, can be extended later to include other geometries
+    UserVar.InitialGeometry="-MismipPlus-";
+else
+    error("What geometry? ")  
+end
+
+
+%% Calving law and level set options
+%
+% Specify a cliff-height dependent calving law where calving rate depends on cliff height as:
+%
+%   c=k F^q
+%
+% where k and q are some parameters, and F is the cliff height:
+%
+%   F=min((s-S),h)
+%
+% In addition both upper and lower limits are set to the calving rate:
+%
+%
+%        c(F<Fmin)= cmin;
+%        c(F>Fmax)= cmax;
+%
+%
+
+% Extract the info on calving law from UserVar.RunType, this can then be expanded to include other sliding laws later
+if contains(UserVar.RunType,"-Fq")
+    UserVar.CalvingLaw.Type="-Fqk-"  ;
+    UserVar.CalvingLaw.Fqk.q=str2double(extract(extract(UserVar.RunType,"-Fq"+digitsPattern+"Fk"),digitsPattern));
+    UserVar.CalvingLaw.Fqk.k=str2double(extract(extract(UserVar.RunType,"Fk"+digitsPattern+"Fmin"),digitsPattern));
+    UserVar.CalvingLaw.Fqk.Fmin=str2double(extract(extract(UserVar.RunType,"Fmin"+digitsPattern+"cmin"),digitsPattern));
+    UserVar.CalvingLaw.Fqk.cmin=str2double(extract(extract(UserVar.RunType,"cmin"+digitsPattern+"Fmax"),digitsPattern));
+    UserVar.CalvingLaw.Fqk.Fmax=str2double(extract(extract(UserVar.RunType,"Fmax"+digitsPattern+"cmax"),digitsPattern));
+    UserVar.CalvingLaw.Fqk.cmax=str2double(extract(extract(UserVar.RunType,"cmax"+digitsPattern+"-"),digitsPattern));
+else
+    error(" what sliding law")
+end
+
+
+CtrlVar.LevelSetMethod=1;
+
+
+% Initial calving front, this needs to be a closed region, inside the ice, outside the "ice-free" region.
+LargeDistance=1000e3  ;
+CalvingFrontBoundary0=[500e3 -LargeDistance ; 500e3 LargeDistance ; -LargeDistance LargeDistance ; -LargeDistance  -LargeDistance ] ; 
+UserVar.CalvingFront0.Xc=CalvingFrontBoundary0(:,1);
+UserVar.CalvingFront0.Yc=CalvingFrontBoundary0(:,2); 
+
+
+
+if contains(UserVar.RunType,"-P-")  
+    CtrlVar.LevelSetEvolution="-Prescribed-"   ; % "-prescribed-",
+elseif contains(UserVar.RunType,"-C-")  
+    CtrlVar.LevelSetEvolution="-By solving the level set equation-"   ; 
+else
+    error(" which calving implmentation to use? ")
+ 
+end
+
+% user re-initialisation? And if so, at what interval? 
+CtrlVar.LevelSetReinitializePDist=true ; CtrlVar.LevelSetInitialisationInterval=inf;
+if contains(UserVar.RunType,"-Ini")  % the re-initialisation intervale is set by looking for "-Ini" substring in RunType
+    IniInt=str2double(extract(extract(UserVar.RunType,"-Ini"+digitsPattern+"-"),digitsPattern));
+    if ~isempty(IniInt)
+        CtrlVar.LevelSetInitialisationInterval=IniInt;
+    end
+end
+
+
+CtrlVar.DevelopmentVersion=true; 
+CtrlVar.LevelSetFABmu.Scale="-u-cl-" ; % "-constant-"; 
+CtrlVar.LevelSetFABmu.Value=0.1;
+CtrlVar.LevelSetInfoLevel=1 ; 
+
+CtrlVar.MeshAdapt.CFrange=[20e3 5e3 ; 10e3 2e3] ; % This refines the mesh around the calving front, provided CtrlVar.AdaptMesh=true;         
+
+
+CtrlVar.CalvingLaw.Evaluation="-int-";                     % evaluate the calving law at integration points using a call to : DefineCalvingAtIntegrationPoints.m  
+CtrlVar.LevelSetMethodAutomaticallyDeactivateElements=0;   % Automatically deactivate elements used in the uv and uvh solvers downstream of calving fronts
+CtrlVar.LevelSetMethodSolveOnAStrip=1;                     % Solve the level-set equaition on a strip around the zero level (ie that calving front)
+CtrlVar.LevelSetMethodStripWidth=150e3;                    % Widht of that strip
+
+% The melt is decribed as a= a_1 (h-hmin)
+CtrlVar.LevelSetMethodMassBalanceFeedbackCoeffLin=-10;  % This is the constant a1, it has units 1/time.
+% Default value is -10
+CtrlVar.ThickMin=0.1;                                   % minimum allowed thickness without (potentially) doing something about it
+CtrlVar.LevelSetMinIceThickness=2*CtrlVar.ThickMin;    % this is the hmin constant, i.e. the accepted min ice thickness over the 'ice-free' areas.
+
+
 %%
 
-CtrlVar.SlidingLaw="W" ;  % options:  "W","W-N0","minCW-N0","C","rpCW-N0", and "rCW-N0"  
-CtrlVar.Experiment="MismipPlus-"+UserVar.MisExperiment;   
+CtrlVar.SlidingLaw="W" ;  % options:  "W","W-N0","minCW-N0","C","rpCW-N0", and "rCW-N0"
 
-CtrlVar.Experiment=replace(CtrlVar.Experiment,"--","-"); 
+
+CtrlVar.Experiment=replace(CtrlVar.Experiment,"--","-");
 %% Types of run
 %
-CtrlVar.TimeDependentRun=1; 
+CtrlVar.TimeDependentRun=1;
 CtrlVar.TotalNumberOfForwardRunSteps=inf;
 CtrlVar.TotalTime=200;
-CtrlVar.Restart=0;  
+CtrlVar.Restart=1;
 
 %% time, time-step, output interval
 
 
 CtrlVar.time=0; 
-CtrlVar.dt=0.1;  
+CtrlVar.dt=1e-5;  
 
-CtrlVar.DefineOutputsDt=1; % interval between calling UaOutputs. 0 implies call it at each and every run step.
+CtrlVar.DefineOutputsDt=0; % interval between calling UaOutputs. 0 implies call it at each and every run step.
                        % setting CtrlVar.DefineOutputsDt=1; causes UaOutputs to be called every 1 years.
                        % This is a more reasonable value once all looks OK.
 
 CtrlVar.ATSdtMax=1;
 CtrlVar.ATSdtMin=0.01;
 CtrlVar.WriteRestartFile=1;
+
+
+%% There seems to be an issue with the explicit estimated d/dt being very large
+% over a few nodes, and possibly (needs to be tested) this is causing an increased number in 
+% Newton-Raphson iterations. One possibily is to limit the d/dt calculations to selected nodes
+% or simply setting to zero.
+CtrlVar.inUpdateFtimeDerivatives.SetAllTimeDerivativesToZero=0; 
+CtrlVar.inUpdateFtimeDerivatives.SetTimeDerivativesDowstreamOfCalvingFrontsToZero=0 ; 
+CtrlVar.inUpdateFtimeDerivatives.SetTimeDerivativesAtMinIceThickToZero=0 ; 
 
 %% Reading in mesh
 CtrlVar.ReadInitialMesh=0;    % if true then read FE mesh (i.e the MUA variable) directly from a .mat file
@@ -55,40 +153,14 @@ CtrlVar.PlotXYscale=1000;
 
 CtrlVar.TriNodes=3;
 
-
 CtrlVar.NameOfRestartFiletoWrite="Restart"+CtrlVar.Experiment+".mat";
 CtrlVar.NameOfRestartFiletoRead=CtrlVar.NameOfRestartFiletoWrite;
 
-%% Calving options
-
-CtrlVar.LevelSetMethod=1;
-CtrlVar.LevelSetEvolution="-By solving the level set equation-"   ; % "-prescribed-", 
-CtrlVar.LevelSetInitialisationInterval=inf ; CtrlVar.LevelSetReinitializePDist=true ; 
-CtrlVar.DevelopmentVersion=true; 
-CtrlVar.LevelSetFABmu.Scale="-ucl-" ; % "-constant-"; 
-CtrlVar.LevelSetFABmu.Value=1;
-CtrlVar.LevelSetInfoLevel=1 ; 
-CtrlVar.MeshAdapt.CFrange=[20e3 5e3 ; 10e3 2e3] ; % This refines the mesh around the calving front, but must set
 
 
-% The melt is decribed as a= a_1 (h-hmin)
-CtrlVar.LevelSetMethodMassBalanceFeedbackCoeffLin=-1;  % This is the constant a1, it has units 1/time.
-% Default value is -1
-
-CtrlVar.LevelSetMinIceThickness=CtrlVar.ThickMin+1;    % this is the hmin constant, i.e. the accepted min ice thickness
-% over the 'ice-free' areas.
-% Default value is CtrlVar.ThickMin+1
-
-CtrlVar.LevelSetEvolution="-By solving the level set equation-"  ; % "-prescribed-", 
-
-
-CtrlVar.Experiment=CtrlVar.Experiment+CtrlVar.LevelSetFABmu.Scale+"-muValue"+num2str(CtrlVar.LevelSetFABmu.Value)...
-    +"-Ini"+num2str(CtrlVar.LevelSetInitialisationInterval)+"-PDist"+num2str(CtrlVar.LevelSetReinitializePDist);
-CtrlVar.Experiment=replace(CtrlVar.Experiment,"--","-"); 
-CtrlVar.Experiment=replace(CtrlVar.Experiment,".","k"); 
 
 %% adapt mesh
-CtrlVar.AdaptMesh=1;         
+CtrlVar.AdaptMesh=0;         
 CtrlVar.AdaptMeshInitial=0 ;       % if true, then a remeshing will always be performed at the inital step
 CtrlVar.AdaptMeshAndThenStop=0;    % if true, then mesh will be adapted but no further calculations performed
                                    % usefull, for example, when trying out different remeshing options (then use CtrlVar.doRemeshPlots=1 to get plots)
@@ -128,7 +200,7 @@ CtrlVar.AdaptMeshRunStepInterval=1;  % number of run-steps between mesh adaptati
 
 
 %% Pos. thickness constraints
-CtrlVar.ThickMin=1; % minimum allowed thickness without (potentially) doing something about it
+
 CtrlVar.ResetThicknessToMinThickness=0;  % if true, thickness values less than ThickMin will be set to ThickMin
 CtrlVar.ThicknessConstraints=1  ;        % if true, min thickness is enforced using active set method
 CtrlVar.ThicknessConstraintsItMax=5  ; 

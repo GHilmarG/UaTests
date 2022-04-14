@@ -1,10 +1,11 @@
 function UserVar=DefineOutputs(UserVar,CtrlVar,MUA,BCs,F,l,GF,InvStartValues,InvFinalValues,Priors,Meas,BCsAdjoint,RunInfo)
 
-persistent iCount Cx Ct
+persistent iCount CxMin CxMax Ct
 
 if isempty(iCount)
     iCount=1;
-    Cx=NaN(10000,1);
+    CxMin=NaN(10000,1);
+    CxMax=NaN(10000,1);
     Ct=NaN(10000,1) ; 
 else 
     iCount=iCount+1 ; 
@@ -32,7 +33,7 @@ if contains(plots,'-save-')
         FileName=sprintf('%s/%07i-Nodes%i-Ele%i-Tri%i-kH%i-%s.mat',...
             UserVar.Outputsdirectory,round(100*time),MUA.Nnodes,MUA.Nele,MUA.nod,1000*CtrlVar.kH,CtrlVar.Experiment);
         fprintf(' Saving data in %s \n',FileName)
-        save(FileName,'CtrlVar','MUA','F','BCs','Cx','Ct','RunInfo')
+        save(FileName,'CtrlVar','MUA','F','BCs','CxMin','Ct','RunInfo')
         
     end
     
@@ -57,8 +58,9 @@ if contains(plots,'-plot-')
     
 
     if ~isempty(xc)
-        Ind=abs(yc-40e3)<CtrlVar.MeshSize ;
-        Cx(iCount)=min(xc(Ind)) ;
+       %  Ind=abs(yc-40e3)<CtrlVar.MeshSize ;
+        CxMin(iCount)=min(xc) ;
+        CxMax(iCount)=max(xc) ;
         Ct(iCount)=F.time ;
     end
 
@@ -81,6 +83,11 @@ if contains(plots,'-plot-')
     hold off
 
     subplot(6,1,4)
+    % Because calving rate is only calculated within the integration-point loop,
+    % is has never been evaluated over the nodes, so I simply make a call to the m-File
+    % for nodal values. This will only work if the calving law itself does not depend on the
+    % spatial gradients of the level set function.
+    F.c=DefineCalvingAtIntegrationPoints(UserVar,CtrlVar,nan,nan,F.ub,F.vb,F.h,F.s,F.S,F.x,F.y) ;
     [~,cbar]=PlotMeshScalarVariable(CtrlVar,MUA,F.c);   title(sprintf('Calving rate c at t=%g  (yr)',CtrlVar.time))
     hold on
     title(cbar,"(m/yr)")
@@ -144,7 +151,9 @@ if contains(plots,'-plot-')
     %hold off
     
     FigC=FindOrCreateFigure("Calving front") ;
-    plot(Ct,Cx/1000,'ob')
+    plot(Ct,CxMin/1000,'ob')
+    hold on 
+    plot(Ct,CxMax/1000,'*r')
     ylabel("Calving Front Position (km)")
     xlabel("time (yr)")
 

@@ -498,16 +498,6 @@ CtrlVar.Inverse.NameOfRestartOutputFile=replace(CtrlVar.Inverse.NameOfRestartOut
 CtrlVar.Inverse.NameOfRestartOutputFile=replace(CtrlVar.Inverse.NameOfRestartOutputFile,".","k");
 CtrlVar.Inverse.NameOfRestartInputFile=CtrlVar.Inverse.NameOfRestartOutputFile;
 
-if CtrlVar.InverseRun
-    fprintf(" Inverse restart file: %s \n",CtrlVar.Inverse.NameOfRestartOutputFile)
-end
-
-if isfile(CtrlVar.Inverse.NameOfRestartInputFile+".mat")
-    CtrlVar.Restart=1;
-else
-    CtrlVar.Restart=0;
-    fprintf("No restart file found. Starting a new run. \n")
-end
 
 
 CtrlVar.ReadInitialMeshFileName=replace(CtrlVar.ReadInitialMeshFileName,".","k");
@@ -524,7 +514,24 @@ CtrlVar.NameOfRestartFiletoWrite=replace(CtrlVar.NameOfRestartFiletoWrite,"--","
 CtrlVar.NameOfRestartFiletoRead=CtrlVar.NameOfRestartFiletoWrite;
 
 
+if CtrlVar.InverseRun
+    fprintf(" Inverse restart file: %s \n",CtrlVar.Inverse.NameOfRestartOutputFile)
+end
 
+if CtrlVar.InverseRun
+    if isfile(CtrlVar.Inverse.NameOfRestartInputFile+".mat")
+        CtrlVar.Restart=1;
+    else
+        CtrlVar.Restart=0;
+        fprintf("No restart file found. Starting a new run. \n")
+    end
+else
+    if isfile(CtrlVar.NameOfRestartFiletoRead)
+        CtrlVar.Restart=1;
+    else
+        CtrlVar.Restart=0;
+    end
+end
 
 CtrlVar.WriteRestartFileInterval=100;
 
