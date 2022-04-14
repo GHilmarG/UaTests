@@ -37,6 +37,9 @@ end
 %
 %
 
+
+CtrlVar.LevelSetMethod=1;
+
 % Extract the info on calving law from UserVar.RunType, this can then be expanded to include other sliding laws later
 if contains(UserVar.RunType,"-Fq")
     UserVar.CalvingLaw.Type="-Fqk-"  ;
@@ -51,7 +54,7 @@ else
 end
 
 
-CtrlVar.LevelSetMethod=1;
+
 
 
 % Initial calving front, this needs to be a closed region, inside the ice, outside the "ice-free" region.
@@ -92,7 +95,7 @@ CtrlVar.MeshAdapt.CFrange=[20e3 5e3 ; 10e3 2e3] ; % This refines the mesh around
 CtrlVar.CalvingLaw.Evaluation="-int-";                     % evaluate the calving law at integration points using a call to : DefineCalvingAtIntegrationPoints.m  
 CtrlVar.LevelSetMethodAutomaticallyDeactivateElements=0;   % Automatically deactivate elements used in the uv and uvh solvers downstream of calving fronts
 CtrlVar.LevelSetMethodSolveOnAStrip=1;                     % Solve the level-set equaition on a strip around the zero level (ie that calving front)
-CtrlVar.LevelSetMethodStripWidth=150e3;                    % Widht of that strip
+CtrlVar.LevelSetMethodStripWidth=150e3;                    % Width of that strip
 
 % The melt is decribed as a= a_1 (h-hmin)
 CtrlVar.LevelSetMethodMassBalanceFeedbackCoeffLin=-10;  % This is the constant a1, it has units 1/time.
@@ -112,7 +115,7 @@ CtrlVar.Experiment=replace(CtrlVar.Experiment,"--","-");
 CtrlVar.TimeDependentRun=1;
 CtrlVar.TotalNumberOfForwardRunSteps=inf;
 CtrlVar.TotalTime=200;
-CtrlVar.Restart=1;
+CtrlVar.Restart=0;
 
 %% time, time-step, output interval
 
@@ -134,8 +137,8 @@ CtrlVar.WriteRestartFile=1;
 % Newton-Raphson iterations. One possibily is to limit the d/dt calculations to selected nodes
 % or simply setting to zero.
 CtrlVar.inUpdateFtimeDerivatives.SetAllTimeDerivativesToZero=0; 
-CtrlVar.inUpdateFtimeDerivatives.SetTimeDerivativesDowstreamOfCalvingFrontsToZero=0 ; 
-CtrlVar.inUpdateFtimeDerivatives.SetTimeDerivativesAtMinIceThickToZero=0 ; 
+CtrlVar.inUpdateFtimeDerivatives.SetTimeDerivativesDowstreamOfCalvingFrontsToZero=1 ; 
+CtrlVar.inUpdateFtimeDerivatives.SetTimeDerivativesAtMinIceThickToZero=1 ; 
 
 %% Reading in mesh
 CtrlVar.ReadInitialMesh=0;    % if true then read FE mesh (i.e the MUA variable) directly from a .mat file

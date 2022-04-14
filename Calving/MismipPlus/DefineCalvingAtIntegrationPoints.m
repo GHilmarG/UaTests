@@ -99,7 +99,7 @@ switch UserVar.CalvingLaw.Type
         dcDdfdx=0;
         dcDdfdy=0;
 
-    case "-Fqk-"  % c = k f^q
+    case "-Fqk-"  % c = k F^q
 
         % power law as a function of cliff height (freeboard f)
 
