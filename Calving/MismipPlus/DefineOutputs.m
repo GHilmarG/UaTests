@@ -11,37 +11,47 @@ else
     iCount=iCount+1 ; 
 end
 
-time=CtrlVar.time; 
+time=CtrlVar.time;
 
-plots='-plot-save-';
+% plots='-plot-save-';
+
+plots=UserVar.Plots ;
 
 if contains(plots,'-save-')
-    
+
     % save data in files with running names
     % check if folder 'ResultsFiles' exists, if not create
-    
-    if exist(fullfile(cd,UserVar.Outputsdirectory),'dir')~=7
-        mkdir(UserVar.Outputsdirectory) ;
+
+    if CtrlVar.DefineOutputsInfostring == "First call" && ~isfolder(UserVar.ResultsFileDirectory)
+        mkdir(UserVar.ResultsFileDirectory)
     end
-    
+
+
     if CtrlVar.DefineOutputsInfostring=="Last call"
-        
+
         %
-        % 
         %
-        
+        %
+
         FileName=sprintf('%s/%07i-Nodes%i-Ele%i-Tri%i-kH%i-%s.mat',...
             UserVar.Outputsdirectory,round(100*time),MUA.Nnodes,MUA.Nele,MUA.nod,1000*CtrlVar.kH,CtrlVar.Experiment);
         fprintf(' Saving data in %s \n',FileName)
         save(FileName,'CtrlVar','MUA','F','BCs','CxMin','Ct','RunInfo')
-        
+
     end
-    
+
 end
 
 if contains(plots,'-plot-')
     
-    figsWidth=1000 ; figHeights=300;
+
+
+    if UserVar.DoNotPlotVelocitiesDownstreamOfCalvingFronts
+  
+        F.ub(F.LSFMask.NodesOut)=nan;
+        F.vb(F.LSFMask.NodesOut)=nan;
+    end
+    
     GLgeo=[]; xGL=[] ; yGL=[];
     %%
     fig100=FindOrCreateFigure("4Plots") ; 
@@ -55,7 +65,7 @@ if contains(plots,'-plot-')
     axis tight
     hold off
     %Plot_sbB(CtrlVar,MUA,s,b,B) ; title(sprintf('time=%g',time))
-    
+    ttAxis=axis;
 
     if ~isempty(xc)
        %  Ind=abs(yc-40e3)<CtrlVar.MeshSize ;
@@ -65,11 +75,12 @@ if contains(plots,'-plot-')
     end
 
     subplot(6,1,2)
+    
     QuiverColorGHG(MUA.coordinates(:,1),MUA.coordinates(:,2),F.ub,F.vb,CtrlVar);
     hold on
     [xGL,yGL,GLgeo]=PlotGroundingLines(CtrlVar,MUA,F.GF,GLgeo,xGL,yGL);
     hold on ; [xc,yc]=PlotCalvingFronts(CtrlVar,MUA,F,'b',LineWidth=2);
-    axis tight
+    axis(ttAxis)
     hold off
     
     subplot(6,1,3)

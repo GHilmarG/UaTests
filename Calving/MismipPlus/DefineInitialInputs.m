@@ -6,10 +6,11 @@ function [UserVar,CtrlVar,MeshBoundaryCoordinates]=DefineInitialInputs(UserVar,C
 %%
 
 
-UserVar.RunType="-MismipPlus-C-Fq1Fk30Fmin80cmin0Fmax100cmax3000-" ;  
+UserVar.RunType="-MismipPlus-C-Fq1Fk30Fmin80cmin0Fmax100cmax3000-Ini50-" ;  
 CtrlVar.Experiment=UserVar.RunType; 
 
-UserVar.Outputsdirectory='ResultsFiles'; % This I use in UaOutputs
+
+UserVar.ResultsFileDirectory="./ResultsFiles"; % This I use in UaOutputs
 UserVar.MassBalanceCase='ice0';
 
 if contains(UserVar.RunType,"-MismipPlus-") % Extract info on geometry from RunType, can be extended later to include other geometries
@@ -18,6 +19,8 @@ else
     error("What geometry? ")  
 end
 
+UserVar.Plots="-plot-save-";  % this is used in DefineOutputs to control if plots are generated and/or data saved
+UserVar.DoNotPlotVelocitiesDownstreamOfCalvingFronts=true; % Also used in DefineOutputs, has not impact on the actual solution
 
 %% Calving law and level set options
 %
@@ -95,7 +98,7 @@ CtrlVar.MeshAdapt.CFrange=[20e3 5e3 ; 10e3 2e3] ; % This refines the mesh around
 CtrlVar.CalvingLaw.Evaluation="-int-";                     % evaluate the calving law at integration points using a call to : DefineCalvingAtIntegrationPoints.m  
 CtrlVar.LevelSetMethodAutomaticallyDeactivateElements=0;   % Automatically deactivate elements used in the uv and uvh solvers downstream of calving fronts
 CtrlVar.LevelSetMethodSolveOnAStrip=1;                     % Solve the level-set equaition on a strip around the zero level (ie that calving front)
-CtrlVar.LevelSetMethodStripWidth=150e3;                    % Width of that strip
+CtrlVar.LevelSetMethodStripWidth=30e3;                    % Width of that strip
 
 % The melt is decribed as a= a_1 (h-hmin)
 CtrlVar.LevelSetMethodMassBalanceFeedbackCoeffLin=-10;  % This is the constant a1, it has units 1/time.
@@ -103,7 +106,11 @@ CtrlVar.LevelSetMethodMassBalanceFeedbackCoeffLin=-10;  % This is the constant a
 CtrlVar.ThickMin=0.1;                                   % minimum allowed thickness without (potentially) doing something about it
 CtrlVar.LevelSetMinIceThickness=2*CtrlVar.ThickMin;    % this is the hmin constant, i.e. the accepted min ice thickness over the 'ice-free' areas.
 
-
+% Optionally, AGlen can be set to some prescribed, usually small, value downstream of all calving fronts.
+CtrlVar.LevelSetDownstreamAGlen=nan;                      % Since the value is here set to nan, there AGlen will NOT be modified
+CtrlVar.LevelSetDownstreamAGlen=10*AGlenVersusTemp(0);  % Here AGlen will be set to this numerical value downstream of all
+                                                          % calving fronts. This will be done automatically and replaces 
+                                                          % any values defined by the user in DefineAGlen.,
 %%
 
 CtrlVar.SlidingLaw="W" ;  % options:  "W","W-N0","minCW-N0","C","rpCW-N0", and "rCW-N0"
@@ -163,7 +170,7 @@ CtrlVar.NameOfRestartFiletoRead=CtrlVar.NameOfRestartFiletoWrite;
 
 
 %% adapt mesh
-CtrlVar.AdaptMesh=0;         
+CtrlVar.AdaptMesh=1;         
 CtrlVar.AdaptMeshInitial=0 ;       % if true, then a remeshing will always be performed at the inital step
 CtrlVar.AdaptMeshAndThenStop=0;    % if true, then mesh will be adapted but no further calculations performed
                                    % usefull, for example, when trying out different remeshing options (then use CtrlVar.doRemeshPlots=1 to get plots)
@@ -187,15 +194,8 @@ CtrlVar.MaxNumberOfElements=250e3;           % max number of elements. If #eleme
 
 CtrlVar.AdaptMeshMaxIterations=2;  % Number of adapt mesh iterations within each run-step.
 CtrlVar.MeshRefinementMethod='explicit:local:newest vertex bisection';    % can have any of these values:
-                                                   % 'explicit:global' 
-                                                   % 'explicit:local'
-                                                   % 'explicit:local:red-green'
-                                                   % 'explicit:local:newest vertex bisection';
-%  
+
 CtrlVar.SaveAdaptMeshFileName='AdaptMesh.mat'; 
-
-
-
 CtrlVar.AdaptMeshRunStepInterval=1;  % number of run-steps between mesh adaptation
 
 % CtrlVar.MeshAdapt.GLrange=[20000 5000 ; 10000 500 ];
