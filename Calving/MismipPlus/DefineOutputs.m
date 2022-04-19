@@ -17,6 +17,14 @@ time=CtrlVar.time;
 
 plots=UserVar.Plots ;
 
+
+% Because calving rate is only calculated within the integration-point loop,
+% it has never been evaluated over the nodes, so I simply make a call to the m-File
+% for nodal values. This will only work if the calving law itself does not depend on the
+% spatial gradients of the level set function.
+F.c=DefineCalvingAtIntegrationPoints(UserVar,CtrlVar,nan,nan,F.ub,F.vb,F.h,F.s,F.S,F.x,F.y) ;
+
+
 if contains(plots,'-save-')
 
     % save data in files with running names
@@ -26,21 +34,22 @@ if contains(plots,'-save-')
         mkdir(UserVar.ResultsFileDirectory)
     end
 
+    if strcmp(CtrlVar.DefineOutputsInfostring,'Last call')==0  % Only create file at regular intervals as determined by DT
+                                                              % so don't create an addtional file at end of run
 
-    if CtrlVar.DefineOutputsInfostring=="Last call"
-
-        %
-        %
-        %
-
-        FileName=sprintf('%s/%07i-Nodes%i-Ele%i-Tri%i-kH%i-%s.mat',...
-            UserVar.Outputsdirectory,round(100*time),MUA.Nnodes,MUA.Nele,MUA.nod,1000*CtrlVar.kH,CtrlVar.Experiment);
+        if ~endsWith(UserVar.ResultsFileDirectory,"/")  % make sure that the name of the directory ends with an "/"
+            UserVar.ResultsFileDirectory= UserVar.ResultsFileDirectory+"/";
+        end
+        
+        FileName=sprintf('%s%07i-Nodes%i-Ele%i-Tri%i-kH%i-%s.mat',...
+            UserVar.ResultsFileDirectory,...
+            round(100*CtrlVar.time),MUA.Nnodes,MUA.Nele,MUA.nod,1000*CtrlVar.kH,CtrlVar.Experiment);
+        FileName=replace(FileName,"--","-");
         fprintf(' Saving data in %s \n',FileName)
-        save(FileName,'CtrlVar','MUA','F','BCs','CxMin','Ct','RunInfo')
+        save(FileName,"CtrlVar","MUA","F")
+
 
     end
-
-end
 
 if contains(plots,'-plot-')
     
@@ -98,7 +107,8 @@ if contains(plots,'-plot-')
     % is has never been evaluated over the nodes, so I simply make a call to the m-File
     % for nodal values. This will only work if the calving law itself does not depend on the
     % spatial gradients of the level set function.
-    F.c=DefineCalvingAtIntegrationPoints(UserVar,CtrlVar,nan,nan,F.ub,F.vb,F.h,F.s,F.S,F.x,F.y) ;
+    % F.c=DefineCalvingAtIntegrationPoints(UserVar,CtrlVar,nan,nan,F.ub,F.vb,F.h,F.s,F.S,F.x,F.y) ;
+
     [~,cbar]=PlotMeshScalarVariable(CtrlVar,MUA,F.c);   title(sprintf('Calving rate c at t=%g  (yr)',CtrlVar.time))
     hold on
     title(cbar,"(m/yr)")

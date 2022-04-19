@@ -15,6 +15,8 @@ CtrlVar.Inverse.Regularize.logAGlen.gs=str2double(extract(extract(UserVar.RunTyp
 
 CtrlVar.SlidingLaw="Weertman";
 
+CtrlVar.LevelSetDownstreamAGlen=AGlenVersusTemp(0);  
+
 pat="-"+digitsPattern+"km";
 MR=str2double(extract(extract(UserVar.RunType,pat),digitsPattern));
 UserVar.MeshResolution=MR*1000;   % MESH RESOLUTION

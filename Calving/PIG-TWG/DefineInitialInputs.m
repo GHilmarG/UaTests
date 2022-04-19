@@ -535,4 +535,7 @@ end
 
 CtrlVar.WriteRestartFileInterval=100;
 
+% Test
+CtrlVar.UseMexFiles=1 ; CtrlVar.UseMexFilesCPUcompare=0;
+
 end

@@ -6,11 +6,11 @@ function [UserVar,CtrlVar,MeshBoundaryCoordinates]=DefineInitialInputs(UserVar,C
 %%
 
 
-UserVar.RunType="-MismipPlus-C-Fq1Fk30Fmin80cmin0Fmax100cmax3000-Ini50-" ;  
+UserVar.RunType="-MismipPlus-C-Fq1Fk30Fmin80cmin0Fmax100cmax3000-Ini5-" ;  
 CtrlVar.Experiment=UserVar.RunType; 
 
 
-UserVar.ResultsFileDirectory="./ResultsFiles"; % This I use in UaOutputs
+UserVar.ResultsFileDirectory="./ResultsFiles/"; % This I use in UaOutputs
 UserVar.MassBalanceCase='ice0';
 
 if contains(UserVar.RunType,"-MismipPlus-") % Extract info on geometry from RunType, can be extended later to include other geometries
@@ -122,7 +122,7 @@ CtrlVar.Experiment=replace(CtrlVar.Experiment,"--","-");
 CtrlVar.TimeDependentRun=1;
 CtrlVar.TotalNumberOfForwardRunSteps=inf;
 CtrlVar.TotalTime=200;
-CtrlVar.Restart=0;
+CtrlVar.Restart=1;
 
 %% time, time-step, output interval
 
@@ -130,7 +130,7 @@ CtrlVar.Restart=0;
 CtrlVar.time=0; 
 CtrlVar.dt=1e-5;  
 
-CtrlVar.DefineOutputsDt=0; % interval between calling UaOutputs. 0 implies call it at each and every run step.
+CtrlVar.DefineOutputsDt=0.25; % interval between calling UaOutputs. 0 implies call it at each and every run step.
                        % setting CtrlVar.DefineOutputsDt=1; causes UaOutputs to be called every 1 years.
                        % This is a more reasonable value once all looks OK.
 
