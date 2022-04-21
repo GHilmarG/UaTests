@@ -46,7 +46,7 @@ if contains(plots,'-save-')
             round(100*CtrlVar.time),MUA.Nnodes,MUA.Nele,MUA.nod,1000*CtrlVar.kH,CtrlVar.Experiment);
         FileName=replace(FileName,"--","-");
         fprintf(' Saving data in %s \n',FileName)
-        save(FileName,"CtrlVar","MUA","F")
+        save(FileName,"CtrlVar","UserVar","MUA","F")
 
 
     end
@@ -63,7 +63,7 @@ if contains(plots,'-plot-')
     
     GLgeo=[]; xGL=[] ; yGL=[];
     %%
-    fig100=FindOrCreateFigure("4Plots") ; 
+    fig100=FindOrCreateFigure("6Plots") ; 
     %fig100=figure(100) ;
     %fig100.Position=[50 50 figsWidth 3*figHeights];
     subplot(6,1,1)
