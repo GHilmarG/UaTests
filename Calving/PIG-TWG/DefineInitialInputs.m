@@ -225,38 +225,24 @@ end
 % "Umbi" ; % "Weertman" ; % "Tsai" ; % "Cornford" ;  "Umbi" ; "Cornford" ; % "Tsai" , "Budd"
 
 if ~isfield(UserVar,'AFile') ||  isempty(UserVar.AFile)
-    switch CtrlVar.SlidingLaw
 
-        case "Weertman"
 
-            InvFile=CtrlVar.SlidingLaw...
-                +"-Ca"+num2str(CtrlVar.Inverse.Regularize.logC.ga)...
-                +"-Cs"+num2str(CtrlVar.Inverse.Regularize.logC.gs)...
-                +"-Aa"+num2str(CtrlVar.Inverse.Regularize.logAGlen.ga)...
-                +"-As"+num2str(CtrlVar.Inverse.Regularize.logAGlen.gs)...
-                +"-"+num2str(UserVar.MeshResolution/1000)+"km";
+    InvFile=CtrlVar.SlidingLaw...
+        +"-Ca"+num2str(CtrlVar.Inverse.Regularize.logC.ga)...
+        +"-Cs"+num2str(CtrlVar.Inverse.Regularize.logC.gs)...
+        +"-Aa"+num2str(CtrlVar.Inverse.Regularize.logAGlen.ga)...
+        +"-As"+num2str(CtrlVar.Inverse.Regularize.logAGlen.gs)...
+        +"-"+num2str(UserVar.MeshResolution/1000)+"km";
 
-            if contains(UserVar.RunType,"-Alim-")
-                InvFile=InvFile+"-Alim-";
-            end
-            InvFile=replace(InvFile,".","k");
-
-            UserVar.AFile="FA-"+InvFile;
-            UserVar.CFile="FC-"+InvFile;
-
-        case "Cornford"
-
-            AFile="Cornford-"+UserVar.Region+"-"+num2str(UserVar.MeshResolution/1000)+"km";   %
-            CFile="Cornford-"+UserVar.Region+"-"+num2str(UserVar.MeshResolution/1000)+"km";   %
-
-            UserVar.AFile="FA-"+AFile;
-            UserVar.CFile="FC-"+CFile;
-
-        case "Umbi"
-            UserVar.CFile='FC-Umbi'; UserVar.AFile='FA-Umbi';
-        otherwise
-            error('A and C fields not available')
+    if contains(UserVar.RunType,"-Alim-")
+        InvFile=InvFile+"-Alim-";
     end
+    InvFile=replace(InvFile,".","k");
+
+    UserVar.AFile="FA-"+InvFile;
+    UserVar.CFile="FC-"+InvFile;
+
+
 
 end
 
@@ -536,6 +522,6 @@ end
 CtrlVar.WriteRestartFileInterval=100;
 
 % Test
-CtrlVar.UseMexFiles=1 ; CtrlVar.UseMexFilesCPUcompare=0;
+% CtrlVar.UseMexFiles=1 ; CtrlVar.UseMexFilesCPUcompare=0;
 
 end
