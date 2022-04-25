@@ -135,24 +135,19 @@ end
 
 
 
-if contains(plots,'-AC-')  && UserVar.CalvingLaw.Type=="-AC-"
-
-
+if contains(UserVar.RunType,"-C-")
 
 
 
     % Plot cliff height and calving rate
-    dfdx=[] ; dfdy=[] ;
-    CliffHeight=min((F.s-F.S),F.h) ;
-    c=DefineCalvingAtIntegrationPoints(UserVar,CtrlVar,dfdx,dfdy,F.ub,F.vb,F.h,F.s,F.S,F.x,F.y) ;
-
-    c(~F.LSFMask.NodesOn)=NaN ;
+    
+    CliffHeight=min((F.s-F.S),F.h).*F.rho./1000;
     CliffHeight(~F.LSFMask.NodesOn)=NaN ;
 
 
     FigCR=FindOrCreateFigure("Calving rate");
     PlotMuaMesh(CtrlVar,MUA); hold on
-    cbar=UaPlots(CtrlVar,MUA,F,c/1000);
+    cbar=UaPlots(CtrlVar,MUA,F,F.c/1000);
     T=sprintf("Calving rate at t=%g for mesh resolution %s",CtrlVar.time,MRT);
     title(T,Interpreter="latex")
     title(cbar,("(km/yr)"))
@@ -179,13 +174,13 @@ if contains(plots,'-AC-')  && UserVar.CalvingLaw.Type=="-AC-"
 
     FigCRvCH=FindOrCreateFigure("Calving versus Cliff Height") ;
     clf(FigCRvCH)
-    plot(CliffHeight,c/1000,'.r')
+    plot(CliffHeight,F.c/1000,'.r')
     xlabel("Cliff Height (m)",Interpreter="latex") ;
     ylabel("Calving Rate (km/yr)",Interpreter="latex") ;
-    title("Anna Crawford et al, 2021, T=-20 C $\alpha$=7.2",Interpreter="latex")
+   % title("Anna Crawford et al, 2021, T=-20 C $\alpha$=7.2",Interpreter="latex")
     text(30,14,"Mesh Resolution"+MRT,Interpreter="latex")
 
-    save("CliffCalving"+MRT+".mat","CliffHeight","c")
+    % save("CliffCalving"+MRT+".mat","CliffHeight","c")
 
     if ~isempty(F.ub)
 
@@ -205,13 +200,13 @@ if contains(plots,'-AC-')  && UserVar.CalvingLaw.Type=="-AC-"
 
         FigSpeedvCH=FindOrCreateFigure("Speed and Cliff Height") ;
         clf(FigSpeedvCH)
-        plot(CliffHeight,c/1000,'or')
+        plot(CliffHeight,F.c/1000,'or')
         hold on
         plot(CliffHeight,speed/1000,'.k')
         xlabel("Cliff Height (m)",Interpreter="latex") ;
         ylabel("Speed and Calving Rate (km/yr)",Interpreter="latex") ;
-        T=sprintf("Anna Crawford et al, 2021, T=-20 C $\\alpha$=7.2 at t=%g (yr), Mesh=%s",CtrlVar.time,MRT) ;
-        title(T,Interpreter="latex") ;
+  %      T=sprintf("Anna Crawford et al, 2021, T=-20 C $\\alpha$=7.2 at t=%g (yr), Mesh=%s",CtrlVar.time,MRT) ;
+  %      title(T,Interpreter="latex") ;
         
         text(0.1,0.9,"Mesh Resolution "+MRT,Interpreter="latex",Units="normalized")
         legend("Calving rate","Ice speed")
@@ -265,7 +260,8 @@ if contains(plots,'-CR-')  % calving rate
         CtrlVar.PlotGLs=0;
         [xc,yc]=PlotCalvingFronts(CtrlVar,MUA,F,'b',LineWidth=2);
         CtrlVar.PlotGLs=1;
-        CliffHeight=min((F.s-F.S),F.h) ;
+
+        CliffHeight=min((F.s-F.S),F.h).*F.rho./1000;
         FCliffHeight=scatteredInterpolant(F.x,F.y,CliffHeight);
         fcf=FCliffHeight(xc,yc);  % freeboard at calving front
         if ~isempty(F.c)

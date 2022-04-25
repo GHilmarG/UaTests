@@ -18,12 +18,6 @@ time=CtrlVar.time;
 plots=UserVar.Plots ;
 
 
-% Because calving rate is only calculated within the integration-point loop,
-% it has never been evaluated over the nodes, so I simply make a call to the m-File
-% for nodal values. This will only work if the calving law itself does not depend on the
-% spatial gradients of the level set function.
-F.c=DefineCalvingAtIntegrationPoints(UserVar,CtrlVar,nan,nan,F.ub,F.vb,F.h,F.s,F.S,F.x,F.y) ;
-
 
 if contains(plots,'-save-')
 
