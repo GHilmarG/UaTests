@@ -124,10 +124,10 @@ end
 % 10km = 4.6km
 %  5km = 2.3km
 
-CreateVideo=true;
-CalcVAF=false;
+CreateVideo=false;
+CalcVAF=true;
 ComparisionPlots=false;
-Step=1;
+Step=10;
 
 
 if CreateVideo

@@ -19,13 +19,13 @@ UserVar.RunType="-MismipPlus-C-Fq1Fk30Fmin80cmin0Fmax100cmax3000-Ini5-c0isGL0-2k
 
 UserVar.RunType="-MismipPlus-C-DP-Ini5-c0isGL0-5km-" ;
 
-BatchJob=false;
+BatchJob=true;
 
 
 
 
 if BatchJob
-    job2km=batch(@Ua,0,{UserVar},Pool=2);
+    job2km=batch(@Ua,0,{UserVar},Pool=1);
 else
     Ua(UserVar)
 end

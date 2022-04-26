@@ -112,7 +112,10 @@ if contains(plots,'-plot-')
     hold off
     
     subplot(6,1,5)
-    CliffHeight=min((F.s-F.S),F.h) ; 
+    
+    rhoice=917 ; 
+    CliffHeight=min((F.s-F.S),F.h).*F.rho./rhoice; 
+
     [~,cbar]=PlotMeshScalarVariable(CtrlVar,MUA,CliffHeight);   title(sprintf('Cliff height at t=%g  (yr)',CtrlVar.time))
     hold on
     title(cbar,"(m)")
