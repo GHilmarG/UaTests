@@ -21,6 +21,7 @@ end
 
 Experiment="AC-lim" ;
 Experiment="10km-New";
+Experiment="5km-New";
 % Experiment= "ConvergenceStudy";
 
 switch Experiment
@@ -106,6 +107,16 @@ switch Experiment
 
         IRange=6:10;
 
+    case "5km-New"
+
+        SubString(1)="-FT-P-TWIS-MR4-SM-5km-Alim-Ca1-Cs100000-Aa1-As100000-";
+        SubString(2)="-FT-P-TWISC0-MR4-SM-5km-Alim-Ca1-Cs100000-Aa1-As100000-";
+        IRange=1:2;
+        LegendEntry=[...
+            "2.3km: Thwaites ice shelf (Alim)",...
+            "2.3km: Thwaites ice shelf removed (Alim)",...
+            ];
+
 end
 
 % 30km = 14km
@@ -116,7 +127,7 @@ end
 CreateVideo=false;
 CalcVAF=true;
 ComparisionPlots=false;
-Step=5;
+Step=10;
 
 
 if CreateVideo

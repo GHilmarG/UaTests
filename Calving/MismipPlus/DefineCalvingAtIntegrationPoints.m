@@ -12,6 +12,18 @@ function  [c,dcddphidx,dcddphidy]=DefineCalvingAtIntegrationPoints(UserVar,CtrlV
 % cint=DefineCalvingAtIntegrationPoints(UserVar,CtrlVar,nx,ny,uint,vint)
 
 
+isPlotStrainRates=false;
+
+if isPlotStrainRates
+
+    FigStrainRates=FindOrCreateFigure("strain rates and velocities") ; clf(FigStrainRates) ; 
+    QuiverColorGHG(F.x/1000,F.y/1000,F.ub,F.vb) ;
+    Scale=2;
+    hold on ; PlotTensor(F.x/1000,F.y/1000,F.exx,F.exy,F.eyy,Scale) ; axis equal
+
+end
+
+
 narginchk(5,5)
 
 switch UserVar.CalvingLaw.Type
@@ -141,8 +153,8 @@ switch UserVar.CalvingLaw.Type
     case "-DP-"  % Robert DeConto and David Pollard
         
         % Units: meters, year
-
-        CliffHeight=min((F.s-F.S),F.h).*F.rho./1000;  % OK, so it is a bit unclear what the "cliff height" should be
+        rhoice=917;
+        CliffHeight=min((F.s-F.S),F.h).*F.rho./rhoice;  % OK, so it is a bit unclear what the "cliff height" should be
                                                       % But presumably the idea is that the CliffHeight is a proxy
                                                       % for the stresses at the calving front, so it appears likley that it should
                                                       % involve rho*g*CliffHeight

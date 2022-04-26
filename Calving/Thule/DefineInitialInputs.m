@@ -135,7 +135,7 @@ CtrlVar.LevelSetMethodAutomaticallyDeactivateElements=0;
 CtrlVar.LevelSetMethodSolveOnAStrip=1;
 CtrlVar.LevelSetMethodStripWidth=150e3;
 
-CtrlVar.MeshAdapt.CFrange=[20e3 5e3 ; 10e3 2e3] ; % This refines the mesh around the calving front, but must set
+CtrlVar.MeshAdapt.CFrange=[20e3 5e3 ; 10e3 2e3] ; % Tmhis refines the mesh around the calving front, but must set
 
 
 % The melt is decribed as a= a_1 (h-hmin)

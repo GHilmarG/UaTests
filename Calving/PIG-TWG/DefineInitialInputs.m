@@ -38,9 +38,16 @@ if isempty(UserVar) || ~isfield(UserVar,'RunType')
     % UserVar.RunType="-FT-P-TWISC2-MR4-SM-" ;  % -P-TWISC- is Thwaites Ice Shelf Calved off, 2km away
     UserVar.RunType="-FT-P-TWISC0-MR4-SM-10km" ;  % -P-TWISC- is Thwaites Ice Shelf Calved off, 0km away
     % the "-P-" stands for prescribed calving fronts
-    UserVar.RunType="-FT-P-TWIS-MR4-SM-10km" ;       % not calved off
-    UserVar.RunType="-FT-P-TWIS-MR4-SM-10km-Alim-" ;  % not calved off
+    UserVar.RunType="-FT-P-TWIS-MR4-SM-10km" ;         % not calved off
+
+    UserVar.RunType="-FT-P-TWIS-MR4-SM-10km-Alim-" ;   % not calved off
     UserVar.RunType="-FT-P-TWISC0-MR4-SM-10km-Alim" ;  % -P-TWISC- is Thwaites Ice Shelf Calved off, 0km away
+
+    UserVar.RunType="-FT-P-TWIS-MR4-SM-5km-Alim-" ;   % not calved off
+    UserVar.RunType="-FT-P-TWISC0-MR4-SM-5km-Alim" ;  % -P-TWISC- is Thwaites Ice Shelf Calved off, 0km away
+
+
+    
     % UserVar.RunType='GenerateMesh' ;
     % UserVar.RunType='Inverse-MatOpt';
 
@@ -51,23 +58,6 @@ FileNameFormat="new" ;
 %% UserVar
 
 UserVar.Region="PIG-TWG" ; "PIG" ; % "PIG-TWG" ;
-
-if contains(UserVar.RunType,"-C-NV-")
-    UserVar.CalvingLaw.Type="-NV-"  ;  % "-ScalesWithNormalVelocity+1.0-"  ;
-    UserVar.CalvingLaw.Factor=1.1;
-elseif contains(UserVar.RunType,"-C-RR-")
-    UserVar.CalvingLaw.Type="-RR-"  ;  %  prescribed retreat rate
-    UserVar.CalvingLaw.Factor="";
-elseif contains(UserVar.RunType,"-C-AC-")
-    UserVar.CalvingLaw.Type="-AC-"  ;  % Anna Crawford
-    UserVar.CalvingLaw.Factor="";
-     CtrlVar.Implicituvh=false;
-else
-    UserVar.CalvingLaw.Type="-NoCalving-"  ;  % "-ScalesWithNormalVelocity+1.0-"  ;
-    UserVar.CalvingLaw.Factor=0 ;
-end
-
-
 
 if isempty(UserVar) || ~isfield(UserVar,'MeshResolution')
 
@@ -93,12 +83,13 @@ if contains(UserVar.RunType,"-TWISC")
     UserVar.CalvingFront0=extract(UserVar.RunType,"-TWISC"+digitsPattern+"-");
 elseif contains(UserVar.RunType,"-BMGL-")
     UserVar.CalvingFront0="-BMGL-";
+elseif contains(UserVar.RunType,"-c0isGL0-")
+    UserVar.CalvingFront0="-c0isGL0-";
 else
     UserVar.CalvingFront0="-BMCF-"; "-BedMachineCalvingFronts-"  ;  % "-GL0-" ; % "-BedMachineCalvingFronts-"  ;
 end
 
 CtrlVar.CalvingLaw.Evaluation="-int-"  ; % nodal or integration-point evaluation  ["-int-","-node-"]
-UserVar.CalvingLaw.String=UserVar.CalvingLaw.Type+num2str(UserVar.CalvingLaw.Factor)+UserVar.CalvingFront0+CtrlVar.CalvingLaw.Evaluation;
 UserVar.DefineOutputs="-ubvb-LSF-h-dhdt-speed-save-AC-"; % '-ubvb-LSF-h-save-';
 % UserVar.DefineOutputs="-ubvb-LSF-h-dhdt-speed-"; %
 % UserVar.DefineOutputs="-save-"; %
@@ -108,14 +99,11 @@ CtrlVar.LimitRangeInUpdateFtimeDerivatives=true ;
 %% Set output files directory
 [~,hostname]=system('hostname') ;
 if contains(hostname,"DESKTOP-G5TCRTD")
-
     UserVar.ResultsFileDirectory="F:\Runs\Calving\PIG-TWG\ResultsFiles\";
 elseif contains(hostname,"DESKTOP-BU2IHIR")
-
     UserVar.ResultsFileDirectory="D:\Runs\Calving\PIG-TWG\ResultsFiles\";
-
 else
-    error("case not implemented")
+    UserVar.ResultsFileDirectory=".\ResultsFiles\";
 end
 
 
@@ -149,34 +137,61 @@ CtrlVar.uvh.SUPG.tau="taus" ; % default,  issues with uvh convergence in the beg
 
 %%
 
-CtrlVar.kH=10; 
-
+CtrlVar.kH=10;
+CtrlVar.MeshSize=UserVar.MeshResolution ;
+CtrlVar.MeshSizeMax=CtrlVar.MeshSize ; 
 %%  Level-set parameters
 
 CtrlVar.LevelSetMethod=1;
+CtrlVar.LevelSetInitialisationInterval=100 ;
+
+CtrlVar.DefineOutputsDt=0.25;
+CtrlVar.LevelSetMethodMassBalanceFeedbackCoeffLin=-10;  % This is the constant a1, it has units 1/time.
+CtrlVar.LevelSetMethodMassBalanceFeedbackCoeffCubic=0;
 
 if contains(UserVar.RunType,"-P-")  || contains(UserVar.RunType,"-Inverse-")
     CtrlVar.LevelSetEvolution="-Prescribed-"   ; % "-prescribed-",
 else
     CtrlVar.LevelSetEvolution="-By solving the level set equation-"   ; % "-prescribed-",
-end
 
-CtrlVar.LevelSetInitialisationInterval=100 ;
+    % specify calving law
+    if contains(UserVar.RunType,"-Fq")
+        UserVar.CalvingLaw.Type="-Fqk-"  ;
+        UserVar.CalvingLaw.Fqk.q=str2double(extract(extract(UserVar.RunType,"-Fq"+digitsPattern+"Fk"),digitsPattern));
+        UserVar.CalvingLaw.Fqk.k=str2double(extract(extract(UserVar.RunType,"Fk"+digitsPattern+"Fmin"),digitsPattern));
+        UserVar.CalvingLaw.Fqk.Fmin=str2double(extract(extract(UserVar.RunType,"Fmin"+digitsPattern+"cmin"),digitsPattern));
+        UserVar.CalvingLaw.Fqk.cmin=str2double(extract(extract(UserVar.RunType,"cmin"+digitsPattern+"Fmax"),digitsPattern));
+        UserVar.CalvingLaw.Fqk.Fmax=str2double(extract(extract(UserVar.RunType,"Fmax"+digitsPattern+"cmax"),digitsPattern));
+        UserVar.CalvingLaw.Fqk.cmax=str2double(extract(extract(UserVar.RunType,"cmax"+digitsPattern+"-"),digitsPattern));
 
-if UserVar.CalvingLaw.Type=="-AC-"   % Anna Crawford
-    CtrlVar.LevelSetInitialisationInterval=1 ;
-    CtrlVar.DefineOutputsDt=0;
-    CtrlVar.LevelSetMethodMassBalanceFeedbackCoeffLin=-1000;  % This is the constant a1, it has units 1/time.
-    CtrlVar.LevelSetMethodMassBalanceFeedbackCoeffCubic=-1; 
-else
-    CtrlVar.DefineOutputsDt=0.25;
+    elseif contains(UserVar.RunType,"-AC-")  % Anna Crawford
 
-    CtrlVar.LevelSetMethodMassBalanceFeedbackCoeffLin=-10;  % This is the constant a1, it has units 1/time.
-    CtrlVar.LevelSetMethodMassBalanceFeedbackCoeffCubic=0; 
+        CtrlVar.LevelSetInitialisationInterval=1 ;
+        CtrlVar.DefineOutputsDt=0;
+        CtrlVar.LevelSetMethodMassBalanceFeedbackCoeffLin=-1000;  % This is the constant a1, it has units 1/time.
+        CtrlVar.LevelSetMethodMassBalanceFeedbackCoeffCubic=-1;
+
+    elseif contains(UserVar.RunType,"-C-NV-")
+
+        UserVar.CalvingLaw.Type="-NV-"  ;  % "-ScalesWithNormalVelocity+1.0-"  ;
+        UserVar.CalvingLaw.Factor=1.1;
+
+    elseif contains(UserVar.RunType,"-C-RR-")
+
+        UserVar.CalvingLaw.Type="-RR-"  ;  %  prescribed retreat rate
+        UserVar.CalvingLaw.Factor="";
+
+    elseif contains(UserVar.RunType,"-C-DP-")
+
+        UserVar.CalvingLaw.Type="-DP-"  ;  % Robert DeConto and David Pollard
+
+    else
+        error("what calving law?")
+
+    end
 end
 
 CtrlVar.LevelSetInitialisationMethod="-geo-" ;
-
 CtrlVar.LevelSetReinitializePDist=true ;
 CtrlVar.LevelSetFixPointSolverApproach="-PTS-" ;   % pseudo forward stepping
 CtrlVar.LevelSetPseudoFixPointSolverTolerance=100;
@@ -185,7 +200,7 @@ CtrlVar.DevelopmentVersion=true;
 CtrlVar.LevelSetFABmu.Scale="-u-cl-" ; % "-constant-";
 CtrlVar.LevelSetFABmu.Value=0.1;
 CtrlVar.CalvingLaw.Evaluation="-int-";
-CtrlVar.LevelSetMethodSolveOnAStrip=1; CtrlVar.LevelSetMethodStripWidth=100e3;
+CtrlVar.LevelSetMethodSolveOnAStrip=1; CtrlVar.LevelSetMethodStripWidth=50e3;
 
 if contains(UserVar.RunType,"-Duvh-")   % 'Forward-Transient-Calving-Initialisation' ;
     CtrlVar.LevelSetMethodAutomaticallyDeactivateElements=1 ;
@@ -194,19 +209,13 @@ else
 end
 
 CtrlVar.LevelSetInfoLevel=1 ;
-CtrlVar.MeshAdapt.CFrange=[20e3 5e3 ; 10e3 2e3] ; % This refines the mesh around the calving front, but must set
+
+CtrlVar.MeshAdapt.CFrange=[2*CtrlVar.MeshSize   CtrlVar.MeshSize/2 ; ...
+                             CtrlVar.MeshSize   CtrlVar.MeshSize/5] ;
 
 
-% The melt is decribed as a= a_1 (h-hmin)
-
-% Default value is 1
 CtrlVar.ThickMin=1;
 CtrlVar.LevelSetMinIceThickness=CtrlVar.ThickMin+1;    % this is the hmin constant, i.e. the accepted min ice thickness
-% over the 'ice-free' areas.
-% Default value is CtrlVar.ThickMin+1
-
-
-
 
 
 %%
@@ -220,45 +229,26 @@ else
 end
 % "Umbi" ; % "Weertman" ; % "Tsai" ; % "Cornford" ;  "Umbi" ; "Cornford" ; % "Tsai" , "Budd"
 
-switch CtrlVar.SlidingLaw
-
-    case "Weertman"
+if ~isfield(UserVar,'AFile') ||  isempty(UserVar.AFile)
 
 
-        InvFile=CtrlVar.SlidingLaw...
-            +"-Ca"+num2str(CtrlVar.Inverse.Regularize.logC.ga)...
-            +"-Cs"+num2str(CtrlVar.Inverse.Regularize.logC.gs)...
-            +"-Aa"+num2str(CtrlVar.Inverse.Regularize.logAGlen.ga)...
-            +"-As"+num2str(CtrlVar.Inverse.Regularize.logAGlen.gs)...
-            +"-"+num2str(UserVar.MeshResolution/1000)+"km";
+    InvFile=CtrlVar.SlidingLaw...
+        +"-Ca"+num2str(CtrlVar.Inverse.Regularize.logC.ga)...
+        +"-Cs"+num2str(CtrlVar.Inverse.Regularize.logC.gs)...
+        +"-Aa"+num2str(CtrlVar.Inverse.Regularize.logAGlen.ga)...
+        +"-As"+num2str(CtrlVar.Inverse.Regularize.logAGlen.gs)...
+        +"-"+num2str(UserVar.MeshResolution/1000)+"km";
 
-        if contains(UserVar.RunType,"-Alim-")
-            InvFile=InvFile+"-Alim-";
-        end
-        InvFile=replace(InvFile,".","k");
+    if contains(UserVar.RunType,"-Alim-")
+        InvFile=InvFile+"-Alim-";
+    end
+    InvFile=replace(InvFile,".","k");
 
-        UserVar.AFile="FA-"+InvFile;
-        UserVar.CFile="FC-"+InvFile;
-
-
-     
-
-    case "Cornford"
-
-        AFile="Cornford-"+UserVar.Region+"-"+num2str(UserVar.MeshResolution/1000)+"km";   %
-        CFile="Cornford-"+UserVar.Region+"-"+num2str(UserVar.MeshResolution/1000)+"km";   %
-
-        UserVar.AFile="FA-"+AFile;
-        UserVar.CFile="FC-"+CFile;
+    UserVar.AFile="FA-"+InvFile;
+    UserVar.CFile="FC-"+InvFile;
 
 
-       
 
-
-    case "Umbi"
-        UserVar.CFile='FC-Umbi'; UserVar.AFile='FA-Umbi';
-    otherwise
-        error('A and C fields not available')
 end
 
 if ~isfile(UserVar.GeometryInterpolant) || ~isfile(UserVar.SurfaceVelocityInterpolant)
@@ -307,12 +297,6 @@ if contains(UserVar.RunType,"Inverse")
     CtrlVar.Inverse.NameOfRestartOutputFile="InverseRestartFile-"+InvFile;
 
 
-
-
-
-
-
-
     % [----------- Testing adjoint gradents
     CtrlVar.Inverse.TestAdjoint.isTrue=0; % If true then perform a brute force calculation
     % of the directional derivative of the objective function.
@@ -358,8 +342,6 @@ elseif contains(UserVar.RunType,"GenerateMesh")
     CtrlVar.Restart=0;
     CtrlVar.ReadInitialMesh=0;
     CtrlVar.MeshGenerator="mesh2d" ; % "mesh2d" ; % 'mesh2d';
-    %CtrlVar.MeshSizeMax=20e3/16;  CtrlVar.SaveInitialMeshFileName="MeshFile1k25km"+CtrlVar.MeshGenerator ;
-
 
     CtrlVar.OnlyMeshDomainAndThenStop=1;
 
@@ -380,7 +362,7 @@ else
 
 end
 
-CtrlVar.MeshSizeMax=UserVar.MeshResolution ;
+
 CtrlVar.SaveInitialMeshFileName=...
     "MeshFile"...
     +num2str(CtrlVar.MeshSizeMax/1000) ...
@@ -415,8 +397,6 @@ CtrlVar.doAdaptMeshPlots=5;
 
 %% Meshing
 
-
-
 CtrlVar.ReadInitialMeshFileName=...
     "MeshFile"...
     +num2str(UserVar.MeshResolution/1000) ...
@@ -424,13 +404,6 @@ CtrlVar.ReadInitialMeshFileName=...
     +UserVar.Region ;
 
 CtrlVar.ReadInitialMeshFileName=replace(CtrlVar.ReadInitialMeshFileName,".","k");
-
-CtrlVar.MaxNumberOfElements=700e3;
-CtrlVar.MeshSize=CtrlVar.MeshSizeMax/2;
-CtrlVar.MeshSizeMin=CtrlVar.MeshSizeMax/20;
-
-UserVar.MeshSizeIceShelves=CtrlVar.MeshSizeMax/5;
-
 MeshBoundaryCoordinates=CreateMeshBoundaryCoordinatesForPIGandTWG(UserVar,CtrlVar);
 
 %% Adapting mesh
@@ -499,16 +472,6 @@ CtrlVar.Inverse.NameOfRestartOutputFile=replace(CtrlVar.Inverse.NameOfRestartOut
 CtrlVar.Inverse.NameOfRestartOutputFile=replace(CtrlVar.Inverse.NameOfRestartOutputFile,".","k");
 CtrlVar.Inverse.NameOfRestartInputFile=CtrlVar.Inverse.NameOfRestartOutputFile;
 
-if CtrlVar.InverseRun
-    fprintf(" Inverse restart file: %s \n",CtrlVar.Inverse.NameOfRestartOutputFile)
-end
-
-if isfile(CtrlVar.Inverse.NameOfRestartInputFile+".mat")
-    CtrlVar.Restart=1;
-else
-    CtrlVar.Restart=0;
-    fprintf("No restart file found. Starting a new run. \n")
-end
 
 
 CtrlVar.ReadInitialMeshFileName=replace(CtrlVar.ReadInitialMeshFileName,".","k");
@@ -525,8 +488,28 @@ CtrlVar.NameOfRestartFiletoWrite=replace(CtrlVar.NameOfRestartFiletoWrite,"--","
 CtrlVar.NameOfRestartFiletoRead=CtrlVar.NameOfRestartFiletoWrite;
 
 
+if CtrlVar.InverseRun
+    fprintf(" Inverse restart file: %s \n",CtrlVar.Inverse.NameOfRestartOutputFile)
+end
 
+if CtrlVar.InverseRun
+    if isfile(CtrlVar.Inverse.NameOfRestartInputFile+".mat")
+        CtrlVar.Restart=1;
+    else
+        CtrlVar.Restart=0;
+        fprintf("No restart file found. Starting a new run. \n")
+    end
+else
+    if isfile(CtrlVar.NameOfRestartFiletoRead)
+        CtrlVar.Restart=1;
+    else
+        CtrlVar.Restart=0;
+    end
+end
 
 CtrlVar.WriteRestartFileInterval=100;
+
+% Test
+% CtrlVar.UseMexFiles=1 ; CtrlVar.UseMexFilesCPUcompare=0;
 
 end
