@@ -36,14 +36,23 @@ function [UserVar,LSF,c]=DefineCalving(UserVar,CtrlVar,MUA,LSF,c,F,BCs)
 %% initialize LSF
 if isempty(F.LSF)   % Do I need to initialize the level set function?
 
+    if contains(UserVar.RunType,"-c0isGL0-")  % -> Initial calving front (c0) is set a initial grounding line position (GL0)
 
-    Xc=UserVar.CalvingFront0.Xc;
-    Yc=UserVar.CalvingFront0.Yc;
+        LSF=-ones(MUA.Nnodes,1) ;
+        LSF(F.GF.node>0.5)=+1;
+        Xc=[] ;  % If Xc and Yc are left empty, the Xc and Yc will be calculated as the zero contorl of the LSF field
+        Yc=[] ; 
 
-    % A rough sign-correct initialisation for the LSF
-    io=inpoly2([F.x F.y],[Xc(:) Yc(:)]);
-    LSF=-ones(MUA.Nnodes,1) ;
-    LSF(io)=+1;
+    else
+
+        Xc=UserVar.CalvingFront0.Xc;
+        Yc=UserVar.CalvingFront0.Yc;
+
+        % A rough sign-correct initialisation for the LSF
+        io=inpoly2([F.x F.y],[Xc(:) Yc(:)]);
+        LSF=-ones(MUA.Nnodes,1) ;
+        LSF(io)=+1;
+    end
 
     % figure ; PlotMuaMesh(CtrlVar,MUA);   hold on ; plot(F.x(io)/1000,F.y(io)/1000,'or')
 
@@ -60,8 +69,15 @@ if  CtrlVar.LevelSetEvolution=="-Prescribed-"
 
 elseif  CtrlVar.CalvingLaw.Evaluation=="-int-"
 
-    c=0; % Must not be nan or otherwise the LSF will not be evolved.
-    %      But otherwise these c values are of no importance and the c defined at int points is the one used
+    % c=0; % Must not be nan or otherwise the LSF will not be evolved.
+    % But otherwise these c values are of no importance and the c defined at int points is the one used
+
+    % This value for the calving rate will actually not be used directly by the code
+    % because the calving rate is here defined at integration points.
+    % But for plotting purposes it is good to define the calving at nodal points as well
+    % so here a call is made to define c at the nodes. 
+    % c=DefineCalvingAtIntegrationPoints(UserVar,CtrlVar,nan,nan,F.ub,F.vb,F.h,F.s,F.S,F.x,F.y) ;
+    c=DefineCalvingAtIntegrationPoints(UserVar,CtrlVar,nan,nan,F) ;
 
 else
 
