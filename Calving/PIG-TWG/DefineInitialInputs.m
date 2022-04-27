@@ -46,8 +46,6 @@ if isempty(UserVar) || ~isfield(UserVar,'RunType')
     UserVar.RunType="-FT-P-TWIS-MR4-SM-5km-Alim-" ;   % not calved off
     UserVar.RunType="-FT-P-TWISC0-MR4-SM-5km-Alim" ;  % -P-TWISC- is Thwaites Ice Shelf Calved off, 0km away
 
-
-
     
     % UserVar.RunType='GenerateMesh' ;
     % UserVar.RunType='Inverse-MatOpt';
@@ -116,14 +114,11 @@ CtrlVar.LimitRangeInUpdateFtimeDerivatives=true ;
 %% Set output files directory
 [~,hostname]=system('hostname') ;
 if contains(hostname,"DESKTOP-G5TCRTD")
-
     UserVar.ResultsFileDirectory="F:\Runs\Calving\PIG-TWG\ResultsFiles\";
 elseif contains(hostname,"DESKTOP-BU2IHIR")
-
     UserVar.ResultsFileDirectory="D:\Runs\Calving\PIG-TWG\ResultsFiles\";
-
 else
-    error("case not implemented")
+    UserVar.ResultsFileDirectory=".\ResultsFiles\";
 end
 
 
@@ -228,45 +223,26 @@ else
 end
 % "Umbi" ; % "Weertman" ; % "Tsai" ; % "Cornford" ;  "Umbi" ; "Cornford" ; % "Tsai" , "Budd"
 
-switch CtrlVar.SlidingLaw
-
-    case "Weertman"
+if ~isfield(UserVar,'AFile') ||  isempty(UserVar.AFile)
 
 
-        InvFile=CtrlVar.SlidingLaw...
-            +"-Ca"+num2str(CtrlVar.Inverse.Regularize.logC.ga)...
-            +"-Cs"+num2str(CtrlVar.Inverse.Regularize.logC.gs)...
-            +"-Aa"+num2str(CtrlVar.Inverse.Regularize.logAGlen.ga)...
-            +"-As"+num2str(CtrlVar.Inverse.Regularize.logAGlen.gs)...
-            +"-"+num2str(UserVar.MeshResolution/1000)+"km";
+    InvFile=CtrlVar.SlidingLaw...
+        +"-Ca"+num2str(CtrlVar.Inverse.Regularize.logC.ga)...
+        +"-Cs"+num2str(CtrlVar.Inverse.Regularize.logC.gs)...
+        +"-Aa"+num2str(CtrlVar.Inverse.Regularize.logAGlen.ga)...
+        +"-As"+num2str(CtrlVar.Inverse.Regularize.logAGlen.gs)...
+        +"-"+num2str(UserVar.MeshResolution/1000)+"km";
 
-        if contains(UserVar.RunType,"-Alim-")
-            InvFile=InvFile+"-Alim-";
-        end
-        InvFile=replace(InvFile,".","k");
+    if contains(UserVar.RunType,"-Alim-")
+        InvFile=InvFile+"-Alim-";
+    end
+    InvFile=replace(InvFile,".","k");
 
-        UserVar.AFile="FA-"+InvFile;
-        UserVar.CFile="FC-"+InvFile;
-
-
-     
-
-    case "Cornford"
-
-        AFile="Cornford-"+UserVar.Region+"-"+num2str(UserVar.MeshResolution/1000)+"km";   %
-        CFile="Cornford-"+UserVar.Region+"-"+num2str(UserVar.MeshResolution/1000)+"km";   %
-
-        UserVar.AFile="FA-"+AFile;
-        UserVar.CFile="FC-"+CFile;
+    UserVar.AFile="FA-"+InvFile;
+    UserVar.CFile="FC-"+InvFile;
 
 
-       
 
-
-    case "Umbi"
-        UserVar.CFile='FC-Umbi'; UserVar.AFile='FA-Umbi';
-    otherwise
-        error('A and C fields not available')
 end
 
 if ~isfile(UserVar.GeometryInterpolant) || ~isfile(UserVar.SurfaceVelocityInterpolant)
@@ -507,16 +483,6 @@ CtrlVar.Inverse.NameOfRestartOutputFile=replace(CtrlVar.Inverse.NameOfRestartOut
 CtrlVar.Inverse.NameOfRestartOutputFile=replace(CtrlVar.Inverse.NameOfRestartOutputFile,".","k");
 CtrlVar.Inverse.NameOfRestartInputFile=CtrlVar.Inverse.NameOfRestartOutputFile;
 
-if CtrlVar.InverseRun
-    fprintf(" Inverse restart file: %s \n",CtrlVar.Inverse.NameOfRestartOutputFile)
-end
-
-if isfile(CtrlVar.Inverse.NameOfRestartInputFile+".mat")
-    CtrlVar.Restart=1;
-else
-    CtrlVar.Restart=0;
-    fprintf("No restart file found. Starting a new run. \n")
-end
 
 
 CtrlVar.ReadInitialMeshFileName=replace(CtrlVar.ReadInitialMeshFileName,".","k");
@@ -533,8 +499,28 @@ CtrlVar.NameOfRestartFiletoWrite=replace(CtrlVar.NameOfRestartFiletoWrite,"--","
 CtrlVar.NameOfRestartFiletoRead=CtrlVar.NameOfRestartFiletoWrite;
 
 
+if CtrlVar.InverseRun
+    fprintf(" Inverse restart file: %s \n",CtrlVar.Inverse.NameOfRestartOutputFile)
+end
 
+if CtrlVar.InverseRun
+    if isfile(CtrlVar.Inverse.NameOfRestartInputFile+".mat")
+        CtrlVar.Restart=1;
+    else
+        CtrlVar.Restart=0;
+        fprintf("No restart file found. Starting a new run. \n")
+    end
+else
+    if isfile(CtrlVar.NameOfRestartFiletoRead)
+        CtrlVar.Restart=1;
+    else
+        CtrlVar.Restart=0;
+    end
+end
 
 CtrlVar.WriteRestartFileInterval=100;
+
+% Test
+% CtrlVar.UseMexFiles=1 ; CtrlVar.UseMexFilesCPUcompare=0;
 
 end

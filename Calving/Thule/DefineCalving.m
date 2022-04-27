@@ -92,7 +92,8 @@ if F.time< 0
 
 elseif  CtrlVar.CalvingLaw.Evaluation=="-int-" 
 
-    c=0; % must not be nan or otherwise the LSF will not be evolved.  But otherwise these c values are of no importance and the c defined at int points the one used
+    c=0; % must not be nan or otherwise the LSF will not be evolved.  
+    % But otherwise these c values are of no importance and the c defined at int points is the one used
 
     % For possible plotting purposes
 

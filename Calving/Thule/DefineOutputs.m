@@ -30,7 +30,7 @@ if iGLCounter > numel(GLMax)
 end
 
 
-
+% f=gcf; exportgraphics(f,'VAF-VC1k1.pdf')
 
 
 %%

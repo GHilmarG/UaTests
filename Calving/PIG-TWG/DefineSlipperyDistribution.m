@@ -56,6 +56,7 @@ else
             load(UserVar.CFile,'FC')
             fprintf(' done \n')
         else
+            fprintf('DefineSlipperyDistribution: file not found, was expecting: %-s \n',UserVar.CFile)
             error("DefineSlipperyDistribution:FileNotFound","Required input file not found")
             % create a FC file
             %load('C-Estimate.mat','C','xC','yC')

@@ -16,6 +16,7 @@ end
 
 
 load("GroundingLineForAntarcticaBasedOnBedmachine.mat","xGL","yGL") ;
+%load("GroundingLineForAntarcticaBasedOnBedmachine","GroundingLines") ; xGL=GroundingLines(:,1) ;   yGL=GroundingLines(:,2) ;
 load("MeshBoundaryCoordinatesForAntarcticaBasedOnBedmachine.mat","Boundary");
 
 %%
