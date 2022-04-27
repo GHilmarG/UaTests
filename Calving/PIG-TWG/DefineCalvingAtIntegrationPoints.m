@@ -18,8 +18,10 @@ switch UserVar.CalvingLaw.Type
 
     case "-AC-"
 
-        CliffHeight=min((F.s-F.S),F.h) ;  % note: this does not account for density
-
+        %CliffHeight=min((F.s-F.S),F.h) ;  % note: this does not account for density
+        
+        CliffHeight=min((F.s-F.S),F.h).*F.rho./1000; % guessing this is what the authors intended
+        
         fI=3.2e-17*365.25 ; c=fI*CliffHeight.^(7.2) ;
         % Now set calving rate to zero for cliff less than 135meters
         c(CliffHeight<135)=0 ;

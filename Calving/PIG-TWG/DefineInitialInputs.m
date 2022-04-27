@@ -156,6 +156,7 @@ else
 
     % specify calving law
     if contains(UserVar.RunType,"-Fq")
+
         UserVar.CalvingLaw.Type="-Fqk-"  ;
         UserVar.CalvingLaw.Fqk.q=str2double(extract(extract(UserVar.RunType,"-Fq"+digitsPattern+"Fk"),digitsPattern));
         UserVar.CalvingLaw.Fqk.k=str2double(extract(extract(UserVar.RunType,"Fk"+digitsPattern+"Fmin"),digitsPattern));
@@ -166,6 +167,7 @@ else
 
     elseif contains(UserVar.RunType,"-AC-")  % Anna Crawford
 
+        UserVar.CalvingLaw.Type="-AC-"  ;
         CtrlVar.LevelSetInitialisationInterval=1 ;
         CtrlVar.DefineOutputsDt=0;
         CtrlVar.LevelSetMethodMassBalanceFeedbackCoeffLin=-1000;  % This is the constant a1, it has units 1/time.
