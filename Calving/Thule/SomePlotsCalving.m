@@ -41,8 +41,9 @@ fEx="2.0";
 % fEx="Min"; 
 
 fEx="Thule-C-Tmin-C-NV2k0-10km" ;
-fEx="Thule-C-Tmax-C-NV2k0-10km" ;
-
+% fEx="Thule-C-Tmax-C-NV2k0-10km" ;
+fEx="Thule-P-SSmax-10km-Cxy-";
+fEx="Thule-P-SSmin-10km-Cxy-";
 
 switch fEx
 
@@ -69,33 +70,11 @@ switch fEx
 
         IRange=4;
 
-    case "Max"
-
-        SubString(1)="Thule-P-SSmax-10km";
-
-        IRange=1:1;
-
-    case "Min"
-
-        SubString(1)="Thule-P-SSmin-10km";
-
-        IRange=1:1;
-
-    case "Thule-C-Tmin-C-NV2k0-10km" 
-
-
-        SubString(1)="Thule-C-Tmin-C-NV2k0-10km" ;
-        IRange=1:1 ;
-
-  case "Thule-C-Tmax-C-NV2k0-10km" 
-
-
-        SubString(1)="Thule-C-Tmax-C-NV2k0-10km" ;
-        IRange=1:1 ;
-
     otherwise
 
-        error("case not found")
+        SubString(1)=fEx;
+        IRange=1:1;
+
 end
 
 
@@ -105,7 +84,7 @@ CalcVAF=false;
 if CalcVAF
     TimeStep=5;
 else
-    TimeStep=1;
+    TimeStep=10;
 end
 
 if CreateVideo
