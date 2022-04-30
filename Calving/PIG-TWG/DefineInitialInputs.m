@@ -169,7 +169,7 @@ else
 
         UserVar.CalvingLaw.Type="-AC-"  ;
         CtrlVar.LevelSetInitialisationInterval=1 ;
-        CtrlVar.DefineOutputsDt=0;
+        CtrlVar.DefineOutputsDt=0.01;
         CtrlVar.LevelSetMethodMassBalanceFeedbackCoeffLin=-1000;  % This is the constant a1, it has units 1/time.
         CtrlVar.LevelSetMethodMassBalanceFeedbackCoeffCubic=-1;
 
@@ -420,8 +420,8 @@ CtrlVar.AdaptMeshRunStepInterval=1 ; % remesh whenever mod(Itime,CtrlVar.AdaptMe
 
 
 %%
-CtrlVar.ThicknessConstraints=1;
-CtrlVar.ResetThicknessToMinThickness=0;
+CtrlVar.ThicknessConstraints=0;
+CtrlVar.ResetThicknessToMinThickness=1;
 
 %% A C constraints
 if contains(UserVar.RunType,"-Alim-")
