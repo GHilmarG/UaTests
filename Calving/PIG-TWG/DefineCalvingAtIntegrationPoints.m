@@ -21,13 +21,13 @@ switch UserVar.CalvingLaw.Type
         %CliffHeight=min((F.s-F.S),F.h) ;  % note: this does not account for density
         
         CliffHeight=min((F.s-F.S),F.h).*F.rho./1000; % guessing this is what the authors intended
-        
+
         fI=3.2e-17*365.25 ; c=fI*CliffHeight.^(7.2) ;
         % Now set calving rate to zero for cliff less than 135meters
         c(CliffHeight<135)=0 ;
         % and set maximum at at cliff height equalt to 450m
-        %cMax=fI*450.^(7.2) ;
-        %c(c>cMax)=cMax ;
+        cMax=fI*450.^(7.2) ;
+        c(c>cMax)=cMax ;
 
         %     c(c>UserVar.CalvingRateMax)=UserVar.CalvingRateMax ; % set an upper max
         dcddphidx=0;
@@ -48,8 +48,8 @@ switch UserVar.CalvingLaw.Type
         %
 
         % I=y<-660e3; c(I)=0;
-        I=F.y<-550e3; c(I)=0;   % This is what Mathieu uses
-        I=F.x<-1700e3; c(I)=0;
+        % I=F.y<-550e3; c(I)=0;   % This is what Mathieu uses, but this seems to create problems with LSF
+        % I=F.x<-1700e3; c(I)=0;
 
         % No calving when B>S
         % Limit calving to 2 km/day
