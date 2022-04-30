@@ -46,7 +46,7 @@ if isempty(UserVar) || ~isfield(UserVar,'RunType')
     UserVar.RunType="-FT-P-TWIS-MR4-SM-5km-Alim-" ;   % not calved off
     UserVar.RunType="-FT-P-TWISC0-MR4-SM-5km-Alim" ;  % -P-TWISC- is Thwaites Ice Shelf Calved off, 0km away
 
-
+    UserVar.RunType="-GenerateMesh-5km-";
     
     % UserVar.RunType='GenerateMesh' ;
     % UserVar.RunType='Inverse-MatOpt';

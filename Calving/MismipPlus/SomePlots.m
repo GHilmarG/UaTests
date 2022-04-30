@@ -2,7 +2,7 @@
 
 % rename GL0-.mat GL0-10km-.mat *GL0-.mat
 
-isVideo=true;
+isVideo=false;
 CurDir=pwd ;
 cd ResultsFiles\
 
@@ -47,9 +47,9 @@ else
 
         DataCollect{I}=ReadPlotSequenceOfResultFiles(FileNameSubstring=SubString(I),...
             PlotTimestep=TimeStep,...
-            PlotTimeInterval=[0 100],...
             isCenterlineProfile=true,...
             PlotType="-collect-") ;
+            %PlotTimeInterval=[0 200],...
 
     end
 
