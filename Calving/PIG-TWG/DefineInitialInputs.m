@@ -326,9 +326,7 @@ elseif contains(UserVar.RunType,"-FT-")
     CtrlVar.InfoLevelNonLinIt=1;
     UserVar.Slipperiness.ReadFromFile=1;
     UserVar.AGlen.ReadFromFile=1;
-    if ~CtrlVar.Restart
-        CtrlVar.ReadInitialMesh=1;
-    end
+  
     CtrlVar.AdaptMesh=0;
     CtrlVar.TotalNumberOfForwardRunSteps=inf;
     %CtrlVar.LevelSetMethod=0;
@@ -550,6 +548,9 @@ if contains(UserVar.RunType,"GenerateMesh")
     CtrlVar.Restart=0;
 end
 
+if CtrlVar.Restart
+    CtrlVar.ReadInitialMesh=0;
+end
 
 CtrlVar.WriteRestartFileInterval=100;
 
