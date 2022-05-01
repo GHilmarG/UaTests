@@ -46,7 +46,7 @@ if isempty(UserVar) || ~isfield(UserVar,'RunType')
     UserVar.RunType="-FT-P-TWIS-MR4-SM-5km-Alim-" ;   % not calved off
     UserVar.RunType="-FT-P-TWISC0-MR4-SM-5km-Alim" ;  % -P-TWISC- is Thwaites Ice Shelf Calved off, 0km away
 
-    UserVar.RunType="-GenerateMesh-5km-";
+    UserVar.RunType="-GenerateMesh-20km-AM-P-BMGL-";
     
     % UserVar.RunType='GenerateMesh' ;
     % UserVar.RunType='Inverse-MatOpt';
@@ -90,9 +90,8 @@ else
 end
 
 CtrlVar.CalvingLaw.Evaluation="-int-"  ; % nodal or integration-point evaluation  ["-int-","-node-"]
-UserVar.DefineOutputs="-ubvb-LSF-h-dhdt-speed-save-AC-"; % '-ubvb-LSF-h-save-';
-% UserVar.DefineOutputs="-ubvb-LSF-h-dhdt-speed-"; %
-% UserVar.DefineOutputs="-save-"; %
+UserVar.DefineOutputs="-ubvb-LSF-h-dhdt-speed-save-AC-"; 
+UserVar.DefineOutputs="-ubvb-LSF-h-dhdt-speed-AC-"; 
 
 CtrlVar.LimitRangeInUpdateFtimeDerivatives=true ;
 
@@ -142,17 +141,22 @@ CtrlVar.MeshSize=UserVar.MeshResolution ;
 CtrlVar.MeshSizeMax=CtrlVar.MeshSize ; 
 %%  Level-set parameters
 
-CtrlVar.LevelSetMethod=1;
+
 CtrlVar.LevelSetInitialisationInterval=100 ;
 
 CtrlVar.DefineOutputsDt=0.25;
 CtrlVar.LevelSetMethodMassBalanceFeedbackCoeffLin=-10;  % This is the constant a1, it has units 1/time.
 CtrlVar.LevelSetMethodMassBalanceFeedbackCoeffCubic=0;
 
-if contains(UserVar.RunType,"-P-")  || contains(UserVar.RunType,"-Inverse-")
+if contains(UserVar.RunType,"-P-") 
+
     CtrlVar.LevelSetEvolution="-Prescribed-"   ; % "-prescribed-",
-else
+    CtrlVar.LevelSetMethod=1;
+
+elseif contains(UserVar.RunType,"-C-")
+
     CtrlVar.LevelSetEvolution="-By solving the level set equation-"   ; % "-prescribed-",
+    CtrlVar.LevelSetMethod=1;
 
     % specify calving law
     if contains(UserVar.RunType,"-Fq")
@@ -191,6 +195,8 @@ else
         error("what calving law?")
 
     end
+else
+    CtrlVar.LevelSetMethod=0;  
 end
 
 CtrlVar.LevelSetInitialisationMethod="-geo-" ;
@@ -212,14 +218,13 @@ end
 
 CtrlVar.LevelSetInfoLevel=1 ;
 
-CtrlVar.MeshAdapt.CFrange=[2*CtrlVar.MeshSize   CtrlVar.MeshSize/2 ; ...
-                             CtrlVar.MeshSize   CtrlVar.MeshSize/5] ;
 
 
 CtrlVar.ThickMin=1;
 CtrlVar.LevelSetMinIceThickness=CtrlVar.ThickMin+1;    % this is the hmin constant, i.e. the accepted min ice thickness
 
-
+%%
+CtrlVar.SaveInitialMeshFileName=[] ; % Do not create a new initial mesh file each time
 %%
 CtrlVar.SaveInitialMeshFileName='MeshFile';
 
@@ -230,6 +235,7 @@ else
     CtrlVar.SlidingLaw="Weertman" ;
 end
 % "Umbi" ; % "Weertman" ; % "Tsai" ; % "Cornford" ;  "Umbi" ; "Cornford" ; % "Tsai" , "Budd"
+
 
 if ~isfield(UserVar,'AFile') ||  isempty(UserVar.AFile)
 
@@ -282,6 +288,7 @@ if contains(UserVar.RunType,"Inverse")
 
     CtrlVar.ReadInitialMesh=1;
     CtrlVar.AdaptMesh=0;
+   
 
     CtrlVar.Inverse.Iterations=2;
 
@@ -345,17 +352,46 @@ elseif contains(UserVar.RunType,"GenerateMesh")
     CtrlVar.ReadInitialMesh=0;
     CtrlVar.MeshGenerator="mesh2d" ; % "mesh2d" ; % 'mesh2d';
 
-    CtrlVar.OnlyMeshDomainAndThenStop=1;
-
+    CtrlVar.OnlyMeshDomainAndThenStop=0;
+    CtrlVar.AdaptMeshAndThenStop=1; 
 
     UserVar.Slipperiness.ReadFromFile=1;
     UserVar.AGlen.ReadFromFile=1;
     CtrlVar.TotalNumberOfForwardRunSteps=1;
-    CtrlVar.AdaptMesh=0;
-    CtrlVar.AdaptMeshInitial=0  ;       % remesh in first iteration (Itime=1)  even if mod(Itime,CtrlVar.AdaptMeshRunStepInterval)~=0.
-    CtrlVar.AdaptMeshAndThenStop=1;    % if true, then mesh will be adapted but no further calculations performed
-    % useful, for example, when trying out different remeshing options (then use CtrlVar.doAdaptMeshPlots=1 to get plots)
-    CtrlVar.InfoLevelAdaptiveMeshing=10;
+
+    if contains(UserVar.RunType,"-AM-")
+        CtrlVar.AdaptMesh=1;
+        CtrlVar.AdaptMeshMaxIterations=5;
+        CtrlVar.MeshRefinementMethod='explicit:global'; 
+    else
+        CtrlVar.AdaptMesh=0;
+    end
+
+
+%     CtrlVar.MeshAdapt.GLrange=[2*CtrlVar.MeshSize   CtrlVar.MeshSize/2 ; ...
+%                                  CtrlVar.MeshSize   CtrlVar.MeshSize/5 ; ...
+%                                  CtrlVar.MeshSize/2   CtrlVar.MeshSize/10 ];
+%   
+     CtrlVar.MeshAdapt.CFrange=[5*CtrlVar.MeshSize   CtrlVar.MeshSize/2 ; ...
+                                2*CtrlVar.MeshSize   CtrlVar.MeshSize/5 ; ...
+                                 CtrlVar.MeshSize   CtrlVar.MeshSize/10 ];
+  
+    
+
+    CtrlVar.AdaptMeshInitial=1  ;       % remesh in first iteration (Itime=1)  even if mod(Itime,CtrlVar.AdaptMeshRunStepInterval)~=0.
+    
+    
+    CtrlVar.InfoLevelAdaptiveMeshing=100;
+
+   UserVar.AFile="FA-Weertman-PIG-TWG-20km";
+   UserVar.CFile="FC-Weertman-PIG-TWG-20km";
+
+
+    CtrlVar.SaveInitialMeshFileName=...
+        "NewMeshFile"...
+        +num2str(CtrlVar.MeshSizeMax/1000) ...
+        +"km-"...  ; %%            +CtrlVar.MeshGenerator ...
+        +UserVar.Region ;
 
 else
 
@@ -365,17 +401,12 @@ else
 end
 
 
-CtrlVar.SaveInitialMeshFileName=...
-    "MeshFile"...
-    +num2str(CtrlVar.MeshSizeMax/1000) ...
-    +"km-"...  ; %%            +CtrlVar.MeshGenerator ...
-    +UserVar.Region ;
 
 %% Time step, total run time, run steps
 
-CtrlVar.dt=0.00001;   
+CtrlVar.dt=1e-6;   
 CtrlVar.ATSdtMax=0.1;
-CtrlVar.ATSdtMin=0.0001;
+CtrlVar.ATSdtMin=1e-6;
 
 if contains(UserVar.RunType,"-I-")
     CtrlVar.time=-0.1;  % If I'm using a mass-balance initialisation set start time to a slighly neg value
@@ -399,29 +430,34 @@ CtrlVar.doAdaptMeshPlots=5;
 
 %% Meshing
 
-CtrlVar.ReadInitialMeshFileName=...
-    "MeshFile"...
-    +num2str(UserVar.MeshResolution/1000) ...
-    +"km-"...  ; %%            +CtrlVar.MeshGenerator ...
-    +UserVar.Region ;
+if contains(UserVar.RunType,"-AM-")
+
+    CtrlVar.ReadInitialMeshFileName="MeshFileAdapt20km36kEle";
+
+else
+
+    CtrlVar.ReadInitialMeshFileName=...
+        "MeshFile"...
+        +num2str(UserVar.MeshResolution/1000) ...
+        +"km-"...  ; %%            +CtrlVar.MeshGenerator ...
+        +UserVar.Region ;
+end
 
 CtrlVar.ReadInitialMeshFileName=replace(CtrlVar.ReadInitialMeshFileName,".","k");
 MeshBoundaryCoordinates=CreateMeshBoundaryCoordinatesForPIGandTWG(UserVar,CtrlVar);
 
 %% Adapting mesh
 
-CtrlVar.AdaptMeshInitial=0  ;       % remesh in first iteration (Itime=1)  even if mod(Itime,CtrlVar.AdaptMeshRunStepInterval)~=0.
-CtrlVar.AdaptMeshAndThenStop=0;    % if true, then mesh will be adapted but no further calculations performed
 % useful, for example, when trying out different remeshing options (then use CtrlVar.doAdaptMeshPlots=1 to get plots)
-CtrlVar.AdaptMeshMaxIterations=5;
+
 CtrlVar.SaveAdaptMeshFileName='MeshFileAdapt';    %  file name for saving adapt mesh. If left empty, no file is written
 CtrlVar.AdaptMeshRunStepInterval=1 ; % remesh whenever mod(Itime,CtrlVar.AdaptMeshRunStepInterval)==0
 
 
 
 %%
-CtrlVar.ThicknessConstraints=0;
-CtrlVar.ResetThicknessToMinThickness=1;
+CtrlVar.ThicknessConstraints=1;
+CtrlVar.ResetThicknessToMinThickness=0;
 
 %% A C constraints
 if contains(UserVar.RunType,"-Alim-")
@@ -508,6 +544,12 @@ else
         CtrlVar.Restart=0;
     end
 end
+
+
+if contains(UserVar.RunType,"GenerateMesh")
+    CtrlVar.Restart=0;
+end
+
 
 CtrlVar.WriteRestartFileInterval=100;
 

@@ -64,23 +64,30 @@ function     [UserVar,EleSizeDesired,ElementsToBeRefined,ElementsToBeCoarsened]=
 
 
 switch lower(CtrlVar.MeshRefinementMethod)
-    
-    case 'explicit:global' 
-        
+
+    case 'explicit:global'
+
         % when using global mesh refinement, return EleSizeIndicator defined at nodes
 
+        x0=-1700e3; y0=-500e3;
+        R=sqrt((x-x0).^2+(y-y0).^2);
+
+
         EleSizeIndicator=EleSizeDesired;
-        
-        EleSizeIndicator(GF.node<0.1)=UserVar.MeshSizeIceShelves; 
+
+        EleSizeIndicator(R<500e3 & R>150e3)=CtrlVar.MeshSize/2 ;
         EleSizeDesired=min(EleSizeDesired,EleSizeIndicator);
-        
-        EleSizeIndicator(s<1500)=CtrlVar.MeshSizeMax/5;
+
+        EleSizeIndicator(R<250e3 & R>100e3)=CtrlVar.MeshSize/5 ;
         EleSizeDesired=min(EleSizeDesired,EleSizeIndicator);
-        
-        xmin=-1727e3   ; xmax=-1100e3 ; ymin=-600e3 ; ymax=-20.e3;
-        ind=x< xmax & x>xmin & y>ymin & y< ymax ;
-        EleSizeDesired(~ind)=CtrlVar.MeshSizeMax;  
-        
+
+        % EleSizeIndicator(s<1500)=CtrlVar.MeshSizeMax/5;
+        % EleSizeDesired=min(EleSizeDesired,EleSizeIndicator);
+
+        %xmin=-1727e3   ; xmax=-1100e3 ; ymin=-600e3 ; ymax=-20.e3;
+        %ind=x< xmax & x>xmin & y>ymin & y< ymax ;
+        %EleSizeDesired(~ind)=CtrlVar.MeshSizeMax;
+
     case {'explicit:local:newest vertex bisection','explicit:local:red-green'}
         
         % When using local mesh refinement, return ElementsToBeRefined and ElementsToBeCoarsened defined over elements
