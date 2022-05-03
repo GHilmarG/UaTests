@@ -19,7 +19,7 @@ UserVar.RunType="-MismipPlus-C-Fq1Fk30Fmin80cmin0Fmax100cmax3000-Ini5-c0isGL0-2k
 
 UserVar.RunType="-MismipPlus-C-DP-Ini5-c0isGL0-5km-" ;
 
-BatchJob=true;
+BatchJob=false;
 
 
 
