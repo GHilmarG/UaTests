@@ -91,7 +91,7 @@ end
 
 CtrlVar.CalvingLaw.Evaluation="-int-"  ; % nodal or integration-point evaluation  ["-int-","-node-"]
 UserVar.DefineOutputs="-ubvb-LSF-h-dhdt-speed-save-AC-"; 
-UserVar.DefineOutputs="-ubvb-LSF-h-dhdt-speed-AC-"; 
+
 
 CtrlVar.LimitRangeInUpdateFtimeDerivatives=true ;
 
@@ -144,7 +144,7 @@ CtrlVar.MeshSizeMax=CtrlVar.MeshSize ;
 
 CtrlVar.LevelSetInitialisationInterval=100 ;
 
-CtrlVar.DefineOutputsDt=0.25;
+CtrlVar.DefineOutputsDt=0.1;
 CtrlVar.LevelSetMethodMassBalanceFeedbackCoeffLin=-10;  % This is the constant a1, it has units 1/time.
 CtrlVar.LevelSetMethodMassBalanceFeedbackCoeffCubic=0;
 
@@ -402,9 +402,9 @@ end
 
 %% Time step, total run time, run steps
 
-CtrlVar.dt=1e-6;   
+CtrlVar.dt=1e-3;   
 CtrlVar.ATSdtMax=0.1;
-CtrlVar.ATSdtMin=1e-6;
+CtrlVar.ATSdtMin=1e-4;
 
 if contains(UserVar.RunType,"-I-")
     CtrlVar.time=-0.1;  % If I'm using a mass-balance initialisation set start time to a slighly neg value
