@@ -91,7 +91,7 @@ end
 
 CtrlVar.CalvingLaw.Evaluation="-int-"  ; % nodal or integration-point evaluation  ["-int-","-node-"]
 UserVar.DefineOutputs="-ubvb-LSF-h-dhdt-speed-save-AC-"; 
-UserVar.DefineOutputs="-ubvb-LSF-h-dhdt-speed-AC-"; 
+
 
 CtrlVar.LimitRangeInUpdateFtimeDerivatives=true ;
 
