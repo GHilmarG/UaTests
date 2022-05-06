@@ -11,7 +11,7 @@ if ~contains(CurDir,"ResultsFiles")
     elseif contains(hostname,"DESKTOP-BU2IHIR")
         UserVar.ResultsFileDirectory="D:\Runs\Calving\PIG-TWG\ResultsFiles\";
     else
-        error("case not implemented")
+        UserVar.ResultsFileDirectory=".\ResultsFiles\";
     end
     cd(UserVar.ResultsFileDirectory)
 end
@@ -55,7 +55,7 @@ SubString="T-C-MR4-u-cl-mu0k1-Ini-geo-100-Strip1-SW=100km-AD=0-NV-1k5-BMCF-int-P
 SubString="T-C-MR4-u-cl-mu0k1-Ini-geo-100-Strip1-SW=100km-AD=0-NV-1k5-BMCF-int-PIG-TWG-MeshFile5km-PIG-TWG";
 
 
-0010000-Nodes21094-Ele41666-Tri3-kH10000-FT-P-TWISC0-MR4-SM-10km
+
 
 % 30km = 14km
 % 20km = 9.3km
@@ -67,6 +67,7 @@ SubString="T-C-MR4-u-cl-mu0k1-Ini-geo-100-Strip1-SW=100km-AD=0-NV-1k5-BMCF-int-P
 
 fEx="1.1";
 % fEx="RR"; 
+fEx="-AC-DP-"  ;  % Anna Crawford and David Pollard calving
 switch fEx
 
     case "1.5"
@@ -95,6 +96,12 @@ switch fEx
         SubString(3)="T-C-RR-BMCF-MR4-SM-u-cl-mu0k1-Ini-geo-100-Strip1-SW=100km-AD=0-RR-BMCF-int-asRacmo-dhdtLim1-PIG-TWG-MeshFile10km-PIG-TWG";
         SubString(4)="T-C-RR-BMCF-MR4-SM-u-cl-mu0k1-Ini-geo-100-Strip1-SW=100km-AD=0-RR-BMCF-int-asRacmo-dhdtLim1-PIG-TWG-MeshFile5km-PIG-TWG";  % not done
         IRange=4;
+
+    case "-AC-DP-"
+
+        SubString(1)="-FT-C-AC-MR4-Ini1-BMGL-5km-Alim-Ca1-Cs100000-Aa1-As100000-";
+        SubString(2)="-FT-C-DP-MR4-Ini5-BMGL-5km-Alim-Ca1-Cs100000-Aa1-As100000-"; 
+        IRange=2; 
 end
 
 
@@ -104,7 +111,7 @@ CalcVAF=false;
 if CalcVAF
     TimeStep=5;
 else
-    TimeStep=1;
+    TimeStep=0; % setting to 0 gives plots at all available times
 end
 
 if CreateVideo
