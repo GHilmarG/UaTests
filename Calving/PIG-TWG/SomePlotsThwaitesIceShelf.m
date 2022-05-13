@@ -124,14 +124,14 @@ end
 % 10km = 4.6km
 %  5km = 2.3km
 
-CreateVideo=true;
-CalcVAF=false;
+CreateVideo=false;
+CalcVAF=true;
 ComparisionPlots=false;
-Step=0.25;
+
 
 
 if CreateVideo
-
+    Step=0.25;
     for I=IRange
 
 
@@ -148,7 +148,7 @@ DataCollect=cell(10) ;
 
 
 if CalcVAF
-
+    Step=10;
 
 
     for I=IRange
