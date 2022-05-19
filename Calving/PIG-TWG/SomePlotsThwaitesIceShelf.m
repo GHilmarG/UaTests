@@ -111,7 +111,7 @@ switch Experiment
 
         SubString(1)="-FT-P-TWIS-MR4-SM-5km-Alim-Ca1-Cs100000-Aa1-As100000-";
         SubString(2)="-FT-P-TWISC0-MR4-SM-5km-Alim-Ca1-Cs100000-Aa1-As100000-";
-        IRange=2;
+        IRange=1:2;
         LegendEntry=[...
             "2.3km: Thwaites ice shelf (Alim)",...
             "2.3km: Thwaites ice shelf removed (Alim)",...
@@ -131,7 +131,7 @@ ComparisionPlots=false;
 
 
 if CreateVideo
-    Step=0.25;
+    Step=0.5;
     for I=IRange
 
 
