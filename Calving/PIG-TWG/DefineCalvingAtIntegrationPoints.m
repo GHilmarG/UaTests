@@ -14,13 +14,29 @@ function  [c,dcddphidx,dcddphidy]=DefineCalvingAtIntegrationPoints(UserVar,CtrlV
 
 narginchk(5,5)
 
+
+
+isPlotStrainRates=false;
+
+if isPlotStrainRates
+
+    FigStrainRates=FindOrCreateFigure("strain rates and velocities") ; clf(FigStrainRates) ;
+    QuiverColorGHG(F.x/1000,F.y/1000,F.ub,F.vb) ;
+    Scale=2;
+    hold on ; PlotTensor(F.x/1000,F.y/1000,F.exx,F.exy,F.eyy,Scale) ; axis equal
+
+end
+
+
+
 switch UserVar.CalvingLaw.Type
 
     case "-AC-"
 
         %CliffHeight=min((F.s-F.S),F.h) ;  % note: this does not account for density
         
-        CliffHeight=min((F.s-F.S),F.h).*F.rho./1000; % guessing this is what the authors intended
+        CliffHeight=min((F.s-F.S),F.h).*F.rho./1000; % guessing this is what the authors intended,
+                                                     % but maybe this should be F.rho/920 assuming the authors used 920.
 
         fI=3.2e-17*365.25 ; c=fI*CliffHeight.^(7.2) ;
         % Now set calving rate to zero for cliff less than 135meters
