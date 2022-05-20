@@ -148,9 +148,9 @@ CtrlVar.DefineOutputsDt=0.25;
 CtrlVar.LevelSetMethodMassBalanceFeedbackCoeffLin=-10;  % This is the constant a1, it has units 1/time.
 CtrlVar.LevelSetMethodMassBalanceFeedbackCoeffCubic=0;
 
-if contains(UserVar.RunType,"-P-")  || contains(UserVar.RunType,"-Inverse-")
+if contains(UserVar.RunType,"-P-") 
     CtrlVar.LevelSetEvolution="-Prescribed-"   ; % "-prescribed-",
-else
+elseif contains(UserVar.RunType,"-C-") 
     CtrlVar.LevelSetEvolution="-By solving the level set equation-"   ; % "-prescribed-",
 
     % specify calving law
