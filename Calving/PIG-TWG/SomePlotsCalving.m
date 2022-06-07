@@ -101,7 +101,7 @@ switch fEx
 
         SubString(1)="-FT-C-AC-MR4-Ini1-BMGL-5km-Alim-Ca1-Cs100000-Aa1-As100000-";
         SubString(2)="-FT-C-DP-MR4-Ini5-BMGL-5km-Alim-Ca1-Cs100000-Aa1-As100000-"; 
-        IRange=1; 
+        IRange=2; 
 end
 
 
@@ -111,7 +111,7 @@ CalcVAF=false;
 if CalcVAF
     TimeStep=5;
 else
-    TimeStep=0.1; % setting to 0 gives plots at all available times
+    TimeStep=0.5 ; % setting to 0 gives plots at all available times
 end
 
 if CreateVideo

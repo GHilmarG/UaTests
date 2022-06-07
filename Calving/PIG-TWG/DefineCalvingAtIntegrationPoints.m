@@ -19,10 +19,26 @@ switch UserVar.CalvingLaw.Type
     case "-AC-"
 
         %CliffHeight=min((F.s-F.S),F.h) ;  % note: this does not account for density
-        
+
         CliffHeight=min((F.s-F.S),F.h).*F.rho./1000; % guessing this is what the authors intended
 
-        fI=3.2e-17*365.25 ; c=fI*CliffHeight.^(7.2) ;
+        if  contains(UserVar.RunType,"-AC-T5-")
+            
+            fI=1.9e-16*365.25 ; c=fI*CliffHeight.^(7.3) ;
+
+        else
+            fI=3.2e-17*365.25 ; c=fI*CliffHeight.^(7.2) ;
+
+        end
+        %
+        % 5C Bn (worst case scenario)*/
+        % IssmDouble I     = 1.9e-16;
+        % IssmDouble alpha = 7.3;
+        % IssmDouble C = min(2000.,I*pow(Hc,alpha))/(24*3600.); /*convert from m/day to m/s*/
+        %
+        %
+        %
+
         % Now set calving rate to zero for cliff less than 135meters
         c(CliffHeight<135)=0 ;
         % and set maximum at at cliff height equalt to 450m
