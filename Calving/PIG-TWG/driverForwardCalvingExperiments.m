@@ -2,8 +2,11 @@
 
 
 
+% Restart-FT-C-DP-MR4-Ini5-BMGL-5km-Alim-Ca1-Cs100000-Aa1-As100000-.mat
 UserVar.RunType="-FT-C-DP-MR4-Ini5-BMGL-5km-Alim-Ca1-Cs100000-Aa1-As100000-" ; 
-UserVar.RunType="-FT-C-AC-MR4-Ini5-BMGL-5km-Alim-Ca1-Cs100000-Aa1-As100000-" ; 
+UserVar.RunType="-FT-C-AC-MR4-Ini1-BMGL-5km-Alim-Ca1-Cs100000-Aa1-As100000-" ; 
+
+% UserVar.RunType="-FT-AM-C-AC-MR4-Ini1-BMGL-5km-Alim-Ca1-Cs100000-Aa1-As100000-" ; 
 
 
 
