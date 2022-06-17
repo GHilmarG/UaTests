@@ -406,7 +406,8 @@ end
 
 CtrlVar.dt=1e-3;   
 CtrlVar.ATSdtMax=0.1;
-CtrlVar.ATSdtMin=1e-4;
+CtrlVar.ATSdtMin=0.001;  
+
 
 if contains(UserVar.RunType,"-I-")
     CtrlVar.time=-0.1;  % If I'm using a mass-balance initialisation set start time to a slighly neg value
@@ -548,11 +549,11 @@ end
 
 if contains(UserVar.RunType,"GenerateMesh")
     CtrlVar.Restart=0;
+    CtrlVar.ReadInitialMesh=0;
+else
+    CtrlVar.ReadInitialMesh=1;
 end
 
-if CtrlVar.Restart
-    CtrlVar.ReadInitialMesh=0;
-end
 
 CtrlVar.WriteRestartFileInterval=100;
 

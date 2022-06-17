@@ -1,14 +1,32 @@
 
+% 30km = 14km
+% 20km = 9.3km
+% 10km = 4.6km
+%  5km = 2.3km
+% 2.5km = 1.16km
 
+%% 5km runs which actually are 2.4 km runs:
 
-
-% Restart-FT-C-DP-MR4-Ini5-BMGL-5km-Alim-Ca1-Cs100000-Aa1-As100000-.mat
 UserVar.RunType="-FT-C-DP-MR4-Ini5-BMGL-5km-Alim-Ca1-Cs100000-Aa1-As100000-" ; 
-UserVar.RunType="-FT-C-AC-MR4-Ini1-BMGL-5km-Alim-Ca1-Cs100000-Aa1-As100000-" ; 
+% UserVar.RunType="-FT-C-AC-MR4-Ini1-BMGL-5km-Alim-Ca1-Cs100000-Aa1-As100000-" ; 
+% UserVar.RunType="-FT-C-AC-T5-MR4-Ini1-BMGL-5km-Alim-Ca1-Cs100000-Aa1-As100000-" ; 
 
-% UserVar.RunType="-FT-AM-C-AC-MR4-Ini1-BMGL-5km-Alim-Ca1-Cs100000-Aa1-As100000-" ; 
 
+%%
+%% 20km runs which actually are 9.4 km runs:
 
+% Here I need: FC-Weertman-Ca1-Cs100000-Aa1-As100000-20km-Alim- 
+
+% UserVar.RunType="-FT-C-DP-MR4-Ini5-BMGL-20km-Alim-Ca1-Cs100000-Aa1-As100000-" ; 
+% UserVar.RunType="-FT-C-AC-MR4-Ini1-BMGL-20km-Alim-Ca1-Cs100000-Aa1-As100000-" ; 
+ UserVar.RunType="-FT-C-AC-T5-MR4-Ini1-BMGL-20km-Alim-Ca1-Cs100000-Aa1-As100000-" ; 
+
+%% UserVar.RunType="-FT-AM-C-AC-MR4-Ini1-BMGL-5km-Alim-Ca1-Cs100000-Aa1-As100000-" ; 
+
+%  AM  : Adaptive Meshing global 
+%  AC
+
+%%
 
 CreateAndSaveACInterpolants=false;
 BatchJob=false;
