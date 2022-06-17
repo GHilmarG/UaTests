@@ -118,22 +118,28 @@ if contains(plots,'-e-')
     [xGL,yGL,GLgeo]=PlotGroundingLines(CtrlVar,MUA,GF,GLgeo,xGL,yGL,'k');
     PlotMuaBoundary(CtrlVar,MUA,'b')
     title(sprintf('e t=%-g ',time)) ; xlabel('x (km)') ; ylabel('y (km)')
-    
+
 end
 
 if contains(plots,'-stresses-')
-    
+
     figure
 
-    
+
     [txzb,tyzb,txx,tyy,txy,exx,eyy,exy,e,eta]=CalcNodalStrainRatesAndStresses(CtrlVar,UserVar,MUA,F) ;
     N=20;
     I=1:N:MUA.Nnodes;
-    
+
     [X,Y]=ndgrid(linspace(min(x),max(x),20),linspace(min(y),max(y),20));
+
+
+    if isempty(MUA.TR)
+         [MUA.Boundary,MUA.TR]=FindBoundary(MUA.connectivity,MUA.coordinates);
+    end
+
     I=nearestNeighbor(MUA.TR,[X(:) Y(:)]);  % find nodes within computational grid closest to the regularly scape X and Y grid points.
-    
-    
+
+
     
     scale=1e-3;
     PlotTensor(x(I)/CtrlVar.PlotXYscale,y(I)/CtrlVar.PlotXYscale,txx(I),txy(I),tyy(I),scale);

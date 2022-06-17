@@ -7,9 +7,7 @@ function [UserVar,CtrlVar,MeshBoundaryCoordinates]=DefineInitialInputs(UserVar,C
 
 if isempty(UserVar) || ~isfield(UserVar,"RunType")
 
-    UserVar.RunType="-MismipPlus-C-Fq1Fk30Fmin80cmin0Fmax100cmax3000-Ini5-" ;
-    UserVar.RunType="-MismipPlus-C-Fq1Fk3Fmin80cmin0Fmax100cmax300-Ini5-" ;
-    UserVar.RunType="-MismipPlus-C-Fq1Fk3Fmin80cmin0Fmax100cmax300-Ini5-c0isGL0-" ;
+    UserVar.RunType="-MismipPlus-C-DP-Ini5-c0isGL0-5km-" ;
 end
 
 

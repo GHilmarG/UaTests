@@ -404,7 +404,7 @@ end
 
 CtrlVar.dt=1e-3;   
 CtrlVar.ATSdtMax=0.1;
-
+CtrlVar.ATSdtMin=0.001;  
 
 
 if contains(UserVar.RunType,"-I-")

@@ -81,6 +81,12 @@ elseif  CtrlVar.CalvingLaw.Evaluation=="-int-"
 
 else
 
+
+
+
+
+    
+
     % It's assumed that the calving is defined at integration points only, or prescribed directly.
     % Anything else is deemed an error.
     error("Define calving rate at integration points")
