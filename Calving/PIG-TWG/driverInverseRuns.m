@@ -11,11 +11,12 @@ UserVar.RunType='Inverse-MatOpt-Alim-';
 UserVar.RunType='Inverse-MatOpt-Alim-Cornford-';
 
 UserVar.MeshResolution=10e3; IRange=0:7 ; JRange=0:7 ;
-UserVar.MeshResolution=5e3; IRange=3:6 ; JRange=3:6 ;
+% UserVar.MeshResolution=5e3; IRange=3:6 ; JRange=3:6 ;
+% UserVar.MeshResolution=20e3; IRange=0:7 ; JRange=0:7 ;
 
 
 
-CtrlVar.Inverse.Iterations=2500;
+CtrlVar.Inverse.Iterations=5000;
 
 if SubmitBathJobs
 
