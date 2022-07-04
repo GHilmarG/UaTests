@@ -1,13 +1,19 @@
 
 function [UserVar,Xc,Yc]=CreateInitialCalvingFrontProfiles(UserVar,CtrlVar,MUA,F,options)
 
+%%
+% Example:
+%
+%   [UserVar,Xc,Yc]=CreateInitialCalvingFrontProfiles(UserVar,CtrlVar,MUA,F,Plot=true);
+%
+%%
 
 arguments
     UserVar struct
     CtrlVar struct
     MUA     struct
-    F       UaFields
-    options.CalvingFront string="-BedmachineCalvingFronts-"
+    F       struct
+    options.CalvingFront string="-BMCF-" ; % -BedmachineCalvingFronts-"
     options.Plot logical=false
 
 end

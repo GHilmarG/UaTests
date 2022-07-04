@@ -125,13 +125,13 @@ end
 %  5km = 2.3km
 
 CreateVideo=true;
-CalcVAF=false;
+CalcVAF=true;
 ComparisionPlots=false;
 
 
 
 if CreateVideo
-    Step=0.5;
+    Step=1;
     for I=IRange
 
 
@@ -148,7 +148,7 @@ DataCollect=cell(10) ;
 
 
 if CalcVAF
-    Step=10;
+    Step=5;
 
 
     for I=IRange
@@ -270,6 +270,10 @@ end
 %%
 
 % f=gcf; exportgraphics(f,'ThwaitesIceShelf.pdf')
+
+fprintf("Plots and videos were saved in the folder %s \n",pwd)
+
+CurDir=pwd ;
 
 
 cd(CurDir)
