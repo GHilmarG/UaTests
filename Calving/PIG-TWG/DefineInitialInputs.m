@@ -404,7 +404,8 @@ end
 
 CtrlVar.dt=1e-3;   
 CtrlVar.ATSdtMax=0.1;
-CtrlVar.ATSdtMin=1e-4;
+CtrlVar.ATSdtMin=1e-2;
+CtrlVar.ThicknessConstraintsItMax=1  ;
 
 if contains(UserVar.RunType,"-I-")
     CtrlVar.time=-0.1;  % If I'm using a mass-balance initialisation set start time to a slighly neg value

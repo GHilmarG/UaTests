@@ -8,7 +8,7 @@ UserVar.RunType="-FT-P-TWIS-MR4-SM-5km-Alim-Ca1-Cs100000-Aa1-As100000-" ;  % not
 
 
 CreateAndSaveACInterpolants=false;
-BatchJob=true;
+BatchJob=false;
 
 CtrlVar.TotalTime=500;
 CtrlVar.Inverse.Regularize.logC.ga=str2double(extract(extract(UserVar.RunType,"-Ca"+digitsPattern+"-"),digitsPattern)) ; 

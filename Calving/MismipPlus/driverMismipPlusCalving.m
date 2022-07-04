@@ -26,18 +26,19 @@ RunType(2)="-MismipPlus-C-DP-Ini5-c0isGL0-5km-" ;
 RunType(3)="-MismipPlus-C-DP-Ini5-c0isGL0-4km-" ;
 RunType(4)="-MismipPlus-C-DP-Ini5-c0isGL0-3km-" ;
 RunType(5)="-MismipPlus-C-DP-Ini5-c0isGL0-2km-" ;
+RunType(6)="-MismipPlus-C-DP-Ini5-c0isGL0-1km-" ;
 
-Irange=1:5 ;
+Irange=6;
 
 
-BatchJob=false;
+BatchJob=true;
 
 if BatchJob
 
     for iJob=Irange
 
         UserVar.RunType=RunType(iJob)  ; % "-MismipPlus-C-DP-Ini5-c0isGL0-5km-" ;
-        job2km=batch(@Ua,0,{UserVar},Pool=1);
+        job1km=batch(@Ua,0,{UserVar},Pool=1);
         pause(30) 
 
     end
