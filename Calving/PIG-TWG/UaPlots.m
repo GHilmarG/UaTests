@@ -1,5 +1,17 @@
 function cbar=UaPlots(CtrlVar,MUA,F,Variable,options)
 
+%%
+%
+% Examples:
+%
+%
+%   UaPlots(CtrlVar,MUA,F,F.h) ; %  plots ice thickness
+%
+%   UaPlots(CtrlVar,MUA,F,"-speed-") ; %  plots (basal) speed
+%
+
+
+
 arguments
     CtrlVar struct
     MUA     struct

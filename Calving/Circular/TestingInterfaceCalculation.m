@@ -42,7 +42,7 @@ switch TestCase
 
 
         [UserVar,MUA]=genmesh2d(UserVar,CtrlVar);
-        % figure ; PlotMuaMesh(CtrlVar,MUA); drawnow
+        figure ; PlotMuaMesh(CtrlVar,MUA); drawnow
 
 
 
