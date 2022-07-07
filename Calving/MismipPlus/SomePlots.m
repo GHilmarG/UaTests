@@ -76,8 +76,8 @@ else
     Figxc=FindOrCreateFigure("Ice Volume") ; clf(Figxc);
 
     for I=Irange
-
-        dVolume=DataCollect{I}.IceVolume-DataCollect{I}.IceVolume(3);
+        iTime=find(abs(DataCollect{I}.time-5)<0.01) ;  % use time=5 as the reference
+        dVolume=DataCollect{I}.IceVolume-DataCollect{I}.IceVolume(iTime);
         plot(DataCollect{I}.time,dVolume/1e9,'-o',Color=col(I))
 
         hold on
@@ -88,6 +88,29 @@ else
 
 
     legend("10 km","5 km","4 km","3 km","2 km","1 km",interpreter="latex")
+
+    %%
+    FigV=FindOrCreateFigure("Convergence") ; clf(FigV);
+    
+    for I=Irange
+
+        iTime5=find(abs(DataCollect{I}.time-5)<0.01) ;  % use time=5 as the reference
+        iTime50=find(abs(DataCollect{I}.time-50)<0.01) ;  % use time=5 as the reference
+        iTime50=iTime50(1); 
+        V(I)=DataCollect{I}.IceVolume(iTime50)-DataCollect{I}.IceVolume(iTime5); 
+    end
+
+    plot([10 5 4 3 2 1],V/1e9,"-o")
+    xlabel("Element Size (km)",Interpreter="latex")
+    ylabel("Ice Volume Change ($\mathrm{km}^3$)",Interpreter="latex")
+    %%
+
+end
+
+
+
+
+
 
 
 end
