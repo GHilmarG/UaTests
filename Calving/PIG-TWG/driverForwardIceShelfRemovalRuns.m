@@ -1,6 +1,6 @@
 
 Resolution="-5km-" ; 
-% Resolution="-10km-" ; % Inverse files still running (2022-07-04)
+Resolution="-10km-" ; % Inverse files still running (2022-07-04)
 % Resolution="-20km-" ; 
 
 
@@ -13,7 +13,7 @@ UserVar.RunType="-FT-P-TWIS-MR4-SM"+Resolution+"Alim-Ca1-Cs100000-Aa1-As100000-"
 CreateAndSaveACInterpolants=true;  % But still created if the files with the interpolants do not exist, 
                                     % but the data files with A and C do.
 
-RunJob=false; 
+RunJob=true; 
 BatchJob=false;
 
 
