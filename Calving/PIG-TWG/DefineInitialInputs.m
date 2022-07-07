@@ -404,13 +404,13 @@ end
 
 %% Time step, total run time, run steps
 
-CtrlVar.dt=1e-3;   
+CtrlVar.dt=1e-5;   
 CtrlVar.ATSdtMax=0.1;
 
 % CtrlVar.ATSdtMin=1e-2;
 % CtrlVar.ThicknessConstraintsItMax=1  ;
 
-CtrlVar.ATSdtMin=0.001;  
+CtrlVar.ATSdtMin=1e-5;  
 
 
 if contains(UserVar.RunType,"-I-")
@@ -521,6 +521,8 @@ CtrlVar.ReadInitialMeshFileName=replace(CtrlVar.ReadInitialMeshFileName,".","k")
 CtrlVar.SaveInitialMeshFileName=replace(CtrlVar.SaveInitialMeshFileName,".","k");
 
 
+UserVar.CFile=replace(UserVar.CFile,".mat","");
+UserVar.AFile=replace(UserVar.AFile,".mat","");
 
 UserVar.CFile=replace(UserVar.CFile,".","k");
 UserVar.AFile=replace(UserVar.AFile,".","k");

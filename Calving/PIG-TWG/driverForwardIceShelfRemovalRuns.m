@@ -1,4 +1,15 @@
 
+
+%%
+%
+% 2022-07-04: I think the long With-Ice-Shelf run stopped at t=363.1. Apparantly some issues with saving files...
+% 2022-07-04: Sending of 5km resolution run with Cornford at 100000 regularistaion for As and Cs with Thwaites Ice Shelf
+%
+%
+%
+%%
+
+
 Resolution="-5km-" ; 
 Resolution="-10km-" ; % Inverse files still running (2022-07-04)
 % Resolution="-20km-" ; 
@@ -7,10 +18,14 @@ Resolution="-10km-" ; % Inverse files still running (2022-07-04)
 UserVar.RunType="-FT-P-TWISC0-MR4-SM"+Resolution+"Alim-Ca1-Cs100000-Aa1-As100000-" ;  % -P-TWISC- is Thwaites Ice Shelf Calved off, 0km away
 UserVar.RunType="-FT-P-TWIS-MR4-SM"+Resolution+"Alim-Ca1-Cs100000-Aa1-As100000-" ;  % not calved off
 
+
+UserVar.RunType="-FT-P-TWIS-MR4-SM-Cornford"+Resolution+"Alim-Ca1-Cs100000-Aa1-As100000-" ;    % not calved off, initially submitted 2022-07-02
+% UserVar.RunType="-FT-P-TWISc0-MR4-SM-Cornford"+Resolution+"Alim-Ca1-Cs100000-Aa1-As100000-" ;  % calved off, initially submitted 2022-07-02
+
 % UserVar.RunType="-FT-P-TWIS-MR4-SM"+Resolution+"Alim-Ca1-Cs1000000-Aa1-As1000000-" ;  % not calved off, have not run this regularisation for either Weertman or Conford
 
 
-CreateAndSaveACInterpolants=true;  % But still created if the files with the interpolants do not exist, 
+CreateAndSaveACInterpolants=false;  % But still created if the files with the interpolants do not exist, 
                                     % but the data files with A and C do.
 
 RunJob=true; 
@@ -23,8 +38,12 @@ CtrlVar.Inverse.Regularize.logC.gs=str2double(extract(extract(UserVar.RunType,"-
 CtrlVar.Inverse.Regularize.logAGlen.ga=str2double(extract(extract(UserVar.RunType,"-Aa"+digitsPattern+"-"),digitsPattern)) ;
 CtrlVar.Inverse.Regularize.logAGlen.gs=str2double(extract(extract(UserVar.RunType,"-As"+digitsPattern+"-"),digitsPattern)) ; 
 
-CtrlVar.SlidingLaw="Weertman";
-CtrlVar.SlidingLaw="Cornford";
+
+if contains(UserVar.RunType,"Cornford")
+    CtrlVar.SlidingLaw="Cornford";
+else
+    CtrlVar.SlidingLaw="Weertman";
+end
 
 CtrlVar.LevelSetDownstreamAGlen=AGlenVersusTemp(0);     
 
