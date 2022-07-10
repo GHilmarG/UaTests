@@ -11,16 +11,22 @@
 
 
 Resolution="-5km-" ; 
-% Resolution="-10km-" ; % Inverse files still running (2022-07-04)
-% Resolution="-20km-" ; 
+Resolution="-10km-" ; % Inverse files still running (2022-07-04)
+% Resolution="-20km-" ; % I think this inversion product for Cornford might not be the latest or fully converged
 
 
 UserVar.RunType="-FT-P-TWISC0-MR4-SM"+Resolution+"Alim-Ca1-Cs100000-Aa1-As100000-" ;  % -P-TWISC- is Thwaites Ice Shelf Calved off, 0km away
-UserVar.RunType="-FT-P-TWIS-MR4-SM"+Resolution+"Alim-Ca1-Cs100000-Aa1-As100000-" ;  % not calved off
+% UserVar.RunType="-FT-P-TWIS-MR4-SM"+Resolution+"Alim-Ca1-Cs100000-Aa1-As100000-" ;  % not calved off
 
 
-UserVar.RunType="-FT-P-TWIS-MR4-SM-Cornford"+Resolution+"Alim-Ca1-Cs100000-Aa1-As100000-" ;    % not calved off, initially submitted 2022-07-02
-% UserVar.RunType="-FT-P-TWISc0-MR4-SM-Cornford"+Resolution+"Alim-Ca1-Cs100000-Aa1-As100000-" ;  % calved off, initially submitted 2022-07-02
+% UserVar.RunType="-FT-P-TWIS-MR4-SM-Cornford"+Resolution+"Alim-Ca1-Cs100000-Aa1-As100000-" ;    % not calved off, initially submitted 2022-07-02
+% UserVar.RunType="-FT-P-TWISC0-MR4-SM-Cornford"+Resolution+"Alim-Ca1-Cs100000-Aa1-As100000-" ;  % calved off, initially submitted 2022-07-02
+
+UserVar.RunType="-FT-P-TWIS-MR4-SM-TM001-Cornford"+Resolution+"Alim-Ca1-Cs100000-Aa1-As100000-" ;    % not calved off with smaller ThickMin initially submitted 2022-07-10
+UserVar.RunType="-FT-P-TWISC0-MR4-SM-TM001-Cornford"+Resolution+"Alim-Ca1-Cs100000-Aa1-As100000-" ;    % calved off with smaller ThickMin initially submitted 2022-07-10
+
+UserVar.RunType="-FT-P-Duvh-TWISC0-MR4-SM-TM001-Cornford"+Resolution+"Alim-Ca1-Cs100000-Aa1-As100000-" ;    % calved off with smaller ThickMin and automated LSF ele deactivation, initially submitted 2022-07-10
+
 
 % UserVar.RunType="-FT-P-TWIS-MR4-SM"+Resolution+"Alim-Ca1-Cs1000000-Aa1-As1000000-" ;  % not calved off, have not run this regularisation for either Weertman or Conford
 
@@ -109,7 +115,7 @@ end
 
 if RunJob
     if BatchJob
-        job1=batch(@Ua,0,{UserVar,CtrlVar},Pool=2) ;
+        job2=batch(@Ua,0,{UserVar,CtrlVar},Pool=2) ;
     else
         Ua(UserVar,CtrlVar)
     end

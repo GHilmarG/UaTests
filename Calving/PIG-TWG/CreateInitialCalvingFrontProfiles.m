@@ -12,13 +12,13 @@ arguments
     UserVar struct
     CtrlVar struct
     MUA     struct
-    F       struct
+    F       {mustBeA(F,{'struct','UaFields'})}
     options.CalvingFront string="-BMCF-" ; % -BedmachineCalvingFronts-"
     options.Plot logical=false
 
 end
 
-%%  Here I am assuming we have files with the current groundign lines and calving fronts of of Antarctia
+%%  Here I am assuming we have files with the current grounding lines and calving fronts of of Antarctia
 
 
 load("GroundingLineForAntarcticaBasedOnBedmachine.mat","xGL","yGL") ;

@@ -21,7 +21,7 @@ arguments
     options.PlotCalvingFronts  logical = true
     options.CalvingFrontColor char = "k"
     options.GroundingLineColor char = "r"
-    options.GetRidOfValuesDownStreamOfCalvingFronts=true; 
+    options.GetRidOfValuesDownStreamOfCalvingFronts=false; 
 
 
     % options.ColorMap double=othercolor('YlGnBu6',1028)
