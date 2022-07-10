@@ -1,0 +1,16 @@
+%%
+
+
+load TestSave
+
+Value=0 ; 
+[Xc,Yc]=CalcMuaFieldsContourLine(CtrlVar,MUA,F0.LSF,Value) ; 
+
+[xc,yc,LSF,xcEdges,ycEdges,ShapeDifference]=...
+    CalvingFrontLevelSetGeometricalInitialisation(CtrlVar,MUA,Xc,Yc,F0.LSF,...
+    method="InputPoints",...
+    ResampleCalvingFront=true,...
+    CalvingFrontPointDistance=1e3,...
+    plot=true) ;
+
+%%

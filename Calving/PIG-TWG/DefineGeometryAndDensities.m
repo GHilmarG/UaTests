@@ -45,6 +45,15 @@ if contains(FieldsToBeDefined,'b')  || contains(FieldsToBeDefined,'B')
 end
 
 
+if contains(FieldsToBeDefined,'b')  || contains(FieldsToBeDefined,'s')
+% should not really be needed because the interpolants already are based on this mask over regular grid
+    io=inpoly2([F.x F.y],UserVar.BedMachineBoundary);
+    NodesOutsideBoundary=~io ;
+    s(NodesOutsideBoundary)=1 ;  b(NodesOutsideBoundary)=-1 ;
+
+end
+
+
 
 if contains(FieldsToBeDefined,'rho')
     rho=Frho(F.x,F.y);

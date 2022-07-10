@@ -1,5 +1,15 @@
 function UserVar=DefineOutputs(UserVar,CtrlVar,MUA,BCs,F,l,GF,InvStartValues,InvFinalValues,Priors,Meas,BCsAdjoint,RunInfo)
     
+persistent xcVector nCall tVector xcAna tAna
+
+
+if isempty(nCall)
+    nCall=0;
+    xcVector=nan(10000,1);
+    tVector=nan(10000,1);
+end
+
+
     time=CtrlVar.time;
     
     if ~isfield(UserVar,'Plots')
@@ -17,15 +27,16 @@ function UserVar=DefineOutputs(UserVar,CtrlVar,MUA,BCs,F,l,GF,InvStartValues,Inv
         % save data in files with running names
         % check if folder 'ResultsFiles' exists, if not create
         
-        if exist(fullfile(cd,UserVar.Outputsdirectory),'dir')~=7
-            mkdir(UserVar.Outputsdirectory) ;
+        %if exist(fullfile(cd,UserVar.ResultsFileDirectory),'dir')~=7
+        if not(isfolder(UserVar.ResultsFileDirectory))
+            mkdir( UserVar.ResultsFileDirectory) ;
         end
         
         if strcmp(CtrlVar.DefineOutputsInfostring,'Last call')==0
             
             
             FileName=sprintf('%s/%07i-Nodes%i-Ele%i-Tri%i-kH%i-%s.mat',...
-                UserVar.Outputsdirectory,round(100*time),MUA.Nnodes,MUA.Nele,MUA.nod,1000*CtrlVar.kH,CtrlVar.Experiment);
+                 UserVar.ResultsFileDirectory,round(100*time),MUA.Nnodes,MUA.Nele,MUA.nod,1000*CtrlVar.kH,CtrlVar.Experiment);
             fprintf(' Saving data in %s \n',FileName)
             save(FileName,'UserVar','CtrlVar','MUA','F')
             
@@ -240,8 +251,8 @@ function UserVar=DefineOutputs(UserVar,CtrlVar,MUA,BCs,F,l,GF,InvStartValues,Inv
             else
                 Mask=u*0+1;
             end
-            FERMSE=FE_RootMeanSquareError(u.*Mask,F.ub.*Mask,MUA.M,u.*Mask);
-            fprintf(' Finite-Element Root-Mean-Square-Deviation between u analytical and numerical is %g \n',FERMSE)
+            % FERMSE=FE_RootMeanSquareError(u.*Mask,F.ub.*Mask,MUA.M,u.*Mask);
+            % fprintf(' Finite-Element Root-Mean-Square-Deviation between u analytical and numerical is %g \n',FERMSE)
         end
         
         
@@ -276,24 +287,75 @@ function UserVar=DefineOutputs(UserVar,CtrlVar,MUA,BCs,F,l,GF,InvStartValues,Inv
             ax.XAxisLocation = 'origin';
             title(sprintf('Profile along the medial line at t=%g',CtrlVar.time))
         end
-        
-        
-        
-        
+
+        FindOrCreateFigure("LSF solve mesh ") ; PlotMuaMesh(CtrlVar,MUA) ;
+        Flsf=FindOrCreateFigure("LSF solve LSF ") ; clf(Flsf) ;
+        PlotMeshScalarVariable(CtrlVar,MUA,F.LSF/1000) ;
+        hold on ; [xc,yc]=PlotCalvingFronts(CtrlVar,MUA,F.LSF,"r",LineWidth=2 ) ;
+        title("$\varphi$"+sprintf(" at t=%2.1f",F.time),Interpreter="latex")
+
+
+        nCall=nCall+1;
+        xcVector(nCall)=min(xc);
+        tVector(nCall)=F.time;
+        FindOrCreateFigure("xc(t)")
+        plot(tVector,xcVector/1000,'or-')
+        title("$\varphi(t)$",Interpreter="latex")
+        xlabel('$t$ (yr)','interpreter','latex') ;
+        ylabel('$x_c$ (km)','interpreter','latex') ;
+
+        if isempty(xcAna)  % Calculate analytical calving positions
+            switch UserVar.CalvingLaw.Scale
+
+                case "-hqk-"
+                    p=-2 ;
+                    k=86320694.4400036;
+                    dt=0.1;  % this is my rough dt for simple explicit integration
+                    tMax=10000 ;
+                    N=floor(tMax/dt);
+                    xcAna=NaN(N,1) ;
+                    tAna=NaN(N,1);
+                    xcAna(1)=200e3 ;
+                    tAna(1)=0;
+                    n=1;
+
+                    while tAna(n)<=tMax
+
+                        [s,b,u]=AnalyticalOneDimentionalIceShelf([],xcAna(n)) ;
+                        h=s-b;
+                        c=k*h^p ;
+                        xcAna(n+1)=xcAna(n)+(u-c)*dt;
+                        tAna(n+1)=tAna(n)+dt ;
+                        n=n+1;
+
+                    end
+                    xcAna(xcAna<0)=NaN;
+                otherwise
+                    error("CaseNotImplemented")
+            end
+        end
+        hold on 
+        II=tAna<=max(F.time);
+        plot(tAna(II),xcAna(II)/1000,'k--+')
+
+
+
+        %%
+
     end
-    
+
     if contains(plots,'-mesh-')
-        
+
         fig300=figure(300);
         fig300.Position=[1200 700 figsWidth figHeights];
         PlotMuaMesh(CtrlVar,MUA)
         hold on
-        
+
         [xGL,yGL,GLgeo]=PlotGroundingLines(CtrlVar,MUA,GF,GLgeo,xGL,yGL,'r','LineWidth',2);
         title(sprintf('t=%g',time))
         hold off
     end
-    
+
     drawnow
     %%
 end

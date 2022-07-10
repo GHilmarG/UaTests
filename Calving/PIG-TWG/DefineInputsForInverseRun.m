@@ -36,11 +36,17 @@ Err=double(FerrMeas(MUA.coordinates(:,1),MUA.coordinates(:,2)));
 % may, or may not, be a good idea. But the important thing is to set the errors where data is missing to some really high value. Here I
 % set the errors to 1e10.
 MissingData=isnan(Meas.us) | isnan(Meas.vs) | isnan(Err) | (Err==0);
-Meas.us(MissingData)=0 ;  Meas.vs(MissingData)=0 ; Err(MissingData)=1e10; 
+Meas.us(MissingData)=0 ;  Meas.vs(MissingData)=0 ; Err(MissingData)=1e10;
 
-% The data errors as specified by these covariance matrices. 
+io=inpoly2([F.x F.y],UserVar.BedMachineBoundary);
+NodesOutsideBoundary=~io ;
+Meas.us(NodesOutsideBoundary)=0 ;  Meas.vs(NodesOutsideBoundary)=0 ; Err(NodesOutsideBoundary)=1e10;
+
+
+
+% The data errors as specified by these covariance matrices.
 % The data errors are assumed to be uncorrelated, hence we are here using diagonal covariance matrices.
-usError=Err ; vsError=Err ; 
+usError=Err ; vsError=Err ;
 Meas.usCov=sparse(1:MUA.Nnodes,1:MUA.Nnodes,usError.^2,MUA.Nnodes,MUA.Nnodes);
 Meas.vsCov=sparse(1:MUA.Nnodes,1:MUA.Nnodes,vsError.^2,MUA.Nnodes,MUA.Nnodes);
 
@@ -84,10 +90,16 @@ switch CtrlVar.SlidingLaw
         error("Ua:DefineInputsForInverseRund:CaseNotFound","Sliding law prior for this sliding law not implemented")
 end
 
+Priors.C=kk_proj(Priors.C,CtrlVar.Cmax,CtrlVar.Cmin) ;
+Priors.AGlen=kk_proj(Priors.AGlen,CtrlVar.AGlenmax,CtrlVar.AGlenmin) ;
 
 %% Define Start Values
 % This is only used at the very start of the inversion. (In an inverse restart run the initial value is always the last values from
 % previous run.)
+
+
+
+
 InvStartValues.C=Priors.C ;
 InvStartValues.m=F.m ;
 InvStartValues.q=F.q;
@@ -98,8 +110,8 @@ InvStartValues.n=F.n ;
 % OK, here I'm allowing for the initial A and C to be read from a file, overwriting the previous values
 % The A and C estimates in these file could, for example, have been obtained from a previous inversion.
 %
-% NOte the ~ here, make sure this is what you want
-if ~UserVar.Slipperiness.ReadFromFile
+
+if UserVar.Slipperiness.ReadFromFile
     
     fprintf('DefineInputsForInverseRun: loading start values for C from the file: %-s ',UserVar.CFile)
     load(UserVar.CFile,'FC')
@@ -108,7 +120,8 @@ if ~UserVar.Slipperiness.ReadFromFile
     % make sure that interpolation/extrapolation does not violate parameter value constraints
     InvStartValues.C=kk_proj(InvStartValues.C,CtrlVar.Cmax,CtrlVar.Cmin) ;
 end
-if ~UserVar.AGlen.ReadFromFile
+
+if UserVar.AGlen.ReadFromFile
     fprintf('DefineSlipperyDistribution: loading file: %-s ',UserVar.AFile)
     load(UserVar.AFile,'FA')
     fprintf(' done \n')
