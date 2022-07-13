@@ -147,6 +147,7 @@ elseif contains(UserVar.RunType,"-MR7-")
 
 end
 
+% only apply basal melt strictly below/outside of grounding lines
 F.GF=IceSheetIceShelves(CtrlVar,MUA,F.GF);
 ab(~F.GF.NodesDownstreamOfGroundingLines)=0;
 dabdh(~F.GF.NodesDownstreamOfGroundingLines)=0;

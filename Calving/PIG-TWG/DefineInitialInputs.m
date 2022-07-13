@@ -220,10 +220,16 @@ end
 
 CtrlVar.LevelSetInfoLevel=1 ;
 
+pat="-TM"+digitsPattern+"-";
+ThickMin=str2double(extract(extract(UserVar.RunType,pat),digitsPattern))/100;
 
 
-CtrlVar.ThickMin=1;
-CtrlVar.LevelSetMinIceThickness=CtrlVar.ThickMin+1;    % this is the hmin constant, i.e. the accepted min ice thickness
+if isempty(ThickMin)
+    CtrlVar.ThickMin=1;
+else
+    CtrlVar.ThickMin=ThickMin;
+end
+CtrlVar.LevelSetMinIceThickness=2*CtrlVar.ThickMin;    % this is the hmin constant, i.e. the accepted min ice thickness
 
 %%
 CtrlVar.SaveInitialMeshFileName=[] ; % Do not create a new initial mesh file each time
