@@ -81,7 +81,8 @@ end
 
 
 if contains(UserVar.RunType,"-TWISC")
-    UserVar.CalvingFront0=extract(UserVar.RunType,"-TWISC"+digitsPattern+"-");
+    % UserVar.CalvingFront0=extract(UserVar.RunType,"-TWISC"+digitsPattern+"-");
+    UserVar.CalvingFront0=extract(UserVar.RunType,"-TWISC"+alphanumericsPattern+"-");
 elseif contains(UserVar.RunType,"-BMGL-")
     UserVar.CalvingFront0="-BMGL-";
 elseif contains(UserVar.RunType,"-c0isGL0-")

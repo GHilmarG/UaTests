@@ -29,8 +29,8 @@ Experiment="10km-New-Cornford";
 Experiment="5km-New-Cornford";
 
 CreateVideo=false;
-CalcVAF=true;
-ComparisionPlots=false;
+CalculateVAF=false;
+ComparisionPlots=true;
 
 % Experiment= "ConvergenceStudy";
 
@@ -143,6 +143,7 @@ switch Experiment
             ];
 
         IRange=1:6 ;
+        IRange=[3 6];
 
       VAFStep=5; 
 
@@ -199,7 +200,7 @@ xyBoundary=[xb(:) yb(:)]*1000;
 % xyBoundary=nan;
 
 if CreateVideo
-    Step=10;
+    Step=1;
     for I=IRange
 
 
@@ -216,7 +217,7 @@ M=["+","o","*","^","s","<"];
 DataCollect=cell(10) ;
 
 
-if CalcVAF
+if CalculateVAF
     Step=VAFStep ;
 
 
@@ -309,62 +310,106 @@ if ComparisionPlots
     Files(1)="0000000-Nodes21094-Ele41666-Tri3-kH10000-FT-P-TWIS-MR4-SM-Cornford-10km-Alim-Ca1-Cs100000-Aa1-As100000-";
     Files(2)="0000000-Nodes21094-Ele41666-Tri3-kH10000-FT-P-TWISC0-MR4-SM-Cornford-10km-Alim-Ca1-Cs100000-Aa1-As100000-";
 
-    CompareAGlen=true ;
-
-    if CompareAGlen
-
-        for I=1:2
-            load(Files(I),"MUA","CtrlVar","F") ; FF(I)= F ;
-        end
-
-        FindOrCreateFigure("File1 A") ; UaPlots(CtrlVar,MUA,FF(1),log10(FF(1).AGlen)) ; title("A")
-        FindOrCreateFigure("File2 A") ; UaPlots(CtrlVar,MUA,FF(2),log10(FF(2).AGlen)) ; title("A")
-
-        FindOrCreateFigure("File1 ab") ; UaPlots(CtrlVar,MUA,FF(1),FF(1).ab) ; title("ab")
-        FindOrCreateFigure("File2 ab") ; UaPlots(CtrlVar,MUA,FF(2),FF(2).ab) ; title("ab")
-
-    else
+   SubString(6)="FT-P-Duvh-TWISC0-MR4-SM-TM001-Cornford-10km-Alim-Ca1-Cs100000-Aa1-As100000-";
 
 
+   Files(1)="0000000-Nodes21094-Ele41666-Tri3-kH10000-ThickMin0k01-FT-P-TWISC0-MR4-SM-TM001-Cornford-10km-Alim-Ca1-Cs100000-Aa1-As100000-kmat";
+   Files(2)="0000000-Nodes21094-Ele41666-Tri3-kH10000-ThickMin0k01-FT-P-TWIS-MR4-SM-TM001-Cornford-10km-Alim-Ca1-Cs100000-Aa1-As100000-kmat";
+   IRange=1:2;
+
+   Compare="A" ;
+   Compare="GL" ;
+
+   switch Compare
+
+       case "A"
 
 
-        LS={"Bedrock","Grounding line t=0 yr","Grounding line t=70 yr","Perturbation: Grounding line t=70 yr","Calving front","Pertubation: Calving front"} ;
+           for I=1:2
+               load(Files(I),"MUA","CtrlVar","F") ; FF(I)= F ;
+           end
 
+           FindOrCreateFigure("File1 A") ; UaPlots(CtrlVar,MUA,FF(1),log10(FF(1).AGlen)) ; title("A")
+           FindOrCreateFigure("File2 A") ; UaPlots(CtrlVar,MUA,FF(2),log10(FF(2).AGlen)) ; title("A")
 
+           FindOrCreateFigure("File1 ab") ; UaPlots(CtrlVar,MUA,FF(1),FF(1).ab) ; title("ab")
+           FindOrCreateFigure("File2 ab") ; UaPlots(CtrlVar,MUA,FF(2),FF(2).ab) ; title("ab")
 
-        for I=1:4
-            load(Files(I),"MUA","CtrlVar","F") ; FF(I)= F ;
-        end
+       case "GL"
 
-        fig=FindOrCreateFigure("Comparison") ; clf(fig)
+           fig=FindOrCreateFigure("GL compare"); 
+    
+           Jtime=[0 1 2 3 4 5]; 
+           VAFv=zeros(2,1) ;
+           for J=1:numel(Jtime)
+               
+               fig.Position=[40 450 1080 850];
+               TimeString=sprintf("%7.7i",100*Jtime(J)) ;
+               Files(1)=TimeString+"-Nodes21094-Ele41666-Tri3-kH10000-ThickMin0k01-FT-P-TWISC0-MR4-SM-TM001-Cornford-10km-Alim-Ca1-Cs100000-Aa1-As100000-kmat";
+               Files(2)=TimeString+"-Nodes21094-Ele41666-Tri3-kH10000-ThickMin0k01-FT-P-TWIS-MR4-SM-TM001-Cornford-10km-Alim-Ca1-Cs100000-Aa1-As100000-kmat";
 
-        [~,cbar]=PlotMeshScalarVariable(CtrlVar,MUA,FF(1).B) ;
-        hold on
-
-        for I=[1 3 4]
-            ls=["-","-","-","--"];
-            PlotGroundingLines(CtrlVar,MUA,FF(I).GF,[],[],[],LineWidth=1,LineStyle=ls(I)) ;
-        end
-
-        for I=[1 3]
-            ls=["-","-","--","--"];
-            PlotCalvingFronts(CtrlVar,MUA,FF(I),LineWidth=2,LineStyle=ls(I),color="k") ;
-        end
-
-        leg=legend(Interpreter="latex") ;
-
-        leg.String=LS;
+               for I=1:2
+                   load(Files(I),"MUA","CtrlVar","F") ; FF(I)= F ;
+                    [VAF,IceVolume,GroundedArea,hAF,hfPos]=CalcVAF(CtrlVar,MUA,F.h,F.B,F.S,F.rho,F.rhow,F.GF,boundary=xyBoundary); 
+                    VAFv(I)=VAF.Total;
+               end
 
 
 
+               UaPlots(CtrlVar,MUA,FF(1),FF(2).h-FF(1).h,GroundingLineColor="r",CalvingFrontColor="b") ;
+               title(sprintf("Thickness diff at time %3.1f, dVAF=%g Gt",F.time,(VAFv(2)-VAFv(1))/1e9)
 
-        title(cbar,"(m a.s.l.)")
-        ModifyColormap
-        xlabel("xps (km)")
-        xlabel("yps (km)")
-        axis tight
+               hold on
+               PlotGroundingLines(CtrlVar,MUA,FF(2).GF,[],[],[],color="r",LineStyle="--",LineWidth=2);
+               PlotCalvingFronts(CtrlVar,MUA,F,color="b",LineWidth=2,LineStyle="--");
+               axis([-1620 -1480 -500 -400])
+               fig.Position=[40 450 1080 850];
+           end
 
-    end
+
+       otherwise
+
+
+
+
+           LS={"Bedrock","Grounding line t=0 yr","Grounding line t=70 yr","Perturbation: Grounding line t=70 yr","Calving front","Pertubation: Calving front"} ;
+
+
+
+           for I=1:4
+               load(Files(I),"MUA","CtrlVar","F") ; FF(I)= F ;
+           end
+
+           fig=FindOrCreateFigure("Comparison") ; clf(fig)
+
+           [~,cbar]=PlotMeshScalarVariable(CtrlVar,MUA,FF(1).B) ;
+           hold on
+
+           for I=[1 3 4]
+               ls=["-","-","-","--"];
+               PlotGroundingLines(CtrlVar,MUA,FF(I).GF,[],[],[],LineWidth=1,LineStyle=ls(I)) ;
+           end
+
+           for I=[1 3]
+               ls=["-","-","--","--"];
+               PlotCalvingFronts(CtrlVar,MUA,FF(I),LineWidth=2,LineStyle=ls(I),color="w") ;
+           end
+
+           leg=legend(Interpreter="latex") ;
+
+           leg.String=LS;
+
+
+
+
+           title(cbar,"(m a.s.l.)")
+           ModifyColormap
+           xlabel("xps (km)")
+           xlabel("yps (km)")
+           axis tight
+   end
+
+
 
 end
 %%
