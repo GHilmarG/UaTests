@@ -412,11 +412,10 @@ end
 
 CtrlVar.dt=1e-5;   
 CtrlVar.ATSdtMax=0.1;
-
-% CtrlVar.ATSdtMin=1e-2;
-% CtrlVar.ThicknessConstraintsItMax=1  ;
-
 CtrlVar.ATSdtMin=1e-5;  
+
+
+CtrlVar.ThicknessConstraintsItMax=1  ;
 
 
 if contains(UserVar.RunType,"-I-")

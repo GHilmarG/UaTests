@@ -26,11 +26,11 @@ end
 Experiment="AC-lim" ;
 Experiment="10km-New-Cornford";
 % Experiment="5km-New";
-% Experiment="5km-New-Cornford";
+Experiment="5km-New-Cornford";
 
 CreateVideo=false;
-CalcVAF=false;
-ComparisionPlots=true;
+CalcVAF=true;
+ComparisionPlots=false;
 
 % Experiment= "ConvergenceStudy";
 
@@ -103,17 +103,48 @@ switch Experiment
 
         IRange=1:4 ;
 
-  case "10km-New-Cornford"
+    case "10km-New-Cornford"
 
         SubString(1)="FT-P-TWIS-MR4-SM-Cornford-10km-Alim-Ca1-Cs100000-Aa1-As100000-";
         SubString(2)="FT-P-TWISC0-MR4-SM-Cornford-10km-Alim-Ca1-Cs100000-Aa1-As100000-";
-        IRange=1:2;
+
+        SubString(1)="FT-P-TWIS-MR4-SM-TM001-Cornford-10km-Alim-Ca1-Cs100000-Aa1-As100000-";
+        SubString(2)="FT-P-TWISC0-MR4-SM-TM001-Cornford-10km-Alim-Ca1-Cs100000-Aa1-As100000-";
+
+        SubString(1)="FT-P-Duvh-TWIS-MR4-SM-TM001-Cornford-10km-Alim-Ca1-Cs100000-Aa1-As100000-";
+        SubString(2)="FT-P-Duvh-TWISC0-MR4-SM-TM001-Cornford-10km-Alim-Ca1-Cs100000-Aa1-As100000-";
+
         LegendEntry=[...
             "4.6km: Thwaites ice shelf (Alim, Cornford)",...
             "4.6km: Thwaites ice shelf removed (Alim, Cornford)",...
             ];
 
-      VAFStep=25; 
+        IRange=1:2;
+
+        SubString(1)="FT-P-TWIS-MR4-SM-Cornford-10km-Alim-Ca1-Cs100000-Aa1-As100000-";
+        SubString(2)="FT-P-TWIS-MR4-SM-TM001-Cornford-10km-Alim-Ca1-Cs100000-Aa1-As100000-";
+        SubString(3)="FT-P-Duvh-TWIS-MR4-SM-TM001-Cornford-10km-Alim-Ca1-Cs100000-Aa1-As100000-";
+
+        SubString(4)="FT-P-TWISC0-MR4-SM-Cornford-10km-Alim-Ca1-Cs100000-Aa1-As100000-";
+        SubString(5)="FT-P-TWISC0-MR4-SM-TM001-Cornford-10km-Alim-Ca1-Cs100000-Aa1-As100000-";
+        SubString(6)="FT-P-Duvh-TWISC0-MR4-SM-TM001-Cornford-10km-Alim-Ca1-Cs100000-Aa1-As100000-";
+
+
+
+
+
+        LegendEntry=[...
+            "4.6km: (Alim, Cornford, hmin=1m)",...
+            "4.6km: (Alim, Cornford, hmin=0.01m)",...
+            "4.6km: (Alim, Cornford, hmin=0.01m, LSF Deactivation)",...
+            "4.6km: removed (Alim, Cornford, hmin=1m)",...
+            "4.6km: removed (Alim, Cornford, hmin=0.01m)",...
+            "4.6km: removed (Alim, Cornford, hmin=0.01m, LSF Deactivation)",...
+            ];
+
+        IRange=1:6 ;
+
+      VAFStep=5; 
 
     case "5km"
 
@@ -153,7 +184,7 @@ switch Experiment
             "2.3km: Thwaites ice shelf removed (Alim, Cornford)",...
             ];
 
-        VAFStep=0.1;
+        VAFStep=5;
 end
 
 % 30km = 14km
@@ -180,7 +211,7 @@ end
 
 col=["k","r","g","m","y","k","c","g","m","y"]  ;
 
-lw=[1 1 1 1 1 2 2 2 2 2 ];
+lw=[1 1 1 2 2 2 2 2 2 2 ];
 M=["+","o","*","^","s","<"];
 DataCollect=cell(10) ;
 
@@ -192,7 +223,12 @@ if CalcVAF
     for I=IRange
         fprintf("\n Reading %s \n",SubString(I))
       
-        DataCollect{I}=ReadPlotSequenceOfResultFiles2(FileNameSubstring=SubString(I),PlotType="-collect-",PlotTimestep=Step,VAFBoundary=xyBoundary) ;
+        DataCollect{I}=ReadPlotSequenceOfResultFiles2(FileNameSubstring=SubString(I),...
+            PlotType="-collect-",...
+            PlotTimestep=Step,...
+            PlotTimeInterval=[0 50],...
+            VAFBoundary=xyBoundary) ;
+        
         fprintf("done. \n \n")
     end
 
@@ -212,7 +248,7 @@ if CalcVAF
         yyaxis right
 
 
-        % ax=gca(); linkprop([ax.YAxis(1) ax.YAxis(2)],'limits') ;
+       
 
         ylabel(" Equvivalent global sea level change (mm)")
 
@@ -225,8 +261,12 @@ if CalcVAF
 
     end
     AreaOfTheOcean=3.625e14; % units m^2.
+    
     ax=gca();  ax.YAxis(2).Limits=ax.YAxis(1).Limits*1000*1e9/AreaOfTheOcean;
-    % linkprop([ax.YAxis(1) ax.YAxis(2)],'limits') ;
+    % Note!!!:  If zooming in, the zoom only is with respect to the left y-axis, after each zoom, the above statement must be
+    % rerun in the command line to get the right y limits on the right y-axis
+
+
     legend
     yyaxis left
     fig.CurrentAxes.YAxis(1).Exponent=0;
