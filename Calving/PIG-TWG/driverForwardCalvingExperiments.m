@@ -19,7 +19,7 @@ UserVar.RunType="-FT-C-DP-MR4-Ini5-BMGL-5km-Alim-Ca1-Cs100000-Aa1-As100000-" ;
 
 % UserVar.RunType="-FT-C-DP-MR4-Ini5-BMGL-20km-Alim-Ca1-Cs100000-Aa1-As100000-" ; 
 % UserVar.RunType="-FT-C-AC-MR4-Ini1-BMGL-20km-Alim-Ca1-Cs100000-Aa1-As100000-" ; 
- UserVar.RunType="-FT-C-AC-T5-MR4-Ini1-BMGL-10km-Alim-Ca1-Cs100000-Aa1-As100000-" ; 
+ UserVar.RunType="-FT-C-AC-T5-MR4-Ini1-BMGL-10km-Alim-Ca1-Cs100000-Aa1-As100000-" ; % possibly this was related to a convergence test
 
 %% UserVar.RunType="-FT-AM-C-AC-MR4-Ini1-BMGL-5km-Alim-Ca1-Cs100000-Aa1-As100000-" ; 
 
