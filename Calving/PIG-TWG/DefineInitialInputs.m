@@ -81,7 +81,8 @@ end
 
 
 if contains(UserVar.RunType,"-TWISC")
-    UserVar.CalvingFront0=extract(UserVar.RunType,"-TWISC"+digitsPattern+"-");
+    % UserVar.CalvingFront0=extract(UserVar.RunType,"-TWISC"+digitsPattern+"-");
+    UserVar.CalvingFront0=extract(UserVar.RunType,"-TWISC"+alphanumericsPattern+"-");
 elseif contains(UserVar.RunType,"-BMGL-")
     UserVar.CalvingFront0="-BMGL-";
 elseif contains(UserVar.RunType,"-c0isGL0-")
@@ -412,11 +413,10 @@ end
 
 CtrlVar.dt=1e-5;   
 CtrlVar.ATSdtMax=0.1;
-
-% CtrlVar.ATSdtMin=1e-2;
-% CtrlVar.ThicknessConstraintsItMax=1  ;
-
 CtrlVar.ATSdtMin=1e-5;  
+
+
+CtrlVar.ThicknessConstraintsItMax=1  ;
 
 
 if contains(UserVar.RunType,"-I-")

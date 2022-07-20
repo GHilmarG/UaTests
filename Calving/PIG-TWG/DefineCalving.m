@@ -40,7 +40,7 @@ if isempty(F.LSF)   % Do I need to initialize the level set function?
 
         LSF=-ones(MUA.Nnodes,1) ;
         LSF(F.GF.node>0.5)=+1;
-        Xc=[] ;  % If Xc and Yc are left empty, the Xc and Yc will be calculated as the zero contorl of the LSF field
+        Xc=[] ;  % If Xc and Yc are left empty, the Xc and Yc will be calculated as the zero contour line of the LSF field
         Yc=[] ;
 
 
