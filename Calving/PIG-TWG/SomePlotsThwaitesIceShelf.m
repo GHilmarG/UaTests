@@ -26,11 +26,11 @@ end
 Experiment="AC-lim" ;
 Experiment="10km-New-Cornford";
 % Experiment="5km-New";
-Experiment="5km-New-Cornford";
+% Experiment="5km-New-Cornford";
 
 CreateVideo=false;
-CalculateVAF=false;
-ComparisionPlots=true;
+CalculateVAF=true;
+ComparisionPlots=false;
 
 % Experiment= "ConvergenceStudy";
 
@@ -105,33 +105,20 @@ switch Experiment
 
     case "10km-New-Cornford"
 
-        SubString(1)="FT-P-TWIS-MR4-SM-Cornford-10km-Alim-Ca1-Cs100000-Aa1-As100000-";
-        SubString(2)="FT-P-TWISC0-MR4-SM-Cornford-10km-Alim-Ca1-Cs100000-Aa1-As100000-";
-
-        SubString(1)="FT-P-TWIS-MR4-SM-TM001-Cornford-10km-Alim-Ca1-Cs100000-Aa1-As100000-";
-        SubString(2)="FT-P-TWISC0-MR4-SM-TM001-Cornford-10km-Alim-Ca1-Cs100000-Aa1-As100000-";
-
-        SubString(1)="FT-P-Duvh-TWIS-MR4-SM-TM001-Cornford-10km-Alim-Ca1-Cs100000-Aa1-As100000-";
-        SubString(2)="FT-P-Duvh-TWISC0-MR4-SM-TM001-Cornford-10km-Alim-Ca1-Cs100000-Aa1-As100000-";
-
-        LegendEntry=[...
-            "4.6km: Thwaites ice shelf (Alim, Cornford)",...
-            "4.6km: Thwaites ice shelf removed (Alim, Cornford)",...
-            ];
-
-        IRange=1:2;
 
         SubString(1)="FT-P-TWIS-MR4-SM-Cornford-10km-Alim-Ca1-Cs100000-Aa1-As100000-";
         SubString(2)="FT-P-TWIS-MR4-SM-TM001-Cornford-10km-Alim-Ca1-Cs100000-Aa1-As100000-";
         SubString(3)="FT-P-Duvh-TWIS-MR4-SM-TM001-Cornford-10km-Alim-Ca1-Cs100000-Aa1-As100000-";
-
         SubString(4)="FT-P-TWISC0-MR4-SM-Cornford-10km-Alim-Ca1-Cs100000-Aa1-As100000-";
         SubString(5)="FT-P-TWISC0-MR4-SM-TM001-Cornford-10km-Alim-Ca1-Cs100000-Aa1-As100000-";
         SubString(6)="FT-P-Duvh-TWISC0-MR4-SM-TM001-Cornford-10km-Alim-Ca1-Cs100000-Aa1-As100000-";
+        SubString(7)="FT-P-Duvh-TWISC2-MR4-SM-TM001-Cornford-10km-Alim-Ca1-Cs100000-Aa1-As100000-kmat";
+        SubString(8)="FT-P-Duvh-TWISC0MGL-MR4-SM-TM001-Cornford-10km-Alim-Ca1-Cs100000-Aa1-As100000-kmat";
 
+        SubString(9)="FT-P-TWIS-MR4-SM-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-";
+        SubString(10)="FT-P-TWISC0-MR4-SM-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-";
 
-
-
+     
 
         LegendEntry=[...
             "4.6km: (Alim, Cornford, hmin=1m)",...
@@ -140,10 +127,14 @@ switch Experiment
             "4.6km: removed (Alim, Cornford, hmin=1m)",...
             "4.6km: removed (Alim, Cornford, hmin=0.01m)",...
             "4.6km: removed (Alim, Cornford, hmin=0.01m, LSF Deactivation)",...
+            "4.6km: removed (Alim, Cornford, hmin=0.01m, LSF Deactivation, C2)",...
+            "4.6km: removed (Alim, Cornford, hmin=0.01m, LSF Deactivation, MGL)",...
+            "2.3km: (Alim, Cornford, hmin=1m)",...
+            "2.3km: removed (Alim, Cornford, hmin=1m)",...
             ];
 
         IRange=1:6 ;
-        IRange=[3 6];
+        IRange=1:10;
 
       VAFStep=5; 
 
@@ -213,7 +204,7 @@ end
 col=["k","r","g","m","y","k","c","g","m","y"]  ;
 
 lw=[1 1 1 2 2 2 2 2 2 2 ];
-M=["+","o","*","^","s","<"];
+M=["+","o","*","^","s","<",">","d","h","v"];
 DataCollect=cell(10) ;
 
 
@@ -243,17 +234,16 @@ if CalculateVAF
 
 
         yyaxis left
-        plot(DataCollect{I}.time, (DataCollect{I}.VAF-VAF0)/1e9,'-o',color=col(I),DisplayName=LegendEntry(I),LineWidth=lw(I),Marker=M(I));
+        % plot loss in VAF, that is plot VAF(t=t0)-VAF(t). So if VAF decreases, which causes an increase in sea level, plot \Delta
+        % VAF as a positive quantity 
+        plot(DataCollect{I}.time, (VAF0-DataCollect{I}.VAF)/1e9,'-o',color=col(I),DisplayName=LegendEntry(I),LineWidth=lw(I),Marker=M(I));
         tt=ylim;
-        ylabel(" VAF (km^3)")
+        ylabel("Loss in VAF $(\mathrm{ km^3})$",Interpreter="latex")
         yyaxis right
-
-
        
 
         ylabel(" Equvivalent global sea level change (mm)")
-
-        xlabel("time (yr)") ;
+        xlabel("time (yr)",Interpreter="latex") ;
 
         %FindOrCreateFigure("Grounded area");
         %plot(DataCollect.time,DataCollect.GroundedArea/1e6,'-or');
@@ -268,7 +258,7 @@ if CalculateVAF
     % rerun in the command line to get the right y limits on the right y-axis
 
 
-    legend
+    legend(Interpreter="latex")
     yyaxis left
     fig.CurrentAxes.YAxis(1).Exponent=0;
 end
@@ -357,7 +347,7 @@ if ComparisionPlots
 
 
                UaPlots(CtrlVar,MUA,FF(1),FF(2).h-FF(1).h,GroundingLineColor="r",CalvingFrontColor="b") ;
-               title(sprintf("Thickness diff at time %3.1f, dVAF=%g Gt",F.time,(VAFv(2)-VAFv(1))/1e9)
+               title(sprintf("Thickness diff at time %3.1f, dVAF=%g Gt",F.time,(VAFv(2)-VAFv(1))/1e9))
 
                hold on
                PlotGroundingLines(CtrlVar,MUA,FF(2).GF,[],[],[],color="r",LineStyle="--",LineWidth=2);
