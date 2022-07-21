@@ -145,7 +145,7 @@ end
 
 
 
-if contains(UserVar.RunType,"-C-")
+if contains(UserVar.RunType,"-C-")  && ~isempty(F.c)
 
 
 
@@ -374,7 +374,7 @@ if contains(plots,'-ubvb-')
 
     QuiverColorGHG(F.x(1:N:end),F.y(1:N:end),F.ub(1:N:end),F.vb(1:N:end),CtrlVar);
     hold on ;
-    [xGL,yGL,GLgeo]=PlotGroundingLines(CtrlVar,MUA,F.GF,GLgeo,xGL,yGL,'k');
+    [xGL,yGL,GLgeo]=PlotGroundingLines(CtrlVar,MUA,F.GF,GLgeo,xGL,yGL,'r',LineWidth=2);
     [xc,yc]=PlotCalvingFronts(CtrlVar,MUA,F,'b',LineWidth=1);
     
     plot(xBMGL/CtrlVar.PlotXYscale,yBMGL/CtrlVar.PlotXYscale,'r');

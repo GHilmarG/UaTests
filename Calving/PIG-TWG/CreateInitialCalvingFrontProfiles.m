@@ -22,7 +22,6 @@ end
 
 
 load("GroundingLineForAntarcticaBasedOnBedmachine.mat","xGL","yGL") ;
-%load("GroundingLineForAntarcticaBasedOnBedmachine","GroundingLines") ; xGL=GroundingLines(:,1) ;   yGL=GroundingLines(:,2) ;
 load("MeshBoundaryCoordinatesForAntarcticaBasedOnBedmachine.mat","Boundary");
 
 %%
@@ -52,6 +51,19 @@ elseif contains(options.CalvingFront,"-BMGL-")  % Initial calving front will be 
 
 
 elseif  contains(options.CalvingFront,"-TWISC")  % Thwaites ice shelf to be (partly) eliminated
+
+
+    if contains(options.CalvingFront,"MGL") 
+
+       % use the GL as calculated on the current mesh, not the high-res GL in the Bedmachine data set
+       fprintf("CreateInitialCalvingFrontProfiles:  Basing the new calving front on the grounding-lines of the current mesh. \n")
+       [xGL,yGL]=CalcMuaFieldsContourLine(CtrlVar,MUA,F.GF.node,0.5);
+
+    else
+
+        fprintf("CreateInitialCalvingFrontProfiles:  Basing the new calving front on the grounding-lines of the BedMachine data set. \n")
+
+    end
 
     Dist2GL=str2double(extract(options.CalvingFront,digitsPattern)) ;
 
@@ -143,11 +155,23 @@ elseif  contains(options.CalvingFront,"-TWISC")  % Thwaites ice shelf to be (par
 
         [~,i1]=min(d1);
         [~,i2]=min(d2);
+        isflipped=false;
+        if i1<i2   %  Here I may need to flip the section 
+            itemp=i1;
+            i1=i2;
+            i2=itemp;
+            isflipped=true;
+        end
 
-
-        Xc=Boundary(:,1) ; Yc=Boundary(:,2);      % starting point for calving front is t
-        % he current calving front
+        Xc=Boundary(:,1) ; Yc=Boundary(:,2);      % starting point for calving front is the current calving front
         XcInsert=xGL(i2:i1); YcInsert=yGL(i2:i1); % this is the new calving front for Thwaites, ie the current grounding line
+
+        if isflipped
+
+            XcInsert=flipud(XcInsert) ;
+            YcInsert=flipud(YcInsert) ;
+            
+        end
 
         d1=(Xc-x1).^2+(Yc-y1).^2;
         d2=(Xc-x2).^2+(Yc-y2).^2;
@@ -173,14 +197,25 @@ end
 if options.Plot
 
     FindOrCreateFigure("Grounding lines and Calving fronts")
+
+    load("GroundingLineForAntarcticaBasedOnBedmachine.mat","xGL","yGL") ;
     plot(xGL/CtrlVar.PlotXYscale,yGL/CtrlVar.PlotXYscale,'r')
+
     hold on
     plot(Boundary(:,1)/CtrlVar.PlotXYscale,Boundary(:,2)/CtrlVar.PlotXYscale,'b')
+
+    [xGLM,yGLM]=CalcMuaFieldsContourLine(CtrlVar,MUA,F.GF.node,0.5);
+    plot(xGLM/CtrlVar.PlotXYscale,yGLM/CtrlVar.PlotXYscale,'g')
+
     plot(Xc/CtrlVar.PlotXYscale,Yc/CtrlVar.PlotXYscale,'k',LineWidth=2)
+
     axis equal
-    legend("Bedmachine Grounding Lines","Bedmachine Calving Fronts","Returned Calving Front")
+    legend("Bedmachine Grounding Lines","Bedmachine Calving Fronts","Model Grounding Lines","Returned Calving Front")
     xlabel("xps (km)",Interpreter="latex"); ylabel("yps (km)",Interpreter="latex");
     % axis([-1800 -1400 -700 -200])
+
+
+
 end
 
 

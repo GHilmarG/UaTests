@@ -23,23 +23,35 @@ UserVar.RunType="-FT-P-TWISC0-MR4-SM"+Resolution+"Alim-Ca1-Cs100000-Aa1-As100000
 % UserVar.RunType="-FT-P-TWIS-MR4-SM-Cornford"+Resolution+"Alim-Ca1-Cs100000-Aa1-As100000-" ;    % not calved off, initially submitted 2022-07-02
 % UserVar.RunType="-FT-P-TWISC0-MR4-SM-Cornford"+Resolution+"Alim-Ca1-Cs100000-Aa1-As100000-" ;  % calved off, initially submitted 2022-07-02
 
-UserVar.RunType="-FT-P-TWIS-MR4-SM-TM001-Cornford"+Resolution+"Alim-Ca1-Cs100000-Aa1-As100000-" ;    % not calved off with smaller ThickMin initially submitted 2022-07-10
+% UserVar.RunType="-FT-P-TWIS-MR4-SM"+Resolution+"Alim-Ca1-Cs1000000-Aa1-As1000000-" ;  % not calved off, have not run this regularisation for either Weertman or Conford
+
+%% current runs: for 5 and 10km (but thickmin 0.01 and deactivation have yet to be submitted for 5km)
+% To do: Consider running the 20km runs on Office DESKTOP-G5TCRTD
+UserVar.RunType="-FT-P-TWIS-MR4-SM-TM001-Cornford"+Resolution+"Alim-Ca1-Cs100000-Aa1-As100000-" ;      % not calved off with smaller ThickMin initially submitted 2022-07-10
 UserVar.RunType="-FT-P-TWISC0-MR4-SM-TM001-Cornford"+Resolution+"Alim-Ca1-Cs100000-Aa1-As100000-" ;    % calved off with smaller ThickMin initially submitted 2022-07-10
 
 UserVar.RunType="-FT-P-Duvh-TWISC0-MR4-SM-TM001-Cornford"+Resolution+"Alim-Ca1-Cs100000-Aa1-As100000-" ;    % calved off with smaller ThickMin and automated LSF ele deactivation, initially submitted 2022-07-10
+UserVar.RunType="-FT-P-Duvh-TWIS-MR4-SM-TM001-Cornford"+Resolution+"Alim-Ca1-Cs100000-Aa1-As100000-" ;    % NOT calved off with smaller ThickMin and automated LSF ele deactivation, initially submitted 2022-07-14
+
+% UserVar.RunType="-FT-P-TWIS-MR4-SM-Cornford"+Resolution+"Alim-Ca1-Cs100000-Aa1-As100000-" ;    % not calved off, initially submitted 2022-07-02
+% UserVar.RunType="-FT-P-TWISC0-MR4-SM-Cornford"+Resolution+"Alim-Ca1-Cs100000-Aa1-As100000-" ;  % calved off, initially submitted 2022-07-02
+
+UserVar.RunType="-FT-P-Duvh-TWISC0MGL-MR4-SM-TM001-Cornford"+Resolution+"Alim-Ca1-Cs100000-Aa1-As100000-" ;  % submitted 18 July 2022
+% UserVar.RunType="-FT-P-Duvh-TWISC2-MR4-SM-TM001-Cornford"+Resolution+"Alim-Ca1-Cs100000-Aa1-As100000-" ;     % submitted 18 July 2022
+%%
 
 
-% UserVar.RunType="-FT-P-TWIS-MR4-SM"+Resolution+"Alim-Ca1-Cs1000000-Aa1-As1000000-" ;  % not calved off, have not run this regularisation for either Weertman or Conford
 
 
 CreateAndSaveACInterpolants=false;  % But still created if the files with the interpolants do not exist, 
                                     % but the data files with A and C do.
 
 RunJob=true; 
-BatchJob=false;
+BatchJob=true;
 
 
-CtrlVar.TotalTime=500;
+CtrlVar.TotalTime=200;
+
 CtrlVar.Inverse.Regularize.logC.ga=str2double(extract(extract(UserVar.RunType,"-Ca"+digitsPattern+"-"),digitsPattern)) ; 
 CtrlVar.Inverse.Regularize.logC.gs=str2double(extract(extract(UserVar.RunType,"-Cs"+digitsPattern+"-"),digitsPattern)) ; 
 CtrlVar.Inverse.Regularize.logAGlen.ga=str2double(extract(extract(UserVar.RunType,"-Aa"+digitsPattern+"-"),digitsPattern)) ;
@@ -116,7 +128,7 @@ end
 
 if RunJob
     if BatchJob
-        job2=batch(@Ua,0,{UserVar,CtrlVar},Pool=2) ;
+        job1=batch(@Ua,0,{UserVar,CtrlVar},Pool=2) ;
     else
         Ua(UserVar,CtrlVar)
     end
