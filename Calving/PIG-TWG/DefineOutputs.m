@@ -65,6 +65,7 @@ if contains(plots,'-save-')
                 round(100*CtrlVar.time),MUA.Nnodes,MUA.Nele,MUA.nod,1000*CtrlVar.kH,CtrlVar.ThickMin,CtrlVar.Experiment);
 
         end
+        FileName=replace(FileName,".mat","");
         FileName=replace(FileName,"--","-");
         FileName=replace(FileName,".","k");
         fprintf(' Saving data in %s \n',FileName)

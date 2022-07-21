@@ -91,7 +91,7 @@ if contains(hostname,"DESKTOP-G5TCRTD")
 elseif contains(hostname,"DESKTOP-BU2IHIR")
     UserVar.ResultsFileDirectory="D:\Runs\Calving\PIG-TWG\ResultsFiles\";
 else
-    UserVar.ResultsFileDirectory=".\ResultsFiles\";
+    UserVar.ResultsFileDirectory=pwd+"\ResultsFiles\";
 end
 
 
@@ -234,7 +234,7 @@ if isempty(ThickMin)
 else
     CtrlVar.ThickMin=ThickMin;
 end
-CtrlVar.LevelSetMinIceThickness=2*CtrlVar.ThickMin;    % this is the hmin constant, i.e. the accepted min ice thickness
+CtrlVar.LevelSetMinIceThickness=CtrlVar.ThickMin;    % this is the hmin constant, i.e. the accepted min ice thickness
 
 %%
 CtrlVar.SaveInitialMeshFileName=[] ; % Do not create a new initial mesh file each time
