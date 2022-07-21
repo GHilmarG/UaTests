@@ -80,6 +80,14 @@ elseif  CtrlVar.CalvingLaw.Evaluation=="-int-"
     % c=DefineCalvingAtIntegrationPoints(UserVar,CtrlVar,nan,nan,F.ub,F.vb,F.h,F.s,F.S,F.x,F.y) ;
     c=DefineCalvingAtIntegrationPoints(UserVar,CtrlVar,nan,nan,F) ;
 
+    % OK, have to be carefull here, if I define calving rate involving the level set derivatives themselves, then this does not
+    % work, and I return a nan, but a nan would imply not evolving the level set at all. So must make sure that if c is nan, that
+    % I then simply set it to some numerical value, again this is only for plotting purposes and should maybe better be done in
+    % DefineOutputs
+
+    if isnan(c)
+        c=0;
+    end
 else
 
     % It's assumed that the calving is defined at integration points only, or prescribed directly.
