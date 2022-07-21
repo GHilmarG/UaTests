@@ -54,7 +54,7 @@ CtrlVar.Inverse.Regularize.logC.gs=str2double(extract(extract(UserVar.RunType,"-
 CtrlVar.Inverse.Regularize.logAGlen.ga=str2double(extract(extract(UserVar.RunType,"-Aa"+digitsPattern+"-"),digitsPattern)) ;
 CtrlVar.Inverse.Regularize.logAGlen.gs=str2double(extract(extract(UserVar.RunType,"-As"+digitsPattern+"-"),digitsPattern)) ; 
 
-CtrlVar.ThicknessBarrier=true; CtrlVar.ThicknessConstraints=0 ; CtrlVar.ResetThicknessToMinThickness=0;
+CtrlVar.ThicknessBarrier=true; CtrlVar.ThicknessConstraints=1 ; CtrlVar.ResetThicknessToMinThickness=0;
 
 if contains(UserVar.RunType,"Cornford")
     CtrlVar.SlidingLaw="Cornford";
