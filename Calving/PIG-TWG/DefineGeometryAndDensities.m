@@ -46,10 +46,10 @@ end
 
 
 if contains(FieldsToBeDefined,'b')  || contains(FieldsToBeDefined,'s')
-% should not really be needed because the interpolants already are based on this mask over regular grid
+    % Make sure ice thickness outside of the glaciated areas is set to the current min ice thickness
     io=inpoly2([F.x F.y],UserVar.BedMachineBoundary);
     NodesOutsideBoundary=~io ;
-    s(NodesOutsideBoundary)=1 ;  b(NodesOutsideBoundary)=-1 ;
+    s(NodesOutsideBoundary)=CtrlVar.ThickMin ;  b(NodesOutsideBoundary)=0 ;
 
 end
 

@@ -38,7 +38,7 @@ Err=double(FerrMeas(MUA.coordinates(:,1),MUA.coordinates(:,2)));
 MissingData=isnan(Meas.us) | isnan(Meas.vs) | isnan(Err) | (Err==0);
 Meas.us(MissingData)=0 ;  Meas.vs(MissingData)=0 ; Err(MissingData)=1e10;
 
-io=inpoly2([F.x F.y],UserVar.BedMachineBoundary);
+io=inpoly2([F.x F.y],UserVar.BedMachineBoundary);  % And here I set all errors outside of the Bedmachine boundary to some very large value.
 NodesOutsideBoundary=~io ;
 Meas.us(NodesOutsideBoundary)=0 ;  Meas.vs(NodesOutsideBoundary)=0 ; Err(NodesOutsideBoundary)=1e10;
 

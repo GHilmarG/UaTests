@@ -226,6 +226,7 @@ ThickMin=str2double(extract(extract(UserVar.RunType,pat),digitsPattern))/100;
 
 if isempty(ThickMin)
     CtrlVar.ThickMin=1;
+    CtrlVar.ThickMin=0.01;  % Default changed
 else
     CtrlVar.ThickMin=ThickMin;
 end
@@ -569,7 +570,19 @@ end
 
 CtrlVar.WriteRestartFileInterval=100;
 
-% Test
-% CtrlVar.UseMexFiles=1 ; CtrlVar.UseMexFilesCPUcompare=0;
+
+
+%%
+
+if CtrlVar.InverseRun && CtrlVar.Restart
+
+    [UserVar]=DefineModificationsToInverseRestartRunData(UserVar,CtrlVar) ;
+
+end
+
+% ModifyInverseRestartFile
+
+
+%%
 
 end
