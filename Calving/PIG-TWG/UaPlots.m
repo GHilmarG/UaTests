@@ -67,6 +67,13 @@ else
             [~,cbar]=PlotMeshScalarVariable(CtrlVar,MUA,speed);
             title("$\log_{10}(\| \mathbf{v} \|)$",Interpreter="latex")
 
+        case {"-velocity-","velocity","-ubvb-"}
+          
+          CtrlVar.VelPlotIntervalSpacing='log10';
+          CtrlVar.VelColorMap=options.ColorMap;
+          cbar=QuiverColorGHG(F.x,F.y,F.ub,F.vb,CtrlVar);
+
+
         otherwise
 
             [~,cbar]=PlotMeshScalarVariable(CtrlVar,MUA,F.(Variable));

@@ -5,18 +5,25 @@
 % 2022-07-04: I think the long With-Ice-Shelf run stopped at t=363.1. Apparantly some issues with saving files...
 % 2022-07-04: Sending of 5km resolution run with Cornford at 100000 regularistaion for As and Cs with Thwaites Ice Shelf
 %
-%
-%
+% 2022-07-27: 
+% Job70: FT-P-TWISC0-MR4-SM-TM001-Cornford-10km-Alim-Ca1-Cs100000-Aa1-As100000-                     t=94.7 dt=0.01            
+% Job71: FT-P-Duvh-TWISC0-MR4-SM-TM001-Cornford-10km-Alim-Ca1-Cs100000-Aa1-As100000-                t=102  dt=0.01
+% Job72: FT-P-Duvh-TWIS-MR4-SM-TM001-Cornford-10km-Alim-Ca1-Cs100000-Aa1-As100000-                  t=186 dt=0.02
+% Job74: FT-P-TWIS-MR4-SM-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-                              t=73.9 dt=0.1
+% Job75: FT-P-TWISC0-MR4-SM-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-                            t=17 dt=0.003 (resubmitted on 27 July)
+% Job77: FT-P-Duvh-TWISC2-MR4-SM-TM001-Cornford-10km-Alim-Ca1-Cs100000-Aa1-As100000                 t=200, done
+% Job78: FT-P-Duvh-TWISC0MGL-MR4-SM-TM001-Cornford-10km-Alim-Ca1-Cs100000-Aa1-As100000-             t=142.4428571 with dt=0.0142857
+% Job79: 
 %%
 
 
 Resolution="-5km-" ; 
-Resolution="-10km-" ; % Inverse files still running (2022-07-04)
+% Resolution="-10km-" ; % Inverse files still running (2022-07-04)
 % Resolution="-20km-" ; % I think this inversion product for Cornford might not be the latest or fully converged
 
 
 
-UserVar.RunType="-FT-P-TWISC0-MR4-SM"+Resolution+"Alim-Ca1-Cs100000-Aa1-As100000-" ;  % -P-TWISC- is Thwaites Ice Shelf Calved off, 0km away
+% UserVar.RunType="-FT-P-TWISC0-MR4-SM"+Resolution+"Alim-Ca1-Cs100000-Aa1-As100000-" ;  % -P-TWISC- is Thwaites Ice Shelf Calved off, 0km away
 % UserVar.RunType="-FT-P-TWIS-MR4-SM"+Resolution+"Alim-Ca1-Cs100000-Aa1-As100000-" ;  % not calved off
 
 
@@ -34,14 +41,14 @@ UserVar.RunType="-FT-P-Duvh-TWISC0-MR4-SM-TM001-Cornford"+Resolution+"Alim-Ca1-C
 UserVar.RunType="-FT-P-Duvh-TWIS-MR4-SM-TM001-Cornford"+Resolution+"Alim-Ca1-Cs100000-Aa1-As100000-" ;    % NOT calved off with smaller ThickMin and automated LSF ele deactivation, initially submitted 2022-07-14
 
 % UserVar.RunType="-FT-P-TWIS-MR4-SM-Cornford"+Resolution+"Alim-Ca1-Cs100000-Aa1-As100000-" ;    % not calved off, initially submitted 2022-07-02
-% UserVar.RunType="-FT-P-TWISC0-MR4-SM-Cornford"+Resolution+"Alim-Ca1-Cs100000-Aa1-As100000-" ;  % calved off, initially submitted 2022-07-02
-
-UserVar.RunType="-FT-P-Duvh-TWISC0MGL-MR4-SM-TM001-Cornford"+Resolution+"Alim-Ca1-Cs100000-Aa1-As100000-" ;  % submitted 18 July 2022
+ UserVar.RunType="-FT-P-TWISC0-MR4-SM-Cornford"+Resolution+"Alim-Ca1-Cs100000-Aa1-As100000-" ;  % calved off, initially submitted 2022-07-02
+                    
+% UserVar.RunType="-FT-P-Duvh-TWISC0MGL-MR4-SM-TM001-Cornford"+Resolution+"Alim-Ca1-Cs100000-Aa1-As100000-" ;  % submitted 18 July 2022
 % UserVar.RunType="-FT-P-Duvh-TWISC2-MR4-SM-TM001-Cornford"+Resolution+"Alim-Ca1-Cs100000-Aa1-As100000-" ;     % submitted 18 July 2022
 %%
 
 
-
+ 
 
 CreateAndSaveACInterpolants=false;  % But still created if the files with the interpolants do not exist, 
                                     % but the data files with A and C do.

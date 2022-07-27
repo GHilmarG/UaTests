@@ -17,6 +17,7 @@
 MR="10km" ; 
 
 UserVar.RunType="-FT-Cornford-Duvh-SW10-TM100-C-ACRR-T5-MR4-Ini5-BMGL-"+MR+"-Alim-Ca1-Cs100000-Aa1-As100000-" ;  % difficulties with convergence
+UserVar.RunType="-FT-Cornford-Duvh-SW10-TM100-C-DPRR-MR4-Ini5-BMGL-"+MR+"-Alim-Ca1-Cs100000-Aa1-As100000-" ;  % difficulties with convergence
 % UserVar.RunType="-FT-Cornford-TM100-C-ACRR-T5-MR4-Ini5-BMGL-"+MR+"-Alim-Ca1-Cs100000-Aa1-As100000-" ; 
 
 

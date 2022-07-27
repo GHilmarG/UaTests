@@ -10,6 +10,12 @@ function [UserVar,CtrlVar,MeshBoundaryCoordinates]=DefineInitialInputs(UserVar,C
 %
 
 
+%   -SM-    Apparantly no longer used...                   
+%   -MR4-   Basal melt rate parameterisation #4
+%
+%
+
+
 if isempty(UserVar) || ~isfield(UserVar,'RunType')
 
 
