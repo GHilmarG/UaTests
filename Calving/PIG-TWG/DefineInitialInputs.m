@@ -16,6 +16,7 @@ function [UserVar,CtrlVar,MeshBoundaryCoordinates]=DefineInitialInputs(UserVar,C
 %
 
 
+
 if isempty(UserVar) || ~isfield(UserVar,'RunType')
 
 
@@ -591,6 +592,9 @@ end
 
 % ModifyInverseRestartFile
 
+%% Testing
+% CtrlVar.uvhDesiredWorkAndForceTolerances=[inf 0.1];  
+% CtrlVar.Implicituvh=0;
 
 %%
 
