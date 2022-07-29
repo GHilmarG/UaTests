@@ -7,14 +7,14 @@
 %
 %                                                                                                   2022-07-27       2022-07-28: 
 % Job70: FT-P-TWISC0-MR4-SM-TM001-Cornford-10km-Alim-Ca1-Cs100000-Aa1-As100000-                     t=94.7 dt=0.01     99.73
-% Job71: FT-P-Duvh-TWISC0-MR4-SM-TM001-Cornford-10km-Alim-Ca1-Cs100000-Aa1-As100000-                t=102  dt=0.01    110.04
+% Job71: FT-P-Duvh-TWISC0-MR4-SM-TM001-Cornford-10km-Alim-Ca1-Cs100000-Aa1-As100000-                t=102  dt=0.01    116
 % Job72: FT-P-Duvh-TWIS-MR4-SM-TM001-Cornford-10km-Alim-Ca1-Cs100000-Aa1-As100000-                  t=186 dt=0.02     200.6
 % Job74: FT-P-TWIS-MR4-SM-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-                              t=73.9 dt=0.1      91.29
 % Job75: FT-P-TWISC0-MR4-SM-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-                            t=17 dt=0.003 (resubmitted on 27 July)
 % Job77: FT-P-Duvh-TWISC2-MR4-SM-TM001-Cornford-10km-Alim-Ca1-Cs100000-Aa1-As100000                 t=200, done
-% Job78: FT-P-Duvh-TWISC0MGL-MR4-SM-TM001-Cornford-10km-Alim-Ca1-Cs100000-Aa1-As100000-             t=142.4 dt=0.014    159.74
+% Job78: FT-P-Duvh-TWISC0MGL-MR4-SM-TM001-Cornford-10km-Alim-Ca1-Cs100000-Aa1-As100000-             t=142.4 dt=0.014    159.74         169
 % Job79: 
-% job81: -ThickMin0k01-FT-P-TWISC0-MR4-SM-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-                                t=20.77 dt=0.0142857.
+% job81: -ThickMin0k01-FT-P-TWISC0-MR4-SM-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-                                t=20.77 dt=0.014 23.8
 
 %%
 
@@ -39,11 +39,12 @@ Resolution="-5km-" ;
 UserVar.RunType="-FT-P-TWIS-MR4-SM-TM001-Cornford"+Resolution+"Alim-Ca1-Cs100000-Aa1-As100000-" ;      % not calved off with smaller ThickMin initially submitted 2022-07-10
 UserVar.RunType="-FT-P-TWISC0-MR4-SM-TM001-Cornford"+Resolution+"Alim-Ca1-Cs100000-Aa1-As100000-" ;    % calved off with smaller ThickMin initially submitted 2022-07-10
 
-% UserVar.RunType="-FT-P-Duvh-TWISC0-MR4-SM-TM001-Cornford"+Resolution+"Alim-Ca1-Cs100000-Aa1-As100000-" ;    % calved off with smaller ThickMin and automated LSF ele deactivation, 
+
+UserVar.RunType="-FT-P-Duvh-TWISC0-MR4-SM-TM001-Cornford"+Resolution+"Alim-Ca1-Cs100000-Aa1-As100000-" ;    % calved off with smaller ThickMin and automated LSF ele deactivation, 
                                                                                                             %  initially submitted 2022-07-10 for 10km
                                                                                                             %  then for 5km on  2022-07-27 on DESKTOP-G5TCRTD
 
-
+UserVar.RunType="-FT-P-Duvh-TWISC2-MR4-SM-TM001-Cornford"+Resolution+"Alim-Ca1-Cs100000-Aa1-As100000-" ;    % calved off with smaller ThickMin and automated LSF ele deactivation, 
 
 % UserVar.RunType="-FT-P-Duvh-TWIS-MR4-SM-TM001-Cornford"+Resolution+"Alim-Ca1-Cs100000-Aa1-As100000-" ;    % NOT calved off with smaller ThickMin and automated LSF ele deactivation, 
                                                                                                           % initially submitted 2022-07-14 for 10km

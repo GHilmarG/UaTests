@@ -19,8 +19,11 @@ end
 IRange=1:2;
 
 
-Compare="5km Weertman";
+
 Compare="10km Cornford";
+% Compare="5km Cornford";
+% Compare="5km Weertman";  % This one covers 200 years for both runs
+Compare="10km C2 Cornford";
 
 switch Compare
 
@@ -31,23 +34,32 @@ switch Compare
         SubString(1)="-Tri3-kH10000-ThickMin0k01-FT-P-TWIS-MR4-SM-TM001-Cornford-10km-Alim-Ca1-Cs100000-Aa1-As100000-kmat";
         SubString(2)="-Tri3-kH10000-ThickMin0k01-FT-P-TWISC0-MR4-SM-TM001-Cornford-10km-Alim-Ca1-Cs100000-Aa1-As100000-kmat";
 
-        SubString(1)="-Tri3-kH10000-ThickMin0k01-FT-P-Duvh-TWIS-MR4-SM-TM001-Cornford-10km-Alim-Ca1-Cs100000-Aa1-As100000-kmat";
-        SubString(2)="-Tri3-kH10000-ThickMin0k01-FT-P-Duvh-TWISC0-MR4-SM-TM001-Cornford-10km-Alim-Ca1-Cs100000-Aa1-As100000-kmat";
+        % SubString(1)="-Tri3-kH10000-ThickMin0k01-FT-P-Duvh-TWIS-MR4-SM-TM001-Cornford-10km-Alim-Ca1-Cs100000-Aa1-As100000-kmat";
+        % SubString(2)="-Tri3-kH10000-ThickMin0k01-FT-P-Duvh-TWISC0-MR4-SM-TM001-Cornford-10km-Alim-Ca1-Cs100000-Aa1-As100000-kmat";
+
+     case  "10km C2 Cornford"
+       
+        SubString(1)="-Tri3-kH10000-ThickMin0k01-FT-P-TWIS-MR4-SM-TM001-Cornford-10km-Alim-Ca1-Cs100000-Aa1-As100000-kmat";
+        SubString(2)="TWISC2-MR4-SM-u-cl-mu0k1-Ini-geo-100-Strip1-SW=100km-AD=0-NoCalving-0-TWISC2";
+
 
     case  "5km Weertman"
         % 5km Weertman
         SubString(1)="-Tri3-kH10000-FT-P-TWIS-MR4-SM-5km-Alim-Ca1-Cs100000-Aa1-As100000-";
         SubString(2)="-Tri3-kH10000-FT-P-TWISC0-MR4-SM-5km-Alim-Ca1-Cs100000-Aa1-As100000-";
+            
 
     case  "5km Cornford"
         % 5km Cornford
         SubString(1)="-FT-P-TWIS-MR4-SM-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-";
         SubString(2)="-FT-P-TWISC0-MR4-SM-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-";
+       %         -Tri3-kH10000-ThickMin0k01-FT-P-TWISC0-MR4-SM-TM001-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-          
 
     case  "20km Cornford"
         % 20km Cornford
         SubString(1)="Nodes5348-Ele10433-Tri3-kH10000-ThickMin0k01-FT-P-TWIS-MR4-SM-TM001-Cornford-20km-Alim-Ca1-Cs100000-Aa1-As100000-";
         SubString(2)="Nodes5348-Ele10433-Tri3-kH10000-ThickMin0k01-FT-P-TWISC0-MR4-SM-TM001-Cornford-20km-Alim-Ca1-Cs100000-Aa1-As100000-";
+        
 
     otherwise
         error("which case")
