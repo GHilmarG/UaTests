@@ -578,7 +578,7 @@ else
 end
 
 
-CtrlVar.WriteRestartFileInterval=100;
+CtrlVar.WriteRestartFileInterval=20;
 
 
 
