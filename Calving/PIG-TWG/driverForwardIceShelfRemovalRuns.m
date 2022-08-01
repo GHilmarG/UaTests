@@ -3,7 +3,8 @@
 %%
 %
 % 2022-07-04: I think the long With-Ice-Shelf run stopped at t=363.1. Apparantly some issues with saving files...
-% 2022-07-04: Sending of 5km resolution run with Cornford at 100000 regularistaion for As and Cs with Thwaites Ice Shelf
+% 2022-07-04: Sending of 5km resolution run with Cornford at 100000 regularisation
+% for As and Cs with Thwaites Ice Shelf
 %
 %                                                                                                   2022-07-27       2022-07-28: 
 % Job70: FT-P-TWISC0-MR4-SM-TM001-Cornford-10km-Alim-Ca1-Cs100000-Aa1-As100000-                     t=94.7 dt=0.01     99.73
