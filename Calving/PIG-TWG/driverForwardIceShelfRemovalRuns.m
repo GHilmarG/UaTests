@@ -26,7 +26,7 @@ CtrlVar.SlidingLaw="Weertman";
 C="C0" ;
 
 
-CreateAndSaveACInterpolants=false;  % But still created if the files with the interpolants do not exist, 
+CreateAndSaveACInterpolants=true;  % But still created if the files with the interpolants do not exist, 
                                     % but the data files with A and C do.
 
 RunJob=true; 
@@ -137,7 +137,7 @@ if CreateAndSaveACInterpolants ||  (~isfile(UserVar.AFile)  || ~isfile(UserVar.C
 
     if isfile(AdataFile) && isfile(CdataFile)
 
-        fprintf("Createing FA and FC interpolants.\n")
+        fprintf("Creating FA and FC interpolants.\n")
         fprintf("FA in %s.\n",UserVar.AFile)
         fprintf("FC in %s.\n",UserVar.CFile)
 
@@ -152,7 +152,9 @@ if CreateAndSaveACInterpolants ||  (~isfile(UserVar.AFile)  || ~isfile(UserVar.C
 
     else
 
-        warning("cant create interpolants as A & C data files do not exist")
+        warning("Can not create interpolants as A & C data files do not exist")
+        fprintf("A data file: %s.\n",AdataFile)
+        fprintf("C data file: %s.\n",CdataFile)
         return
 
     end
