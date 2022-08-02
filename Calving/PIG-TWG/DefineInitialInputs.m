@@ -16,6 +16,7 @@ function [UserVar,CtrlVar,MeshBoundaryCoordinates]=DefineInitialInputs(UserVar,C
 %
 
 
+
 if isempty(UserVar) || ~isfield(UserVar,'RunType')
 
 
@@ -426,7 +427,7 @@ CtrlVar.ATSdtMax=0.1;
 CtrlVar.ATSdtMin=1e-6;  
 CtrlVar.NRitmax=150;       % maximum number of NR iteration
 
-CtrlVar.ThicknessConstraintsItMax=5  ;
+CtrlVar.ThicknessConstraintsItMax=1  ;
 
 
 if contains(UserVar.RunType,"-I-")
@@ -578,7 +579,7 @@ else
 end
 
 
-CtrlVar.WriteRestartFileInterval=100;
+CtrlVar.WriteRestartFileInterval=20;
 
 
 
@@ -592,6 +593,9 @@ end
 
 % ModifyInverseRestartFile
 
+%% Testing
+% CtrlVar.uvhDesiredWorkAndForceTolerances=[inf 0.1];  
+% CtrlVar.Implicituvh=0;
 
 %%
 
