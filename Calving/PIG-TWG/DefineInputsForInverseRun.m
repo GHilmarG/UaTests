@@ -90,6 +90,39 @@ switch CtrlVar.SlidingLaw
         error("Ua:DefineInputsForInverseRund:CaseNotFound","Sliding law prior for this sliding law not implemented")
 end
 
+if contains(UserVar.RunType,"Clim")
+
+
+
+    %% What to do about areas where there are no velocity data?
+    % What prior to use for C over those areas?
+    % Answer:  Interpolate/Extrapolate from those areas where I have data.
+
+
+    CPrior=Priors.C ;
+
+
+    FCdata=scatteredInterpolant(F.x(~MissingData),F.y(~MissingData),CPrior(~MissingData)) ;
+
+    CPrior=FCdata(F.x,F.y) ;   
+    % This should be looked at, possibly extrapolation might cause negative C values. Here I simply limit the range afterwards
+    Priors.CPrior=kk_proj(CPrior,CtrlVar.Cmax,CtrlVar.Cmin) ; 
+
+    
+    
+    
+    % This is good at filling holes in the data, but less good over areas far away from vel data
+    % For example, this is not good for the ocean floor.
+    NoDataAndAfloat=MissingData & F.GF.node<0.5 ;
+    CminAFloat=5e-3 ;
+    CPrior(NoDataAndAfloat)=CminAFloat ;
+
+    AfloatAndCtooLow=F.GF.node<0.5 & CPrior<CminAFloat ;
+    CPrior(AfloatAndCtooLow)=CminAFloat;
+    Priors.C=CPrior;
+end
+%%
+
 Priors.C=kk_proj(Priors.C,CtrlVar.Cmax,CtrlVar.Cmin) ;
 Priors.AGlen=kk_proj(Priors.AGlen,CtrlVar.AGlenmax,CtrlVar.AGlenmin) ;
 
