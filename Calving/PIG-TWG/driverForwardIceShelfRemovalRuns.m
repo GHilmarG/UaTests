@@ -32,7 +32,7 @@ C="C0" ;
 Resolution="-5km-" ;  CtrlVar.SlidingLaw="Cornford"; C="C0" ;
 
 
-CreateAndSaveACInterpolants=true;  % But still created if the files with the interpolants do not exist, 
+CreateAndSaveACInterpolants=false;  % But still created if the files with the interpolants do not exist, 
                                     % but the data files with A and C do.
 
 RunJob=true; 
