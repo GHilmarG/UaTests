@@ -47,6 +47,7 @@ Compare="2.3km Weertman-Cornford";
 Compare="2.3km Weertman-Cornford TWISC0";
 
 Compare="2.3km Cornford";
+Compare="2.3km Cornford C2-C0"; 
 % Compare="2.3km Weertman";  % This one covers 200 years for both runs
 % Note: When comparing I subtract Data(2)-Data(1)
 
@@ -95,17 +96,21 @@ switch Compare
         SubString(1)="-FT-P-TWIS-MR4-SM-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-";
         SubString(2)="-FT-P-TWISC0-MR4-SM-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-";
 
-        % I also have:
-                      
-        SubString(1)="-Tri3-kH10000-ThickMin0k01-FT-P-Duvh-TWISC2-MR4-SM-TM001-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-";
-        SubString(2)="-Tri3-kH10000-ThickMin0k01-FT-P-Duvh-TWISC0-MR4-SM-TM001-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-";
+   case  "2.3km Cornford C2-C0"
+                         
+        
+        SubString(1)="-ThickMin0k01-FT-P-TWISC0-MR4-SM-TM001-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-" ;      % for some reason missing the first 10 years, and also do not have this with Duvh
+        SubString(2)="-ThickMin0k01-FT-P-Duvh-TWISC2-MR4-SM-TM001-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-" ; % only have this with Duvh
+        
 
         TextString=["With Iceshelf: thin lines","Without Iceshelf: thick lines"] ;
 
     case  "2.3km C2 Cornford"
 
-        SubString(1)="-FT-P-TWIS-MR4-SM-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-";
-        SubString(2)="-FT-P-Duvh-TWISC2-MR4-SM-TM001-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-";
+        SubString(1)="-FT-P-TWIS-MR4-SM-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-";              
+        SubString(2)="-Tri3-kH10000-ThickMin0k01-FT-P-Duvh-TWISC2-MR4-SM-TM001-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-";   % only have this with Duvh
+        
+        
 
     case  "2.3km C2 Weertman"
 
