@@ -16,7 +16,11 @@
 % Job78: FT-P-Duvh-TWISC0MGL-MR4-SM-TM001-Cornford-10km-Alim-Ca1-Cs100000-Aa1-As100000-             t=142.4 dt=0.014    159.74         169  200(done)
 % Job79: 
 % job81: -ThickMin0k01-FT-P-TWISC0-MR4-SM-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-                                t=20.77 dt=0.014 23.8
-
+%
+%
+%  Runs missing: Cornford 5km TM001 TWIS (ie reference run for min ice thickness, for both Duvh and not)
+%
+%
 %%
 
 
@@ -24,6 +28,8 @@ Resolution="-10km-" ;
 CtrlVar.SlidingLaw="Cornford";
 CtrlVar.SlidingLaw="Weertman";
 C="C0" ;
+
+Resolution="-5km-" ;  CtrlVar.SlidingLaw="Cornford"; C="C0" ;
 
 
 CreateAndSaveACInterpolants=true;  % But still created if the files with the interpolants do not exist, 
