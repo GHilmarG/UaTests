@@ -1,4 +1,4 @@
-xyBo% Restart-FT-P-TWISC0-MR4-SM-TM001-Cornford-10km-Alim-Ca1-Cs100000-Aa1-As100000-.mat  at t=42.8286
+% Restart-FT-P-TWISC0-MR4-SM-TM001-Cornford-10km-Alim-Ca1-Cs100000-Aa1-As100000-.mat  at t=42.8286
 % Restart-FT-P-TWIS-MR4-SM-TM001-Cornford-10km-Alim-Ca1-Cs100000-Aa1-As100000-.mat  at t=161.564 
 % Restart-FT-P-Duvh-TWISC0-MR4-SM-TM001-Cornford-10km-Alim-Ca1-Cs100000-Aa1-As100000-.mat  at t=53.3 
 % Restart-FT-P-Duvh-TWIS-MR4-SM-TM001-Cornford-10km-Alim-Ca1-Cs100000-Aa1-As100000-.mat  at t=105.55 
@@ -26,15 +26,17 @@ end
 Experiment="AC-lim" ;
 Experiment="10km-New-Cornford";
 % Experiment="5km-New";
-% Experiment="5km-New-Cornford";
+Experiment="5km-New-Cornford";
+Experiment="Compare with ref" ;
 
-CreateVideo=true; 
-CalculateVAF=false;
-ComparisionPlots=false;
+CreateVideo=false; 
+CalculateVAF=true;
+
 
 % Experiment= "ConvergenceStudy";
 
 VAFStep=5; 
+ PlotCase=""  ; 
 
 switch Experiment
 
@@ -173,15 +175,58 @@ switch Experiment
 
     case "5km-New-Cornford"
 
-        SubString(1)="FT-P-TWIS-MR4-SM-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-";
-        SubString(2)="FT-P-TWISC0-MR4-SM-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-";
-        IRange=1:2;
+
+        SubString(1)="-FT-P-TWIS-MR4-SM-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-";
+        SubString(2)="-FT-P-Duvh-TWISC2-MR4-SM-TM001-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-";
+        SubString(3)="-FT-P-TWISC0-MR4-SM-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-";
+
+        IRange=1:3;
         LegendEntry=[...
             "2.3km: Thwaites ice shelf (Alim, Cornford)",...
+            "2.3km: Thwaites ice shelf removed 2km downstream (Alim, Cornford)",...
             "2.3km: Thwaites ice shelf removed (Alim, Cornford)",...
             ];
 
         VAFStep=5;
+
+    case "Compare with ref"
+
+        PlotCase="Compare"  ;
+
+        ComparisionMatrix=[1 nan; 2 1 ; 3 1  ; 4 nan ; 5 4 ; 6 4 ; 7 nan ; 8 7]  ;
+        IRange=ComparisionMatrix(:,1); IRange=IRange' ;
+
+
+
+
+        SubString(1)="-FT-P-TWIS-MR4-SM-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-";
+        SubString(2)="-FT-P-Duvh-TWISC2-MR4-SM-TM001-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-";
+        SubString(3)="-FT-P-TWISC0-MR4-SM-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-";
+
+
+
+        SubString(4)="FT-P-Duvh-TWIS-MR4-SM-TM001-Cornford-10km-Alim-Ca1-Cs100000-Aa1-As100000-";
+        SubString(5)="FT-P-Duvh-TWISC2-MR4-SM-TM001-Cornford-10km-Alim-Ca1-Cs100000-Aa1-As100000-kmat";
+        SubString(6)="FT-P-Duvh-TWISC0-MR4-SM-TM001-Cornford-10km-Alim-Ca1-Cs100000-Aa1-As100000-";
+        
+
+
+        SubString(7)="-FT-P-TWIS-MR4-SM-TM001-Cornford-20km-Alim-Ca1-Cs100000-Aa1-As100000-";
+        SubString(8)="-FT-P-TWISC0-MR4-SM-TM001-Cornford-20km-Alim-Ca1-Cs100000-Aa1-As100000-";
+
+        LegendEntry=[...
+            "2.3km: Thwaites ice shelf (Alim, Cornford)",...
+            "2.3km: Thwaites ice shelf removed 2km downstream (Alim, Cornford)",...
+            "2.3km: Thwaites ice shelf removed (Alim, Cornford)",...
+            "4.6km: Thwaites ice shelf (Alim, Cornford)",...
+            "4.6km: Thwaites ice shelf removed 2km downstream (Alim, Cornford)",...
+            "4.6km: Thwaites ice shelf removed (Alim, Cornford)",...
+            "9.3km: Thwaites ice shelf (Alim, Cornford)",...
+            "9.3km: Thwaites ice shelf removed (Alim, Cornford)",...
+            ];
+
+        VAFStep=10;
+
 end
 
 % 30km = 14km
@@ -223,7 +268,7 @@ if CalculateVAF
         DataCollect{I}=ReadPlotSequenceOfResultFiles2(FileNameSubstring=SubString(I),...
             PlotType="-collect-",...
             PlotTimestep=Step,...
-            PlotTimeInterval=[0 50],...
+            PlotTimeInterval=[0 100],...
             VAFBoundary=xyBoundary) ;
         
         fprintf("done. \n \n")
@@ -241,13 +286,16 @@ if CalculateVAF
         yyaxis left
         % plot loss in VAF, that is plot VAF(t=t0)-VAF(t). So if VAF decreases, which causes an increase in sea level, plot \Delta
         % VAF as a positive quantity 
-        plot(DataCollect{I}.time, (VAF0-DataCollect{I}.VAF)/1e9,'-o',color=col(I),DisplayName=LegendEntry(I),LineWidth=lw(I),Marker=M(I));
+        dVAF=(DataCollect{I}.VAF-VAF0) ;
+
+        % Plot loss in VAF, ie loss in VAF is positive if VAF is lost
+        plot(DataCollect{I}.time,-dVAF/1e9,'-o',color=col(I),DisplayName=LegendEntry(I),LineWidth=lw(I),Marker=M(I));
         tt=ylim;
         ylabel("Loss in VAF $(\mathrm{ km^3})$",Interpreter="latex")
         yyaxis right
        
 
-        ylabel(" Equvivalent global sea level change (mm)")
+        ylabel("Equivalent global sea level change (mm)")
         xlabel("time (yr)",Interpreter="latex") ;
 
         %FindOrCreateFigure("Grounded area");
@@ -257,8 +305,9 @@ if CalculateVAF
 
     end
     AreaOfTheOcean=3.625e14; % units m^2.
-    
-    ax=gca();  ax.YAxis(2).Limits=ax.YAxis(1).Limits*1000*1e9/AreaOfTheOcean;
+
+    ax=gca();  
+    ax.YAxis(2).Limits=ax.YAxis(1).Limits*1000*1e9/AreaOfTheOcean;  % Sea level rise is positive for loss (ie negative) VAF
     % Note!!!:  If zooming in, the zoom only is with respect to the left y-axis, after each zoom, the above statement must be
     % rerun in the command line to get the right y limits on the right y-axis
 
@@ -268,50 +317,124 @@ if CalculateVAF
     fig.CurrentAxes.YAxis(1).Exponent=0;
     %%
 
-    figVAFdVAF=FindOrCreateFigure("VAF and dVAF"); clf(figVAFdVAF);
-
-    for I=IRange
-
-
-        VAF0=DataCollect{I}.VAF(1);  % The ref value, but this could be re-defined for each run in princple
-        yyaxis left
-        % plot loss in VAF, that is plot VAF(t=t0)-VAF(t). So if VAF decreases, which causes an increase in sea level, plot \Delta
-        % VAF as a positive quantity
-        plot(DataCollect{I}.time, (VAF0-DataCollect{I}.VAF)/1e9,'-o',color=col(I),DisplayName=LegendEntry(I),LineWidth=lw(I),Marker=M(I));
-        hold on
-        ylabel("Loss in VAF $(\mathrm{ km^3})$",Interpreter="latex")
+    if PlotCase=="Compare"
         
+        fig=FindOrCreateFigure("Compare"); clf(fig);
+        for I=1:size(ComparisionMatrix,1)
+           
 
-        % Where do I have common data? 
-        IRef=IRange(1); 
-        timeRef=round(DataCollect{IRef}.time(find(~isnan(DataCollect{IRef}.time)))) ;
-        timeCompare=round(DataCollect{I}.time(find(~isnan(DataCollect{I}.time)))) ;
-        TimeVector=intersect(timeRef,timeCompare) ;  % These are the times where I have date in the ref and the comparision arrays
-        dVAF=nan(numel(TimeVector),1); 
-         
-        for k=1:numel(TimeVector)  % Now presumably this can be done better using some vector based converstation...
+            yyaxis left
+            % plot loss in VAF, that is plot VAF(t=t0)-VAF(t). So if VAF decreases, which causes an increase in sea level, plot \Delta
+            % VAF as a positive quantity
 
-              [dtRef,iRef]=min(abs(DataCollect{IRef}.time - TimeVector(k)));          % I know that I have data here at these times, because I've already restricted TimeVector to those times
-              [dtCompare,iCompare]=min(abs(DataCollect{I}.time - TimeVector(k)));
-              dVAF(k)= DataCollect{I}.VAF(iCompare)-DataCollect{IRef}.VAF(iCompare) ;
+
+            iRef=ComparisionMatrix(I,2);
+            iData=ComparisionMatrix(I,1);
+
+            if isnan(iRef)
+                continue
+            end
+
+            % Where do I have common data?
+          
+
+            timeRef=round(DataCollect{iRef}.time(find(~isnan(DataCollect{iRef}.time)))) ;
+            timeCompare=round(DataCollect{iData}.time(find(~isnan(DataCollect{iData}.time)))) ;
+            TimeVector=intersect(timeRef,timeCompare) ;  % These are the times where I have data in the ref and the comparision arrays
+
+
+            dVAF=nan(numel(TimeVector),1);
+
+            for k=1:numel(TimeVector)  
+
+                [dtRef,iRefTime]=min(abs(DataCollect{iRef}.time - TimeVector(k)));          
+                [dtCompare,iCompareTime]=min(abs(DataCollect{iData}.time - TimeVector(k)));
+
+                dtMin=0.001; 
+                if dtRef<dtMin && dtCompare<dtMin  % should not really be needed, 
+                                                         % because  I know that I have data here at these times, 
+                                                         % since I already restricted TimeVector to common times 
+
+                    dVAF(k)= DataCollect{iData}.VAF(iCompareTime)-DataCollect{iRef}.VAF(iRefTime) ;
+                else
+                    dVAF(k)=nan;
+                end
+            end
+
+            yyaxis left
+            plot(TimeVector, -dVAF/1e9,'-o',color=col(I),DisplayName=LegendEntry(iData),LineWidth=lw(I),Marker=M(iData));
+            tt=ylim;
+            ylabel("Loss in VAF $(\mathrm{ km^3})$",Interpreter="latex")
+
+            yyaxis right
+            ylabel("Equivalent global sea level change (mm)")
+            xlabel("time (yr)",Interpreter="latex") ;
+
+            %FindOrCreateFigure("Grounded area");
+            %plot(DataCollect.time,DataCollect.GroundedArea/1e6,'-or');
+            %xlabel("time (yr)") ; ylabel(" Grounded area(km^2)")
+            hold on
+        end
+
+    end
+    AreaOfTheOcean=3.625e14; % units m^2.
+
+    ax=gca();  
+    ax.YAxis(2).Limits=ax.YAxis(1).Limits*1000*1e9/AreaOfTheOcean;
+    % Note!!!:  If zooming in, the zoom only is with respect to the left y-axis, after each zoom, the above statement must be
+    % rerun in the command line to get the right y limits on the right y-axis
+
+
+    legend(ax,Interpreter="latex")
+    yyaxis left
+    fig.CurrentAxes.YAxis(1).Exponent=0;
+
+    %%
+
+    if PlotCase=="Comparing ThickMin for 4.6km"
+
+        figVAFdVAF=FindOrCreateFigure("VAF and dVAF"); clf(figVAFdVAF);
+
+        for I=IRange
+
+
+            VAF0=DataCollect{I}.VAF(1);  % The ref value, but this could be re-defined for each run in princple
+            yyaxis left
+            % plot loss in VAF, that is plot VAF(t=t0)-VAF(t). So if VAF decreases, which causes an increase in sea level, plot \Delta
+            % VAF as a positive quantity
+            plot(DataCollect{I}.time, (VAF0-DataCollect{I}.VAF)/1e9,'-o',color=col(I),DisplayName=LegendEntry(I),LineWidth=lw(I),Marker=M(I));
+            hold on
+            ylabel("Loss in VAF $(\mathrm{ km^3})$",Interpreter="latex")
+
+
+            % Where do I have common data?
+            IRef=IRange(1);
+            timeRef=round(DataCollect{IRef}.time(find(~isnan(DataCollect{IRef}.time)))) ;
+            timeCompare=round(DataCollect{I}.time(find(~isnan(DataCollect{I}.time)))) ;
+            TimeVector=intersect(timeRef,timeCompare) ;  % These are the times where I have date in the ref and the comparision arrays
+            dVAF=nan(numel(TimeVector),1);
+
+            for k=1:numel(TimeVector)  % Now presumably this can be done better using some vector based converstation...
+
+                [dtRef,iRef]=min(abs(DataCollect{IRef}.time - TimeVector(k)));          % I know that I have data here at these times, because I've already restricted TimeVector to those times
+                [dtCompare,iCompare]=min(abs(DataCollect{I}.time - TimeVector(k)));
+                dVAF(k)= DataCollect{I}.VAF(iCompare)-DataCollect{IRef}.VAF(iCompare) ;
+
+            end
+
+            yyaxis right
+            plot(TimeVector,dVAF/1e9,'-o',color=col(I),DisplayName=LegendEntry(I),LineWidth=lw(I),Marker=M(I),LineStyle='--');
+            hold on
+
+            ylabel("Change in VAF with respect to $h_{\mathrm{min}}=1\,\mathrm{m}\,(\mathrm{km}^3)$",Interpreter="latex")
+
 
         end
 
-        yyaxis right
-        plot(TimeVector,dVAF/1e9,'-o',color=col(I),DisplayName=LegendEntry(I),LineWidth=lw(I),Marker=M(I),LineStyle='--');
-        hold on 
-    
-        
-        ylabel("Change in VAF with respect to $h_{\mathrm{min}}=1\,\mathrm{m}\,(\mathrm{km}^3)$",Interpreter="latex")
-        
+        xlabel("time (yr)",Interpreter="latex") ;
+        lg=legend(Interpreter="latex");
 
 
-    end
-
-    xlabel("time (yr)",Interpreter="latex") ;
-    lg=legend(Interpreter="latex");
-
-    if PlotCase=="Comparing ThickMin for 4.6km"
         lg.String{1}="$h_{\mathrm{min}}=1\,\mathrm{m}$";  lg.String{2}="$h_{\mathrm{min}}=0.01\,\mathrm{m}$";  lg.String{3}="$h_{\mathrm{min}}=1\,\mathrm{m}$ and deactivation";
         lg.String(4:6)=[] ;
     end

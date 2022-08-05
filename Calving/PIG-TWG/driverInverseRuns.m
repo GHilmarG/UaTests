@@ -11,6 +11,7 @@ UserVar.RunType='Inverse-MatOpt-Alim-';
 UserVar.RunType='Inverse-MatOpt-Alim-Cornford-';
 UserVar.RunType='Inverse-MatOpt-Alim-Weertman-';
 
+UserVar.RunType='Inverse-MatOpt-Alim-Clim-Cornford-';
 
 UserVar.MeshResolution=5e3; IRange=3:6 ; JRange=3:6 ;
 UserVar.MeshResolution=20e3; IRange=0:7 ; JRange=0:7 ;
