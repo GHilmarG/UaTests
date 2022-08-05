@@ -106,7 +106,7 @@ if contains(UserVar.RunType,"Clim")
 
     CPrior=FCdata(F.x,F.y) ;   
     % This should be looked at, possibly extrapolation might cause negative C values. Here I simply limit the range afterwards
-    Priors.CPrior=kk_proj(CPrior,CtrlVar.Cmax,CtrlVar.Cmin) ; 
+    CPrior=kk_proj(CPrior,CtrlVar.Cmax,CtrlVar.Cmin) ; 
 
     
     
