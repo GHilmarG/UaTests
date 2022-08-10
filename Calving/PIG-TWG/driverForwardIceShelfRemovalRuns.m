@@ -7,11 +7,11 @@
 %
 % 2022-08-01: Consider sending off 10km runs for Weertman, TWIS, TWISC0 and TWISC2
 %                                                                                                   2022-07-27        2022-07-28: 2022-08-01
-% Job70: FT-P-TWISC0-MR4-SM-TM001-Cornford-10km-Alim-Ca1-Cs100000-Aa1-As100000-                     t=94.7 dt=0.01    *TWIS99.73/117
-% Job71: FT-P-Duvh-TWISC0-MR4-SM-TM001-Cornford-10km-Alim-Ca1-Cs100000-Aa1-As100000-                t=102  dt=0.01    116/131
-% Job72: FT-P-Duvh-TWIS-MR4-SM-TM001-Cornford-10km-Alim-Ca1-Cs100000-Aa1-As100000-                  t=186 dt=0.02      200.6/212
+% Job70: FT-P-TWISC0-MR4-SM-TM001-Cornford-10km-Alim-Ca1-Cs100000-Aa1-As100000-                     t=94.7 dt=0.01    99.73/117/147
+% Job71: FT-P-Duvh-TWISC0-MR4-SM-TM001-Cornford-10km-Alim-Ca1-Cs100000-Aa1-As100000-                t=102  dt=0.01    116/131/157
+% Job72: FT-P-Duvh-TWIS-MR4-SM-TM001-Cornford-10km-Alim-Ca1-Cs100000-Aa1-As100000-                  t=186 dt=0.02     200.6/212/252
 
-% Job74: FT-P-TWIS-MR4-SM-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-                              t=73.9 dt=0.1    91.29/95.95/109.97
+% Job74: FT-P-TWIS-MR4-SM-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-                              t=73.9 dt=0.1    91.29/95.95/109.97/110.4
 % Job75: FT-P-TWISC0-MR4-SM-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-                            t=17 dt=0.003    59.3/64.5
 
 % Job77: FT-P-Duvh-TWISC2-MR4-SM-TM001-Cornford-10km-Alim-Ca1-Cs100000-Aa1-As100000                 t=200, done
@@ -24,7 +24,30 @@
 %
 %
 %%
-
+%
+% Cornford-5km TM001&Duvh    TM001~Duvh    TM1
+% TWIS           x             0.1        111
+% TWISC0         x             90         205                       *Duvh-TWISC0*Cornford*5km*.mat     / *FT-P-TWISC0-MR4-SM-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-*.mat
+% TWISC2         93             x          x
+%
+%
+%
+%
+% Weertman-5km TM001&Duvh    TM001~Duvh    TM1
+% TWIS           x             x         361
+% TWISC0         x             x         303
+% TWISC2         x             x          x
+%
+%
+%
+%
+% Weertman-10km TM001&Duvh    TM001~Duvh    TM1
+% TWIS           200           x             100         *Duvh-TWIS-*TM001-Weertman*.mat  /  *-TWIS-*SM-10km*.mat
+% TWISC0         59            x             100         *Duvh-TWISC0-*TM001-Weertman*.mat
+% TWISC2         200           x              x
+%
+%
+%
 
 
 % Resolution="-5km-" ;  CtrlVar.SlidingLaw="Cornford"; C="" ;     Duvh="-Duvh-" ;  % missing

@@ -414,7 +414,7 @@ if CalculateVAF
             TimeVector=intersect(timeRef,timeCompare) ;  % These are the times where I have date in the ref and the comparision arrays
             dVAF=nan(numel(TimeVector),1);
 
-            for k=1:numel(TimeVector)  % Now presumably this can be done better using some vector based converstation...
+            for k=1:numel(TimeVector)  % Now presumably this can be done better using some vectorized approach...
 
                 [dtRef,iRef]=min(abs(DataCollect{IRef}.time - TimeVector(k)));          % I know that I have data here at these times, because I've already restricted TimeVector to those times
                 [dtCompare,iCompare]=min(abs(DataCollect{I}.time - TimeVector(k)));

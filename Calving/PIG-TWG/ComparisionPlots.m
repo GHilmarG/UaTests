@@ -36,20 +36,21 @@ Compare="2.3km C2 Weertman";
 Compare="4.6km C2 Cornford";
 Compare="2.3km C2 Cornford";
 
-Compare="4.6km Cornford";
-
-
-
 
 
 
 Compare="2.3km Weertman-Cornford";
 Compare="2.3km Weertman-Cornford TWISC0";
-
 Compare="2.3km Cornford";
-Compare="2.3km Cornford C2-C0"; 
+Compare="4.6km Cornford";
+
+Compare="2.3km Cornford C0-C2"; 
+
+Compare="2.3km Cornford C0 1m 1cm"; 
+
 % Compare="2.3km Weertman";  % This one covers 200 years for both runs
 % Note: When comparing I subtract Data(2)-Data(1)
+QuiverColorSpeedLimits=[0 1000];
 
 switch Compare
 
@@ -68,6 +69,7 @@ switch Compare
 
 
     case  "4.6km Cornford"
+        
 
 
         % 10km Cornford
@@ -96,14 +98,14 @@ switch Compare
         SubString(1)="-FT-P-TWIS-MR4-SM-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-";
         SubString(2)="-FT-P-TWISC0-MR4-SM-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-";
 
-   case  "2.3km Cornford C2-C0"
-                         
-        
-        SubString(1)="-ThickMin0k01-FT-P-TWISC0-MR4-SM-TM001-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-" ;      % for some reason missing the first 10 years, and also do not have this with Duvh
-        SubString(2)="-ThickMin0k01-FT-P-Duvh-TWISC2-MR4-SM-TM001-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-" ; % only have this with Duvh
+   case  "2.3km Cornford C0-C2"
+                       
+        SubString(1)="-ThickMin0k01-FT-P-Duvh-TWISC2-MR4-SM-TM001-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-" ; % only have this with Duvh
+        SubString(2)="-ThickMin0k01-FT-P-TWISC0-MR4-SM-TM001-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-" ;      % for some reason missing the first 10 years, and also do not have this with Duvh
+
         
 
-        TextString=["With Iceshelf: thin lines","Without Iceshelf: thick lines"] ;
+        TextString=["2km iceshelf: thin lines","No iceshelf: thick lines"] ;
 
     case  "2.3km C2 Cornford"
 
@@ -130,7 +132,7 @@ switch Compare
     case "2.3km Weertman-Cornford"
 
          SubString(1)="-FT-P-TWIS-MR4-SM-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-";
-         SubString(2)="-Tri3-kH10000-FT-P-TWIS-MR4-SM-5km-Alim-Ca1-Cs100000-Aa1-As100000-";         
+         SubString(2)="-Tri3-kH10000-FT-P-TWIS-MR4-SM-5km-Alim-Ca1-Cs100000-Aa1-As100000-";
 
          TextString=["Cornford: thin lines","Weertman: thick lines"] ;
 
@@ -138,12 +140,19 @@ switch Compare
 
     case "2.3km Weertman-Cornford TWISC0"
 
-         SubString(1)="-FT-P-TWISC0-MR4-SM-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-";
-         SubString(2)="-Tri3-kH10000-FT-P-TWISC0-MR4-SM-5km-Alim-Ca1-Cs100000-Aa1-As100000-";         
+        SubString(1)="-FT-P-TWISC0-MR4-SM-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-";
+        SubString(2)="-Tri3-kH10000-FT-P-TWISC0-MR4-SM-5km-Alim-Ca1-Cs100000-Aa1-As100000-";
 
-         TextString=["Cornford: thin lines","Weertman: thick lines"] ;
+        TextString=["Cornford: thin lines","Weertman: thick lines"] ;
 
+    case "2.3km Cornford C0 1m 1cm"
 
+        SubString(1)="-FT-P-TWISC0-MR4-SM-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-";
+        SubString(2)="-FT-P-TWISC0-MR4-SM-TM001-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-";
+
+        QuiverColorSpeedLimits=[0 1];
+        TextString=["Cornford: thin lines","Weertman: thick lines"] ;
+        
     otherwise
         error("which case")
 
@@ -209,7 +218,8 @@ for J=1:numel(TimeVector)
     end
 
 
-    figure(figVAF)
+    figVAF=FindOrCreateFigure("Compare"); clf(figVAF) ;
+    hold off
     cbar=UaPlots(CtrlVar,MUA1,F1,dVAFnode,GroundingLineColor="r",CalvingFrontColor="b") ;
     title(cbar,["VAF","(m w.e.)"]) ;
     
@@ -228,11 +238,14 @@ for J=1:numel(TimeVector)
     axis([-1620 -1400 -520 -340])
     caxis([-50 50])
     ModifyColormap
+    dlat=5/4 ; dlon=10/2 ; PlotLatLonGrid(1000,dlat,dlon);
+    text(-1445,-350,TextString,BackgroundColor="w",FontSize=10,EdgeColor="k");
+    text(-1560,-350,["Grounding lines in red","Calving fronts in blue"],BackgroundColor="w",FontSize=10,EdgeColor="k");
     if J==1
         figVAF.Position=[50 500 1000 800];
     end
 
-    figure(figVel)
+    figVel=FindOrCreateFigure("Velocity"); clf(figVel) ;
     hold off
 
     dub=ub2-F1.ub;
@@ -246,14 +259,14 @@ for J=1:numel(TimeVector)
 %     dvb(~F1.LSFMask.NodesIn)=NaN;
 
     % get rid of values downstream of the grounding line of F1
-    F1.GF=IceSheetIceShelves(CtrlVar,MUA,F1.GF);
+    F1.GF=IceSheetIceShelves(CtrlVar,MUA1,F1.GF);
     dub(F1.GF.NodesDownstreamOfGroundingLines)=NaN;
     dvb(F1.GF.NodesDownstreamOfGroundingLines)=NaN;
 
     dub(VAF2node<eps  | VAF1.node < eps)=NaN;  % also, if interpolated VAF values are small, indicating floating areas, get rid of those too.
     dvb(VAF2node<eps  | VAF1.node < eps)=NaN;
 
-    CtrlVar.VelColorMap=jet(100) ; CtrlVar.QuiverColorSpeedLimits=[0 1000]; 
+    CtrlVar.VelColorMap=jet(100) ; CtrlVar.QuiverColorSpeedLimits=QuiverColorSpeedLimits ; 
 
     if J==1
         CtrlVar.QuiverSameVelocityScalingsAsBefore=false ;
@@ -278,8 +291,9 @@ for J=1:numel(TimeVector)
     if J==1
         figVel.Position=[1050 500 1000 800];
     end
-    text(-1460,-350,TextString,BackgroundColor="w",FontSize=12,EdgeColor="k");
-    text(-1560,-350,["Grounding lines in red","Calving fronts in blue"],BackgroundColor="w",FontSize=12,EdgeColor="k");
+    dlat=5/4 ; dlon=10/2 ; PlotLatLonGrid(1000,dlat,dlon);
+    text(-1445,-350,TextString,BackgroundColor="w",FontSize=10,EdgeColor="k");
+    text(-1560,-350,["Grounding lines in red","Calving fronts in blue"],BackgroundColor="w",FontSize=10,EdgeColor="k");
     drawnow
 
     if AskForInput
