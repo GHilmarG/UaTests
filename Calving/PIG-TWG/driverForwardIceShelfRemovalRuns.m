@@ -26,29 +26,39 @@
 %%
 %
 % Cornford-5km TM001&Duvh    TM001~Duvh    TM1
-% TWIS           x             0.1        111
-% TWISC0         x             90         205                       *Duvh-TWISC0*Cornford*5km*.mat     / *FT-P-TWISC0-MR4-SM-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-*.mat
-% TWISC2         93             x          x
-%
-%
+% TWIS           x             3.0        111         *Duvh-TWIS-*TM001-Cornford*5km*.mat / *P-TWIS-*TM001-Cornford*5km*.mat
+% TWISC0         x             110        205           
+% TWISC2         125             x          x
 %
 %
 % Weertman-5km TM001&Duvh    TM001~Duvh    TM1
-% TWIS           x             x         361
-% TWISC0         x             x         303
-% TWISC2         x             x          x
-%
+% TWIS           6.0             x         361
+% TWISC0         7.1             x         303
+% TWISC2         x               x          x
 %
 %
 %
 % Weertman-10km TM001&Duvh    TM001~Duvh    TM1
 % TWIS           200           x             100         *Duvh-TWIS-*TM001-Weertman*.mat  /  *-TWIS-*SM-10km*.mat
-% TWISC0         59            x             100         *Duvh-TWISC0-*TM001-Weertman*.mat
+% TWISC0         83            x             100         *Duvh-TWISC0-*TM001-Weertman*.mat
 % TWISC2         200           x              x
 %
 %
 %
-
+% Cornfod-10km TM001&Duvh    TM001~Duvh    TM1
+% TWIS           281           161         100       
+% TWISC0         175           173         100       
+% TWISC2         200           x            x
+%
+%
+%
+% Cornfod-20km TM001&Duvh    TM001~Duvh    TM1
+% TWIS            x           200
+% TWISC0          x           200      
+% TWISC2          x             x            x
+%
+%
+%
 
 % Resolution="-5km-" ;  CtrlVar.SlidingLaw="Cornford"; C="" ;     Duvh="-Duvh-" ;  % missing
 Resolution="-5km-" ;  CtrlVar.SlidingLaw="Cornford"; C="" ;     Duvh="" ;  % submitted
