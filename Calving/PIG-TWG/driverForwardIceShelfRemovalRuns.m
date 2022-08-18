@@ -11,7 +11,7 @@
 % Job71: FT-P-Duvh-TWISC0-MR4-SM-TM001-Cornford-10km-Alim-Ca1-Cs100000-Aa1-As100000-                t=102  dt=0.01    116/131/157
 % Job72: FT-P-Duvh-TWIS-MR4-SM-TM001-Cornford-10km-Alim-Ca1-Cs100000-Aa1-As100000-                  t=186 dt=0.02     200.6/212/252
 
-% Job74: FT-P-TWIS-MR4-SM-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-                              t=73.9 dt=0.1    91.29/95.95/109.97/110.4
+% Job74: FT-P-TWIS-MR4-SM-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-                              t=73.9 dt=0.1  91.29/95.95/109.97/110.4/115
 % Job75: FT-P-TWISC0-MR4-SM-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-                            t=17 dt=0.003    59.3/64.5
 
 % Job77: FT-P-Duvh-TWISC2-MR4-SM-TM001-Cornford-10km-Alim-Ca1-Cs100000-Aa1-As100000                 t=200, done
@@ -26,15 +26,15 @@
 %%
 %
 % Cornford-5km TM001&Duvh    TM001~Duvh    TM1
-% TWIS           x             3.0        111         *Duvh-TWIS-*TM001-Cornford*5km*.mat / *P-TWIS-*TM001-Cornford*5km*.mat
-% TWISC0         x             110        205           
-% TWISC2         125             x          x
+% TWIS           x             17.8        115         *Duvh-TWIS-*TM001-Cornford*5km*.mat / *P-TWIS-*TM001-Cornford*5km*.mat
+% TWISC0         x             128         250           
+% TWISC2         148             x          x
 %
 %
 % Weertman-5km TM001&Duvh    TM001~Duvh    TM1
-% TWIS           6.0             x         361
-% TWISC0         7.1             x         303
-% TWISC2         x               x          x
+% TWIS           26.6             x         361        *Duvh-TWIS-MR4*TM001-Weertman*5km*.mat  / *P-TWIS-MR4-SM-5km-Alim*.mat
+% TWISC0         22.4             x         303
+% TWISC2          x               x          x                                              
 %
 %
 %
@@ -46,8 +46,8 @@
 %
 %
 % Cornfod-10km TM001&Duvh    TM001~Duvh    TM1
-% TWIS           281           161         100       
-% TWISC0         175           173         100       
+% TWIS           289           186         100       
+% TWISC0         187           173         100       
 % TWISC2         200           x            x
 %
 %

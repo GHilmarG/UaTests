@@ -18,7 +18,7 @@ FigureDirectory="C:\Users\Hilmar\OneDrive - Northumbria University - Production 
 FileName="D:\Runs\Calving\PIG-TWG\ResultsFiles\0000050-Nodes83632-Ele166223-Tri3-kH10000-FT-P-TWIS-MR4-SM-5km-Alim-Ca1-Cs100000-Aa1-As100000-" ;
 % FileName="D:\Runs\C
 
-ving\PIG-TWG\ResultsFiles\0000000-Nodes83632-Ele166223-Tri3-kH10000-FT-P-TWIS-MR4-SM-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-" ;  % Cornford test
+
 
 fprintf(' Loading %s ',FileName)
 load(FileName,"CtrlVar","MUA","F");

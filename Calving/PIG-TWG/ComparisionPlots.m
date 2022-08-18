@@ -41,12 +41,14 @@ Compare="2.3km C2 Cornford";
 
 Compare="2.3km Weertman-Cornford";
 Compare="2.3km Weertman-Cornford TWISC0";
-Compare="2.3km Cornford";
+
 Compare="4.6km Cornford";
 
 Compare="2.3km Cornford C0-C2"; 
 
 Compare="2.3km Cornford C0 1m 1cm"; 
+
+Compare="2.3km Cornford";
 
 % Compare="2.3km Weertman";  % This one covers 200 years for both runs
 % Note: When comparing I subtract Data(2)-Data(1)
@@ -152,7 +154,7 @@ switch Compare
 
         QuiverColorSpeedLimits=[0 1];
         TextString=["Cornford: thin lines","Weertman: thick lines"] ;
-        
+
     otherwise
         error("which case")
 
@@ -228,7 +230,7 @@ for J=1:numel(TimeVector)
     SLR=-dVAFGt/362 ; 
 
 
-    title(sprintf("%s: VAF diff at time=%3.1f  \n dVAF=%g Gt, SLR=%5.2f (mm)",Compare,F1.time,(VAF2.Total-VAF1.Total)/1e9,SLR),Interpreter="latex" )
+    title(sprintf("%s: VAF diff at time=%3.1f yr \n dVAF=%g Gt, SLR=%5.2f (mm)",Compare,F1.time,(VAF2.Total-VAF1.Total)/1e9,SLR),Interpreter="latex" )
     fprintf("t=%f \t VAF1=%f \t VAF2=%f \n ",F1.time,VAF1.Total/1e9,VAF2.Total/1e9)
     hold on
     PlotGroundingLines(CtrlVar,MUA2,F2.GF,[],[],[],color="r",LineStyle="-",LineWidth=2);
@@ -276,7 +278,7 @@ for J=1:numel(TimeVector)
 
     cbar=QuiverColorGHG(F1.x,F1.y,dub,dvb,CtrlVar) ;
     title(cbar,"(m/a)")
-    title(sprintf("%s: Vel diff at time=%3.1f  \n dVAF=%g Gt, SLR=%5.2f (mm)",Compare,F1.time,(VAF2.Total-VAF1.Total)/1e9,SLR),Interpreter="latex" )
+    title(sprintf("%s: Vel diff at time=%3.1f yr \n dVAF=%g Gt, SLR=%5.2f (mm)",Compare,F1.time,(VAF2.Total-VAF1.Total)/1e9,SLR),Interpreter="latex" )
 
 
     xlabel("xps (km)",Interpreter="latex")
