@@ -14,6 +14,8 @@ if ~contains(WorkDir,"ResultsFiles")
         UserVar.ResultsFileDirectory="F:\Runs\Calving\PIG-TWG\ResultsFiles\";
     elseif contains(hostname,"DESKTOP-BU2IHIR")
         UserVar.ResultsFileDirectory="D:\Runs\Calving\PIG-TWG\ResultsFiles\";
+    elseif contains(hostname,"DESKTOP-014ILS5")
+        UserVar.ResultsFileDirectory="E:\Runs\Calving\PIG-TWG\ResultsFiles\";
     else
         error("case not implemented")
     end
@@ -31,15 +33,15 @@ Experiment="5km-New";
 
 %Experiment="Compare with ref" ;
 
-CreateVideo=true; 
-CalculateVAF=false;
+CreateVideo=false; 
+CalculateVAF=true;
 
 
 % Experiment= "ConvergenceStudy";
 
-VAFStep=5; 
+VAFStep=25; 
 VideoStep=10; 
- PlotCase=""  ; 
+PlotCase=""  ; 
 
 switch Experiment
 
