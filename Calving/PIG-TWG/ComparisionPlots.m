@@ -36,19 +36,23 @@ Compare="2.3km C2 Weertman";
 Compare="4.6km C2 Cornford";
 Compare="2.3km C2 Cornford";
 
-Compare="4.6km Cornford";
-
-
-
 
 
 
 Compare="2.3km Weertman-Cornford";
 Compare="2.3km Weertman-Cornford TWISC0";
 
+Compare="4.6km Cornford";
+
+Compare="2.3km Cornford C0-C2"; 
+
+Compare="2.3km Cornford C0 1m 1cm"; 
+
 Compare="2.3km Cornford";
+
 % Compare="2.3km Weertman";  % This one covers 200 years for both runs
 % Note: When comparing I subtract Data(2)-Data(1)
+QuiverColorSpeedLimits=[0 1000];
 
 switch Compare
 
@@ -67,6 +71,7 @@ switch Compare
 
 
     case  "4.6km Cornford"
+        
 
 
         % 10km Cornford
@@ -95,17 +100,21 @@ switch Compare
         SubString(1)="-FT-P-TWIS-MR4-SM-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-";
         SubString(2)="-FT-P-TWISC0-MR4-SM-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-";
 
-        % I also have:
-                      
-        SubString(1)="-Tri3-kH10000-ThickMin0k01-FT-P-Duvh-TWISC2-MR4-SM-TM001-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-";
-        SubString(2)="-Tri3-kH10000-ThickMin0k01-FT-P-Duvh-TWISC0-MR4-SM-TM001-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-";
+   case  "2.3km Cornford C0-C2"
+                       
+        SubString(1)="-ThickMin0k01-FT-P-Duvh-TWISC2-MR4-SM-TM001-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-" ; % only have this with Duvh
+        SubString(2)="-ThickMin0k01-FT-P-TWISC0-MR4-SM-TM001-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-" ;      % for some reason missing the first 10 years, and also do not have this with Duvh
 
-        TextString=["With Iceshelf: thin lines","Without Iceshelf: thick lines"] ;
+        
+
+        TextString=["2km iceshelf: thin lines","No iceshelf: thick lines"] ;
 
     case  "2.3km C2 Cornford"
 
-        SubString(1)="-FT-P-TWIS-MR4-SM-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-";
-        SubString(2)="-FT-P-Duvh-TWISC2-MR4-SM-TM001-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-";
+        SubString(1)="-FT-P-TWIS-MR4-SM-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-";              
+        SubString(2)="-Tri3-kH10000-ThickMin0k01-FT-P-Duvh-TWISC2-MR4-SM-TM001-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-";   % only have this with Duvh
+        
+        
 
     case  "2.3km C2 Weertman"
 
@@ -125,7 +134,7 @@ switch Compare
     case "2.3km Weertman-Cornford"
 
          SubString(1)="-FT-P-TWIS-MR4-SM-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-";
-         SubString(2)="-Tri3-kH10000-FT-P-TWIS-MR4-SM-5km-Alim-Ca1-Cs100000-Aa1-As100000-";         
+         SubString(2)="-Tri3-kH10000-FT-P-TWIS-MR4-SM-5km-Alim-Ca1-Cs100000-Aa1-As100000-";
 
          TextString=["Cornford: thin lines","Weertman: thick lines"] ;
 
@@ -133,11 +142,18 @@ switch Compare
 
     case "2.3km Weertman-Cornford TWISC0"
 
-         SubString(1)="-FT-P-TWISC0-MR4-SM-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-";
-         SubString(2)="-Tri3-kH10000-FT-P-TWISC0-MR4-SM-5km-Alim-Ca1-Cs100000-Aa1-As100000-";         
+        SubString(1)="-FT-P-TWISC0-MR4-SM-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-";
+        SubString(2)="-Tri3-kH10000-FT-P-TWISC0-MR4-SM-5km-Alim-Ca1-Cs100000-Aa1-As100000-";
 
-         TextString=["Cornford: thin lines","Weertman: thick lines"] ;
+        TextString=["Cornford: thin lines","Weertman: thick lines"] ;
 
+    case "2.3km Cornford C0 1m 1cm"
+
+        SubString(1)="-FT-P-TWISC0-MR4-SM-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-";
+        SubString(2)="-FT-P-TWISC0-MR4-SM-TM001-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-";
+
+        QuiverColorSpeedLimits=[0 1];
+        TextString=["Cornford: thin lines","Weertman: thick lines"] ;
 
     otherwise
         error("which case")
@@ -204,7 +220,8 @@ for J=1:numel(TimeVector)
     end
 
 
-    figure(figVAF)
+    figVAF=FindOrCreateFigure("Compare"); clf(figVAF) ;
+    hold off
     cbar=UaPlots(CtrlVar,MUA1,F1,dVAFnode,GroundingLineColor="r",CalvingFrontColor="b") ;
     title(cbar,["VAF","(m w.e.)"]) ;
     
@@ -213,7 +230,7 @@ for J=1:numel(TimeVector)
     SLR=-dVAFGt/362 ; 
 
 
-    title(sprintf("%s: VAF diff at time=%3.1f  \n dVAF=%g Gt, SLR=%5.2f (mm)",Compare,F1.time,(VAF2.Total-VAF1.Total)/1e9,SLR),Interpreter="latex" )
+    title(sprintf("%s: VAF diff at time=%3.1f yr \n dVAF=%g Gt, SLR=%5.2f (mm)",Compare,F1.time,(VAF2.Total-VAF1.Total)/1e9,SLR),Interpreter="latex" )
     fprintf("t=%f \t VAF1=%f \t VAF2=%f \n ",F1.time,VAF1.Total/1e9,VAF2.Total/1e9)
     hold on
     PlotGroundingLines(CtrlVar,MUA2,F2.GF,[],[],[],color="r",LineStyle="-",LineWidth=2);
@@ -223,11 +240,14 @@ for J=1:numel(TimeVector)
     axis([-1620 -1400 -520 -340])
     caxis([-50 50])
     ModifyColormap
+    dlat=5/4 ; dlon=10/2 ; PlotLatLonGrid(1000,dlat,dlon);
+    text(-1445,-350,TextString,BackgroundColor="w",FontSize=10,EdgeColor="k");
+    text(-1560,-350,["Grounding lines in red","Calving fronts in blue"],BackgroundColor="w",FontSize=10,EdgeColor="k");
     if J==1
         figVAF.Position=[50 500 1000 800];
     end
 
-    figure(figVel)
+    figVel=FindOrCreateFigure("Velocity"); clf(figVel) ;
     hold off
 
     dub=ub2-F1.ub;
@@ -241,14 +261,14 @@ for J=1:numel(TimeVector)
 %     dvb(~F1.LSFMask.NodesIn)=NaN;
 
     % get rid of values downstream of the grounding line of F1
-    F1.GF=IceSheetIceShelves(CtrlVar,MUA,F1.GF);
+    F1.GF=IceSheetIceShelves(CtrlVar,MUA1,F1.GF);
     dub(F1.GF.NodesDownstreamOfGroundingLines)=NaN;
     dvb(F1.GF.NodesDownstreamOfGroundingLines)=NaN;
 
     dub(VAF2node<eps  | VAF1.node < eps)=NaN;  % also, if interpolated VAF values are small, indicating floating areas, get rid of those too.
     dvb(VAF2node<eps  | VAF1.node < eps)=NaN;
 
-    CtrlVar.VelColorMap=jet(100) ; CtrlVar.QuiverColorSpeedLimits=[0 1000]; 
+    CtrlVar.VelColorMap=jet(100) ; CtrlVar.QuiverColorSpeedLimits=QuiverColorSpeedLimits ; 
 
     if J==1
         CtrlVar.QuiverSameVelocityScalingsAsBefore=false ;
@@ -258,7 +278,7 @@ for J=1:numel(TimeVector)
 
     cbar=QuiverColorGHG(F1.x,F1.y,dub,dvb,CtrlVar) ;
     title(cbar,"(m/a)")
-    title(sprintf("%s: Vel diff at time=%3.1f  \n dVAF=%g Gt, SLR=%5.2f (mm)",Compare,F1.time,(VAF2.Total-VAF1.Total)/1e9,SLR),Interpreter="latex" )
+    title(sprintf("%s: Vel diff at time=%3.1f yr \n dVAF=%g Gt, SLR=%5.2f (mm)",Compare,F1.time,(VAF2.Total-VAF1.Total)/1e9,SLR),Interpreter="latex" )
 
 
     xlabel("xps (km)",Interpreter="latex")
@@ -273,8 +293,9 @@ for J=1:numel(TimeVector)
     if J==1
         figVel.Position=[1050 500 1000 800];
     end
-    text(-1460,-350,TextString,BackgroundColor="w",FontSize=12,EdgeColor="k");
-    text(-1560,-350,["Grounding lines in red","Calving fronts in blue"],BackgroundColor="w",FontSize=12,EdgeColor="k");
+    dlat=5/4 ; dlon=10/2 ; PlotLatLonGrid(1000,dlat,dlon);
+    text(-1445,-350,TextString,BackgroundColor="w",FontSize=10,EdgeColor="k");
+    text(-1560,-350,["Grounding lines in red","Calving fronts in blue"],BackgroundColor="w",FontSize=10,EdgeColor="k");
     drawnow
 
     if AskForInput

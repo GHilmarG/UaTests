@@ -7,12 +7,12 @@
 %
 % 2022-08-01: Consider sending off 10km runs for Weertman, TWIS, TWISC0 and TWISC2
 %                                                                                                   2022-07-27        2022-07-28: 2022-08-01
-% Job70: FT-P-TWISC0-MR4-SM-TM001-Cornford-10km-Alim-Ca1-Cs100000-Aa1-As100000-                     t=94.7 dt=0.01    *TWIS99.73/117
-% Job71: FT-P-Duvh-TWISC0-MR4-SM-TM001-Cornford-10km-Alim-Ca1-Cs100000-Aa1-As100000-                t=102  dt=0.01    116/131
-% Job72: FT-P-Duvh-TWIS-MR4-SM-TM001-Cornford-10km-Alim-Ca1-Cs100000-Aa1-As100000-                  t=186 dt=0.02      200.6/212
+% Job70: FT-P-TWISC0-MR4-SM-TM001-Cornford-10km-Alim-Ca1-Cs100000-Aa1-As100000-                     t=94.7 dt=0.01    99.73/117/147
+% Job71: FT-P-Duvh-TWISC0-MR4-SM-TM001-Cornford-10km-Alim-Ca1-Cs100000-Aa1-As100000-                t=102  dt=0.01    116/131/157
+% Job72: FT-P-Duvh-TWIS-MR4-SM-TM001-Cornford-10km-Alim-Ca1-Cs100000-Aa1-As100000-                  t=186 dt=0.02     200.6/212/252
 
-% Job74: FT-P-TWIS-MR4-SM-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-                              t=73.9 dt=0.1    91.29/95.95/109.97
-% Job75: FT-P-TWISC0-MR4-SM-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-                            t=17 dt=0.003    59.3
+% Job74: FT-P-TWIS-MR4-SM-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-                              t=73.9 dt=0.1  91.29/95.95/109.97/110.4/115
+% Job75: FT-P-TWISC0-MR4-SM-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-                            t=17 dt=0.003    59.3/64.5
 
 % Job77: FT-P-Duvh-TWISC2-MR4-SM-TM001-Cornford-10km-Alim-Ca1-Cs100000-Aa1-As100000                 t=200, done
 % Job78: FT-P-Duvh-TWISC0MGL-MR4-SM-TM001-Cornford-10km-Alim-Ca1-Cs100000-Aa1-As100000-             t=142.4 dt=0.014    159.74         169  200(done)
@@ -24,17 +24,53 @@
 %
 %
 %%
-
-
-
-CtrlVar.SlidingLaw="Cornford";
-CtrlVar.SlidingLaw="Weertman";
-C="C0" ; Duvh="-Duvh-" ;
+%
+% Cornford-5km TM001&Duvh    TM001~Duvh    TM1
+% TWIS           x             17.8        115         *Duvh-TWIS-*TM001-Cornford*5km*.mat / *P-TWIS-*TM001-Cornford*5km*.mat
+% TWISC0         x             128         250           
+% TWISC2         148             x          x
+%
+%
+% Weertman-5km TM001&Duvh    TM001~Duvh    TM1
+% TWIS           26.6             x         361        *Duvh-TWIS-MR4*TM001-Weertman*5km*.mat  / *P-TWIS-MR4-SM-5km-Alim*.mat
+% TWISC0         22.4             x         303
+% TWISC2          x               x          x                                              
+%
+%
+%
+% Weertman-10km TM001&Duvh    TM001~Duvh    TM1
+% TWIS           200           x             100         *Duvh-TWIS-*TM001-Weertman*.mat  /  *-TWIS-*SM-10km*.mat
+% TWISC0         83            x             100         *Duvh-TWISC0-*TM001-Weertman*.mat
+% TWISC2         200           x              x
+%
+%
+%
+% Cornfod-10km TM001&Duvh    TM001~Duvh    TM1
+% TWIS           289           186         100       
+% TWISC0         187           173         100       
+% TWISC2         200           x            x
+%
+%
+%
+% Cornfod-20km TM001&Duvh    TM001~Duvh    TM1
+% TWIS            x           200
+% TWISC0          x           200      
+% TWISC2          x             x            x
+%
+%
+%
+%%
 
 % Resolution="-5km-" ;  CtrlVar.SlidingLaw="Cornford"; C="" ;     Duvh="-Duvh-" ;  % missing
 Resolution="-5km-" ;  CtrlVar.SlidingLaw="Cornford"; C="" ;     Duvh="" ;  % submitted
 % Resolution="-5km-" ;  CtrlVar.SlidingLaw="Cornford"; C="C0" ;   Duvh="-Duvh-" ;  % missing
 Resolution="-5km-" ;  CtrlVar.SlidingLaw="Cornford"; C="C0" ;   Duvh="" ;  % running and extended to 400years
+
+% C17777347
+Resolution="-5km-" ;  CtrlVar.SlidingLaw="Cornford"; C="C0" ;   Duvh="" ;  CtrlVar.TotalTime=21;  % for some reason first 20 years of files missing, presumably simply due to name changes
+Resolution="-10km-" ;  CtrlVar.SlidingLaw="Weertman"; C="C0" ;   Duvh="Duvh" ;  CtrlVar.TotalTime=200;  
+Resolution="-5km-" ;  CtrlVar.SlidingLaw="Weertman"; C="" ;   Duvh="Duvh" ;  CtrlVar.TotalTime=200;  
+Resolution="-5km-" ;  CtrlVar.SlidingLaw="Weertman"; C="C0" ;   Duvh="Duvh" ;  CtrlVar.TotalTime=200;  
 
 
 CreateAndSaveACInterpolants=false;  % But still created if the files with the interpolants do not exist, 
@@ -44,55 +80,9 @@ RunJob=true;
 BatchJob=false;
 
 
-%%%%%%%%%%%%%%
+UserVar.RunType="-FT-P-"+Duvh+"-TWIS"+C+"-MR4-SM-TM001-"+CtrlVar.SlidingLaw+Resolution+"Alim-Ca1-Cs100000-Aa1-As100000-" ;  
 
-% Resolution="-10km-" ; % Inverse files still running (2022-07-04)
-% Resolution="-20km-" ; % I think this inversion product for Cornford might not be the latest or fully converged
-
-
-
-% UserVar.RunType="-FT-P-TWISC0-MR4-SM"+Resolution+"Alim-Ca1-Cs100000-Aa1-As100000-" ;  % -P-TWISC- is Thwaites Ice Shelf Calved off, 0km away
-% UserVar.RunType="-FT-P-TWIS-MR4-SM"+Resolution+"Alim-Ca1-Cs100000-Aa1-As100000-" ;  % not calved off
-
-
-% UserVar.RunType="-FT-P-TWIS-MR4-SM-Cornford"+Resolution+"Alim-Ca1-Cs100000-Aa1-As100000-" ;    % not calved off, initially submitted 2022-07-02
-% UserVar.RunType="-FT-P-TWISC0-MR4-SM-Cornford"+Resolution+"Alim-Ca1-Cs100000-Aa1-As100000-" ;  % calved off, initially submitted 2022-07-02
-
-% UserVar.RunType="-FT-P-TWIS-MR4-SM"+Resolution+"Alim-Ca1-Cs1000000-Aa1-As1000000-" ;  % not calved off, have not run this regularisation for either Weertman or Conford
-
-%% current runs: for 5 and 10km (but thickmin 0.01 and deactivation have yet to be submitted for 5km)
-% To do: Consider running the 20km runs on Office DESKTOP-G5TCRTD
-UserVar.RunType="-FT-P-TWIS-MR4-SM-TM001-Cornford"+Resolution+"Alim-Ca1-Cs100000-Aa1-As100000-" ;      % not calved off with smaller ThickMin initially submitted 2022-07-10
-UserVar.RunType="-FT-P-TWISC0-MR4-SM-TM001-Cornford"+Resolution+"Alim-Ca1-Cs100000-Aa1-As100000-" ;    % calved off with smaller ThickMin initially submitted 2022-07-10
-
-UserVar.RunType="-FT-P-Duvh-TWIS"+C+"-MR4-SM-TM001-"+CtrlVar.SlidingLaw+Resolution+"Alim-Ca1-Cs100000-Aa1-As100000-" ;    % calved off with smaller ThickMin initially submitted 2022-07-10
-
-UserVar.RunType="-FT-P-"+Duvh+"-TWIS"+C+"-MR4-SM-TM001-"+CtrlVar.SlidingLaw+Resolution+"Alim-Ca1-Cs100000-Aa1-As100000-" ;    % calved off with smaller ThickMin initially submitted 2022-07-10
-
-
-
-% UserVar.RunType="-FT-P-Duvh-TWISC0-MR4-SM-TM001-Cornford"+Resolution+"Alim-Ca1-Cs100000-Aa1-As100000-" ;    % calved off with smaller ThickMin and automated LSF ele deactivation, 
-                                                                                                            %  initially submitted 2022-07-10 for 10km
-                                                                                                            %  then for 5km on  2022-07-27 on DESKTOP-G5TCRTD
-
-% UserVar.RunType="-FT-P-Duvh-TWISC2-MR4-SM-TM001-Cornford"+Resolution+"Alim-Ca1-Cs100000-Aa1-As100000-" ;    % calved off with smaller ThickMin and automated LSF ele deactivation, 
-
-% UserVar.RunType="-FT-P-Duvh-TWIS-MR4-SM-TM001-Cornford"+Resolution+"Alim-Ca1-Cs100000-Aa1-As100000-" ;    % NOT calved off with smaller ThickMin and automated LSF ele deactivation, 
-                                                                                                          % initially submitted 2022-07-14 for 10km
-                                                                                                          %  then for 5km on  2022-07-27 on DESKTOP-G5TCRTD
-
-% UserVar.RunType="-FT-P-TWIS-MR4-SM-Cornford"+Resolution+"Alim-Ca1-Cs100000-Aa1-As100000-" ;    % not calved off, initially submitted 2022-07-02
-% UserVar.RunType="-FT-P-TWISC0-MR4-SM-Cornford"+Resolution+"Alim-Ca1-Cs100000-Aa1-As100000-" ;  % calved off, initially submitted 2022-07-02
-                    
-% UserVar.RunType="-FT-P-Duvh-TWISC0MGL-MR4-SM-TM001-Cornford"+Resolution+"Alim-Ca1-Cs100000-Aa1-As100000-" ; %submitted 18 July 2022 for 10km res
-% UserVar.RunType="-FT-P-Duvh-TWISC2-MR4-SM-TM001-Cornford"+Resolution+"Alim-Ca1-Cs100000-Aa1-As100000-" ;     % submitted 18 July 2022
-
-
-% UserVar.RunType="-FT-P-TWIS-MR4-SM-TM001-Cornford"+Resolution+"Alim-Ca1-Cs100000-Aa1-As100000-" ;    % NOT calved off with smaller ThickMin, 
-                                                                                                     % send off with 20km on 2022-07-27 on DESKTOP-G5TCRTD
-
-% UserVar.RunType="-FT-P-TWISC0-MR4-SM-TM001-Cornford"+Resolution+"Alim-Ca1-Cs100000-Aa1-As100000-" ;  % calved off with smaller ThickMin, 
-                                                                                                     % send off with 20km on 2022-07-27 on DESKTOP-G5TCRTD
+                                                                                                     
                                                                                                      
 %%
 

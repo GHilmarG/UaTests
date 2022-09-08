@@ -25,17 +25,20 @@ end
 
 Experiment="AC-lim" ;
 Experiment="10km-New-Cornford";
-% Experiment="5km-New";
-Experiment="5km-New-Cornford";
-Experiment="Compare with ref" ;
 
-CreateVideo=false; 
-CalculateVAF=true;
+Experiment="5km-New-Cornford";
+Experiment="5km-New";
+
+%Experiment="Compare with ref" ;
+
+CreateVideo=true; 
+CalculateVAF=false;
 
 
 % Experiment= "ConvergenceStudy";
 
 VAFStep=5; 
+VideoStep=10; 
  PlotCase=""  ; 
 
 switch Experiment
@@ -173,6 +176,8 @@ switch Experiment
             ];
 
 
+       VideoStep=5; 
+
     case "5km-New-Cornford"
 
 
@@ -181,6 +186,7 @@ switch Experiment
         SubString(3)="-FT-P-TWISC0-MR4-SM-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-";
 
         IRange=1:3;
+        IRange=3; 
         LegendEntry=[...
             "2.3km: Thwaites ice shelf (Alim, Cornford)",...
             "2.3km: Thwaites ice shelf removed 2km downstream (Alim, Cornford)",...
@@ -188,15 +194,17 @@ switch Experiment
             ];
 
         VAFStep=5;
+        VideoStep=5; 
 
     case "Compare with ref"
 
         PlotCase="Compare"  ;
 
         ComparisionMatrix=[1 nan; 2 1 ; 3 1  ; 4 nan ; 5 4 ; 6 4 ; 7 nan ; 8 7]  ;
+        
         IRange=ComparisionMatrix(:,1); IRange=IRange' ;
 
-
+        IRange=[1  3  4  6  7  8];
 
 
         SubString(1)="-FT-P-TWIS-MR4-SM-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-";
@@ -225,7 +233,7 @@ switch Experiment
             "9.3km: Thwaites ice shelf removed (Alim, Cornford)",...
             ];
 
-        VAFStep=10;
+        VAFStep=25;
 
 end
 
@@ -241,17 +249,18 @@ xyBoundary=[xb(:) yb(:)]*1000;
 % xyBoundary=nan;
 
 if CreateVideo
-    Step=1;
+    Step=VideoStep; 
     for I=IRange
 
 
-        %ReadPlotSequenceOfResultFiles(FileNameSubstring=SubString(I),PlotTimestep=Step,PlotType="-ubvb-h-") ;
+%        ReadPlotSequenceOfResultFiles(FileNameSubstring=SubString(I),PlotTimestep=Step,PlotType="-ubvb-h-") ;
+        ReadPlotSequenceOfResultFiles(FileNameSubstring=SubString(I),PlotTimestep=Step,PlotType="-ubvb-s-",AxisLimits=[-1700 -1050 -700 0]) ;
         % ReadPlotSequenceOfResultFiles2(FileNameSubstring=SubString(I),PlotTimestep=Step,PlotType="-ubvb-B-") ;
-        ReadPlotSequenceOfResultFiles2(FileNameSubstring=SubString(I),PlotTimestep=Step,PlotType="-ubvb-VAF-",VAFBoundary=xyBoundary) ;
+        % ReadPlotSequenceOfResultFiles2(FileNameSubstring=SubString(I),PlotTimestep=Step,PlotType="-ubvb-VAF-",VAFBoundary=xyBoundary) ;
     end
 end
 
-col=["k","r","g","m","y","k","c","g","m","y","k","r","g"]  ;
+col=["r","b","g","m","y","c","k","b","r","g","m","y","c","k"]  ;
 
 lw=[1 1 1 2 2 2 2 2 2 2 2 2 2 2 2 2 2 ];
 M=["+","o","*","^","s","<",">","d","h","v","+","o","*"];
@@ -307,12 +316,12 @@ if CalculateVAF
     AreaOfTheOcean=3.625e14; % units m^2.
 
     ax=gca();  
-    ax.YAxis(2).Limits=ax.YAxis(1).Limits*1000*1e9/AreaOfTheOcean;  % Sea level rise is positive for loss (ie negative) VAF
+    ax.YAxis(2).Limits=ax.YAxis(1).Limits/362.5 ; % *1000*1e9/AreaOfTheOcean;  % Sea level rise is positive for loss (ie negative) VAF
     % Note!!!:  If zooming in, the zoom only is with respect to the left y-axis, after each zoom, the above statement must be
     % rerun in the command line to get the right y limits on the right y-axis
 
 
-    legend(Interpreter="latex")
+    lgVAF=legend(Interpreter="latex");
     yyaxis left
     fig.CurrentAxes.YAxis(1).Exponent=0;
     %%
@@ -320,7 +329,8 @@ if CalculateVAF
     if PlotCase=="Compare"
         
         fig=FindOrCreateFigure("Compare"); clf(fig);
-        for I=1:size(ComparisionMatrix,1)
+        %for I=1:size(ComparisionMatrix,1)
+        for I=IRange
            
 
             yyaxis left
@@ -414,7 +424,7 @@ if CalculateVAF
             TimeVector=intersect(timeRef,timeCompare) ;  % These are the times where I have date in the ref and the comparision arrays
             dVAF=nan(numel(TimeVector),1);
 
-            for k=1:numel(TimeVector)  % Now presumably this can be done better using some vector based converstation...
+            for k=1:numel(TimeVector)  % Now presumably this can be done better using some vectorized approach...
 
                 [dtRef,iRef]=min(abs(DataCollect{IRef}.time - TimeVector(k)));          % I know that I have data here at these times, because I've already restricted TimeVector to those times
                 [dtCompare,iCompare]=min(abs(DataCollect{I}.time - TimeVector(k)));
