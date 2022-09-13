@@ -140,7 +140,7 @@ CtrlVar.MeshSizeMax=CtrlVar.MeshSize ;
 
 CtrlVar.LevelSetInitialisationInterval=100 ;
 
-CtrlVar.DefineOutputsDt=0.1;
+CtrlVar.DefineOutputsDt=0.5;
 CtrlVar.LevelSetMethodMassBalanceFeedbackCoeffLin=-10;  % This is the constant a1, it has units 1/time.
 CtrlVar.LevelSetMethodMassBalanceFeedbackCoeffCubic=0;
 
