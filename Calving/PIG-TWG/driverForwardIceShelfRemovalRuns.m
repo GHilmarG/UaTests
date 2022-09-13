@@ -26,28 +26,28 @@
 %%
 %
 % Cornford-5km TM001&Duvh    TM001~Duvh    TM1
-% TWIS           x             17.8        115         *Duvh-TWIS-*TM001-Cornford*5km*.mat / *P-TWIS-*TM001-Cornford*5km*.mat
-% TWISC0         x             128         250           
-% TWISC2         148             x          x
+% TWIS           x              97        115         *Duvh-TWISC0-*TM001-Cornford-5km*.mat / *P-TWIS-*TM001-Cornford*5km*.mat
+% TWISC0         x             253        250           
+% TWISC2         200             x          x          *Duvh-TWISC2-*TM001-Cornford-5km*.mat
 %
 %
 % Weertman-5km TM001&Duvh    TM001~Duvh    TM1
-% TWIS           26.6             x         361        *Duvh-TWIS-MR4*TM001-Weertman*5km*.mat  / *P-TWIS-MR4-SM-5km-Alim*.mat
-% TWISC0         22.4             x         303
-% TWISC2          x               x          x                                              
+% TWIS           110             x         361        *Duvh-TWIS-MR4*TM001-Weertman*5km*.mat  / *P-TWIS-MR4-SM-5km-Alim*.mat
+% TWISC0         118             x         303
+% TWISC2          x              x          x                                              
 %
 %
 %
 % Weertman-10km TM001&Duvh    TM001~Duvh    TM1
 % TWIS           200           x             100         *Duvh-TWIS-*TM001-Weertman*.mat  /  *-TWIS-*SM-10km*.mat
-% TWISC0         83            x             100         *Duvh-TWISC0-*TM001-Weertman*.mat
+% TWISC0         165           x             100         *Duvh-TWISC0-*TM001-Weertman*.mat
 % TWISC2         200           x              x
 %
 %
 %
 % Cornfod-10km TM001&Duvh    TM001~Duvh    TM1
-% TWIS           289           186         100       
-% TWISC0         187           173         100       
+% TWIS           359           161         100       
+% TWISC0         224           232         100       
 % TWISC2         200           x            x
 %
 %
