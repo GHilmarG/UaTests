@@ -36,15 +36,15 @@
 %
 %
 % Weertman-5km TM001&Duvh    TM001~Duvh    TM1
-% TWIS           110/HPO         x         361        *Duvh-TWIS-MR4*TM001-Weertman*5km*.mat  / *P-TWIS-MR4-SM-5km-Alim*.mat
-% TWISC0         118/HPO         x         303
+% TWIS           116/HPO         x         361        *Duvh-TWIS-MR4*TM001-Weertman*5km*.mat  / *P-TWIS-MR4-SM-5km-Alim*.mat
+% TWISC0         126/HPO         x         303
 % TWISC2          x              x          x                                              
 %
 %
 %
 % Weertman-10km TM001&Duvh    TM001~Duvh    TM1
 % TWIS           200           x             100         *Duvh-TWIS-*TM001-Weertman*.mat  /  *-TWIS-*SM-10km*.mat
-% TWISC0         165/HPO       x             100         *Duvh-TWISC0-*TM001-Weertman*.mat
+% TWISC0         177/HPO       x             100         *Duvh-TWISC0-*TM001-Weertman*.mat
 % TWISC2         200           x              x
 %
 %
