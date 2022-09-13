@@ -25,22 +25,26 @@
 %
 %%
 %
+% DO= Dell Office
+% HPO= HP Office
+% HPH= HP Home
+%
 % Cornford-5km TM001&Duvh    TM001~Duvh    TM1
-% TWIS           x              97        115         *Duvh-TWISC0-*TM001-Cornford-5km*.mat / *P-TWIS-*TM001-Cornford*5km*.mat
-% TWISC0         x             253        250           
+% TWIS           x             104/D0        115         *Duvh-TWISC0-*TM001-Cornford-5km*.mat / *P-TWIS-*TM001-Cornford*5km*.mat
+% TWISC0         x             263/D0        250           
 % TWISC2         200             x          x          *Duvh-TWISC2-*TM001-Cornford-5km*.mat
 %
 %
 % Weertman-5km TM001&Duvh    TM001~Duvh    TM1
-% TWIS           110             x         361        *Duvh-TWIS-MR4*TM001-Weertman*5km*.mat  / *P-TWIS-MR4-SM-5km-Alim*.mat
-% TWISC0         118             x         303
+% TWIS           110/HPO         x         361        *Duvh-TWIS-MR4*TM001-Weertman*5km*.mat  / *P-TWIS-MR4-SM-5km-Alim*.mat
+% TWISC0         118/HPO         x         303
 % TWISC2          x              x          x                                              
 %
 %
 %
 % Weertman-10km TM001&Duvh    TM001~Duvh    TM1
 % TWIS           200           x             100         *Duvh-TWIS-*TM001-Weertman*.mat  /  *-TWIS-*SM-10km*.mat
-% TWISC0         165           x             100         *Duvh-TWISC0-*TM001-Weertman*.mat
+% TWISC0         165/HPO       x             100         *Duvh-TWISC0-*TM001-Weertman*.mat
 % TWISC2         200           x              x
 %
 %
