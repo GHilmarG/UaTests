@@ -31,7 +31,7 @@
 %
 % Cornford-5km TM001&Duvh    TM001~Duvh    TM1
 % TWIS           x             104/D0        115         *Duvh-TWISC0-*TM001-Cornford-5km*.mat / *P-TWIS-*TM001-Cornford*5km*.mat
-% TWISC0         x             263/D0        250           
+% TWISC0         x             266/D0        250           
 % TWISC2         200             x          x          *Duvh-TWISC2-*TM001-Cornford-5km*.mat
 %
 %
