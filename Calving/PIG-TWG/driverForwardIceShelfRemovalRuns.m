@@ -25,29 +25,33 @@
 %
 %%
 %
+% DO= Dell Office
+% HPO= HP Office
+% HPH= HP Home
+%
 % Cornford-5km TM001&Duvh    TM001~Duvh    TM1
-% TWIS           x             17.8        115         *Duvh-TWIS-*TM001-Cornford*5km*.mat / *P-TWIS-*TM001-Cornford*5km*.mat
-% TWISC0         x             128         250           
-% TWISC2         148             x          x
+% TWIS           x             104/D0        115         *Duvh-TWISC0-*TM001-Cornford-5km*.mat / *P-TWIS-*TM001-Cornford*5km*.mat
+% TWISC0         x             266/D0        250           
+% TWISC2         200             x          x          *Duvh-TWISC2-*TM001-Cornford-5km*.mat
 %
 %
 % Weertman-5km TM001&Duvh    TM001~Duvh    TM1
-% TWIS           26.6             x         361        *Duvh-TWIS-MR4*TM001-Weertman*5km*.mat  / *P-TWIS-MR4-SM-5km-Alim*.mat
-% TWISC0         22.4             x         303
-% TWISC2          x               x          x                                              
+% TWIS           116/HPO         x         361        *Duvh-TWIS-MR4*TM001-Weertman*5km*.mat  / *P-TWIS-MR4-SM-5km-Alim*.mat
+% TWISC0         126/HPO         x         303
+% TWISC2          x              x          x                                              
 %
 %
 %
 % Weertman-10km TM001&Duvh    TM001~Duvh    TM1
 % TWIS           200           x             100         *Duvh-TWIS-*TM001-Weertman*.mat  /  *-TWIS-*SM-10km*.mat
-% TWISC0         83            x             100         *Duvh-TWISC0-*TM001-Weertman*.mat
+% TWISC0         177/HPO       x             100         *Duvh-TWISC0-*TM001-Weertman*.mat
 % TWISC2         200           x              x
 %
 %
 %
 % Cornfod-10km TM001&Duvh    TM001~Duvh    TM1
-% TWIS           289           186         100       
-% TWISC0         187           173         100       
+% TWIS           359           161         100       
+% TWISC0         224           232         100       
 % TWISC2         200           x            x
 %
 %
@@ -59,18 +63,21 @@
 %
 %
 %
+%%
 
 % Resolution="-5km-" ;  CtrlVar.SlidingLaw="Cornford"; C="" ;     Duvh="-Duvh-" ;  % missing
 Resolution="-5km-" ;  CtrlVar.SlidingLaw="Cornford"; C="" ;     Duvh="" ;  % submitted
 % Resolution="-5km-" ;  CtrlVar.SlidingLaw="Cornford"; C="C0" ;   Duvh="-Duvh-" ;  % missing
-% Resolution="-5km-" ;  CtrlVar.SlidingLaw="Cornford"; C="C0" ;   Duvh="" ;  % running
 
-% C17777347
-Resolution="-5km-" ;  CtrlVar.SlidingLaw="Cornford"; C="C0" ;   Duvh="" ;  CtrlVar.TotalTime=21;  % for some reason first 20 years of files missing, presumably simply due to name changes
+
+
+
 Resolution="-10km-" ;  CtrlVar.SlidingLaw="Weertman"; C="C0" ;   Duvh="Duvh" ;  CtrlVar.TotalTime=200;  
 Resolution="-5km-" ;  CtrlVar.SlidingLaw="Weertman"; C="" ;   Duvh="Duvh" ;  CtrlVar.TotalTime=200;  
 Resolution="-5km-" ;  CtrlVar.SlidingLaw="Weertman"; C="C0" ;   Duvh="Duvh" ;  CtrlVar.TotalTime=200;  
 
+Resolution="-5km-" ;  CtrlVar.SlidingLaw="Cornford"; C="C0" ;   Duvh="" ;  % running and extended to 400years
+Resolution="-5km-" ;  CtrlVar.SlidingLaw="Cornford"; C="" ;   Duvh="" ;  % running and extended to 400years
 
 CreateAndSaveACInterpolants=false;  % But still created if the files with the interpolants do not exist, 
                                     % but the data files with A and C do.
@@ -88,7 +95,7 @@ UserVar.RunType="-FT-P-"+Duvh+"-TWIS"+C+"-MR4-SM-TM001-"+CtrlVar.SlidingLaw+Reso
 UserVar.RunType=replace(UserVar.RunType,"--","-");
  
 
-CtrlVar.TotalTime=200;
+CtrlVar.TotalTime=400;
 
 CtrlVar.Inverse.Regularize.logC.ga=str2double(extract(extract(UserVar.RunType,"-Ca"+digitsPattern+"-"),digitsPattern)) ; 
 CtrlVar.Inverse.Regularize.logC.gs=str2double(extract(extract(UserVar.RunType,"-Cs"+digitsPattern+"-"),digitsPattern)) ; 
