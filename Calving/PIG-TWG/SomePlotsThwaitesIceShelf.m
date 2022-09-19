@@ -28,13 +28,14 @@ end
 Experiment="AC-lim" ;
 Experiment="10km-New-Cornford";
 
-Experiment="5km-New-Cornford";
 Experiment="5km-New";
+Experiment="5km-New-Cornford";
+
 
 %Experiment="Compare with ref" ;
 
-CreateVideo=false; 
-CalculateVAF=true;
+CreateVideo=true; 
+CalculateVAF=false;
 
 
 % Experiment= "ConvergenceStudy";
@@ -188,7 +189,7 @@ switch Experiment
         SubString(3)="-FT-P-TWISC0-MR4-SM-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-";
 
         IRange=1:3;
-        IRange=3; 
+     
         LegendEntry=[...
             "2.3km: Thwaites ice shelf (Alim, Cornford)",...
             "2.3km: Thwaites ice shelf removed 2km downstream (Alim, Cornford)",...
@@ -196,7 +197,7 @@ switch Experiment
             ];
 
         VAFStep=5;
-        VideoStep=5; 
+        VideoStep=1; 
 
     case "Compare with ref"
 
@@ -256,7 +257,7 @@ if CreateVideo
 
 
 %        ReadPlotSequenceOfResultFiles(FileNameSubstring=SubString(I),PlotTimestep=Step,PlotType="-ubvb-h-") ;
-        ReadPlotSequenceOfResultFiles(FileNameSubstring=SubString(I),PlotTimestep=Step,PlotType="-ubvb-s-",AxisLimits=[-1700 -1050 -700 0]) ;
+        ReadPlotSequenceOfResultFiles(FileNameSubstring=SubString(I),PlotTimestep=Step,PlotTimeInterval=[0 100],PlotType="-ubvb-s-",AxisLimits=[-1700 -1050 -700 0]) ;
         % ReadPlotSequenceOfResultFiles2(FileNameSubstring=SubString(I),PlotTimestep=Step,PlotType="-ubvb-B-") ;
         % ReadPlotSequenceOfResultFiles2(FileNameSubstring=SubString(I),PlotTimestep=Step,PlotType="-ubvb-VAF-",VAFBoundary=xyBoundary) ;
     end
