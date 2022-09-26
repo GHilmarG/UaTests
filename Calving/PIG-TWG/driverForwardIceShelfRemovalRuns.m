@@ -26,8 +26,8 @@
 %%
 %
 % Cornford-5km TM001&Duvh    TM001~Duvh    TM1
-% TWIS           x              97        115         *Duvh-TWISC0-*TM001-Cornford-5km*.mat / *P-TWIS-*TM001-Cornford*5km*.mat
-% TWISC0         x             253        250           
+% TWIS           x             107        115         *Duvh-TWISC0-*TM001-Cornford-5km*.mat / *P-TWIS-*TM001-Cornford*5km*.mat
+% TWISC0         x             283        250           
 % TWISC2         200             x          x          *Duvh-TWISC2-*TM001-Cornford-5km*.mat
 %
 %
@@ -57,7 +57,10 @@
 % TWISC0          x           200      
 % TWISC2          x             x            x
 %
+% SUPG: 20km, TWIS
 %
+%  tau1-01  tau2-02 taut-01    taus-01
+%   252      283      241       200
 %
 %%
 
@@ -67,11 +70,13 @@ Resolution="-5km-" ;  CtrlVar.SlidingLaw="Cornford"; C="" ;     Duvh="" ;  % sub
 Resolution="-5km-" ;  CtrlVar.SlidingLaw="Cornford"; C="C0" ;   Duvh="" ;  % running and extended to 400years
 
 % C17777347
-Resolution="-5km-" ;  CtrlVar.SlidingLaw="Cornford"; C="C0" ;   Duvh="" ;  CtrlVar.TotalTime=21;  % for some reason first 20 years of files missing, presumably simply due to name changes
+Resolution="-5km-" ;  CtrlVar.SlidingLaw="Cornford"; C="C0" ;   Duvh="" ;  
 Resolution="-10km-" ;  CtrlVar.SlidingLaw="Weertman"; C="C0" ;   Duvh="Duvh" ;  CtrlVar.TotalTime=200;  
 Resolution="-5km-" ;  CtrlVar.SlidingLaw="Weertman"; C="" ;   Duvh="Duvh" ;  CtrlVar.TotalTime=200;  
 Resolution="-5km-" ;  CtrlVar.SlidingLaw="Weertman"; C="C0" ;   Duvh="Duvh" ;  CtrlVar.TotalTime=200;  
 
+Resolution="-20km-" ;  CtrlVar.SlidingLaw="Cornford"; C="" ;     Duvh="" ;  CtrlVar.uvh.SUPG.tauMultiplier=100 ; CtrlVar.uvh.SUPG.tau="tau1";  % taus ; taut ; 
+Resolution="-20km-" ;  CtrlVar.SlidingLaw="Cornford"; C="" ;     Duvh="" ;  CtrlVar.uvh.SUPG.tauMultiplier=0 ; CtrlVar.uvh.SUPG.tau="taus"; CtrlVar.dt=1e-6 ;  CtrlVar.Restart=0;  % taus ; taut ; 
 
 CreateAndSaveACInterpolants=false;  % But still created if the files with the interpolants do not exist, 
                                     % but the data files with A and C do.
@@ -82,11 +87,17 @@ BatchJob=false;
 
 UserVar.RunType="-FT-P-"+Duvh+"-TWIS"+C+"-MR4-SM-TM001-"+CtrlVar.SlidingLaw+Resolution+"Alim-Ca1-Cs100000-Aa1-As100000-" ;  
 
+if CtrlVar.uvh.SUPG.tauMultiplier~=1  ||  CtrlVar.uvh.SUPG.tau~="taus"
+    UserVar.RunType=UserVar.RunType+"-"+CtrlVar.uvh.SUPG.tau+"-SUPGm"+num2str(CtrlVar.uvh.SUPG.tauMultiplier) ;
+    % taus with multy >= 5 does not converge
+end
+
                                                                                                      
                                                                                                      
 %%
 
 UserVar.RunType=replace(UserVar.RunType,"--","-");
+UserVar.RunType=replace(UserVar.RunType,".","k");
  
 
 CtrlVar.TotalTime=400;
