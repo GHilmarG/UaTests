@@ -24,10 +24,16 @@ end
 
 
 Experiment="AC-lim" ;
-Experiment="10km-New-Cornford";
+Experiment="5km-New";
 
 Experiment="5km-New-Cornford";
-Experiment="5km-New";
+Experiment="10km-New-Cornford";
+Experiment="20km-New-Cornford"; 
+
+Experiment="SUPG"  ;
+
+
+
 
 %Experiment="Compare with ref" ;
 
@@ -108,16 +114,35 @@ switch Experiment
 
         IRange=1:4 ;
 
+case "20km-New-Cornford"
+
+        SubString(1)="ThickMin0k01-FT-P-TWIS-MR4-SM-TM001-Cornford-20km-Alim-Ca1-Cs100000-Aa1-As100000-";    % 200 years
+        SubString(2)="ThickMin0k01-FT-P-TWISC0-MR4-SM-TM001-Cornford-20km-Alim-Ca1-Cs100000-Aa1-As100000-";  % 200 years
+
+        LegendEntry=[...
+            "9.3km: (Alim, Cornford, hmin=0.01m)",...
+            "9.3km: removed (Alim, Cornford, hmin=0.01m)",...
+            ];
+
+        IRange=1;   
+        VideoStep=10; 
+
     case "10km-New-Cornford"
 
 
         SubString(1)="FT-P-TWIS-MR4-SM-Cornford-10km-Alim-Ca1-Cs100000-Aa1-As100000-";
-        SubString(2)="FT-P-TWIS-MR4-SM-TM001-Cornford-10km-Alim-Ca1-Cs100000-Aa1-As100000-";
-        SubString(3)="FT-P-Duvh-TWIS-MR4-SM-TM001-Cornford-10km-Alim-Ca1-Cs100000-Aa1-As100000-";
+        
+        SubString(2)="ThickMin0k01-FT-P-TWIS-MR4-SM-TM001-Cornford-10km-Alim-Ca1-Cs100000-Aa1-As100000-";  % 161 years
+        
+        SubString(3)="FT-P-Duvh-TWIS-MR4-SM-TM001-Cornford-10km-Alim-Ca1-Cs100000-Aa1-As100000-";  % 359 years
+
         SubString(4)="FT-P-TWISC0-MR4-SM-Cornford-10km-Alim-Ca1-Cs100000-Aa1-As100000-";
-        SubString(5)="FT-P-TWISC0-MR4-SM-TM001-Cornford-10km-Alim-Ca1-Cs100000-Aa1-As100000-";
-        SubString(6)="FT-P-Duvh-TWISC0-MR4-SM-TM001-Cornford-10km-Alim-Ca1-Cs100000-Aa1-As100000-";
-        SubString(7)="FT-P-Duvh-TWISC2-MR4-SM-TM001-Cornford-10km-Alim-Ca1-Cs100000-Aa1-As100000-kmat";
+        SubString(5)="ThickMin0k01-FT-P-TWISC0-MR4-SM-TM001-Cornford-10km-Alim-Ca1-Cs100000-Aa1-As100000-";  % 232 years
+
+        SubString(6)="FT-P-Duvh-TWISC0-MR4-SM-TM001-Cornford-10km-Alim-Ca1-Cs100000-Aa1-As100000-";  % 224 years
+
+        SubString(7)="FT-P-Duvh-TWISC2-MR4-SM-TM001-Cornford-10km-Alim-Ca1-Cs100000-Aa1-As100000-kmat";  % 200 years
+
         SubString(8)="FT-P-Duvh-TWISC0MGL-MR4-SM-TM001-Cornford-10km-Alim-Ca1-Cs100000-Aa1-As100000-kmat";
 
         SubString(9)="FT-P-TWIS-MR4-SM-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-";
@@ -125,6 +150,8 @@ switch Experiment
 
         SubString(11)="ThickMin0k01-FT-P-TWIS-MR4-SM-TM001-Cornford-20km-Alim-Ca1-Cs100000-Aa1-As100000-";
         SubString(12)="ThickMin0k01-FT-P-TWISC0-MR4-SM-TM001-Cornford-20km-Alim-Ca1-Cs100000-Aa1-As100000-";
+
+        
 
         LegendEntry=[...
             "4.6km: (Alim, Cornford, hmin=1m)",...
@@ -145,6 +172,7 @@ switch Experiment
         IRange=1:10;
         IRange=1:3;    PlotCase="Comparing ThickMin for 4.6km"  ; 
         IRange=11:12;  PlotCase=""  ; 
+        IRange=5; 
 
       VAFStep=5; 
 
@@ -185,6 +213,10 @@ switch Experiment
         SubString(2)="-FT-P-Duvh-TWISC2-MR4-SM-TM001-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-";
         SubString(3)="-FT-P-TWISC0-MR4-SM-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-";
 
+        SubString(1)="-ThickMin0k01-FT-P-TWIS-MR4-SM-TM001-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-";  % 107 years
+        SubString(2)="-ThickMin0k01-FT-P-Duvh-TWISC2-MR4-SM-TM001-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-";
+        SubString(3)="-ThickMin0k01-FT-P-TWISC0-MR4-SM-TM001-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-";  % 285 years
+
         IRange=1:3;
         IRange=3; 
         LegendEntry=[...
@@ -194,7 +226,7 @@ switch Experiment
             ];
 
         VAFStep=5;
-        VideoStep=5; 
+        VideoStep=25; 
 
     case "Compare with ref"
 
@@ -235,6 +267,25 @@ switch Experiment
 
         VAFStep=25;
 
+
+    case "SUPG"  
+
+        SubString(1)="ThickMin0k01-FT-P-TWIS-MR4-SM-TM001-Cornford-20km-Alim-Ca1-Cs100000-Aa1-As100000-.mat";    
+        SubString(2)="ThickMin0k01-FT-P-TWIS-MR4-SM-TM001-Cornford-20km-Alim-Ca1-Cs100000-Aa1-As100000-taut-beta01.mat";    % 200 years
+        SubString(3)="ThickMin0k01-FT-P-TWIS-MR4-SM-TM001-Cornford-20km-Alim-Ca1-Cs100000-Aa1-As100000-tau1-beta01.mat";    % 200 years
+        SubString(4)="ThickMin0k01-FT-P-TWIS-MR4-SM-TM001-Cornford-20km-Alim-Ca1-Cs100000-Aa1-As100000-tau2-beta01.mat";    % 200 years
+ 
+        SubString(5)="ThickMin0k01-FT-P-TWIS-MR4-SM-TM001-Cornford-20km-Alim-Ca1-Cs100000-Aa1-As100000-taus-SUPGm100.mat";    % 200 years
+        SubString(6)="ThickMin0k01-FT-P-TWIS-MR4-SM-TM001-Cornford-20km-Alim-Ca1-Cs100000-Aa1-As100000-taut-SUPGm100.mat";    % 400 years
+        SubString(7)="ThickMin0k01-FT-P-TWIS-MR4-SM-TM001-Cornford-20km-Alim-Ca1-Cs100000-Aa1-As100000-tau1-SUPGM100.mat";    % 400 years
+        SubString(8)="ThickMin0k01-FT-P-TWIS-MR4-SM-TM001-Cornford-20km-Alim-Ca1-Cs100000-Aa1-As100000-tau2-SUPGm100.mat";    % 400 years
+
+
+        SubString(9)="ThickMin0k01-FT-P-TWISC0-MR4-SM-TM001-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-.mat";  
+
+        IRange=[9];   
+        VideoStep=10; 
+
 end
 
 % 30km = 14km
@@ -254,9 +305,11 @@ if CreateVideo
 
 
 %        ReadPlotSequenceOfResultFiles(FileNameSubstring=SubString(I),PlotTimestep=Step,PlotType="-ubvb-h-") ;
-        ReadPlotSequenceOfResultFiles(FileNameSubstring=SubString(I),PlotTimestep=Step,PlotType="-ubvb-s-",AxisLimits=[-1700 -1050 -700 0]) ;
+        % ReadPlotSequenceOfResultFiles2(FileNameSubstring=SubString(I),PlotTimestep=Step,PlotType="-ubvb-s-",AxisLimits=[-1700 -1050 -700 0]) ;
         % ReadPlotSequenceOfResultFiles2(FileNameSubstring=SubString(I),PlotTimestep=Step,PlotType="-ubvb-B-") ;
         % ReadPlotSequenceOfResultFiles2(FileNameSubstring=SubString(I),PlotTimestep=Step,PlotType="-ubvb-VAF-",VAFBoundary=xyBoundary) ;
+        % ReadPlotSequenceOfResultFiles2(FileNameSubstring=SubString(I),PlotTimestep=Step,PlotType="-ubvb-ds-",VAFBoundary=xyBoundary) ;
+        ReadPlotSequenceOfResultFiles2(FileNameSubstring=SubString(I),PlotTimestep=Step,PlotType="-ds-",VAFBoundary=xyBoundary,PlotTimeInterval=[0 400]) ;
     end
 end
 
@@ -277,7 +330,7 @@ if CalculateVAF
         DataCollect{I}=ReadPlotSequenceOfResultFiles2(FileNameSubstring=SubString(I),...
             PlotType="-collect-",...
             PlotTimestep=Step,...
-            PlotTimeInterval=[0 100],...
+            PlotTimeInterval=[0 400],...
             VAFBoundary=xyBoundary) ;
         
         fprintf("done. \n \n")

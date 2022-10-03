@@ -30,8 +30,8 @@
 % HPH= HP Home
 %
 % Cornford-5km TM001&Duvh    TM001~Duvh    TM1
-% TWIS           x             104/D0        115         *Duvh-TWISC0-*TM001-Cornford-5km*.mat / *P-TWIS-*TM001-Cornford*5km*.mat
-% TWISC0         x             266/D0        250           
+% TWIS           x             107        115         *Duvh-TWISC0-*TM001-Cornford-5km*.mat / *P-TWIS-*TM001-Cornford*5km*.mat
+% TWISC0         x             283        250           
 % TWISC2         200             x          x          *Duvh-TWISC2-*TM001-Cornford-5km*.mat
 %
 %
@@ -61,7 +61,9 @@
 % TWISC0          x           200      
 % TWISC2          x             x            x
 %
-%
+% SUPG: 20km, TWIS
+%  tau1-01  tau2-02 taut-01    taus-01 taus-0.1  taus-0.0   taus-2.0 
+%   252      283      241       200     400        400       193 
 %
 %%
 
@@ -70,14 +72,17 @@ Resolution="-5km-" ;  CtrlVar.SlidingLaw="Cornford"; C="" ;     Duvh="" ;  % sub
 % Resolution="-5km-" ;  CtrlVar.SlidingLaw="Cornford"; C="C0" ;   Duvh="-Duvh-" ;  % missing
 
 
+Resolution="-10km-" ;  CtrlVar.SlidingLaw="Weertman"; C="C0" ;   Duvh="Duvh" ;  CtrlVar.TotalTime=200;  
+Resolution="-5km-" ;  CtrlVar.SlidingLaw="Weertman"; C="" ;   Duvh="Duvh" ;  CtrlVar.TotalTime=200;  
+Resolution="-5km-" ;  CtrlVar.SlidingLaw="Weertman"; C="C0" ;   Duvh="Duvh" ;  CtrlVar.TotalTime=200;  
 
 
-Resolution="-10km-" ;  CtrlVar.SlidingLaw="Weertman"; C="C0" ;   Duvh="Duvh" ; 
 
-Resolution="-5km-" ;  CtrlVar.SlidingLaw="Weertman"; C="C0" ;   Duvh="Duvh" ;  
+Resolution="-10km-" ;  CtrlVar.SlidingLaw="Cornford"; C="" ;     Duvh="" ;  CtrlVar.uvh.SUPG.tauMultiplier=10 ; CtrlVar.uvh.SUPG.tau="tau1";  
+% Resolution="-10km-" ;  CtrlVar.SlidingLaw="Cornford"; C="" ;     Duvh="" ;  CtrlVar.uvh.SUPG.tauMultiplier=0.1 ; CtrlVar.uvh.SUPG.tau="taus"; CtrlVar.dt=1e-6 ;  
+% Resolution="-10km-" ;  CtrlVar.SlidingLaw="Cornford"; C="" ;     Duvh="" ;  CtrlVar.uvh.SUPG.tauMultiplier=0 ; CtrlVar.uvh.SUPG.tau="taus"; CtrlVar.dt=1e-6 ;    
+% Resolution="-10km-" ;  CtrlVar.SlidingLaw="Cornford"; C="" ;     Duvh="" ;  CtrlVar.uvh.SUPG.tauMultiplier=1 ; CtrlVar.uvh.SUPG.tau="taus"; CtrlVar.dt=1e-6 ;    
 
-Resolution="-5km-" ;  CtrlVar.SlidingLaw="Cornford"; C="C0" ;   Duvh="" ;  % running and extended to 400years
-Resolution="-5km-" ;  CtrlVar.SlidingLaw="Cornford"; C="" ;   Duvh="" ;  % running and extended to 400years
 
 Resolution="-5km-" ;  CtrlVar.SlidingLaw="Weertman"; C="" ;   Duvh="Duvh" ;  
 Resolution="-5km-" ;  CtrlVar.SlidingLaw="Weertman"; C="C0" ;   Duvh="Duvh" ;  
@@ -86,16 +91,22 @@ CreateAndSaveACInterpolants=false;  % But still created if the files with the in
                                     % but the data files with A and C do.
 
 RunJob=true; 
-BatchJob=false;
+BatchJob=true;
 
 
 UserVar.RunType="-FT-P-"+Duvh+"-TWIS"+C+"-MR4-SM-TM001-"+CtrlVar.SlidingLaw+Resolution+"Alim-Ca1-Cs100000-Aa1-As100000-" ;  
+
+if CtrlVar.uvh.SUPG.tauMultiplier~=1  ||  CtrlVar.uvh.SUPG.tau~="taus"
+    UserVar.RunType=UserVar.RunType+"-"+CtrlVar.uvh.SUPG.tau+"-SUPGm"+num2str(CtrlVar.uvh.SUPG.tauMultiplier) ;
+    % taus with multy >= 5 does not converge
+end
 
                                                                                                      
                                                                                                      
 %%
 
 UserVar.RunType=replace(UserVar.RunType,"--","-");
+UserVar.RunType=replace(UserVar.RunType,".","k");
  
 
 CtrlVar.TotalTime=400;
