@@ -62,9 +62,8 @@
 % TWISC2          x             x            x
 %
 % SUPG: 20km, TWIS
-%
-%  tau1-01  tau2-02 taut-01    taus-01
-%   252      283      241       200
+%  tau1-01  tau2-02 taut-01    taus-01 taus-0.1  taus-0.0   taus-2.0 
+%   252      283      241       200     400        400       193 
 %
 %%
 
@@ -78,15 +77,17 @@ Resolution="-5km-" ;  CtrlVar.SlidingLaw="Weertman"; C="" ;   Duvh="Duvh" ;  Ctr
 Resolution="-5km-" ;  CtrlVar.SlidingLaw="Weertman"; C="C0" ;   Duvh="Duvh" ;  CtrlVar.TotalTime=200;  
 
 
-Resolution="-20km-" ;  CtrlVar.SlidingLaw="Cornford"; C="" ;     Duvh="" ;  CtrlVar.uvh.SUPG.tauMultiplier=100 ; CtrlVar.uvh.SUPG.tau="tau1";  % taus ; taut ; 
-Resolution="-20km-" ;  CtrlVar.SlidingLaw="Cornford"; C="" ;     Duvh="" ;  CtrlVar.uvh.SUPG.tauMultiplier=0 ; CtrlVar.uvh.SUPG.tau="taus"; CtrlVar.dt=1e-6 ;  CtrlVar.Restart=0;  % taus ; taut ; 
+Resolution="-10km-" ;  CtrlVar.SlidingLaw="Cornford"; C="" ;     Duvh="" ;  CtrlVar.uvh.SUPG.tauMultiplier=10 ; CtrlVar.uvh.SUPG.tau="tau1";  
+% Resolution="-10km-" ;  CtrlVar.SlidingLaw="Cornford"; C="" ;     Duvh="" ;  CtrlVar.uvh.SUPG.tauMultiplier=0.1 ; CtrlVar.uvh.SUPG.tau="taus"; CtrlVar.dt=1e-6 ;  
+% Resolution="-10km-" ;  CtrlVar.SlidingLaw="Cornford"; C="" ;     Duvh="" ;  CtrlVar.uvh.SUPG.tauMultiplier=0 ; CtrlVar.uvh.SUPG.tau="taus"; CtrlVar.dt=1e-6 ;    
+% Resolution="-10km-" ;  CtrlVar.SlidingLaw="Cornford"; C="" ;     Duvh="" ;  CtrlVar.uvh.SUPG.tauMultiplier=1 ; CtrlVar.uvh.SUPG.tau="taus"; CtrlVar.dt=1e-6 ;    
 
 
 CreateAndSaveACInterpolants=false;  % But still created if the files with the interpolants do not exist, 
                                     % but the data files with A and C do.
 
 RunJob=true; 
-BatchJob=false;
+BatchJob=true;
 
 
 UserVar.RunType="-FT-P-"+Duvh+"-TWIS"+C+"-MR4-SM-TM001-"+CtrlVar.SlidingLaw+Resolution+"Alim-Ca1-Cs100000-Aa1-As100000-" ;  
