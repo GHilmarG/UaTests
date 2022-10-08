@@ -50,10 +50,14 @@ Compare="2.3km Cornford C0 1m 1cm";
 
 Compare="2.3km Cornford";
 
+Compare="SUPG";
+
 % Compare="2.3km Weertman";  % This one covers 200 years for both runs
 % Note: When comparing I subtract Data(2)-Data(1)
 QuiverColorSpeedLimits=[0 1000];
-
+xb=[-1520 -1445 -1100 -1100 -1350 -1590 -1520] ;yb=[-510  -547  -547 -180 -180   -390 -510];
+xyBoundary=[xb(:) yb(:)]*1000;
+AxisLimits=[-1620 -1400 -520 -340] ;
 switch Compare
 
 
@@ -155,15 +159,41 @@ switch Compare
         QuiverColorSpeedLimits=[0 1];
         TextString=["Cornford: thin lines","Weertman: thick lines"] ;
 
+
+    case "SUPG"
+
+
+      
+
+        SubString(1)="ThickMin0k01-FT-P-TWIS-MR4-SM-TM001-Cornford-20km-Alim-Ca1-Cs100000-Aa1-As100000-tau1-beta01";    % 200 years
+        SubString(2)="ThickMin0k01-FT-P-TWIS-MR4-SM-TM001-Cornford-20km-Alim-Ca1-Cs100000-Aa1-As100000-tau1-SUPGM100";    % 400 years
+        
+        SubString(1)="ThickMin0k01-FT-P-TWIS-MR4-SM-TM001-Cornford-20km-Alim-Ca1-Cs100000-Aa1-As100000-taut-beta01";    % 200 years
+        SubString(2)="ThickMin0k01-FT-P-TWIS-MR4-SM-TM001-Cornford-20km-Alim-Ca1-Cs100000-Aa1-As100000-taut-SUPGM100";    % 400 years
+
+        SubString(1)="ThickMin0k01-FT-P-TWIS-MR4-SM-TM001-Cornford-20km-Alim-Ca1-Cs100000-Aa1-As100000-tau2-beta01";    % 200 years
+        SubString(2)="ThickMin0k01-FT-P-TWIS-MR4-SM-TM001-Cornford-20km-Alim-Ca1-Cs100000-Aa1-As100000-tau2-SUPGM100";    % 400 years
+
+        SubString(1)="ThickMin0k01-FT-P-TWIS-MR4-SM-TM001-Cornford-20km-Alim-Ca1-Cs100000-Aa1-As100000-.mat";   
+        SubString(2)="ThickMin0k01-FT-P-TWIS-MR4-SM-TM001-Cornford-20km-Alim-Ca1-Cs100000-Aa1-As100000-tau2-beta01";    % 200 years
+        
+        SubString(1)="ThickMin0k01-FT-P-TWIS-MR4-SM-TM001-Cornford-20km-Alim-Ca1-Cs100000-Aa1-As100000-.mat";   
+        SubString(2)="ThickMin0k01-FT-P-TWIS-MR4-SM-TM001-Cornford-20km-Alim-Ca1-Cs100000-Aa1-As100000-taus-SUPGm2";    % 200 years
+                      
+
+        xyBoundary=NaN;
+        AxisLimits=[ -1735.8                   -1012.6                    -725.3                      52.3] ; 
+
+        QuiverColorSpeedLimits=[0 1];
+        TextString=["tau2: thin lines","tau2 m100: thick lines"] ;
+
     otherwise
         error("which case")
 
 end
 
 
-xb=[-1520 -1445 -1100 -1100 -1350 -1590 -1520] ;yb=[-510  -547  -547 -180 -180   -390 -510];
-xyBoundary=[xb(:) yb(:)]*1000;
-TimeVector=0:10:200;
+TimeVector=0:20:200;
 % TimeVector=0:1:50;
 
 
@@ -174,27 +204,37 @@ figVel=FindOrCreateFigure("Velocity");
 AskForInput=true;
 VAFnode=[] ;
 VAFn=[nan;nan];
-
+iCount=0; 
 
 for J=1:numel(TimeVector)
 
-
+    iCount=iCount+1;
     TimeString=sprintf("%7.7i",100*TimeVector(J)) ;
 
-    File1=dir(TimeString+"*"+SubString(1)+"*.mat") ;
-    File2=dir(TimeString+"*"+SubString(2)+"*.mat") ;
+    if ~contains(SubString(1),".mat")
+        File1=dir(TimeString+"*"+SubString(1)+"*.mat") ;
+    else
+        File1=dir(TimeString+"*"+SubString(1)) ;
+    end
+
+    if ~contains(SubString(2),".mat")
+        File2=dir(TimeString+"*"+SubString(2)+"*.mat") ;
+        
+    else
+        File2=dir(TimeString+"*"+SubString(2)) ;
+    end
 
     if numel(File1) > 0  && numel(File2) > 0
-        
+
         load(File1(1).name,"MUA","CtrlVar","F") ;
         F1= F ; MUA1=MUA;
-        
+
         load(File2(1).name,"MUA","CtrlVar","F") ;
         F2=F; MUA2=MUA;
 
     else
         fprintf("numel(File1)=%i \t numel(File2)=%i \t Breaking out of loop \n",numel(File1),numel(File2))
-        continue 
+        continue
     end
 
 
@@ -237,15 +277,18 @@ for J=1:numel(TimeVector)
     PlotCalvingFronts(CtrlVar,MUA2,F2,color="b",LineWidth=2,LineStyle="-");
 
 
-    axis([-1620 -1400 -520 -340])
-    caxis([-50 50])
+    
+    axis(AxisLimits)
+
+    clim([-50 50])
     ModifyColormap
-    dlat=5/4 ; dlon=10/2 ; PlotLatLonGrid(1000,dlat,dlon);
+    
     text(-1445,-350,TextString,BackgroundColor="w",FontSize=10,EdgeColor="k");
     text(-1560,-350,["Grounding lines in red","Calving fronts in blue"],BackgroundColor="w",FontSize=10,EdgeColor="k");
     if J==1
         figVAF.Position=[50 500 1000 800];
     end
+    % dlat=5/4 ; dlon=10/2 ; PlotLatLonGrid(1000,dlat,dlon);
 
     figVel=FindOrCreateFigure("Velocity"); clf(figVel) ;
     hold off
@@ -289,14 +332,29 @@ for J=1:numel(TimeVector)
 
     PlotGroundingLines(CtrlVar,MUA2,F2.GF,[],[],[],color="r",LineStyle="-",LineWidth=2);
     PlotCalvingFronts(CtrlVar,MUA2,F2,color="b",LineWidth=2,LineStyle="-");
-    axis([-1620 -1400 -520 -340])
+    
+    axis(AxisLimits)
     if J==1
         figVel.Position=[1050 500 1000 800];
     end
-    dlat=5/4 ; dlon=10/2 ; PlotLatLonGrid(1000,dlat,dlon);
+    
+    % dlat=5/4 ; dlon=10/2 ; PlotLatLonGrid(1000,dlat,dlon);
     text(-1445,-350,TextString,BackgroundColor="w",FontSize=10,EdgeColor="k");
     text(-1560,-350,["Grounding lines in red","Calving fronts in blue"],BackgroundColor="w",FontSize=10,EdgeColor="k");
     drawnow
+
+
+    FigVAF1=FindOrCreateFigure("VAF1") ;
+
+    if iCount==1 ; VAF1start=VAF1.node; end
+    
+    UaPlots(CtrlVar,MUA1,F1,VAF1.node-VAF1start) ;
+
+    FigVAF2=FindOrCreateFigure("VAF2") ;
+    
+    if iCount==1 ; VAF2start=VAF2.node; end
+
+    UaPlots(CtrlVar,MUA2,F2,VAF2.node-VAF2start) ;
 
     if AskForInput
         prompt = " Y/N/C [Y]: ";
