@@ -8,7 +8,7 @@ clear DefineOutputs
 UserVar.Geometry='square';
 % UserVar.Geometry='island';
 
-CtrlVar.uvh.SUPG.tauMultiplier=1 ; CtrlVar.uvh.SUPG.tau="taus"; 
+CtrlVar.uvh.SUPG.tauMultiplier=0.5 ; CtrlVar.uvh.SUPG.tau="taus"; 
 CtrlVar.TriNodes=3 ;  % {3|6|10}  number of nodes per element
 l=0.25e3 ;     % overall element size
 UserVar.u0=10000; 
@@ -63,8 +63,8 @@ CtrlVar.LineSeachAllowedToUseExtrapolation=1;
 
 %% Restart
 CtrlVar.Restart=0;  CtrlVar.WriteRestartFile=1;
-CtrlVar.NameOfRestartFiletoRead='iA-Restart.mat';
-CtrlVar.NameOfRestartFiletoWrite='iA-Restart.mat';
+CtrlVar.NameOfRestartFiletoRead="R-"+UserVar.RunType;
+CtrlVar.NameOfRestartFiletoWrite=CtrlVar.NameOfRestartFiletoRead;
 
 
 
@@ -75,7 +75,7 @@ CtrlVar.meshgeneration=1;
 CtrlVar.MeshSize=l;
 CtrlVar.MeshSizeMin=l; 
 CtrlVar.MeshSizeMax=l ; 
-CtrlVar.MaxNumberOfElements=5000;
+CtrlVar.MaxNumberOfElements=50000;
 %% for adaptive meshing
 CtrlVar.AdaptMesh=0;
 
