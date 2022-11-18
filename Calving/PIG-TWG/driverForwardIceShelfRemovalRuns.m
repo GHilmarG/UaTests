@@ -36,8 +36,8 @@
 %
 %
 % Weertman-5km TM001&Duvh    TM001~Duvh    TM1
-% TWIS           247/HPO         x         361         ls -lt *Duvh-TWIS-*TM001-Weertman*5km*.mat | head   /   *Duvh-TWIS-MR4*TM001-Weertman*5km*.mat  / *P-TWIS-MR4-SM-5km-Alim*.mat
-% TWISC0         163/HPO         x         303         ls -lt *Duvh-TWISC0-*TM001-Weertman*5km*.mat | head
+% TWIS           163/HPO         x         361         ls -lt *Duvh-TWIS-*TM001-Weertman*5km*.mat | head   /   *Duvh-TWIS-MR4*TM001-Weertman*5km*.mat  / *P-TWIS-MR4-SM-5km-Alim*.mat
+% TWISC0         247/HPO         x         303         ls -lt *Duvh-TWISC0-*TM001-Weertman*5km*.mat | head
 % TWISC2          x              x          x                                              
 %
 %
@@ -83,11 +83,11 @@ Resolution="-10km-" ;  CtrlVar.SlidingLaw="Cornford"; C="" ;     Duvh="" ;  Ctrl
 % Resolution="-10km-" ;  CtrlVar.SlidingLaw="Cornford"; C="" ;     Duvh="" ;  CtrlVar.uvh.SUPG.tauMultiplier=0 ; CtrlVar.uvh.SUPG.tau="taus"; CtrlVar.dt=1e-6 ;    
 % Resolution="-10km-" ;  CtrlVar.SlidingLaw="Cornford"; C="" ;     Duvh="" ;  CtrlVar.uvh.SUPG.tauMultiplier=1 ; CtrlVar.uvh.SUPG.tau="taus"; CtrlVar.dt=1e-6 ;    
 
-
+CtrlVar.uvh.SUPG.tauMultiplier=1 ;  CtrlVar.uvh.SUPG.tau="taus" ; 
 Resolution="-5km-" ;  CtrlVar.SlidingLaw="Weertman"; C="" ;     Duvh="Duvh" ;   % send
-Resolution="-5km-" ;  CtrlVar.SlidingLaw="Weertman"; C="C0" ;   Duvh="Duvh" ;   % send
-Resolution="-5km-" ;  CtrlVar.SlidingLaw="Cornford"; C="" ;     Duvh="" ;       % send
-Resolution="-5km-" ;  CtrlVar.SlidingLaw="Cornford"; C="C0" ;   Duvh="" ;       % send
+% Resolution="-5km-" ;  CtrlVar.SlidingLaw="Weertman"; C="C0" ;   Duvh="Duvh" ;   % sent
+% Resolution="-5km-" ;  CtrlVar.SlidingLaw="Cornford"; C="" ;     Duvh="" ;       % sent
+% Resolution="-5km-" ;  CtrlVar.SlidingLaw="Cornford"; C="C0" ;   Duvh="" ;       % done
 
 
 
@@ -96,7 +96,7 @@ CreateAndSaveACInterpolants=false;  % But still created if the files with the in
                                     % but the data files with A and C do.
 
 RunJob=true; 
-BatchJob=true;
+BatchJob=false;
 
 
 UserVar.RunType="-FT-P-"+Duvh+"-TWIS"+C+"-MR4-SM-TM001-"+CtrlVar.SlidingLaw+Resolution+"Alim-Ca1-Cs100000-Aa1-As100000-" ;  
