@@ -35,11 +35,12 @@ Experiment="20km-New-Cornford";
 
 Experiment="SUPG"  ;
 
+Experiment="5km-New-Cornford";
 
 %Experiment="Compare with ref" ;
 
-CreateVideo=true; 
-CalculateVAF=false;
+CreateVideo=false; 
+CalculateVAF=true;
 
 
 % Experiment= "ConvergenceStudy";
@@ -226,7 +227,7 @@ case "20km-New-Cornford"
             "2.3km: Thwaites ice shelf removed (Alim, Cornford)",...
             ];
 
-        VAFStep=5;
+        VAFStep=1;
         VideoStep=25; 
 
     case "Compare with ref"
