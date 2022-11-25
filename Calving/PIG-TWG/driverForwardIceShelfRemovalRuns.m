@@ -67,6 +67,8 @@
 %
 %%
 
+IceShelf="Thwaites" ; % send
+
 % Resolution="-5km-" ;  CtrlVar.SlidingLaw="Cornford"; C="" ;     Duvh="-Duvh-" ;  % missing
 Resolution="-5km-" ;  CtrlVar.SlidingLaw="Cornford"; C="" ;     Duvh="" ;  % submitted
 % Resolution="-5km-" ;  CtrlVar.SlidingLaw="Cornford"; C="C0" ;   Duvh="-Duvh-" ;  % missing
@@ -89,7 +91,7 @@ Resolution="-5km-" ;  CtrlVar.SlidingLaw="Weertman"; C="" ;     Duvh="Duvh" ;   
 % Resolution="-5km-" ;  CtrlVar.SlidingLaw="Cornford"; C="" ;     Duvh="" ;       % sent
 % Resolution="-5km-" ;  CtrlVar.SlidingLaw="Cornford"; C="C0" ;   Duvh="" ;       % done
 
-
+% Resolution="-5km-" ;  CtrlVar.SlidingLaw="Weertman"; C="" ;     Duvh="Duvh" ;   IceShelf="PIG" ; % send
 
 
 CreateAndSaveACInterpolants=false;  % But still created if the files with the interpolants do not exist, 
@@ -106,7 +108,13 @@ if CtrlVar.uvh.SUPG.tauMultiplier~=1  ||  CtrlVar.uvh.SUPG.tau~="taus"
     % taus with multy >= 5 does not converge
 end
 
-                                                                                                     
+if IceShelf~="Thwaites"
+
+    UserVar.RunType=replace(UserVar.RunType,"TWISC","PIGC");
+
+end
+
+
                                                                                                      
 %%
 
