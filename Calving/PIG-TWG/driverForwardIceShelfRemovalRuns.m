@@ -91,7 +91,7 @@ Resolution="-5km-" ;  CtrlVar.SlidingLaw="Weertman"; C="" ;     Duvh="Duvh" ;   
 % Resolution="-5km-" ;  CtrlVar.SlidingLaw="Cornford"; C="" ;     Duvh="" ;       % sent
 % Resolution="-5km-" ;  CtrlVar.SlidingLaw="Cornford"; C="C0" ;   Duvh="" ;       % done
 
-% Resolution="-5km-" ;  CtrlVar.SlidingLaw="Weertman"; C="" ;     Duvh="Duvh" ;   IceShelf="PIG" ; % send
+Resolution="-5km-" ;  CtrlVar.SlidingLaw="Cornford"; C="C0" ;     Duvh="" ;   IceShelf="PIG" ; % send
 
 
 CreateAndSaveACInterpolants=false;  % But still created if the files with the interpolants do not exist, 
@@ -110,7 +110,7 @@ end
 
 if IceShelf~="Thwaites"
 
-    UserVar.RunType=replace(UserVar.RunType,"TWISC","PIGC");
+    UserVar.RunType=replace(UserVar.RunType,"TWIS","PIG");
 
 end
 
