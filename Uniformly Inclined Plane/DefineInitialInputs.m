@@ -8,6 +8,8 @@ function [UserVar,CtrlVar,MeshBoundaryCoordinates]=DefineInitialInputs(UserVar,C
     CtrlVar.TimeDependentRun=1;
     xd=100e3; xu=0 ; yl=20e3 ; yr=-20e3;
     MeshBoundaryCoordinates=flipud([xu yr ; xd yr ; xd yl ; xu yl]);
+
+    CtrlVar.MeshGenerator="gmsh";  % possible values: {mesh2d|gmsh}
     CtrlVar.GmshGeoFileAdditionalInputLines{1}='Periodic Line {1,2} = {3,4};';  % these lines are added to the gmsh .geo input file each time such a file is created
     CtrlVar.OnlyMeshDomainAndThenStop=0;
     
