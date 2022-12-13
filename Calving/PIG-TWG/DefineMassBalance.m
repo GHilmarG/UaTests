@@ -71,7 +71,7 @@ elseif contains(UserVar.RunType,"-MR0-")
     dabdh=zeros(MUA.Nnodes,1);
 
     I=F.b<-800 ; ab(I)=-100; dabdh(I)=0;
-    I= F.b< -400 & F.b >= -800; ab(I)=100*(F.b(I)+400)/400; dabdh(I)=(-F.F.rho(I)/F.F.rhow)/4;
+    I= F.b< -400 & F.b >= -800; ab(I)=100*(F.b(I)+400)/400; dabdh(I)=(-F.rho(I)/F.rhow)/4;
     I=F.b>-400 ; ab(I)=0; dabdh(I)=0;
 
 
@@ -83,8 +83,8 @@ elseif contains(UserVar.RunType,"-MR1-")
     dabdh=zeros(MUA.Nnodes,1);
 
     I=F.b<-800 ; ab(I)=-200; dabdh(I)=0;
-    I= F.b< -400 & F.b>= -800; ab(I)=200*(b(I)+400)/400; dabdh(I)=(-F.rho(I)/F.rhow)/2;
-    I=b>-400 ; ab(I)=0; dabdh(I)=0;
+    I= F.b< -400 & F.b>= -800; ab(I)=200*(F.b(I)+400)/400; dabdh(I)=(-F.rho(I)/F.rhow)/2;
+    I=F.b>-400 ; ab(I)=0; dabdh(I)=0;
     %I=MUA.coordinates(:,2)>-264e3;
     %ab(I)=0; dabdh(I)=0;
 
@@ -96,7 +96,7 @@ elseif contains(UserVar.RunType,"-MR2-")
 
     I= F.b<-800 ; ab(I)=-100;  dabdh(I)=0;
     I= F.b< -200 & F.b>= -800; ab(I)=100*(F.b(I)+200)/600; dabdh(I)=(-F.rho(I)/F.rhow)/6;
-    I=b>-200 ; ab(I)=0; dabdh(I)=0;
+    I=F.b>-200 ; ab(I)=0; dabdh(I)=0;
 
 elseif contains(UserVar.RunType,"-MR3-")
 
@@ -106,7 +106,7 @@ elseif contains(UserVar.RunType,"-MR3-")
 
     I=F.b<-800 ; ab(I)=-200; dabdh(I)=0;
     I= F.b< -200 & F.b>= -800;  ab(I)=200*(F.b(I)+200)/600;  dabdh(I)=(-F.rho(I)/F.rhow)/3;
-    I=b>-200 ; ab(I)=0; dabdh(I)=0;
+    I=F.b>-200 ; ab(I)=0; dabdh(I)=0;
 
 elseif contains(UserVar.RunType,"-MR4-")
 
@@ -121,9 +121,9 @@ elseif contains(UserVar.RunType,"-MR5-")
 
     ab(F.b<-800)=-200;
     I= F.b< -200 & F.b>= -800; ab(I)=200*(F.b(I)+200)/600;
-    ab(b>-200)=0;
+    ab(F.b>-200)=0;
 
-    I=MUA.coordinates(:,2)>-264e3;
+    % I=MUA.coordinates(:,2)>-264e3;
     ab(I)=0;
 
 elseif contains(UserVar.RunType,"-MR6-")
@@ -132,9 +132,9 @@ elseif contains(UserVar.RunType,"-MR6-")
 
     ab(F.b<-800)=-200;
     I= F.b< -200 & F.b>= -800; ab(I)=200*(F.b(I)+200)/600;
-    ab(b>-200)=0;
+    ab(F.b>-200)=0;
 
-    I=MUA.coordinates(:,2)>-200e3;
+    % I=MUA.coordinates(:,2)>-200e3;
     ab(I)=0;
 
 elseif contains(UserVar.RunType,"-MR7-")
@@ -143,15 +143,16 @@ elseif contains(UserVar.RunType,"-MR7-")
 
     ab(F.b<-1000)=-50 ;
     I=F.b> -1000 & F.b < -455 ; ab(I)=9e-4*F.b(I).^2+1.4*F.b(I)+450 ;
-    ab(b>-455)=0;
+    ab(F.b>-455)=0;
 
 end
 
-% only apply basal melt strictly below/outside of grounding lines
-F.GF=IceSheetIceShelves(CtrlVar,MUA,F.GF);
-ab(~F.GF.NodesDownstreamOfGroundingLines)=0;
-dabdh(~F.GF.NodesDownstreamOfGroundingLines)=0;
-
+if ~isfield(UserVar,"IceSheetIceShelves") || UserVar.IceSheetIceShelves
+    % only apply basal melt strictly below/outside of grounding lines
+    F.GF=IceSheetIceShelves(CtrlVar,MUA,F.GF);
+    ab(~F.GF.NodesDownstreamOfGroundingLines)=0;
+    dabdh(~F.GF.NodesDownstreamOfGroundingLines)=0;
+end
 
 return
 

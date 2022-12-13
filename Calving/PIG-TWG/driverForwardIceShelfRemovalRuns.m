@@ -68,6 +68,8 @@
 %%
 
 IceShelf="Thwaites" ; % send
+Melt="-MR4-" ;                  % BasalMeltRateParameterisation=
+
 
 % Resolution="-5km-" ;  CtrlVar.SlidingLaw="Cornford"; C="" ;     Duvh="-Duvh-" ;  % missing
 Resolution="-5km-" ;  CtrlVar.SlidingLaw="Cornford"; C="" ;     Duvh="" ;  % submitted
@@ -91,7 +93,10 @@ Resolution="-5km-" ;  CtrlVar.SlidingLaw="Weertman"; C="" ;     Duvh="Duvh" ;   
 % Resolution="-5km-" ;  CtrlVar.SlidingLaw="Cornford"; C="" ;     Duvh="" ;       % sent
 % Resolution="-5km-" ;  CtrlVar.SlidingLaw="Cornford"; C="C0" ;   Duvh="" ;       % done
 
-Resolution="-5km-" ;  CtrlVar.SlidingLaw="Cornford"; C="C0" ;     Duvh="" ;   IceShelf="PIG" ; % send
+Resolution="-5km-" ;  CtrlVar.SlidingLaw="Cornford"; C="C0" ;     Duvh="" ;   IceShelf="PIG" ; % Deleting PIG Ice Shelf, using Melt MR4
+
+Resolution="-5km-" ;  CtrlVar.SlidingLaw="Cornford"; C="" ;     Duvh="" ;  Melt="-MR0-" ;  IceShelf="Thwaites" ; % Reference run for Melt="-MR0-"
+Resolution="-5km-" ;  CtrlVar.SlidingLaw="Cornford"; C="C0" ;     Duvh="" ;  Melt="-MR0-" ;  IceShelf="PIG" ; % PIG ice shelf removal run for Melt="-MR0-"
 
 
 CreateAndSaveACInterpolants=false;  % But still created if the files with the interpolants do not exist, 
@@ -101,7 +106,8 @@ RunJob=true;
 BatchJob=false;
 
 
-UserVar.RunType="-FT-P-"+Duvh+"-TWIS"+C+"-MR4-SM-TM001-"+CtrlVar.SlidingLaw+Resolution+"Alim-Ca1-Cs100000-Aa1-As100000-" ;  
+
+UserVar.RunType="-FT-P-"+Duvh+"-TWIS"+C+Melt+"SM-TM001-"+CtrlVar.SlidingLaw+Resolution+"Alim-Ca1-Cs100000-Aa1-As100000-" ;  
 
 if CtrlVar.uvh.SUPG.tauMultiplier~=1  ||  CtrlVar.uvh.SUPG.tau~="taus"
     UserVar.RunType=UserVar.RunType+"-"+CtrlVar.uvh.SUPG.tau+"-SUPGm"+num2str(CtrlVar.uvh.SUPG.tauMultiplier) ;
