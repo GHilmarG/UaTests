@@ -29,6 +29,11 @@ IRange=1:2;
 
 TextString="";
 
+SaveFigures=true;  
+% FigureDirectory="C:\Users\lapnjc6\OneDrive - Northumbria University - Production Azure AD\Work\Manuscripts\2022 ThwaitesIceShelfButtressing\Figures\"; 
+FigureDirectory="C:\Users\Hilmar\OneDrive - Northumbria University - Production Azure AD\Work\Manuscripts\2022 ThwaitesIceShelfButtressing\Figures\";
+
+Region="Thwaites" ;  % only one implemented
 
 Compare="2.3km C2 Weertman";
 
@@ -50,12 +55,12 @@ Compare="2.3km Cornford C0 1m 1cm";
 
 Compare="2.3km Cornford";
 
-Compare="SUPG";
+% Compare="SUPG";
 
 % Compare="2.3km Weertman";  % This one covers 200 years for both runs
 % Note: When comparing I subtract Data(2)-Data(1)
 QuiverColorSpeedLimits=[0 1000];
-xb=[-1520 -1445 -1100 -1100 -1350 -1590 -1520] ;yb=[-510  -547  -547 -180 -180   -390 -510];
+xb=[-1520 -1445 -1100 -1100 -1350 -1590 -1520] ;yb=[-510  -547  -547 -180 -180   -390 -510];  % Thwaites
 xyBoundary=[xb(:) yb(:)]*1000;
 AxisLimits=[-1620 -1400 -520 -340] ;
 switch Compare
@@ -103,6 +108,9 @@ switch Compare
 
         SubString(1)="-FT-P-TWIS-MR4-SM-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-";
         SubString(2)="-FT-P-TWISC0-MR4-SM-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-";
+
+        SubString(1)="-FT-P-TWIS-MR4-SM-TM001-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-";
+        SubString(2)="-FT-P-TWISC0-MR4-SM-TM001-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-";
 
    case  "2.3km Cornford C0-C2"
                        
@@ -197,8 +205,6 @@ TimeVector=0:20:200;
 % TimeVector=0:1:50;
 
 
-figVAF=FindOrCreateFigure("Compare");
-figVel=FindOrCreateFigure("Velocity");
 
 
 AskForInput=true;
@@ -260,10 +266,11 @@ for J=1:numel(TimeVector)
     end
 
 
-    figVAF=FindOrCreateFigure("Compare"); clf(figVAF) ;
+    figVAF=FindOrCreateFigure("Compare",[50 700 700 550]); clf(figVAF) ;  
     hold off
-    cbar=UaPlots(CtrlVar,MUA1,F1,dVAFnode,GroundingLineColor="r",CalvingFrontColor="b") ;
-    title(cbar,["VAF","(m w.e.)"]) ;
+    
+    cbarVAF=UaPlots(CtrlVar,MUA1,F1,dVAFnode,GroundingLineColor="r",CalvingFrontColor="b") ;
+    title(cbarVAF,["Height above","flotation","(m w.eq.)"],interpreter="latex") ;
     
     
     dVAFGt=(VAF2.Total-VAF1.Total)/1e9;
@@ -277,21 +284,33 @@ for J=1:numel(TimeVector)
     PlotCalvingFronts(CtrlVar,MUA2,F2,color="b",LineWidth=2,LineStyle="-");
 
 
-    
+
     axis(AxisLimits)
 
     clim([-50 50])
-    ModifyColormap
-    
-    text(-1445,-350,TextString,BackgroundColor="w",FontSize=10,EdgeColor="k");
-    text(-1560,-350,["Grounding lines in red","Calving fronts in blue"],BackgroundColor="w",FontSize=10,EdgeColor="k");
-    if J==1
-        figVAF.Position=[50 500 1000 800];
-    end
-    % dlat=5/4 ; dlon=10/2 ; PlotLatLonGrid(1000,dlat,dlon);
+    ModifyColormap();
 
-    figVel=FindOrCreateFigure("Velocity"); clf(figVel) ;
+    % PlotLatLonGrid(1000,5/4,10/4);
+    text(-1445,-350,TextString,BackgroundColor="w",FontSize=10,EdgeColor="k");
+    text(-1560,-350,["Grounding lines in red","Calving fronts in blue"],BackgroundColor="w",FontSize=9,EdgeColor="k");
+   
+    % dlat=5/4 ; dlon=10/2 ; PlotLatLonGrid(1000,dlat,dlon);
+    drawnow
+
+    if SaveFigures
+        title("")  % get rid of title
+        cbarVAF.Position=[0.8 0.2 0.03, 0.6];
+        FigureName="HeightAboveFlotationDiff"+TimeString+Region;
+        exportgraphics(figVAF,FigureDirectory+FigureName+".pdf")
+        savefig(figVAF,FigureDirectory+FigureName+".fig","compact")
+
+    end
+
+
+    figVel=FindOrCreateFigure("Velocity",[800 700 700 550]); clf(figVel) ; 
     hold off
+    
+
 
     dub=ub2-F1.ub;
     dvb=vb2-F1.vb;
@@ -319,8 +338,9 @@ for J=1:numel(TimeVector)
         CtrlVar.QuiverSameVelocityScalingsAsBefore=true ;
     end
 
-    cbar=QuiverColorGHG(F1.x,F1.y,dub,dvb,CtrlVar) ;
-    title(cbar,"(m/a)")
+    
+    [cbarVel,Qh,QVPar]=QuiverColorGHG(F1.x,F1.y,dub,dvb,CtrlVar) ;
+    title(cbarVel,["Speed","$(\mathrm{m/yr})$"],interpreter="latex")
     title(sprintf("%s: Vel diff at time=%3.1f yr \n dVAF=%g Gt, SLR=%5.2f (mm)",Compare,F1.time,(VAF2.Total-VAF1.Total)/1e9,SLR),Interpreter="latex" )
 
 
@@ -332,30 +352,44 @@ for J=1:numel(TimeVector)
 
     PlotGroundingLines(CtrlVar,MUA2,F2.GF,[],[],[],color="r",LineStyle="-",LineWidth=2);
     PlotCalvingFronts(CtrlVar,MUA2,F2,color="b",LineWidth=2,LineStyle="-");
-    
+
     axis(AxisLimits)
-    if J==1
-        figVel.Position=[1050 500 1000 800];
-    end
     
-    % dlat=5/4 ; dlon=10/2 ; PlotLatLonGrid(1000,dlat,dlon);
+
+
+    
     text(-1445,-350,TextString,BackgroundColor="w",FontSize=10,EdgeColor="k");
-    text(-1560,-350,["Grounding lines in red","Calving fronts in blue"],BackgroundColor="w",FontSize=10,EdgeColor="k");
+    text(-1560,-350,["Grounding lines in red","Calving fronts in blue"],BackgroundColor="w",FontSize=9,EdgeColor="k");
+    cbarVel.Position=[0.8 0.2 0.03, 0.6];
     drawnow
 
+    if SaveFigures
+        title("")  % get rid of title
+        % cbarVel.Position=[0.85 0.2 0.03, 0.6];
+        FigureName="VelocityDiff"+TimeString+Region;
+        exportgraphics(figVel,FigureDirectory+FigureName+".pdf")
+        savefig(figVel,FigureDirectory+FigureName+".fig","compact")
+
+    end
+
+
+    % show changes in height above floation for each run, from start of run.
 
     FigVAF1=FindOrCreateFigure("VAF1") ;
 
-    if iCount==1 ; VAF1start=VAF1.node; end
+    if iCount==1 ; VAF1start=VAF1; end
     
-    UaPlots(CtrlVar,MUA1,F1,VAF1.node-VAF1start) ;
+    UaPlots(CtrlVar,MUA1,F1,VAF1.node-VAF1start.node) ;
+    title(sprintf("%s: \n VAF diff at time=%3.1f yr \n dVAF=%g Gt, SLR=%5.2f (mm)",SubString(1),F1.time,(VAF1.Total-VAF1start.Total)/1e9,SLR),Interpreter="latex" )
+    CLim=clim;
 
     FigVAF2=FindOrCreateFigure("VAF2") ;
     
-    if iCount==1 ; VAF2start=VAF2.node; end
+    if iCount==1 ; VAF2start=VAF2; end
 
-    UaPlots(CtrlVar,MUA2,F2,VAF2.node-VAF2start) ;
-
+    UaPlots(CtrlVar,MUA2,F2,VAF2.node-VAF2start.node) ;
+    title(sprintf("%s: \n VAF diff at time=%3.1f yr \n dVAF=%g Gt, SLR=%5.2f (mm)",SubString(2),F2.time,(VAF2.Total-VAF2start.Total)/1e9,SLR),Interpreter="latex" )
+    clim(CLim)
     if AskForInput
         prompt = " Y/N/C [Y]: ";
         txt = input("Ret to continue, N for break, C for continuous: ","s");

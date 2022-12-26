@@ -1,21 +1,25 @@
 
 
 PlotType="Bubble" ;   
+PlotType="Histograms" ;   % OK
+
 Region="DotsonCrosson"; % actually Crosson and Dotson Ice Shelves, and Pope, Smith anbd Kohler glaciers
+Region="Thwaites"; 
+Region="PIG" ; 
 Region="Whole"; 
-% Region="PIG" ; 
-% Region="Thwaites"; 
 
 
-PlotType="Histograms" ;   
 
-SaveFigures=false;  
+
+SaveFigures=true;  
 % FigureDirectory="C:\Users\lapnjc6\OneDrive - Northumbria University - Production Azure AD\Work\Manuscripts\2022 ThwaitesIceShelfButtressing\Figures\"; 
 FigureDirectory="C:\Users\Hilmar\OneDrive - Northumbria University - Production Azure AD\Work\Manuscripts\2022 ThwaitesIceShelfButtressing\Figures\";
 %% Get data and do some simple plots to check all is good.
 
 
 FileName="D:\Runs\Calving\PIG-TWG\ResultsFiles\0000050-Nodes83632-Ele166223-Tri3-kH10000-FT-P-TWIS-MR4-SM-5km-Alim-Ca1-Cs100000-Aa1-As100000-" ;
+
+
 % FileName="D:\Runs\C
 
 
@@ -128,10 +132,10 @@ switch PlotType
         ax2.YTick = [];
         set([ax1,ax2],'Position',[.17 .11 .685 .815]);
         cb1 = colorbar(ax1,'Position',[.07 .2 .05 .6]);
-        cb2 = colorbar(ax2,'Position',[.88 .2 .05 .6]);  caxis(ax2,[ValuesMin ValuesMax]) ; %
+        cb2 = colorbar(ax2,'Position',[.88 .2 .05 .6]);  clim(ax2,[ValuesMin ValuesMax]) ; %
 
         title(cb2,"$\Theta_N$",interpreter="latex")
-        title(cb1,["speed","$(m/yr)$"],interpreter="latex")
+        title(cb1,["speed","$(\mathrm{m/yr})$"],interpreter="latex")
         
         %colormap(ax1,'hot')
         %colormap(ax2,'cool')
@@ -160,11 +164,15 @@ switch PlotType
 
                 text(-1560,-565,"Crosson",Color="k",FontSize=12,Interpreter="latex",FontWeight="bold",Rotation=0,BackgroundColor="w")
                 text(-1570,-650,"Dotson",Color="k",FontSize=12,Interpreter="latex",FontWeight="bold",Rotation=0,BackgroundColor="w")
-                
+
                 text(-1610,-225,["Pine Island Glacier"],Color="k",FontSize=12,Interpreter="latex",FontWeight="bold",Rotation=0,BackgroundColor="w")
                 text(-1510,-425,["Thwaites"," Glacier"],Color="k",FontSize=12,Interpreter="latex",FontWeight="bold",Rotation=0,BackgroundColor="w")
-                text(-1600,-605,["\ \ \ \ Bear","Peninsula"],Color="k",FontSize=12,Interpreter="latex",FontWeight="bold",Rotation=0,BackgroundColor="w")
-                caxis(ax1,[0 4500]) ; %
+                text(-1590,-605,["\ \ \ \ Bear","Peninsula"],Color="k",FontSize=10,Interpreter="latex",FontWeight="bold",Rotation=0,BackgroundColor="w")
+
+                text(-1610,-490,"TWGT",Color="k",FontSize=10,Interpreter="latex",FontWeight="bold",Rotation=0,BackgroundColor="w")
+                text(-1620,-450,"TEIS",Color="k",FontSize=10,Interpreter="latex",FontWeight="bold",Rotation=0,BackgroundColor="w")
+
+                clim(ax1,[0 4500]) ; %
 
             case "PIG"
 
@@ -172,12 +180,14 @@ switch PlotType
                 bl.Location="NorthWest";  % PIG
                 TN.Position=[50 460 760 790];
                 PlotLatLonGrid(1000,5/2^3,10/2^2);
+
+                text(-1610,-230,["Pine Island Glacier"],Color="k",FontSize=12,Interpreter="latex",FontWeight="bold",Rotation=0,BackgroundColor="w")
                 % exportgraphics(Fig,'C:\Users\lapnjc6\OneDrive - Northumbria University - Production Azure AD\Work\Manuscripts\2022 ThwaitesIceShelfButtressing\Figures\ButtressingRatioPIG.pdf')
 
             case "Thwaites"
 
                 Fig.XLim=[-1585 -1515];  Fig.YLim=[-480 -390];
-                caxis(ax1,[0 3000]) ; %
+                clim(ax1,[0 3000]) ; %
                 TN.Position=[50 345 790 903];
                 PlotLatLonGrid(1000,5/2^4,10/2^3); 
 
@@ -186,7 +196,7 @@ switch PlotType
 
                 Fig.XLim=[-1600 -1470];  Fig.YLim=[-710 -520];
                 PlotLatLonGrid(1000,5/2^3,10/2^2);
-                caxis(ax1,[0 1800]) ; %
+                clim(ax1,[0 1800]) ; %
                 text(-1540,-565,"Crosson",Color="k",FontSize=14,Interpreter="latex",FontWeight="bold",Rotation=0,BackgroundColor="w")
                 text(-1540,-650,"Dotson",Color="k",FontSize=14,Interpreter="latex",FontWeight="bold",Rotation=0,BackgroundColor="w")
 
@@ -228,30 +238,45 @@ switch PlotType
 
 
 
-
-        FH=FindOrCreateFigure("Hist N") ; clf(FH)
+    % Theta_N Histograms
+        FH=FindOrCreateFigure("Hist ThetaN") ; clf(FH)
         tiledlayout(3,1)
         nexttile
-        hg1=histogram(GLQ.ThetaN(InPIG)) ;  hg1.Normalization="probability" ; hg1.BinWidth=0.1 ;
+        hg1=histogram(GLQ.ThetaN(InPIG)) ;  hg1.Normalization="probability" ; hg1.BinWidth=0.05 ;
         xlim([-1 1.5]) ; legend("PIG") ; xlabel("$\Theta_N$",interpreter="latex")
         nexttile
-        hg2=histogram(GLQ.ThetaN(InTG)) ;  hg2.Normalization="probability" ; hg2.BinWidth=0.1 ;
+        hg2=histogram(GLQ.ThetaN(InTG)) ;  hg2.Normalization="probability" ; hg2.BinWidth=0.05 ;
         xlim([-1 1.5]) ; legend("Thwaites",Location="northwest") ; xlabel("$\Theta_N$",interpreter="latex")
         nexttile
-        hg3=histogram(GLQ.ThetaN(InPSK)) ; hg3.Normalization="probability" ; hg3.BinWidth=0.1 ;
+        hg3=histogram(GLQ.ThetaN(InPSK)) ; hg3.Normalization="probability" ; hg3.BinWidth=0.05 ;
         xlim([-1 1.5]) ; legend("Pope, Smith, Kohler") ; xlabel("$\Theta_N$",interpreter="latex")
 
         if SaveFigures
-           
-            FigureName="HistogramN";
+
+            FigureName="HistogramTheta";
             exportgraphics(FH,FigureDirectory+FigureName+".pdf")
             savefig(FH,FigureDirectory+FigureName+".fig","compact")
 
         end
 
+        FHkappaThwaites=FindOrCreateFigure("Hist ThetaN Thwaites simplified") ; clf(FHkappaThwaites)
+        hgT1=histogram(GLQ.ThetaN(InTG)) ;  hgT1.Normalization="probability" ; hgT1.BinWidth=0.05 ;
+        hold on
+        hgT2=histogram(GLQThwaitesSimplified.ThetaN(InTG)) ;  hgT2.Normalization="probability" ; hgT2.BinWidth=0.05 ;
+        xlim([-0.5 1.5]) ;
+        legend("Along Thwaites' Grounding Line","Downstream of Thwaites' grounding line",Location="northwest") ; ylabel("$\Theta_N$",interpreter="latex")
 
 
+        if SaveFigures
 
+            FigureName="HistogramThetaThwaites";
+            exportgraphics(FHkappaThwaites,FigureDirectory+FigureName+".pdf")
+            savefig(FHkappaThwaites,FigureDirectory+FigureName+".fig","compact")
+
+        end
+
+
+    % K_N histograms (consider renaming K to \kappa)
         FHkappa=FindOrCreateFigure("Hist kappaN") ; clf(FHkappa)
         tiledlayout(3,1)
         nexttile
@@ -295,7 +320,9 @@ switch PlotType
         BL=FindOrCreateFigure("Boxes locations") ; clf(BL)
         CtrlVar.PlotGLs=1;
         cbar=UaPlots(CtrlVar,MUA,F,"-speed-");
-        caxis([0 4500])
+        clim([0 4500])
+        cbar.Location='East';
+        cbar.Position=[0.7 0.6 0.04 0.25];
         hold on
 
         plot([BoxPIG(1) BoxPIG(2) BoxPIG(2) BoxPIG(1) BoxPIG(1)]/1e3,[BoxPIG(3) BoxPIG(3) BoxPIG(4) BoxPIG(4) BoxPIG(3)]/1e3,"k")
@@ -313,22 +340,26 @@ switch PlotType
 
 
         
-        title(cbar,["speed","$(m/yr)$"],Interpreter="latex")
+        title(cbar,["speed","$(\mathrm{m/yr})$"],Interpreter="latex")
         xlabel("xps (km)",Interpreter="latex")
         ylabel("yps (km)",Interpreter="latex")
         BL.Position=[220 432 500 718];
         title("")
 
         BL.Position=[220 432 500 718];
-
-
+        cbar.Position=[0.7 0.6 0.04 0.25];
+        
+        PlotLatLonGrid(1000);
         text(-1560,-565,"Crosson",Color="k",FontSize=10,Interpreter="latex",FontWeight="bold",Rotation=0,BackgroundColor="w")
         text(-1570,-650,"Dotson",Color="k",FontSize=10,Interpreter="latex",FontWeight="bold",Rotation=0,BackgroundColor="w")
 
         text(-1620,-225,["Pine Island Glacier"],Color="k",FontSize=10,Interpreter="latex",FontWeight="bold",Rotation=0,BackgroundColor="w")
         text(-1510,-425,["Thwaites"," Glacier"],Color="k",FontSize=10,Interpreter="latex",FontWeight="bold",Rotation=0,BackgroundColor="w")
-        text(-1600,-605,["\ \ \ \ Bear","Peninsula"],Color="k",FontSize=10,Interpreter="latex",FontWeight="bold",Rotation=0,BackgroundColor="w")
+        text(-1600,-605,["\ \ \ \ Bear","Peninsula"],Color="k",FontSize=9,Interpreter="latex",FontWeight="bold",Rotation=0,BackgroundColor="w")
 
+        text(-1630,-490,"TWGT",Color="k",FontSize=10,Interpreter="latex",FontWeight="bold",Rotation=0,BackgroundColor="w")
+        text(-1630,-450,"TEIS",Color="k",FontSize=10,Interpreter="latex",FontWeight="bold",Rotation=0,BackgroundColor="w")
+        drawnow
         BL.Position=[220 432 500 718];
         if SaveFigures
 

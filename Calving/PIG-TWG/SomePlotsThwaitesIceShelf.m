@@ -30,12 +30,14 @@ Experiment="5km-New";
 
 
 Experiment="5km-New-Cornford";
-Experiment="10km-New-Cornford";
+
 Experiment="20km-New-Cornford"; 
 
 Experiment="SUPG"  ;
 
 Experiment="5km-New-Cornford";
+Experiment="10km-New-Cornford";
+
 
 %Experiment="Compare with ref" ;
 
@@ -132,11 +134,10 @@ case "20km-New-Cornford"
     case "10km-New-Cornford"
 
 
-        SubString(1)="FT-P-TWIS-MR4-SM-Cornford-10km-Alim-Ca1-Cs100000-Aa1-As100000-";
+        SubString(1)="FT-P-TWIS-MR4-SM-Cornford-10km-Alim-Ca1-Cs100000-Aa1-As100000-.mat";
         
-        SubString(2)="ThickMin0k01-FT-P-TWIS-MR4-SM-TM001-Cornford-10km-Alim-Ca1-Cs100000-Aa1-As100000-";  % 161 years
-        
-        SubString(3)="FT-P-Duvh-TWIS-MR4-SM-TM001-Cornford-10km-Alim-Ca1-Cs100000-Aa1-As100000-";  % 359 years
+        SubString(2)="ThickMin0k01-FT-P-TWIS-MR4-SM-TM001-Cornford-10km-Alim-Ca1-Cs100000-Aa1-As100000-.mat";  % 161 years
+        SubString(3)="ThickMin0k01-FT-P-Duvh-TWIS-MR4-SM-TM001-Cornford-10km-Alim-Ca1-Cs100000-Aa1-As100000-.mat";  % 359 years
 
         SubString(4)="FT-P-TWISC0-MR4-SM-Cornford-10km-Alim-Ca1-Cs100000-Aa1-As100000-";
         SubString(5)="ThickMin0k01-FT-P-TWISC0-MR4-SM-TM001-Cornford-10km-Alim-Ca1-Cs100000-Aa1-As100000-";  % 232 years
@@ -173,8 +174,8 @@ case "20km-New-Cornford"
         IRange=1:6 ;
         IRange=1:10;
         IRange=1:3;    PlotCase="Comparing ThickMin for 4.6km"  ; 
-        IRange=11:12;  PlotCase=""  ; 
-        IRange=5; 
+       % IRange=11:12;  PlotCase=""  ; 
+       %  IRange=5; 
 
       VAFStep=5; 
 
@@ -463,32 +464,36 @@ if CalculateVAF
         for I=IRange
 
 
-            VAF0=DataCollect{I}.VAF(1);  % The ref value, but this could be re-defined for each run in princple
+
+            In=~isnan(DataCollect{1}.time);
+            timeRefVector=DataCollect{1}.time(In) ;
+            VAFRefVector=DataCollect{1}.VAF(In) ;
+            [~,ia]=unique(timeRefVector) ;
+            timeRefVector=timeRefVector(ia);
+            VAFRefVector=VAFRefVector(ia);
+
+            In=~isnan(DataCollect{I}.time);
+            timeVector=DataCollect{I}.time(In) ;
+            VAFVector=DataCollect{I}.VAF(In) ;
+
+            [~,ia]=unique(timeVector) ;
+            timeVector=timeVector(ia);
+            VAFVector=VAFVector(ia);
+
+            VAFVectorAtTimeRef = interp1(timeVector,VAFVector,timeRefVector) ;
+
+
+            
             yyaxis left
             % plot loss in VAF, that is plot VAF(t=t0)-VAF(t). So if VAF decreases, which causes an increase in sea level, plot \Delta
             % VAF as a positive quantity
-            plot(DataCollect{I}.time, (VAF0-DataCollect{I}.VAF)/1e9,'-o',color=col(I),DisplayName=LegendEntry(I),LineWidth=lw(I),Marker=M(I));
+            plot(timeRefVector,-(VAFVectorAtTimeRef-VAFVectorAtTimeRef(1))/1e9,'-o',color=col(I),DisplayName=LegendEntry(I),LineWidth=lw(I),Marker=M(I));
             hold on
             ylabel("Loss in VAF $(\mathrm{ km^3})$",Interpreter="latex")
 
 
-            % Where do I have common data?
-            IRef=IRange(1);
-            timeRef=round(DataCollect{IRef}.time(find(~isnan(DataCollect{IRef}.time)))) ;
-            timeCompare=round(DataCollect{I}.time(find(~isnan(DataCollect{I}.time)))) ;
-            TimeVector=intersect(timeRef,timeCompare) ;  % These are the times where I have date in the ref and the comparision arrays
-            dVAF=nan(numel(TimeVector),1);
-
-            for k=1:numel(TimeVector)  % Now presumably this can be done better using some vectorized approach...
-
-                [dtRef,iRef]=min(abs(DataCollect{IRef}.time - TimeVector(k)));          % I know that I have data here at these times, because I've already restricted TimeVector to those times
-                [dtCompare,iCompare]=min(abs(DataCollect{I}.time - TimeVector(k)));
-                dVAF(k)= DataCollect{I}.VAF(iCompare)-DataCollect{IRef}.VAF(iCompare) ;
-
-            end
-
             yyaxis right
-            plot(TimeVector,dVAF/1e9,'-o',color=col(I),DisplayName=LegendEntry(I),LineWidth=lw(I),Marker=M(I),LineStyle='--');
+            plot(timeRefVector,(VAFVectorAtTimeRef-VAFRefVector)/1e9,'-o',color=col(I),DisplayName=LegendEntry(I),LineWidth=lw(I),Marker=M(I),LineStyle='--');
             hold on
 
             ylabel("Change in VAF with respect to $h_{\mathrm{min}}=1\,\mathrm{m}\,(\mathrm{km}^3)$",Interpreter="latex")
@@ -500,7 +505,7 @@ if CalculateVAF
         lg=legend(Interpreter="latex");
 
 
-        lg.String{1}="$h_{\mathrm{min}}=1\,\mathrm{m}$";  lg.String{2}="$h_{\mathrm{min}}=0.01\,\mathrm{m}$";  lg.String{3}="$h_{\mathrm{min}}=1\,\mathrm{m}$ and deactivation";
+        lg.String{1}="$h_{\mathrm{min}}=1\,\mathrm{m}$";  lg.String{2}="$h_{\mathrm{min}}=0.01\,\mathrm{m}$";  lg.String{3}="$h_{\mathrm{min}}=0.01\,\mathrm{m}$ and deactivation";
         lg.String(4:6)=[] ;
     end
     %%
