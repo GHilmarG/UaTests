@@ -1,7 +1,7 @@
 % Restart-FT-P-TWISC0-MR4-SM-TM001-Cornford-10km-Alim-Ca1-Cs100000-Aa1-As100000-.mat  at t=42.8286
-% Restart-FT-P-TWIS-MR4-SM-TM001-Cornford-10km-Alim-Ca1-Cs100000-Aa1-As100000-.mat  at t=161.564 
-% Restart-FT-P-Duvh-TWISC0-MR4-SM-TM001-Cornford-10km-Alim-Ca1-Cs100000-Aa1-As100000-.mat  at t=53.3 
-% Restart-FT-P-Duvh-TWIS-MR4-SM-TM001-Cornford-10km-Alim-Ca1-Cs100000-Aa1-As100000-.mat  at t=105.55 
+% Restart-FT-P-TWIS-MR4-SM-TM001-Cornford-10km-Alim-Ca1-Cs100000-Aa1-As100000-.mat  at t=161.564
+% Restart-FT-P-Duvh-TWISC0-MR4-SM-TM001-Cornford-10km-Alim-Ca1-Cs100000-Aa1-As100000-.mat  at t=53.3
+% Restart-FT-P-Duvh-TWIS-MR4-SM-TM001-Cornford-10km-Alim-Ca1-Cs100000-Aa1-As100000-.mat  at t=105.55
 
 
 
@@ -23,7 +23,10 @@ if ~contains(WorkDir,"ResultsFiles")
 end
 
 
+xb=[-1520 -1445 -1100 -1100 -1350 -1590 -1520] ;yb=[-510  -547  -547 -180 -180   -390 -510];
+xyBoundary=[xb(:) yb(:)]*1000;
 
+TimeInterval=[0 400] ; 
 
 Experiment="AC-lim" ;
 Experiment="5km-New";
@@ -31,25 +34,30 @@ Experiment="5km-New";
 
 Experiment="5km-New-Cornford";
 
-Experiment="20km-New-Cornford"; 
+Experiment="20km-New-Cornford";
 
 Experiment="SUPG"  ;
 
-Experiment="5km-New-Cornford";
+
 Experiment="10km-New-Cornford";
 
+Experiment="5km-New-Weertman";
+Experiment="5km-New-Cornford";
 
-%Experiment="Compare with ref" ;
 
-CreateVideo=false; 
-CalculateVAF=true;
+Experiment="Compare with ref: mesh convergence" ;
+Experiment= "Compare with ref: TWIS and PIG" ;
+
+Experiment="5km-New-Cornford-PIG";
+
+CreateVideo=false; CalculateVAF=true;  % defaults
 
 
 % Experiment= "ConvergenceStudy";
 
-VAFStep=25; 
-VideoStep=10; 
-PlotCase=""  ; 
+VAFStep=25;
+VideoStep=10;
+PlotCase=""  ;
 
 switch Experiment
 
@@ -102,7 +110,7 @@ switch Experiment
             ];
 
     case "10km-New"
-        
+
 
         SubString(1)="FT-P-TWIS-MR4-SM-10km.mat";
         SubString(2)="FT-P-TWISC0-MR4-SM-10km.mat";
@@ -118,7 +126,7 @@ switch Experiment
 
         IRange=1:4 ;
 
-case "20km-New-Cornford"
+    case "20km-New-Cornford"
 
         SubString(1)="ThickMin0k01-FT-P-TWIS-MR4-SM-TM001-Cornford-20km-Alim-Ca1-Cs100000-Aa1-As100000-";    % 200 years
         SubString(2)="ThickMin0k01-FT-P-TWISC0-MR4-SM-TM001-Cornford-20km-Alim-Ca1-Cs100000-Aa1-As100000-";  % 200 years
@@ -128,14 +136,14 @@ case "20km-New-Cornford"
             "9.3km: removed (Alim, Cornford, hmin=0.01m)",...
             ];
 
-        IRange=1;   
-        VideoStep=10; 
+        IRange=1;
+        VideoStep=10;
 
     case "10km-New-Cornford"
 
 
         SubString(1)="FT-P-TWIS-MR4-SM-Cornford-10km-Alim-Ca1-Cs100000-Aa1-As100000-.mat";
-        
+
         SubString(2)="ThickMin0k01-FT-P-TWIS-MR4-SM-TM001-Cornford-10km-Alim-Ca1-Cs100000-Aa1-As100000-.mat";  % 161 years
         SubString(3)="ThickMin0k01-FT-P-Duvh-TWIS-MR4-SM-TM001-Cornford-10km-Alim-Ca1-Cs100000-Aa1-As100000-.mat";  % 359 years
 
@@ -144,9 +152,9 @@ case "20km-New-Cornford"
 
         SubString(6)="FT-P-Duvh-TWISC0-MR4-SM-TM001-Cornford-10km-Alim-Ca1-Cs100000-Aa1-As100000-";  % 224 years
 
-        SubString(7)="FT-P-Duvh-TWISC2-MR4-SM-TM001-Cornford-10km-Alim-Ca1-Cs100000-Aa1-As100000-kmat";  % 200 years
+        SubString(7)="FT-P-Duvh-TWISC2-MR4-SM-TM001-Cornford-10km-Alim-Ca1-Cs100000-Aa1-As100000-";  % 200 years
 
-        SubString(8)="FT-P-Duvh-TWISC0MGL-MR4-SM-TM001-Cornford-10km-Alim-Ca1-Cs100000-Aa1-As100000-kmat";
+        SubString(8)="FT-P-Duvh-TWISC0MGL-MR4-SM-TM001-Cornford-10km-Alim-Ca1-Cs100000-Aa1-As100000-";
 
         SubString(9)="FT-P-TWIS-MR4-SM-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-";
         SubString(10)="FT-P-TWISC0-MR4-SM-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-";
@@ -154,7 +162,7 @@ case "20km-New-Cornford"
         SubString(11)="ThickMin0k01-FT-P-TWIS-MR4-SM-TM001-Cornford-20km-Alim-Ca1-Cs100000-Aa1-As100000-";
         SubString(12)="ThickMin0k01-FT-P-TWISC0-MR4-SM-TM001-Cornford-20km-Alim-Ca1-Cs100000-Aa1-As100000-";
 
-        
+
 
         LegendEntry=[...
             "4.6km: (Alim, Cornford, hmin=1m)",...
@@ -173,11 +181,11 @@ case "20km-New-Cornford"
 
         IRange=1:6 ;
         IRange=1:10;
-        IRange=1:3;    PlotCase="Comparing ThickMin for 4.6km"  ; 
-       % IRange=11:12;  PlotCase=""  ; 
-       %  IRange=5; 
+        IRange=1:3;    PlotCase="Comparing ThickMin for 4.6km"  ;
+        % IRange=11:12;  PlotCase=""  ;
+        %  IRange=5;
 
-      VAFStep=5; 
+        VAFStep=5;
 
     case "5km"
 
@@ -207,7 +215,7 @@ case "20km-New-Cornford"
             ];
 
 
-       VideoStep=5; 
+        VideoStep=5;
 
     case "5km-New-Cornford"
 
@@ -216,46 +224,102 @@ case "20km-New-Cornford"
         SubString(2)="-FT-P-Duvh-TWISC2-MR4-SM-TM001-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-";
         SubString(3)="-FT-P-TWISC0-MR4-SM-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-";
 
-        SubString(1)="-ThickMin0k01-FT-P-TWIS-MR4-SM-TM001-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-";  % 107 years
-        SubString(2)="-ThickMin0k01-FT-P-Duvh-TWISC2-MR4-SM-TM001-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-";
-        SubString(3)="-ThickMin0k01-FT-P-TWISC0-MR4-SM-TM001-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-";  % 285 years
+        SubString(1)="-FT-P-TWIS-MR4-SM-TM001-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-"; 
+        SubString(2)="-FT-P-Duvh-TWISC2-MR4-SM-TM001-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-";
+        SubString(3)="-FT-P-TWISC0-MR4-SM-TM001-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-";
 
         IRange=1:3;
-     
+
         LegendEntry=[...
             "2.3km: Thwaites ice shelf (Alim, Cornford)",...
             "2.3km: Thwaites ice shelf removed 2km downstream (Alim, Cornford)",...
             "2.3km: Thwaites ice shelf removed (Alim, Cornford)",...
             ];
 
-        VAFStep=1;
-        VideoStep=25; 
 
-    case "Compare with ref"
+    case "5km-New-Cornford-PIG"
 
-        PlotCase="Compare"  ;
+        SubString(1)="-FT-P-PIGC0-MR4-SM-TM001-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-.mat";
+        SubString(2)="-FT-P-PIGC0-MR0-SM-TM001-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-.mat";
+        IRange=1; 
+
+        VideoStep=1;  CreateVideo=true; CalculateVAF=false;
+        xyBoundary=NaN;
+
+    case "5km-New-Weertman"
+
+
+        SubString(1)="-ThickMin0k01-FT-P-Duvh-TWIS-MR4-SM-TM001-Weertman-5km-Alim-Ca1-Cs100000-Aa1-As100000-"; 
+        SubString(2)="-ThickMin0k01-FT-P-Duvh-TWISC0-MR4-SM-TM001-Weertman-5km-Alim-Ca1-Cs100000-Aa1-As100000-";
+
+        IRange=1:2;
+
+        LegendEntry=[...
+            "2.3km: Thwaites ice shelf (Alim, Weertman)",...
+            "2.3km: Thwaites ice shelf removed (Alim, Weertman)",...
+            ];
+
+
+    case "Compare with ref: TWIS and PIG"
+
+        PlotCase="Compare"  ;  % Mesh convergence 
+
+        ComparisionMatrix=[1 nan; 2 1 ; 3 1  ; 4 nan ; 5 4 ; 6 4 ]  ;
+
+        IRange=ComparisionMatrix(:,1); IRange=IRange' ;
+
+        IRange=[1 2 3 4 5 6 ];
+
+
+        SubString(1)="-FT-P-TWIS-MR4-SM-TM001-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-.mat";
+        SubString(2)="-FT-P-TWISC0-MR4-SM-TM001-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-.mat";
+        SubString(3)="-FT-P-PIGC0-MR4-SM-TM001-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-.mat";
+        
+        SubString(4)="-FT-P-TWIS-MR0-SM-TM001-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-.mat";
+        SubString(5)="-FT-P-TWISC0-MR0-SM-TM001-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-.mat";
+        SubString(6)="-FT-P-PIGC0-MR0-SM-TM001-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-.mat";
+        
+
+
+
+        LegendEntry=[...
+            "2.3km: MR4-Reference (Cornford)",...
+            "2.3km: MR4-Thwaites ice shelf removed (Cornford)",...
+            "2.3km: MR4-PIG ice shelf removed (Cornford)",...
+            "2.3km: MR0-Reference (Cornford)",...
+            "2.3km: MR0-Thwaites ice shelf removed (Cornford)",...
+            "2.3km: MR0-PIG ice shelf removed (Cornford)",...
+            ];
+
+        TimeInterval=[0 50] ; 
+        VAFStep=10;
+        xyBoundary=nan;  % since this is always with respect to a reference run, I think that limiting the region is not needed
+
+    case "Compare with ref: mesh convergence"
+
+        PlotCase="Compare"  ;  % Mesh convergence 
 
         ComparisionMatrix=[1 nan; 2 1 ; 3 1  ; 4 nan ; 5 4 ; 6 4 ; 7 nan ; 8 7]  ;
-        
+
         IRange=ComparisionMatrix(:,1); IRange=IRange' ;
 
         IRange=[1  3  4  6  7  8];
 
 
-        SubString(1)="-FT-P-TWIS-MR4-SM-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-";
-        SubString(2)="-FT-P-Duvh-TWISC2-MR4-SM-TM001-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-";
-        SubString(3)="-FT-P-TWISC0-MR4-SM-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-";
+
+        SubString(1)="-FT-P-TWIS-MR4-SM-TM001-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-.mat";
+        SubString(2)="-FT-P-Duvh-TWISC2-MR4-SM-TM001-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-.mat";
+        SubString(3)="-FT-P-TWISC0-MR4-SM-TM001-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-.mat";
+
+
+        SubString(4)="FT-P-Duvh-TWIS-MR4-SM-TM001-Cornford-10km-Alim-Ca1-Cs100000-Aa1-As100000-.mat";
+        SubString(5)="FT-P-Duvh-TWISC2-MR4-SM-TM001-Cornford-10km-Alim-Ca1-Cs100000-Aa1-As100000-.mat";
+        SubString(6)="FT-P-Duvh-TWISC0-MR4-SM-TM001-Cornford-10km-Alim-Ca1-Cs100000-Aa1-As100000-.mat";
 
 
 
-        SubString(4)="FT-P-Duvh-TWIS-MR4-SM-TM001-Cornford-10km-Alim-Ca1-Cs100000-Aa1-As100000-";
-        SubString(5)="FT-P-Duvh-TWISC2-MR4-SM-TM001-Cornford-10km-Alim-Ca1-Cs100000-Aa1-As100000-kmat";
-        SubString(6)="FT-P-Duvh-TWISC0-MR4-SM-TM001-Cornford-10km-Alim-Ca1-Cs100000-Aa1-As100000-";
-        
-
-
-        SubString(7)="-FT-P-TWIS-MR4-SM-TM001-Cornford-20km-Alim-Ca1-Cs100000-Aa1-As100000-";
-        SubString(8)="-FT-P-TWISC0-MR4-SM-TM001-Cornford-20km-Alim-Ca1-Cs100000-Aa1-As100000-";
+        SubString(7)="-FT-P-TWIS-MR4-SM-TM001-Cornford-20km-Alim-Ca1-Cs100000-Aa1-As100000-.mat";
+        SubString(8)="-FT-P-TWISC0-MR4-SM-TM001-Cornford-20km-Alim-Ca1-Cs100000-Aa1-As100000-.mat";
 
         LegendEntry=[...
             "2.3km: Thwaites ice shelf (Alim, Cornford)",...
@@ -269,25 +333,28 @@ case "20km-New-Cornford"
             ];
 
         VAFStep=25;
+        xyBoundary=nan;  % since this is always with respect to a reference run, I think that limiting the region is not needed
 
 
-    case "SUPG"  
 
-        SubString(1)="ThickMin0k01-FT-P-TWIS-MR4-SM-TM001-Cornford-20km-Alim-Ca1-Cs100000-Aa1-As100000-.mat";    
+
+    case "SUPG"
+
+        SubString(1)="ThickMin0k01-FT-P-TWIS-MR4-SM-TM001-Cornford-20km-Alim-Ca1-Cs100000-Aa1-As100000-.mat";
         SubString(2)="ThickMin0k01-FT-P-TWIS-MR4-SM-TM001-Cornford-20km-Alim-Ca1-Cs100000-Aa1-As100000-taut-beta01.mat";    % 200 years
         SubString(3)="ThickMin0k01-FT-P-TWIS-MR4-SM-TM001-Cornford-20km-Alim-Ca1-Cs100000-Aa1-As100000-tau1-beta01.mat";    % 200 years
         SubString(4)="ThickMin0k01-FT-P-TWIS-MR4-SM-TM001-Cornford-20km-Alim-Ca1-Cs100000-Aa1-As100000-tau2-beta01.mat";    % 200 years
- 
+
         SubString(5)="ThickMin0k01-FT-P-TWIS-MR4-SM-TM001-Cornford-20km-Alim-Ca1-Cs100000-Aa1-As100000-taus-SUPGm100.mat";    % 200 years
         SubString(6)="ThickMin0k01-FT-P-TWIS-MR4-SM-TM001-Cornford-20km-Alim-Ca1-Cs100000-Aa1-As100000-taut-SUPGm100.mat";    % 400 years
         SubString(7)="ThickMin0k01-FT-P-TWIS-MR4-SM-TM001-Cornford-20km-Alim-Ca1-Cs100000-Aa1-As100000-tau1-SUPGM100.mat";    % 400 years
         SubString(8)="ThickMin0k01-FT-P-TWIS-MR4-SM-TM001-Cornford-20km-Alim-Ca1-Cs100000-Aa1-As100000-tau2-SUPGm100.mat";    % 400 years
 
 
-        SubString(9)="ThickMin0k01-FT-P-TWISC0-MR4-SM-TM001-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-.mat";  
+        SubString(9)="ThickMin0k01-FT-P-TWISC0-MR4-SM-TM001-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-.mat";
 
-        IRange=[9];   
-        VideoStep=10; 
+        IRange=[9];
+        VideoStep=10;
 
 end
 
@@ -298,16 +365,15 @@ end
 
 
 
-xb=[-1520 -1445 -1100 -1100 -1350 -1590 -1520] ;yb=[-510  -547  -547 -180 -180   -390 -510];
-xyBoundary=[xb(:) yb(:)]*1000;
+
 % xyBoundary=nan;
 
 if CreateVideo
-    Step=VideoStep; 
+    Step=VideoStep;
     for I=IRange
 
 
-%        ReadPlotSequenceOfResultFiles(FileNameSubstring=SubString(I),PlotTimestep=Step,PlotType="-ubvb-h-") ;
+        %        ReadPlotSequenceOfResultFiles(FileNameSubstring=SubString(I),PlotTimestep=Step,PlotType="-ubvb-h-") ;
         % ReadPlotSequenceOfResultFiles2(FileNameSubstring=SubString(I),PlotTimestep=Step,PlotType="-ubvb-s-",AxisLimits=[-1700 -1050 -700 0]) ;
         % ReadPlotSequenceOfResultFiles2(FileNameSubstring=SubString(I),PlotTimestep=Step,PlotType="-ubvb-B-") ;
         % ReadPlotSequenceOfResultFiles2(FileNameSubstring=SubString(I),PlotTimestep=Step,PlotType="-ubvb-VAF-",VAFBoundary=xyBoundary) ;
@@ -329,17 +395,17 @@ if CalculateVAF
 
     for I=IRange
         fprintf("\n Reading %s \n",SubString(I))
-      
+
         DataCollect{I}=ReadPlotSequenceOfResultFiles2(FileNameSubstring=SubString(I),...
             PlotType="-collect-",...
             PlotTimestep=Step,...
-            PlotTimeInterval=[0 400],...
+            PlotTimeInterval=TimeInterval,...
             VAFBoundary=xyBoundary) ;
-        
+
         fprintf("done. \n \n")
     end
 
-    
+
 
 
     %% VAF and sea-level change plot
@@ -350,7 +416,7 @@ if CalculateVAF
         VAF0=DataCollect{I}.VAF(1);  % The ref value, but this could be re-defined for each run in princple
         yyaxis left
         % plot loss in VAF, that is plot VAF(t=t0)-VAF(t). So if VAF decreases, which causes an increase in sea level, plot \Delta
-        % VAF as a positive quantity 
+        % VAF as a positive quantity
         dVAF=(DataCollect{I}.VAF-VAF0) ;
 
         % Plot loss in VAF, ie loss in VAF is positive if VAF is lost
@@ -358,7 +424,7 @@ if CalculateVAF
         tt=ylim;
         ylabel("Loss in VAF $(\mathrm{ km^3})$",Interpreter="latex")
         yyaxis right
-       
+
 
         ylabel("Equivalent global sea level change (mm)")
         xlabel("time (yr)",Interpreter="latex") ;
@@ -371,7 +437,7 @@ if CalculateVAF
     end
     AreaOfTheOcean=3.625e14; % units m^2.
 
-    ax=gca();  
+    ax=gca();
     ax.YAxis(2).Limits=ax.YAxis(1).Limits/362.5 ; % *1000*1e9/AreaOfTheOcean;  % Sea level rise is positive for loss (ie negative) VAF
     % Note!!!:  If zooming in, the zoom only is with respect to the left y-axis, after each zoom, the above statement must be
     % rerun in the command line to get the right y limits on the right y-axis
@@ -383,11 +449,11 @@ if CalculateVAF
     %%
 
     if PlotCase=="Compare"
-        
+
         fig=FindOrCreateFigure("Compare"); clf(fig);
         %for I=1:size(ComparisionMatrix,1)
         for I=IRange
-           
+
 
             yyaxis left
             % plot loss in VAF, that is plot VAF(t=t0)-VAF(t). So if VAF decreases, which causes an increase in sea level, plot \Delta
@@ -402,7 +468,7 @@ if CalculateVAF
             end
 
             % Where do I have common data?
-          
+
 
             timeRef=round(DataCollect{iRef}.time(find(~isnan(DataCollect{iRef}.time)))) ;
             timeCompare=round(DataCollect{iData}.time(find(~isnan(DataCollect{iData}.time)))) ;
@@ -411,15 +477,15 @@ if CalculateVAF
 
             dVAF=nan(numel(TimeVector),1);
 
-            for k=1:numel(TimeVector)  
+            for k=1:numel(TimeVector)
 
-                [dtRef,iRefTime]=min(abs(DataCollect{iRef}.time - TimeVector(k)));          
+                [dtRef,iRefTime]=min(abs(DataCollect{iRef}.time - TimeVector(k)));
                 [dtCompare,iCompareTime]=min(abs(DataCollect{iData}.time - TimeVector(k)));
 
-                dtMin=0.001; 
-                if dtRef<dtMin && dtCompare<dtMin  % should not really be needed, 
-                                                         % because  I know that I have data here at these times, 
-                                                         % since I already restricted TimeVector to common times 
+                dtMin=0.001;
+                if dtRef<dtMin && dtCompare<dtMin  % should not really be needed,
+                    % because  I know that I have data here at these times,
+                    % since I already restricted TimeVector to common times
 
                     dVAF(k)= DataCollect{iData}.VAF(iCompareTime)-DataCollect{iRef}.VAF(iRefTime) ;
                 else
@@ -430,12 +496,13 @@ if CalculateVAF
             yyaxis left
             plot(TimeVector, -dVAF/1e9,'-o',color=col(I),DisplayName=LegendEntry(iData),LineWidth=lw(I),Marker=M(iData));
             tt=ylim;
-            ylabel("Loss in VAF $(\mathrm{ km^3})$",Interpreter="latex")
+            ylabel("Relative loss in VAF $(\mathrm{ km^3})$",Interpreter="latex")
 
             yyaxis right
             ylabel("Equivalent global sea level change (mm)")
             xlabel("time (yr)",Interpreter="latex") ;
 
+            
             %FindOrCreateFigure("Grounded area");
             %plot(DataCollect.time,DataCollect.GroundedArea/1e6,'-or');
             %xlabel("time (yr)") ; ylabel(" Grounded area(km^2)")
@@ -445,16 +512,17 @@ if CalculateVAF
     end
     AreaOfTheOcean=3.625e14; % units m^2.
 
-    ax=gca();  
+    ax=gca();
     ax.YAxis(2).Limits=ax.YAxis(1).Limits*1000*1e9/AreaOfTheOcean;
     % Note!!!:  If zooming in, the zoom only is with respect to the left y-axis, after each zoom, the above statement must be
     % rerun in the command line to get the right y limits on the right y-axis
 
 
-    legend(ax,Interpreter="latex")
+    lgRel=legend(ax,Interpreter="latex");
     yyaxis left
     fig.CurrentAxes.YAxis(1).Exponent=0;
-
+    yline(0) ; lgRel.String(end)=[];
+   
     %%
 
     if PlotCase=="Comparing ThickMin for 4.6km"
@@ -483,7 +551,7 @@ if CalculateVAF
             VAFVectorAtTimeRef = interp1(timeVector,VAFVector,timeRefVector) ;
 
 
-            
+
             yyaxis left
             % plot loss in VAF, that is plot VAF(t=t0)-VAF(t). So if VAF decreases, which causes an increase in sea level, plot \Delta
             % VAF as a positive quantity

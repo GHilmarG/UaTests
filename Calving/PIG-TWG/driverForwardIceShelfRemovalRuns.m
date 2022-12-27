@@ -20,7 +20,6 @@
 % job81: -ThickMin0k01-FT-P-TWISC0-MR4-SM-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-                                t=20.77 dt=0.014 23.8
 %
 %
-%  Runs missing: Cornford 5km TM001 TWIS (ie reference run for min ice thickness, for both Duvh and not)
 %
 %
 %%
@@ -29,15 +28,21 @@
 % HPO= HP Office
 % HPH= HP Home
 %
-% Cornford-5km TM001&Duvh    TM001~Duvh    TM1
-% TWIS           x             190        115         *Duvh-TWISC0-*TM001-Cornford-5km*.mat / ls -lt *P-TWIS-*TM001-Cornford*5km*.mat | head   /  *P-TWIS-*TM001-Cornford*5km*.mat
-% TWISC0         x             400        250           *Duvh-TWISC0-*TM001-Cornford-5km*.mat 
+% Cornford-5km TM001&Duvh    TM001~Duvh    TM1        for MR4
+% TWIS           x             289        124         *Duvh-TWISC0-*TM001-Cornford-5km*.mat / ls -t *P-TWIS-MR4-*TM001-Cornford*5km*.mat | head     /  ls -lt *P-TWIS-MR4-SM-Cornford*5km*.mat  | head
+% TWISC0         x             400        327                                               / ls -lt *P-TWIS-MR4-SM-TM001-Cornford*5km*.mat  | head /  ls -lt *P-TWIS-MR4-SM-Cornford*5km*.mat  | head   
 % TWISC2         200             x          x          *Duvh-TWISC2-*TM001-Cornford-5km*.mat
+% PIGC0          x              85          x                                                / ls -t *P-PIGC0-MR4-SM-TM001-Cornford-5km*.mat | head  /
 %
+% 
+% Cornford-5km TM001&Duvh    TM001~Duvh    TM1         for MR0:
+%  TWIS            x            29           x
+%  TWISC0          x            54           x                                             /  ls -t  *P-TWISC0-MR0-SM-TM001-Cornford-5km*.mat | head  /
+%  PIGC0           x            22           x                                             /  ls -t  *P-PIGC0-MR0-SM-TM001-Cornford-5km*.mat | head  /
 %
-% Weertman-5km TM001&Duvh    TM001~Duvh    TM1
-% TWIS           165/HPO         x         361         ls -lt *Duvh-TWIS-*TM001-Weertman*5km*.mat | head   /   *Duvh-TWIS-MR4*TM001-Weertman*5km*.mat  / *P-TWIS-MR4-SM-5km-Alim*.mat
-% TWISC0         249/HPO         x         303         ls -lt *Duvh-TWISC0-*TM001-Weertman*5km*.mat | head
+% Weertman-5km TM001&Duvh    TM001~Duvh    TM1         for MR4
+% TWIS           256/HPO         x         361         ls -lt *P-Duvh-TWIS-MR4-SM-TM001-Weertman-5km*.mat | head     /  *Duvh-TWIS-MR4*TM001-Weertman*5km*.mat  / ls -lt *P-TWIS-MR4-SM-5km-Alim*.mat |head
+% TWISC0         329/HPO         x         303         ls -lt *P-Duvh-TWISC0-MR4-SM-TM001-Weertman-5km*.mat  | head  /                                           / ls -lt *P-TWISC0-MR4-SM-5km*.mat  | head
 % TWISC2          x              x          x                                              
 %
 %
