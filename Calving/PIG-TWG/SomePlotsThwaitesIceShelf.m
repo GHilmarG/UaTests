@@ -51,6 +51,8 @@ Experiment="Compare with ref: mesh convergence" ;
 
 % Experiment="5km-New-Cornford-PIG";
 
+Experiment="Compare Cornford and Weertman with respective ref"  ; % C and W for MR4 and Thwaites removal
+
 CreateVideo=false; CalculateVAF=true;  % defaults
 
 
@@ -261,7 +263,7 @@ switch Experiment
             ];
 
 
-    case "Compare with ref: TWIS and PIG"
+    case "Compare with ref: TWIS and PIG"   % MR0 and MR4 for removing either PIG or Thwaites
 
         PlotCase="Compare"  ;  
 
@@ -298,9 +300,49 @@ switch Experiment
         VAFStep=5;
         xyBoundary=nan;  % since this is always with respect to a reference run, I think that limiting the region is not needed
 
-    case "Compare with ref: mesh convergence"
 
-        PlotCase="Compare"  ;  % Mesh convergence 
+
+
+    case "Compare Cornford and Weertman with respective ref"   % C and W for MR4 and Thwaites removal
+
+        PlotCase="Compare"  ;  
+
+        ComparisionMatrix=[1 nan; 2 1 ; 3 nan  ; 4 3 ];
+
+        IRange=ComparisionMatrix(:,1); IRange=IRange' ;
+
+
+        % Cornford
+        SubString(1)="-FT-P-TWIS-MR4-SM-TM001-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-.mat";
+        SubString(2)="-FT-P-TWISC0-MR4-SM-TM001-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-.mat";
+        
+        
+        %  Weertman
+        SubString(3)="-FT-P-Duvh-TWIS-MR4-SM-TM001-Weertman-5km-Alim-Ca1-Cs100000-Aa1-As100000-.mat";
+        SubString(4)="-FT-P-Duvh-TWISC0-MR4-SM-TM001-Weertman-5km-Alim-Ca1-Cs100000-Aa1-As100000-.mat";
+
+
+        LegendEntry=[...
+            "Reference    (2.3km, MR4, Cornford)",...
+            "TWIS removed (2.3km, MR4, Cornford)",...
+            "Reference    (2.3km, MR4, Weertman)",...
+            "TWIS removed (2.3km, MR4, Weertman)",...
+            ];
+
+        TimeInterval=[0 400] ;  VAFStep=25;
+        xyBoundary=nan;  % since this is always with respect to a reference run, I think that limiting the region is not needed
+
+
+
+
+
+
+
+
+
+    case "Compare with ref: mesh convergence"  % Mesh convergence for Cornford
+
+        PlotCase="Compare"  ;  
 
         ComparisionMatrix=[1 nan; 2 1 ; 3 1  ; 4 nan ; 5 4 ; 6 4 ; 7 nan ; 8 7]  ;
 
@@ -335,7 +377,7 @@ switch Experiment
             "9.3km: Thwaites ice shelf removed (Alim, Cornford)",...
             ];
 
-        VAFStep=25;
+        TimeInterval=[0 400] ;  VAFStep=25;
         xyBoundary=nan;  % since this is always with respect to a reference run, I think that limiting the region is not needed
 
 
