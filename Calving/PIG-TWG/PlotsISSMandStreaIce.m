@@ -263,7 +263,7 @@ cd(CurDir)
 
 cd("C:\cygwin64\home\Hilmar\Ua\UaTests\Calving\PIG-TWG")
 
-load("UaVAFcomparision.mat","DataCollect")
+load("UaVAFcomparision.mat","DataCollect")         % Created using SomePlotsThwaitesIceShelf
 col=["r","b","g","m","y","c","k","b","r","g","m","y","c","k"]  ;
 
 lw=[1 1 1 2 2 2 2 2 2 2 2 2 2 2 2 2 2 ];

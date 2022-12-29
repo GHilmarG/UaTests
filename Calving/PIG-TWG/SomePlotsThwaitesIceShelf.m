@@ -22,6 +22,7 @@ if ~contains(WorkDir,"ResultsFiles")
     cd(UserVar.ResultsFileDirectory)
 end
 
+FigureDirectory="C:\Users\Hilmar\OneDrive - Northumbria University - Production Azure AD\Work\Manuscripts\2022 ThwaitesIceShelfButtressing\Figures\";
 
 xb=[-1520 -1445 -1100 -1100 -1350 -1590 -1520] ;yb=[-510  -547  -547 -180 -180   -390 -510];
 xyBoundary=[xb(:) yb(:)]*1000;
@@ -46,9 +47,9 @@ Experiment="5km-New-Cornford";
 
 
 Experiment="Compare with ref: mesh convergence" ;
-Experiment= "Compare with ref: TWIS and PIG" ;
+% Experiment= "Compare with ref: TWIS and PIG" ;
 
-Experiment="5km-New-Cornford-PIG";
+% Experiment="5km-New-Cornford-PIG";
 
 CreateVideo=false; CalculateVAF=true;  % defaults
 
@@ -262,7 +263,7 @@ switch Experiment
 
     case "Compare with ref: TWIS and PIG"
 
-        PlotCase="Compare"  ;  % Mesh convergence 
+        PlotCase="Compare"  ;  
 
         ComparisionMatrix=[1 nan; 2 1 ; 3 1  ; 4 nan ; 5 4 ; 6 4 ]  ;
 
@@ -271,10 +272,12 @@ switch Experiment
         IRange=[1 2 3 4 5 6 ];
 
 
+        % MR4
         SubString(1)="-FT-P-TWIS-MR4-SM-TM001-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-.mat";
         SubString(2)="-FT-P-TWISC0-MR4-SM-TM001-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-.mat";
         SubString(3)="-FT-P-PIGC0-MR4-SM-TM001-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-.mat";
         
+        % MR0
         SubString(4)="-FT-P-TWIS-MR0-SM-TM001-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-.mat";
         SubString(5)="-FT-P-TWISC0-MR0-SM-TM001-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-.mat";
         SubString(6)="-FT-P-PIGC0-MR0-SM-TM001-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-.mat";
@@ -283,16 +286,16 @@ switch Experiment
 
 
         LegendEntry=[...
-            "2.3km: MR4-Reference (Cornford)",...
-            "2.3km: MR4-Thwaites ice shelf removed (Cornford)",...
-            "2.3km: MR4-PIG ice shelf removed (Cornford)",...
-            "2.3km: MR0-Reference (Cornford)",...
-            "2.3km: MR0-Thwaites ice shelf removed (Cornford)",...
-            "2.3km: MR0-PIG ice shelf removed (Cornford)",...
+            "Reference    (2.3km, MR4, Cornford)",...
+            "TWIS removed (2.3km, MR4, Cornford)",...
+            "PIIS removed (2.3km, MR4, Cornford)",...
+            "Reference    (2.3km, MR0, Cornford)",...
+            "TWIS removed (2.3km, MR0, Cornford)",...
+            "PIIS removed (2.3km, MR0, Cornford)",...
             ];
 
-        TimeInterval=[0 50] ; 
-        VAFStep=10;
+        TimeInterval=[0 100] ; 
+        VAFStep=5;
         xyBoundary=nan;  % since this is always with respect to a reference run, I think that limiting the region is not needed
 
     case "Compare with ref: mesh convergence"
@@ -435,7 +438,7 @@ if CalculateVAF
         hold on
 
     end
-    AreaOfTheOcean=3.625e14; % units m^2.
+    % AreaOfTheOcean=3.625e14; % units m^2.
 
     ax=gca();
     ax.YAxis(2).Limits=ax.YAxis(1).Limits/362.5 ; % *1000*1e9/AreaOfTheOcean;  % Sea level rise is positive for loss (ie negative) VAF
