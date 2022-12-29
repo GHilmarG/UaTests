@@ -29,3 +29,7 @@ figure ; UaPlots(CtrlVar,MUA,F,Field) ;   hold on ; plot(Xc/1000,Yc/1000,'.k') ;
 %
 
 
+load CreateInitialCalvingFrontProfiles.mat
+
+
+[UserVar,Xc,Yc]=CreateInitialCalvingFrontProfiles(UserVar,CtrlVar,MUA,F,CalvingFront=UserVar.CalvingFront0,Plot=true);
