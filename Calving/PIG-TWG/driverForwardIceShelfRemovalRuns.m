@@ -104,8 +104,17 @@ Resolution="-5km-" ;  CtrlVar.SlidingLaw="Cornford"; C="" ;     Duvh="" ;  Melt=
 % Resolution="-5km-" ;  CtrlVar.SlidingLaw="Cornford"; C="C0" ;     Duvh="" ;  Melt="-MR0-" ;  IceShelf="PIG" ;    % PIG ice shelf removal run for Melt="-MR0-"
 % Resolution="-5km-" ;  CtrlVar.SlidingLaw="Cornford"; C="C0" ;     Duvh="" ;  Melt="-MR0-" ;  IceShelf="Thwaites" ; % Thwaites ice shelf removal run for Melt="-MR0-"
 
-Resolution="-10km-" ;  CtrlVar.SlidingLaw="Cornford"; C="" ;     Duvh="" ;  Melt="-MR4-" ;  IceShelf="Thwaites" ; % Reference run 
-%Resolution="-10km-" ;  CtrlVar.SlidingLaw="Cornford"; C="C0" ;     Duvh="" ;  Melt="-MR4-" ;  IceShelf="Thwaites" ; % Thwaites removal
+Resolution="-20km-" ;  CtrlVar.SlidingLaw="Cornford"; C="" ;     Duvh="" ;  Melt="-MR4-" ;  IceShelf="Thwaites" ; % Reference run (for both Thwaites and PIG
+Resolution="-20km-" ;  CtrlVar.SlidingLaw="Cornford"; C="C0" ;     Duvh="" ;  Melt="-MR4-" ;  IceShelf="Thwaites" ; % Thwaites removal
+
+Resolution="-10km-" ;  CtrlVar.SlidingLaw="Cornford"; C="" ;      Duvh="" ;  Melt="-MR4-" ;  IceShelf="PIG" ;  % PIG removal
+% Resolution="-20km-" ;  CtrlVar.SlidingLaw="Cornford"; C="C0" ;     Duvh="" ;  Melt="-MR4-" ;  IceShelf="PIG" ; % PIG removal
+
+%% New runs
+Resolution="-5km-" ;  CtrlVar.SlidingLaw="Weertman"; C="C0" ;     Duvh="" ;  Melt="-MR4-" ;  IceShelf="PIG" ; % PIG removal / Weertman  /MR4
+% Resolution="-5km-" ;  CtrlVar.SlidingLaw="Weertman"; C="C0" ;     Duvh="" ;  Melt="-MR0-" ;  IceShelf="PIG" ; % PIG removal / Weertman  /MR0
+% Resolution="-5km-" ;  CtrlVar.SlidingLaw="Weertman"; C="C0" ;     Duvh="" ;  Melt="-MR0-" ;  IceShelf="Thwaites" ; % TWIS removal / Weertman  /MR0
+
 
 CreateAndSaveACInterpolants=false;  % But still created if the files with the interpolants do not exist, 
                                     % but the data files with A and C do.

@@ -47,11 +47,13 @@ Experiment="5km-New-Cornford";
 
 
 Experiment="Compare with ref: mesh convergence" ;
-% Experiment= "Compare with ref: TWIS and PIG" ;
+
 
 % Experiment="5km-New-Cornford-PIG";
 
 Experiment="Compare Cornford and Weertman with respective ref"  ; % C and W for MR4 and Thwaites removal
+% Experiment= "Compare with ref: TWIS and PIG" ;
+
 
 CreateVideo=false; CalculateVAF=true;  % defaults
 
@@ -330,6 +332,7 @@ switch Experiment
             ];
 
         TimeInterval=[0 400] ;  VAFStep=25;
+        TimeInterval=[0 100] ;  VAFStep=5;
         xyBoundary=nan;  % since this is always with respect to a reference run, I think that limiting the region is not needed
 
 
@@ -495,7 +498,7 @@ if CalculateVAF
 
     if PlotCase=="Compare"
 
-        fig=FindOrCreateFigure("Compare"); clf(fig);
+        figCompare=FindOrCreateFigure("Compare"); clf(figCompare);
         %for I=1:size(ComparisionMatrix,1)
         for I=IRange
 
@@ -565,7 +568,7 @@ if CalculateVAF
 
     lgRel=legend(ax,Interpreter="latex");
     yyaxis left
-    fig.CurrentAxes.YAxis(1).Exponent=0;
+    figCompare.CurrentAxes.YAxis(1).Exponent=0;
     yline(0) ; lgRel.String(end)=[];
    
     %%
@@ -625,7 +628,13 @@ if CalculateVAF
 
 end
 
-
+% switch Experiment
+% 
+%     case "Compare Cornford and Weertman with respective ref"   % C and W for MR4 and Thwaites removal
+% 
+%         cd(FigureDirectory)   ; exportgraphics(figCompare,'VAFcomparisionTWISandPIGforMR0andMR4.pdf')
+% 
+% end
 
 % f=gcf; exportgraphics(f,'ThwaitesIceShelf.pdf')
 
