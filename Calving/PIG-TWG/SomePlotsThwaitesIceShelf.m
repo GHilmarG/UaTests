@@ -309,38 +309,49 @@ switch Experiment
 
         PlotCase="Compare"  ;  
 
-        ComparisionMatrix=[1 nan; 2 1 ; 3 nan  ; 4 3 ];
+        ComparisionMatrix=[1 nan; 2 1 ; 3 1 ; 4 nan  ; 5 4  ; 6 4 ; 7 nan ; 8 7 ; 9 7 ; 10 nan ; 11 10 ; 12 10 ];
 
         IRange=ComparisionMatrix(:,1); IRange=IRange' ;
 
 
         % Cornford
-        SubString(1)="-FT-P-TWIS-MR4-SM-TM001-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-.mat";
+        SubString(1)="-FT-P-TWIS-MR4-SM-TM001-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-.mat";      % ref Cornford, M4
         SubString(2)="-FT-P-TWISC0-MR4-SM-TM001-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-.mat";
-        
-        
+        SubString(3)="-FT-P-PIGC0-MR4-SM-TM001-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-.mat";
+
         %  Weertman
-        SubString(3)="-FT-P-Duvh-TWIS-MR4-SM-TM001-Weertman-5km-Alim-Ca1-Cs100000-Aa1-As100000-.mat";
-        SubString(4)="-FT-P-Duvh-TWISC0-MR4-SM-TM001-Weertman-5km-Alim-Ca1-Cs100000-Aa1-As100000-.mat";
+        SubString(4)="-FT-P-Duvh-TWIS-MR4-SM-TM001-Weertman-5km-Alim-Ca1-Cs100000-Aa1-As100000-.mat";    % ref Weertman, M4
+        SubString(5)="-FT-P-Duvh-TWISC0-MR4-SM-TM001-Weertman-5km-Alim-Ca1-Cs100000-Aa1-As100000-.mat";
+        SubString(6)="-FT-P-PIGC0-MR4-SM-TM001-Weertman-5km-Alim-Ca1-Cs100000-Aa1-As100000-.mat";
+
+        % MR0
+        SubString(7)="-FT-P-TWIS-MR0-SM-TM001-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-.mat";             % ref Cornford, M0
+        SubString(8)="-FT-P-TWISC0-MR0-SM-TM001-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-.mat";
+        SubString(9)="-FT-P-PIGC0-MR0-SM-TM001-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-.mat";
+
+        SubString(10)="-FT-P-TWIS-MR0-SM-TM001-Weertman-5km-Alim-Ca1-Cs100000-Aa1-As100000-.mat";    % ref Weertman, M0 missing?
+        SubString(11)="-FT-P-TWISC0-MR0-SM-TM001-Weertman-5km-Alim-Ca1-Cs100000-Aa1-As100000-.mat";
+        SubString(12)="-FT-P-PIGC0-MR0-SM-TM001-Weertman-5km-Alim-Ca1-Cs100000-Aa1-As100000-.mat";
 
 
         LegendEntry=[...
             "Reference    (2.3km, MR4, Cornford)",...
             "TWIS removed (2.3km, MR4, Cornford)",...
+            "PIIS removed (2.3km, MR4, Cornford)",...
             "Reference    (2.3km, MR4, Weertman)",...
             "TWIS removed (2.3km, MR4, Weertman)",...
+            "PIIS removed (2.3km, MR4, Weertman)",...
+            "Reference    (2.3km, MR0, Cornford)",...
+            "TWIS removed (2.3km, MR0, Cornford)",...
+            "PIIS removed (2.3km, MR0, Cornford)",...
+            "Reference    (2.3km, MR0, Weertman)",...
+            "TWIS removed (2.3km, MR0, Weertman)",...
+            "PIIS removed (2.3km, MR0, Weertman)",...
             ];
 
         TimeInterval=[0 400] ;  VAFStep=25;
         TimeInterval=[0 100] ;  VAFStep=5;
         xyBoundary=nan;  % since this is always with respect to a reference run, I think that limiting the region is not needed
-
-
-
-
-
-
-
 
 
     case "Compare with ref: mesh convergence"  % Mesh convergence for Cornford

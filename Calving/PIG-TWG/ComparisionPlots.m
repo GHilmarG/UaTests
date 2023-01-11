@@ -29,7 +29,7 @@ IRange=1:2;
 
 TextString="";
 
-SaveFigures=true;  
+SaveFigures=false;  
 % FigureDirectory="C:\Users\lapnjc6\OneDrive - Northumbria University - Production Azure AD\Work\Manuscripts\2022 ThwaitesIceShelfButtressing\Figures\"; 
 FigureDirectory="C:\Users\Hilmar\OneDrive - Northumbria University - Production Azure AD\Work\Manuscripts\2022 ThwaitesIceShelfButtressing\Figures\";
 
@@ -203,7 +203,7 @@ end
 
 TimeVector=0:20:200;
 % TimeVector=0:1:50;
-
+TimeVector=20;
 
 
 
@@ -269,6 +269,8 @@ for J=1:numel(TimeVector)
     figVAF=FindOrCreateFigure("Compare",[50 700 700 550]); clf(figVAF) ;  
     hold off
     
+    Tile=tiledlayout(1,2) ; 
+    nexttile(1)
     cbarVAF=UaPlots(CtrlVar,MUA1,F1,dVAFnode,GroundingLineColor="r",CalvingFrontColor="b") ;
     title(cbarVAF,["Height above","flotation","(m w.eq.)"],interpreter="latex") ;
     
@@ -293,13 +295,13 @@ for J=1:numel(TimeVector)
     % PlotLatLonGrid(1000,5/4,10/4);
     text(-1445,-350,TextString,BackgroundColor="w",FontSize=10,EdgeColor="k");
     text(-1560,-350,["Grounding lines in red","Calving fronts in blue"],BackgroundColor="w",FontSize=9,EdgeColor="k");
-   
+    cbarVAF.Position=[0.8 0.2 0.03, 0.6]; title("")
     % dlat=5/4 ; dlon=10/2 ; PlotLatLonGrid(1000,dlat,dlon);
-    drawnow
+    
 
     if SaveFigures
         title("")  % get rid of title
-        cbarVAF.Position=[0.8 0.2 0.03, 0.6];
+        
         FigureName="HeightAboveFlotationDiff"+TimeString+Region;
         exportgraphics(figVAF,FigureDirectory+FigureName+".pdf")
         savefig(figVAF,FigureDirectory+FigureName+".fig","compact")
@@ -307,9 +309,9 @@ for J=1:numel(TimeVector)
     end
 
 
-    figVel=FindOrCreateFigure("Velocity",[800 700 700 550]); clf(figVel) ; 
+    % figVel=FindOrCreateFigure("Velocity",[800 700 700 550]); clf(figVel) ; 
     hold off
-    
+    nexttile(2)
 
 
     dub=ub2-F1.ub;
@@ -357,18 +359,24 @@ for J=1:numel(TimeVector)
     
 
 
-    
+
     text(-1445,-350,TextString,BackgroundColor="w",FontSize=10,EdgeColor="k");
     text(-1560,-350,["Grounding lines in red","Calving fronts in blue"],BackgroundColor="w",FontSize=9,EdgeColor="k");
-    cbarVel.Position=[0.8 0.2 0.03, 0.6];
+    cbarVel.Position=[0.9 0.2 0.02, 0.55]; title("")
+    cbarVAF.Position=[0.42 0.2 0.02 0.55];
+    text(-1.3,1,"(a)",Units="normalized",FontWeight="bold")
+    text(-0.12,1,"(b)",Units="normalized",FontWeight="bold")
     drawnow
 
+    Tile.TileSpacing="compact" ; Tile.Padding="compact";
+    figVAF.Position=[50 700 1200 550];
+    nexttile(1) ; ModifyColormap;
     if SaveFigures
         title("")  % get rid of title
         % cbarVel.Position=[0.85 0.2 0.03, 0.6];
         FigureName="VelocityDiff"+TimeString+Region;
-        exportgraphics(figVel,FigureDirectory+FigureName+".pdf")
-        savefig(figVel,FigureDirectory+FigureName+".fig","compact")
+        exportgraphics(figVAF,FigureDirectory+FigureName+".pdf")
+        savefig(figVAF,FigureDirectory+FigureName+".fig","compact")
 
     end
 

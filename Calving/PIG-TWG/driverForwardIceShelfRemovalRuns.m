@@ -112,8 +112,9 @@ Resolution="-10km-" ;  CtrlVar.SlidingLaw="Cornford"; C="" ;      Duvh="" ;  Mel
 
 %% New runs
 Resolution="-5km-" ;  CtrlVar.SlidingLaw="Weertman"; C="C0" ;     Duvh="" ;  Melt="-MR4-" ;  IceShelf="PIG" ; % PIG removal / Weertman  /MR4
-% Resolution="-5km-" ;  CtrlVar.SlidingLaw="Weertman"; C="C0" ;     Duvh="" ;  Melt="-MR0-" ;  IceShelf="PIG" ; % PIG removal / Weertman  /MR0
-% Resolution="-5km-" ;  CtrlVar.SlidingLaw="Weertman"; C="C0" ;     Duvh="" ;  Melt="-MR0-" ;  IceShelf="Thwaites" ; % TWIS removal / Weertman  /MR0
+Resolution="-5km-" ;  CtrlVar.SlidingLaw="Weertman"; C="C0" ;     Duvh="" ;  Melt="-MR0-" ;  IceShelf="PIG" ; % PIG removal / Weertman  /MR0
+Resolution="-5km-" ;  CtrlVar.SlidingLaw="Weertman"; C="C0" ;     Duvh="" ;  Melt="-MR0-" ;  IceShelf="Thwaites" ; % TWIS removal / Weertman  /MR0
+Resolution="-5km-" ;  CtrlVar.SlidingLaw="Weertman"; C="" ;     Duvh="" ;  Melt="-MR0-" ;  IceShelf="Thwaites" ; % TWIS removal / Weertman  /MR0
 
 
 CreateAndSaveACInterpolants=false;  % But still created if the files with the interpolants do not exist, 

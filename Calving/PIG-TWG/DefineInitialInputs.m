@@ -429,12 +429,15 @@ end
 
 %% Time step, total run time, run steps
 
-CtrlVar.dt=1e-6;   
+CtrlVar.dt=1e-5;   
 CtrlVar.ATSdtMax=0.1;
-CtrlVar.ATSdtMin=1e-6;  
+CtrlVar.ATSdtMin=1e-5;  
+CtrlVar.ATSTargetIterations=6;
+CtrlVar.ThicknessConstraintsItMax=0  ; % only update active-set, then move to next time step
+
 CtrlVar.NRitmax=150;       % maximum number of NR iteration
 
-CtrlVar.ThicknessConstraintsItMax=0  ; % only update active-set, then move to next time step
+
 
 
 if contains(UserVar.RunType,"-I-")
