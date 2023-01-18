@@ -116,6 +116,12 @@ Resolution="-5km-" ;  CtrlVar.SlidingLaw="Weertman"; C="C0" ;     Duvh="" ;  Mel
 Resolution="-5km-" ;  CtrlVar.SlidingLaw="Weertman"; C="C0" ;     Duvh="" ;  Melt="-MR0-" ;  IceShelf="Thwaites" ; % TWIS removal / Weertman  /MR0
 Resolution="-5km-" ;  CtrlVar.SlidingLaw="Weertman"; C="" ;     Duvh="" ;  Melt="-MR0-" ;  IceShelf="Thwaites" ; % TWIS removal / Weertman  /MR0
 
+%C17777347
+Resolution="-5km-" ;  CtrlVar.SlidingLaw="Cornford"; C="" ;       Duvh="" ;  Melt="-MR0-" ;  IceShelf="Thwaites" ; 
+% Resolution="-5km-" ;  CtrlVar.SlidingLaw="Cornford"; C="C0" ;     Duvh="" ;  Melt="-MR0-" ;  IceShelf="Thwaites" ; 
+% Resolution="-5km-" ;  CtrlVar.SlidingLaw="Cornford"; C="C0" ;     Duvh="" ;  Melt="-MR4-" ;  IceShelf="PIG" ; 
+% Resolution="-5km-" ;  CtrlVar.SlidingLaw="Cornford"; C="C0" ;     Duvh="" ;  Melt="-MR0-" ;  IceShelf="PIG" ; 
+
 
 CreateAndSaveACInterpolants=false;  % But still created if the files with the interpolants do not exist, 
                                     % but the data files with A and C do.
