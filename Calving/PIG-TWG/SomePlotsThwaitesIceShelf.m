@@ -362,10 +362,10 @@ switch Experiment
             ];
 
         TimeInterval=[0 400] ;  VAFStep=25;
-        TimeInterval=[0 100] ;  VAFStep=5;
+        % TimeInterval=[0 100] ;  VAFStep=5;
         xyBoundary=nan;  % since this is always with respect to a reference run, I think that limiting the region is not needed
 
-        IRange=[1 2 4 5] ;
+        % IRange=[1 2 4 5] ;
 
     case "Compare with ref: mesh convergence"  % Mesh convergence for Cornford
 

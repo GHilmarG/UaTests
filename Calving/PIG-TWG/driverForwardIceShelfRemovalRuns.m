@@ -29,22 +29,27 @@
 % HPH= HP Home
 %
 % Cornford-5km TM001&Duvh    TM001~Duvh    TM1        for MR4
-% TWIS           x             293        124         *Duvh-TWISC0-*TM001-Cornford-5km*.mat / ls -t *P-TWIS-MR4-*TM001-Cornford*5km*.mat | head     /  ls -lt *P-TWIS-MR4-SM-Cornford*5km*.mat  | head
+% TWIS           x             386        124         *Duvh-TWISC0-*TM001-Cornford-5km*.mat / ls -t *P-TWIS-MR4-SM-TM001-Cornford*5km*.mat | head     /  ls -lt *P-TWIS-MR4-SM-Cornford*5km*.mat  | head
 % TWISC0         x             400        327                                               / ls -lt *P-TWIS-MR4-SM-TM001-Cornford*5km*.mat  | head /  ls -lt *P-TWIS-MR4-SM-Cornford*5km*.mat  | head   
 % TWISC2         200             x          x          *Duvh-TWISC2-*TM001-Cornford-5km*.mat
-% PIGC0          x              88          x                                                / ls -t *P-PIGC0-MR4-SM-TM001-Cornford-5km*.mat | head  /
+% PIGC0          x             353          x                                                / ls -t *P-PIGC0-MR4-SM-TM001-Cornford-5km*.mat | head  /
 %
 % 
 % Cornford-5km TM001&Duvh    TM001~Duvh    TM1         for MR0:                             
-%  TWIS            x            37           x                                             / ls -t  *P-TWIS-MR0-*TM001-Cornford*5km*.mat | head       /
-%  TWISC0          x            62           x                                             /  ls -t  *P-TWISC0-MR0-SM-TM001-Cornford-5km*.mat | head  /
-%  PIGC0           x            32           x                                             /  ls -t  *P-PIGC0-MR0-SM-TM001-Cornford-5km*.mat | head  /
+%  TWIS            x           328           x                                             /  ls -lt *P-TWIS-MR0-SM-TM001-Cornford*5km*.mat  | head      /
+%  TWISC0          x           259           x                                             /  ls -lt *P-TWISC0-MR0-SM-TM001-Cornford*5km*.mat  | head  /
+%  PIGC0           x           274           x                                             /  ls -t  *P-PIGC0-MR0-SM-TM001-Cornford-5km*.mat | head  /
 %
 % Weertman-5km TM001&Duvh    TM001~Duvh    TM1         for MR4
-% TWIS           262             x         361         ls -lt *P-Duvh-TWIS-MR4-SM-TM001-Weertman-5km*.mat | head     /  *Duvh-TWIS-MR4*TM001-Weertman*5km*.mat  / ls -lt *P-TWIS-MR4-SM-5km-Alim*.mat |head
-% TWISC0         335             x         303         ls -lt *P-Duvh-TWISC0-MR4-SM-TM001-Weertman-5km*.mat  | head  /                                           / ls -lt *P-TWISC0-MR4-SM-5km*.mat  | head
-% TWISC2          x              x          x                                              
+% TWIS           342             x         361         ls -lt *P-Duvh-TWIS-MR4-SM-TM001-Weertman-5km*.mat | head     /  *Duvh-TWIS-MR4*TM001-Weertman*5km*.mat  / ls -lt *P-TWIS-MR4-SM-5km-Alim*.mat |head
+% TWISC0         400             x         303         ls -lt *P-Duvh-TWISC0-MR4-SM-TM001-Weertman-5km*.mat  | head  /                                           / ls -lt *P-TWISC0-MR4-SM-5km*.mat  | head
+% TWISC2          x              x          x           
+% PIGC0           x            165          x                                                                        /   ls -lt *P-PIGC0-MR4-SM-TM001-Weertman*5km*.mat  | head                     /
 %
+% Weertman-5km TM001&Duvh    TM001~Duvh    TM1         for MR0
+% TWIS              x          163           x                                             / ls -lt *P-TWIS-MR0-SM-TM001-Weertman*5km*.mat  | head /
+% TWISC0            x          111           x                                            / ls -lt *P-TWISC0-MR0-SM-TM001-Weertman*5km*.mat  | head /
+% PIGC0             x          165           x                                            / ls -lt *P-PIGC0-MR0-SM-TM001-Weertman*5km*.mat  | head /
 %
 %
 % Weertman-10km TM001&Duvh    TM001~Duvh    TM1         for MR4
