@@ -326,22 +326,23 @@ switch Experiment
         IRange=ComparisionMatrix(:,1); IRange=IRange' ;
 
 
-        % Cornford
-        SubString(1)="-FT-P-TWIS-MR4-SM-TM001-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-.mat";      % ref Cornford, M4
+        % Cornford:MR4
+        SubString(1)="-FT-P-TWIS-MR4-SM-TM001-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-.mat";      % ref Cornford:M4
         SubString(2)="-FT-P-TWISC0-MR4-SM-TM001-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-.mat";
         SubString(3)="-FT-P-PIGC0-MR4-SM-TM001-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-.mat";
 
-        %  Weertman
-        SubString(4)="-FT-P-Duvh-TWIS-MR4-SM-TM001-Weertman-5km-Alim-Ca1-Cs100000-Aa1-As100000-.mat";    % ref Weertman, M4
+        % Weertman:MR4
+        SubString(4)="-FT-P-Duvh-TWIS-MR4-SM-TM001-Weertman-5km-Alim-Ca1-Cs100000-Aa1-As100000-.mat";    % ref Weertman:M4
         SubString(5)="-FT-P-Duvh-TWISC0-MR4-SM-TM001-Weertman-5km-Alim-Ca1-Cs100000-Aa1-As100000-.mat";
         SubString(6)="-FT-P-PIGC0-MR4-SM-TM001-Weertman-5km-Alim-Ca1-Cs100000-Aa1-As100000-.mat";
 
-        % MR0
-        SubString(7)="-FT-P-TWIS-MR0-SM-TM001-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-.mat";             % ref Cornford, M0
+        % Cornford:MR0
+        SubString(7)="-FT-P-TWIS-MR0-SM-TM001-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-.mat";             % ref Cornford:M0
         SubString(8)="-FT-P-TWISC0-MR0-SM-TM001-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-.mat";
         SubString(9)="-FT-P-PIGC0-MR0-SM-TM001-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-.mat";
 
-        SubString(10)="-FT-P-TWIS-MR0-SM-TM001-Weertman-5km-Alim-Ca1-Cs100000-Aa1-As100000-.mat";    % ref Weertman, M0 missing?
+        % Weertman:MR0
+        SubString(10)="-FT-P-TWIS-MR0-SM-TM001-Weertman-5km-Alim-Ca1-Cs100000-Aa1-As100000-.mat";    % ref Weertman:M0
         SubString(11)="-FT-P-TWISC0-MR0-SM-TM001-Weertman-5km-Alim-Ca1-Cs100000-Aa1-As100000-.mat";
         SubString(12)="-FT-P-PIGC0-MR0-SM-TM001-Weertman-5km-Alim-Ca1-Cs100000-Aa1-As100000-.mat";
 
@@ -366,6 +367,9 @@ switch Experiment
         xyBoundary=nan;  % since this is always with respect to a reference run, I think that limiting the region is not needed
 
         % IRange=[1 2 4 5] ;
+
+       IRange=[9 12] ; CreateVideo=true; CalculateVAF=false; VideoStep=25;  TimeInterval=[0 400] ;
+
 
     case "Compare with ref: mesh convergence"  % Mesh convergence for Cornford
 
