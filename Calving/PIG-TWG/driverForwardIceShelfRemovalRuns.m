@@ -135,9 +135,9 @@ Resolution="-10km-" ;  CtrlVar.SlidingLaw="Cornford"; C="C0" ;     Duvh="" ;  Me
 Resolution="-10km-" ;  CtrlVar.SlidingLaw="Cornford"; C="C0" ;     Duvh="" ;  Melt="-MR4-" ;  IceShelf="PIG" ; 
 %C17777347
 % 20km
-%Resolution="-20km-" ;  CtrlVar.SlidingLaw="Cornford"; C="" ;       Duvh="" ;  Melt="-MR4-" ;  IceShelf="Thwaites" ; 
-%Resolution="-20km-" ;  CtrlVar.SlidingLaw="Cornford"; C="C0" ;     Duvh="" ;  Melt="-MR4-" ;  IceShelf="Thwaites" ; 
-%Resolution="-20km-" ;  CtrlVar.SlidingLaw="Cornford"; C="C0" ;     Duvh="" ;  Melt="-MR4-" ;  IceShelf="PIG" ; 
+Resolution="-20km-" ;  CtrlVar.SlidingLaw="Cornford"; C="" ;       Duvh="" ;  Melt="-MR4-" ;  IceShelf="Thwaites" ; % done
+Resolution="-20km-" ;  CtrlVar.SlidingLaw="Cornford"; C="C0" ;     Duvh="" ;  Melt="-MR4-" ;  IceShelf="Thwaites" ; % done
+Resolution="-20km-" ;  CtrlVar.SlidingLaw="Cornford"; C="C0" ;     Duvh="" ;  Melt="-MR4-" ;  IceShelf="PIG" ; % done
 
 CreateAndSaveACInterpolants=false;  % But still created if the files with the interpolants do not exist, 
                                     % but the data files with A and C do.
