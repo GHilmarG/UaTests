@@ -7,8 +7,12 @@ BCs=BoundaryConditions ;
 %load("ForwardResults1km10yr.mat","CtrlVar","F","MUA","UserVar") ;  
 load("ForwardResults1km100yr.mat","CtrlVar","F","MUA","UserVar") ;  
 
+OneDriverFolder="C:\Users\lapnjc6\OneDrive - Northumbria University - Production Azure AD\";
+P="Runs\MISMIPplus\";
+filename="RestartIce0-rCW-N0-Implicit-kH100-nod3.mat";
 
-load("C:\Users\Hilmar Gudmundsson\OneDrive - Northumbria University - Production Azure AD\Runs\MISMIPplus\RestartIce0-rCW-N0-Implicit-kH100-nod3.mat","F","MUA","UserVarInRestartFile","BCs")
+%load("C:\Users\Hilmar Gudmundsson\OneDrive - Northumbria University - Production Azure AD\Runs\MISMIPplus\RestartIce0-rCW-N0-Implicit-kH100-nod3.mat","F","MUA","UserVarInRestartFile","BCs")
+load(OneDriverFolder+P+filename,"F","MUA","UserVarInRestartFile","BCs")
 
 if isempty(F.x)  % if the result file is old...
     F.x=MUA.coordinates(:,1);

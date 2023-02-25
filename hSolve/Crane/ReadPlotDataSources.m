@@ -4,11 +4,13 @@
 
 if contains(hostname,"DESKTOP-G5TCRTD")
 
+elseif contains(hostname,"DESKTOP-014ILS5")
+
+   OneDriveFolder="C:\Users\lapnjc6\OneDrive - Northumbria University - Production Azure AD\Work\Ua\Antarctic Global Data Sets\";
 
 elseif contains(hostname,"DESKTOP-BU2IHIR")
 
     OneDriveFolder="C:\Users\Hilmar\OneDrive - Northumbria University - Production Azure AD\Work\Ua\Antarctic Global Data Sets\" ;
-
 
 end
 
@@ -16,28 +18,33 @@ end
 
 %%  Reading nc file with velocities
 
-wdir="C:\Users\Hilmar\OneDrive - Northumbria University - Production Azure AD\Work\Ua\Antarctic Global Data Sets\ITS_LIVE\"; 
+
 wdir=OneDriveFolder+"ITS_LIVE\";
 
 filenameITS="ANT_G0240_1996.nc" ; 
 filenameITS="ANT_G0240_2018.nc" ; 
 filenameITS="ANT_G0120_0000.nc";
 
-fprintf(" Reading %s  ...",filename)
+fprintf(" Reading %s  ...",wdir+filenameITS)
 
-finfo = ncinfo(filenameITS) ;
+finfo = ncinfo(wdir+filenameITS) ;
 
-xITS=ncread(filenameITS,"x");   fprintf("x ...")
-yITS=ncread(filenameITS,"y");    fprintf("y ...")    % these y values are in decending order
-vx=ncread(filenameITS,"vx");   fprintf("vx ...")
+xITS=ncread(wdir+filenameITS,"x");   fprintf("x ...")
+yITS=ncread(wdir+filenameITS,"y");    fprintf("y ...")    % these y values are in decending order
+vx=ncread(wdir+filenameITS,"vx");   fprintf("vx ...")
 vy=ncread(wdir+filenameITS,"vy");   fprintf("vy ...")
+rock=ncread(wdir+filenameITS,"rock");   fprintf("rock ...")
+ice=ncread(wdir+filenameITS,"ice");   fprintf("ice ...")
 
 fprintf("done. \n")
 
 % y values are in decending order, so flip
+
 yITS=flipud(yITS);
-vx=flipud(vx);
-vy=flipud(vy);
+vx=fliplr(vx);
+vy=fliplr(vy);
+rock=fliplr(rock);
+ice=fliplr(ice);
 
 
 %% Read REMA 
@@ -46,6 +53,10 @@ vy=flipud(vy);
 
 P=OneDriveFolder+"REMA\rema_mosaci_1km_v2k0_filled_cop30\";
 filenameREMA=P+"rema_mosaic_1km_v2.0_filled_cop30_dem.tif";
+
+
+% P=OneDriveFolder+"REMA\rema_mosaic_100m_v2k0_filled_cop30\";
+% filenameREMA=P+"rema_mosaic_100m_v2.0_filled_cop30_dem.tif";
 
 fprintf("Reading REMA...    ")
 [sREMA,R] = readgeoraster(filenameREMA) ;
@@ -59,17 +70,15 @@ xRema=(R.XWorldLimits(1)+dx/2):dx:(R.XWorldLimits(2)-dx/2);
 yRema=(R.YWorldLimits(1)+dy/2):dy:(R.YWorldLimits(2)-dy/2);   % I guess this is what they did (why not just include xps and yps in the data set?!) 
 
 xRema=xRema(:) ; yRema=yRema(:);
-yRema=flipud(yRema);
 
 
+%[X,Y]=ndgrid(single(xRema),single(yRema)) ;
 
-[X,Y]=ndgrid(double(xRema),double(flipud(yRema))) ;
-
-Fs=griddedInterpolant(X,Y,rot90(double(sREMA),3)); 
+Fs=griddedInterpolant({xRema,yRema},single(rot90(sREMA,3))); 
 
 %% Define region of interest
 
-Region=[-2440 -2320 1200 1320]*1000 ; % This defines the region considered, in xp,up coordinates
+Region=[-2440 -2320 1200 1320]*1000 ; % This defines the region considered, in xps,yps coordinates
 
 
 
@@ -104,6 +113,10 @@ xRegion=xITS(ix) ;   % These are the x,y vectors of the region
 yRegion=yITS(iy) ; 
 
 vxRegion=vx(ix,iy);  vyRegion=vy(ix,iy);
+rockRegion=rock(ix,iy); iceRegion=ice(ix,iy);
+
+
+
 axis(Region)
 
 Par.VelPlotIntervalSpacing='log10' ;
@@ -126,10 +139,10 @@ title(replace(sprintf("%s",filenameITS),"_","-"))
 
 sRegion=Fs(XRegion,YRegion) ;
 
-figure ; contourf(XRegion/1000,YRegion/1000,sRegion) ; colorbar
-
-hold on ; [cGL,yGL]=PlotGroundingLines([],"Bedmachine",[],[],[],[],"k");
-
+FindOrCreateFigure("REMA") ;
+contourf(XRegion/1000,YRegion/1000,sRegion) ; colorbar
+hold on ; [cGL,yGL]=PlotGroundingLines([],"Bedmachine",[],[],[],[],"w");
+xlabel("xps (km)",Interpreter="latex")  ; ylabel("yps (km)",Interpreter="latex")
 
 
 %% Surface mass balance
@@ -141,9 +154,9 @@ filenameRACMO="SMB_RACMO2.3_1979_2011.nc" ;
 
 
 
-LAT=ncread(filenameRACMO,'lat2d')';
-LON=ncread(filenameRACMO,'lon2d')';
-SMB=ncread(filenameRACMO,'SMB')';
+LAT=ncread(P+filenameRACMO,'lat2d')';
+LON=ncread(P+filenameRACMO,'lon2d')';
+SMB=ncread(P+filenameRACMO,'SMB')';
 
 
 [X, Y]=ll2xy(LAT,LON); %transform to your Polar stereo projection
@@ -156,60 +169,41 @@ acc=SMB/rho_ice ;
 % smb = griddata(X,Y,SMB,x,y) / 917; %in m/yr
 
 Fas=scatteredInterpolant(X(:),Y(:),acc(:)); 
-% Create a gridded interpolant
-dx=10;  % units km
-dy=10;
-x=[-3000:dx:3000]*1000 ;
-y=[-2500:dy:2500]*1000 ;
-[X,Y]=ndgrid(double(x),double(flipud(y))) ;
 
-AS=Fas(X,Y); 
+% map on region
+asRegion=Fas(XRegion,YRegion) ;
 
-FasGridded=griddedInterpolant(X,Y,AS) ; 
-%
-% Test gridded interpolants
-
-% load in an old mesh of Antarctica and map on this mesh. Just done for testing purposes and to see if the gridded data looks sensible.
-fprintf(' Testing interpolants by mapping on a FE grid of Antartica. \n')
-
-load MUA_Antarctica.mat; 
-xFE=MUA.coordinates(:,1) ; yFE=MUA.coordinates(:,2) ; 
-
-%as=Fas(xFE,yFE);
-as=FasGridded(xFE,yFE);
+%%
+FindOrCreateFigure("as Region") ;
+contourf(XRegion/1000,YRegion/1000,asRegion) ; cbar=colorbar ; 
+title(cbar,"(m/yr)")
+hold on ; [cGL,yGL]=PlotGroundingLines([],"Bedmachine",[],[],[],[],"w");
+xlabel("xps (km)",Interpreter="latex")  ; ylabel("yps (km)",Interpreter="latex")
 
 
-CtrlVar.PlotXYscale=1000;
- 
-asfig=FindOrCreateFigure('as') ; clf(asfig);
-[~,cbar]=PlotMeshScalarVariable(CtrlVar,MUA,as);
-xlabel('xps (km)' ) ; xlabel('yps (km)' ) ; title('as') ; title(cbar,'(m/yr)')
+%%
+FindOrCreateFigure("rock Region") ;
+contourf(XRegion/1000,YRegion/1000,rockRegion) ; cbar=colorbar ; 
+hold on ; [cGL,yGL]=PlotGroundingLines([],"Bedmachine",[],[],[],[],"w");
+xlabel("xps (km)",Interpreter="latex")  ; ylabel("yps (km)",Interpreter="latex")
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+FindOrCreateFigure("ice Region") ;
+contourf(XRegion/1000,YRegion/1000,iceRegion) ; cbar=colorbar ; 
+hold on ; [cGL,yGL]=PlotGroundingLines([],"Bedmachine",[],[],[],[],"w");
+xlabel("xps (km)",Interpreter="latex")  ; ylabel("yps (km)",Interpreter="latex")
 
 
 
 %% Regional interpolants
+%
+Fs=griddedInterpolant({xRegion,yRegion},sRegion) ;
+Fvx=griddedInterpolant({xRegion,yRegion},vxRegion) ;
+Fvy=griddedInterpolant({xRegion,yRegion},vyRegion) ;
+Fas=griddedInterpolant({xRegion,yRegion},asRegion) ;
+Frock=griddedInterpolant({xRegion,yRegion},single(rockRegion)) ;
+Fice=griddedInterpolant({xRegion,yRegion},single(iceRegion)) ;
 
-% Fs=griddedInterpolant(XRegion,YRegion,sRegion) ; 
-% Fu=griddedInterpolant(XRegion,YRegion,vxRegion) ; 
-% Fv=griddedInterpolant(XRegion,YRegion,vyRegion) ; 
-% 
+
+
 
 
