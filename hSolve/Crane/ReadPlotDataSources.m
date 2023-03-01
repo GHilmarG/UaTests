@@ -6,18 +6,21 @@ if contains(hostname,"DESKTOP-G5TCRTD")
 
 elseif contains(hostname,"DESKTOP-014ILS5")
 
-   OneDriveFolder="C:\Users\lapnjc6\OneDrive - Northumbria University - Production Azure AD\Work\Ua\Antarctic Global Data Sets\";
+    OneDriveFolder="C:\Users\lapnjc6\OneDrive - Northumbria University - Production Azure AD\Work\Ua\Antarctic Global Data Sets\";
 
 elseif contains(hostname,"DESKTOP-BU2IHIR")
 
     OneDriveFolder="C:\Users\Hilmar\OneDrive - Northumbria University - Production Azure AD\Work\Ua\Antarctic Global Data Sets\" ;
 
+elseif contains(hostname,"C23000099")
+
+    OneDriveFolder="C:\Users\pcnj6\OneDrive - Northumbria University - Production Azure AD\Work\Ua\Antarctic Global Data Sets\" ;
+
 end
 
 
 
-%%  Reading nc file with velocities
-
+%%  Reading ITS velocity data.
 
 wdir=OneDriveFolder+"ITS_LIVE\";
 
@@ -35,6 +38,8 @@ vx=ncread(wdir+filenameITS,"vx");   fprintf("vx ...")
 vy=ncread(wdir+filenameITS,"vy");   fprintf("vy ...")
 rock=ncread(wdir+filenameITS,"rock");   fprintf("rock ...")
 ice=ncread(wdir+filenameITS,"ice");   fprintf("ice ...")
+vxErr=ncread(wdir+filenameITS,"vx_err");   fprintf("vx_err ...")
+vyErr=ncread(wdir+filenameITS,"vy_err");   fprintf("vy_err ...")
 
 fprintf("done. \n")
 
@@ -42,10 +47,16 @@ fprintf("done. \n")
 
 yITS=flipud(yITS);
 vx=fliplr(vx);
-vy=fliplr(vy);
+vy=fliplr(vy);  
 rock=fliplr(rock);
 ice=fliplr(ice);
+vxErr=fliplr(vxErr);
+vyErr=fliplr(vyErr);
 
+
+% change the no data convention, set errors to 1e10 and velocities to zeros at
+% locations where no data is available
+I=vx==-32767;  vx(I)=0;  vy(I)=0; vxErr(I)=1e10 ; vyErr(I)=1e10;  
 
 %% Read REMA 
 % y corresponds to the  first index in the original data set
@@ -83,7 +94,7 @@ Region=[-2440 -2320 1200 1320]*1000 ; % This defines the region considered, in x
 
 
 %% Plotting velocities
-I=vx==-32767;  vx(I)=nan;  vy(I)=nan;
+
 
 
 fprintf("plotting Antarctic velocities.\n")
@@ -97,6 +108,16 @@ QuiverColorGHG(xITS(1:istep:end)/1000,yITS(1:istep:end)/1000,vx(1:istep:end,1:is
 [cGL,yGL]=PlotGroundingLines([],"Bedmachine",[],[],[],[],"k");
 xlabel("xps (km)",Interpreter="latex")  ; ylabel("yps (km)",Interpreter="latex")
 title(replace(sprintf("%s",filenameITS),"_","-"))
+
+% Plotting velocity errors
+vErr=sqrt(vxErr.*vxErr+vyErr.*vyErr);
+
+FindOrCreateFigure("vErr")
+istep=200;
+contourf(XITS(1:istep:end,1:istep:end)/1000,YITS(1:istep:end,1:istep:end)/1000,vErr(1:istep:end,1:istep:end)') ;
+cbar=colorbar;
+axis equal
+xlabel("xps (km)",Interpreter="latex")  ; ylabel("yps (km)",Interpreter="latex")
 
 %%
 
@@ -114,21 +135,18 @@ yRegion=yITS(iy) ;
 
 vxRegion=vx(ix,iy);  vyRegion=vy(ix,iy);
 rockRegion=rock(ix,iy); iceRegion=ice(ix,iy);
-
-
+vxErrRegion=vxErr(ix,iy) ;  vyErrRegion=vyErr(ix,iy) ; 
 
 axis(Region)
-
 Par.VelPlotIntervalSpacing='log10' ;
-
 QuiverColorGHG(xRegion/1000,yRegion/1000,vxRegion,vyRegion,Par) ;
-
 [cGL,yGL]=PlotGroundingLines([],"Bedmachine",[],[],[],[],"k");
-
 axis(Region/1000) ; 
-
 xlabel("xps (km)",Interpreter="latex")  ; ylabel("yps (km)",Interpreter="latex")
 title(replace(sprintf("%s",filenameITS),"_","-"))
+
+
+
 
 
 
@@ -199,9 +217,23 @@ xlabel("xps (km)",Interpreter="latex")  ; ylabel("yps (km)",Interpreter="latex")
 Fs=griddedInterpolant({xRegion,yRegion},sRegion) ;
 Fvx=griddedInterpolant({xRegion,yRegion},vxRegion) ;
 Fvy=griddedInterpolant({xRegion,yRegion},vyRegion) ;
+FvxError=griddedInterpolant({xRegion,yRegion},vxErrRegion) ;
+FvyError=griddedInterpolant({xRegion,yRegion},vyErrRegion) ;
 Fas=griddedInterpolant({xRegion,yRegion},asRegion) ;
 Frock=griddedInterpolant({xRegion,yRegion},single(rockRegion)) ;
+
 Fice=griddedInterpolant({xRegion,yRegion},single(iceRegion)) ;
+
+
+%% Define polygon area of interest interactivily
+
+
+
+[xp,yp]=GetMousePoints;
+
+save("DomainOutline","xp","yp")
+
+
 
 
 
