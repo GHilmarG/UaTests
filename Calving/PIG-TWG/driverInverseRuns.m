@@ -121,7 +121,7 @@ else
  
  
 
-    CtrlVar.Inverse.Iterations=500;
+    CtrlVar.Inverse.Iterations=2500;
     CtrlVar.Inverse.Regularize.logC.ga=1;
     CtrlVar.Inverse.Regularize.logC.gs=100000  ; % 100000000  ; % 10000000 (c); %   5000000 (c) ; %     1000000 (c) ;
 

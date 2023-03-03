@@ -3,16 +3,34 @@
 BCs=BoundaryConditions ;
 
 %% Synthetic data
-% load("ForwardResults10km.mat","CtrlVar","F","MUA","UserVar") ;  
-%load("ForwardResults1km10yr.mat","CtrlVar","F","MUA","UserVar") ;  
-load("ForwardResults1km100yr.mat","CtrlVar","F","MUA","UserVar") ;  
+% load("ForwardResults10km.mat","CtrlVar","F","MUA","UserVar") ;
+%load("ForwardResults1km10yr.mat","CtrlVar","F","MUA","UserVar") ;
+load("ForwardResults1km100yr.mat","CtrlVar","F","MUA","UserVar") ;
 
-OneDriverFolder="C:\Users\lapnjc6\OneDrive - Northumbria University - Production Azure AD\";
+
+[~,hostname]=system('hostname') ;
+if contains(hostname,"DESKTOP-G5TCRTD")
+
+elseif contains(hostname,"DESKTOP-014ILS5")
+
+    OneDriveFolder="C:\Users\lapnjc6\OneDrive - Northumbria University - Production Azure AD\";
+
+elseif contains(hostname,"DESKTOP-BU2IHIR")
+
+    OneDriveFolder="C:\Users\Hilmar\OneDrive - Northumbria University - Production Azure AD\";
+
+elseif contains(hostname,"C23000099")
+
+    OneDriveFolder="C:\Users\pcnj6\OneDrive - Northumbria University - Production Azure AD\";
+
+end
+
+
 P="Runs\MISMIPplus\";
 filename="RestartIce0-rCW-N0-Implicit-kH100-nod3.mat";
 
 %load("C:\Users\Hilmar Gudmundsson\OneDrive - Northumbria University - Production Azure AD\Runs\MISMIPplus\RestartIce0-rCW-N0-Implicit-kH100-nod3.mat","F","MUA","UserVarInRestartFile","BCs")
-load(OneDriverFolder+P+filename,"F","MUA","UserVarInRestartFile","BCs")
+load(OneDriveFolder+P+filename,"F","MUA","UserVarInRestartFile","BCs")
 
 if isempty(F.x)  % if the result file is old...
     F.x=MUA.coordinates(:,1);
@@ -25,15 +43,15 @@ htrue=F.h ;
 %% Define BCs for h-problem
 
 if ~exist("BCs","var")
-   BCs=BoundaryConditions ;
+    BCs=BoundaryConditions ;
 end
 
-% add min thickness constraints 
+% add min thickness constraints
 I=find(F.h<=CtrlVar.ThickMin); BCs.hFixedNode=I ;
 BCs.hFixedValue=BCs.hFixedNode*0+CtrlVar.ThickMin;
 
 BCs.hFixedNode=[BCs.hFixedNode ; MUA.Boundary.Nodes] ;
-BCs.hFixedValue=[BCs.hFixedValue; F.h(MUA.Boundary.Nodes)] ; 
+BCs.hFixedValue=[BCs.hFixedValue; F.h(MUA.Boundary.Nodes)] ;
 
 % constrain all floating areas
 I=find(F.GF.node<0.5) ;
@@ -53,7 +71,7 @@ isError=true;
 
 if isError  % add some error the surface mass balance
 
-F.as=F.as+0.01*0.3*rand(numel(F.x),1);  % 1% error 
+    F.as=F.as+0.01*0.3*rand(numel(F.x),1);  % 1% error
 
 end
 
@@ -64,15 +82,15 @@ end
 
 %%
 
-% Using cross diffusion is very effective as "smoothing" the solution and results insensitive to the exact diffusion coefficient value 
+% Using cross diffusion is very effective as "smoothing" the solution and results insensitive to the exact diffusion coefficient value
 
- CtrlVar.SUPG.beta0=0;
+CtrlVar.SUPG.beta0=0;
 
-kIso=F.x*0+0*1e2; 
-kAlong=F.x*0+0.01*1e4; 
-kCross=F.x*0+0.1*1e4; 
+kIso=F.x*0+0*1e2;
+kAlong=F.x*0+0.01*1e4;
+kCross=F.x*0+0.1*1e4;
 
-F.as=F.as-F.dhdt; 
+F.as=F.as-F.dhdt;
 [UserVar,hest,lambda]=hEquation(UserVar,CtrlVar,MUA,F,BCs,kIso,kAlong,kCross);
 
 
@@ -80,7 +98,7 @@ F.as=F.as-F.dhdt;
 
 %% Results
 
-FigTitle=sprintf("h est: kIso=%5.1f kAlong=%5.1f kAcross=%5.1f",mean(kIso),mean(kAlong),mean(kCross)); 
+FigTitle=sprintf("h est: kIso=%5.1f kAlong=%5.1f kAcross=%5.1f",mean(kIso),mean(kAlong),mean(kCross));
 
 FindOrCreateFigure(FigTitle);
 Tile=tiledlayout(2,2) ;
@@ -93,11 +111,11 @@ nexttile ; UaPlots(CtrlVar,MUA,F,htrue) ; title("h true")
 axis tight
 
 
-nexttile ; 
+nexttile ;
 % h1=histogram(hest-htrue); h1.Normalization="probability";
 yyaxis left
 plot(htrue,hest,'.')
-hold on 
+hold on
 plot(xlim,xlim);
 ylim(xlim)
 ylabel("h estimated")
