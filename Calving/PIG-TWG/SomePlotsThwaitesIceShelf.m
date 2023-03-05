@@ -55,6 +55,9 @@ Experiment="5km-New-Cornford-PIG";
 Experiment= "Compare with ref: TWIS and PIG" ;
 Experiment="Compare Cornford and Weertman with respective ref"  ; % C and W for MR4 and Thwaites removal
 
+Experiment="5km-New-Cornford";
+
+
 CreateVideo=false; CalculateVAF=true;  % defaults
 
 

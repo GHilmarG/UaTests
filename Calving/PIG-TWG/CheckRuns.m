@@ -3,7 +3,22 @@
 
 %%
 CurDir=pwd;
-cd("d:/Runs/Calving/PIG-TWG/ResultsFiles")
+
+
+
+
+[~,hostname]=system('hostname') ;
+if contains(hostname,"C23000099")
+    cd("E:\Runs\Calving\PIG-TWG\ResultsFiles")
+else
+    cd("d:/Runs/Calving/PIG-TWG/ResultsFiles")
+end
+
+
+
+
+
+
 
 Res=["5km","10km","20km"];
 Reg=["TWIS","TWISC0","PIGC0"] ;
