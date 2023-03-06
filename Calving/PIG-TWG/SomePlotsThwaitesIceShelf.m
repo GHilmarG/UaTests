@@ -58,13 +58,13 @@ Experiment="Compare Cornford and Weertman with respective ref"  ; % C and W for 
 Experiment="5km-New-Cornford";
 
 
-CreateVideo=false; CalculateVAF=true;  % defaults
+CreateVideo=true; CalculateVAF=false;  % defaults
 
 
 % Experiment= "ConvergenceStudy";
 
 VAFStep=25;
-VideoStep=10;
+VideoStep=25;
 PlotCase=""  ;
 
 switch Experiment
@@ -243,6 +243,8 @@ switch Experiment
             "2.3km: Thwaites ice shelf removed 2km downstream (Alim, Cornford)",...
             "2.3km: Thwaites ice shelf removed (Alim, Cornford)",...
             ];
+
+      VideoStep=5;
 
 
     case "5km-New-Cornford-PIG"
@@ -457,7 +459,7 @@ if CreateVideo
         % ReadPlotSequenceOfResultFiles2(FileNameSubstring=SubString(I),PlotTimestep=Step,PlotType="-ubvb-B-") ;
         % ReadPlotSequenceOfResultFiles2(FileNameSubstring=SubString(I),PlotTimestep=Step,PlotType="-ubvb-VAF-",VAFBoundary=xyBoundary) ;
         % ReadPlotSequenceOfResultFiles2(FileNameSubstring=SubString(I),PlotTimestep=Step,PlotType="-ubvb-ds-",VAFBoundary=xyBoundary) ;
-        ReadPlotSequenceOfResultFiles2(FileNameSubstring=SubString(I),PlotTimestep=Step,PlotType="-ds-",VAFBoundary=xyBoundary,PlotTimeInterval=[0 400]) ;
+        ReadPlotSequenceOfResultFiles2(FileNameSubstring=SubString(I),PlotTimestep=Step,PlotType="-ds-VAF-",VAFBoundary=xyBoundary,PlotTimeInterval=[0 400]) ;
     end
 end
 
