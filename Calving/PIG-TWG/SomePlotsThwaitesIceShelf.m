@@ -16,6 +16,8 @@ if ~contains(WorkDir,"ResultsFiles")
         UserVar.ResultsFileDirectory="D:\Runs\Calving\PIG-TWG\ResultsFiles\";
     elseif contains(hostname,"DESKTOP-014ILS5")
         UserVar.ResultsFileDirectory="E:\Runs\Calving\PIG-TWG\ResultsFiles\";
+    elseif contains(hostname,"C23000099")
+        UserVar.ResultsFileDirectory="E:\Runs\Calving\PIG-TWG\ResultsFiles\"; 
     else
         error("case not implemented")
     end
@@ -244,7 +246,7 @@ switch Experiment
             "2.3km: Thwaites ice shelf removed (Alim, Cornford)",...
             ];
 
-      VideoStep=5;
+      VideoStep=1;
 
 
     case "5km-New-Cornford-PIG"
