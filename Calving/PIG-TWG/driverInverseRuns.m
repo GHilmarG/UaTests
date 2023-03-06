@@ -12,6 +12,7 @@ UserVar.RunType='Inverse-MatOpt-Alim-Cornford-';
 UserVar.RunType='Inverse-MatOpt-Alim-Weertman-';
 
 UserVar.RunType='Inverse-MatOpt-Alim-Clim-Cornford-';
+UserVar.RunType='Inverse-MatOpt-Alim-Clim-Weertman-';
 
 UserVar.MeshResolution=5e3; IRange=3:6 ; JRange=3:6 ;
 UserVar.MeshResolution=20e3; IRange=0:7 ; JRange=0:7 ;
@@ -121,7 +122,7 @@ else
  
  
 
-    CtrlVar.Inverse.Iterations=2500;
+    CtrlVar.Inverse.Iterations=500;
     CtrlVar.Inverse.Regularize.logC.ga=1;
     CtrlVar.Inverse.Regularize.logC.gs=100000  ; % 100000000  ; % 10000000 (c); %   5000000 (c) ; %     1000000 (c) ;
 
