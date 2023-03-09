@@ -1,11 +1,14 @@
 
 
+
 % (beta)  09/03/2023
+
 
 % results = runtests('TestUa.m') ; table(results)
 %
 
 function tests = TestUa
+<<<<<<< HEAD
 
 
 f={@setupOnce,@testCrack,@teardownOnce};
@@ -33,6 +36,35 @@ f={@testFreeSlipBCs}          ;  % OK  11/05/2021,  OK 08/09/2021 ,  01/11/2021
 % small initial time step
 
 tests = functiontests(f); 
+=======
+    
+    
+    
+    % f={@setupOnce,@testCalvingManuallyDeactivateElements,@teardownOnce};      % outdated, not expected to work
+    % f={@setupOnce,@testCalvingThroughMassBalanceFeedback,@teardownOnce};  % outdated, not expected to work
+    
+ 
+    
+    %f={@testPIGmeshing};
+
+    
+    %f=localfunctions ;  % all tests
+    
+     f={@testCrack}                ;  % OK  11/05/2021 , OK on 09/09/2021 , 01/11/2021  , 08/03/2023
+     f={@testPIGdiagnostic}        ;  % OK  11/05/2021, OK on 09/09/2021 , 01/11/2021 , 08/03/2023
+     f={@testMassBalanceFeedback}  ;  % OK  11/05/2021 , OK on 09/09/2021 , 01/11/2021  , 08/03/2023
+     f={@test1dIceStream}          ;  % OK  11/05/2021, OK on 08/09/2021 , 01/11/2021 , 08/03/2023
+     f={@test1dIceShelf}           ;  % OK  11/05/2021, OK on 08/09/2021 , 01/11/2021, 08/03/2023
+     f={@testGaussPeak}            ;  % OK  11/05/2021, needs gmsh , 01/11/2021, 08/03/2023
+     f={@testFreeSlipBCs}          ;  % OK  11/05/2021,  OK 08/09/2021 , 01/11/2021 , 03/08/2023
+
+    % f={@testCalvingAnalyticalIceShelf};  % ~OK 01/09/2021, OK 11/05/2021 , On 01/11/2021 in development
+    % f={@testPIGtransient}         ;  % OK 11/05/2021, 08/09/2021 due to new geomery with sharp corners this now only runs for
+    % small initial time step
+    
+    
+    tests = functiontests(f);
+>>>>>>> alpha
 end
 
 function setupOnce(testCase)
@@ -64,9 +96,16 @@ function testPIGdiagnostic(testCase)
     UserVar=Ua(UserVar) ;
     cd ..
     actSolution= UserVar.Test.Norm.actValue ;
+<<<<<<< HEAD
     % expSolution = 95982.7181182457;  % this was with the old bedmap2 data expSolution = 9757675340.83092 ;   % this is with the
     % new Bedmachine data, 10/09/2021
     expSolution = 202912           ;     % this is with the new Bedmachine data and a new boundary, 01/11/2021
+=======
+    % expSolution = 95982.7181182457;  % this was with the old bedmap2 data
+    % expSolution = 9757675340.83092 ;   % this is with the new Bedmachine data, 10/09/2021
+    % expSolution = 202912           ;     % this is with the new Bedmachine data and a new boundary, 01/11/2021
+    expSolution= 201932.019377657  ; %  Z840   
+>>>>>>> alpha
     verifyEqual(testCase,actSolution,expSolution,'RelTol',1e-4)
     
 end

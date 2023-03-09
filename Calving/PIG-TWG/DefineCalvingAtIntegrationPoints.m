@@ -85,9 +85,43 @@ switch UserVar.CalvingLaw.Type
 
         % No calving when B>S
         % Limit calving to 2 km/day
-        % cMax=2000*265.25 ; 
-        % c(c>cMax)=cMax;   % This makes quite an impact, but also creates a 'spotted' c field 
+        % cMax=2000*265.25 ;
+        % c(c>cMax)=cMax;   % This makes quite an impact, but also creates a 'spotted' c field
 
+    case "-ACRR-"  % This is Anna Crawford interpreted as retreat rate
+
+        CliffHeight=min((F.s-F.S),F.h).*F.rho./1000; % guessing this is what the authors intended,
+
+        if  contains(UserVar.RunType,"-T5-")
+
+            fI=1.9e-16*365.25 ; 
+            RR=fI*CliffHeight.^(7.3) ;
+            RRMax=fI*450.^(7.3) ;  % max at cliff height of 450 m
+
+        else
+            fI=3.2e-17*365.25 ; 
+            RR=fI*CliffHeight.^(7.2) ;
+            RRMax=fI*450.^(7.2) ;    % max at cliff height of 450 m
+
+        end
+        
+        % Now set calving rate to zero for cliff less than 135meters
+        RR(CliffHeight<135)=0 ;
+        RR(RR>RRMax)=RRMax ;
+
+        N=sqrt(dphidx.*dphidx+dphidy.*dphidy+eps);  
+        Vn=-(F.ub.*dphidx+F.vb.*dphidy)./N;  % Normal velocity. Note the sign convention 
+
+        if isempty(Vn)
+
+            c=0; dcddphidx=[] ; dcddphidy=[];  % This can happen at the start of the run if, for example for plotting purposes, called from DefineCalving
+                                                % This will not happen within the integration point loop
+        else
+            c=Vn+RR ;  % Calving rate = Normal Velocity + Retreat Rate
+
+            dcddphidx=-(F.ub./N - dphidx.*(F.ub.*dphidx+F.vb.*dphidy)./( (dphidx.*dphidx+dphidy.*dphidy+eps).^(3/2))  ) ;
+            dcddphidy=-(F.vb./N - dphidy.*(F.ub.*dphidx+F.vb.*dphidy)./( (dphidx.*dphidx+dphidy.*dphidy+eps).^(3/2))  ) ;
+        end
 
     case "-NV-"   % Calving is a function of the normal velocity component to the calving front
         % That is:  c = f(v_n)   where c is the calving rate and v_n the ice velocity normal to the calving front
@@ -177,11 +211,11 @@ switch UserVar.CalvingLaw.Type
         % Units: meters, year
 
         CliffHeight=min((F.s-F.S),F.h).*F.rho./1000;  % OK, so it is a bit unclear what the "cliff height" should be
-                                                      % But presumably the idea is that the CliffHeight is a proxy
-                                                      % for the stresses at the calving front, so it appears likley that it should
-                                                      % involve rho*g*CliffHeight
-                                                      % For this to be comparable with values in the litterature
-                                                      % this will most likely need to be adjusted to water equivalent height.
+        % But presumably the idea is that the CliffHeight is a proxy
+        % for the stresses at the calving front, so it appears likley that it should
+        % involve rho*g*CliffHeight
+        % For this to be comparable with values in the litterature
+        % this will most likely need to be adjusted to water equivalent height.
 
 
         k1=-12000 ; k2=150 ;
@@ -189,9 +223,41 @@ switch UserVar.CalvingLaw.Type
 
         c(CliffHeight<80)= 0;
         c(CliffHeight>100)=3000;
-        
+
         dcddphidx=0;
         dcddphidy=0;
+
+    case "-DPRR-"
+
+        CliffHeight=min((F.s-F.S),F.h).*F.rho./1000; % guessing this is what the authors intended,
+
+
+        k1=-12000 ; k2=150 ;
+        c=k1+k2*CliffHeight;  % c(CliffHeight=80 m)=0 and c(CliffHeight=100 m) = 3000 m/yr
+
+        c(CliffHeight<80)= 0;
+        c(CliffHeight>100)=3000;
+
+
+        RR=c ;  % Calving rate interpreted as retreat rate...so when the old calving rate is zero, the retreat rate is zero
+        % The old calving rate is zero for less than 80, so in that case there will be no advance because now it is the retreat reate
+        % that is zero. The old calving rate is always greater that zero, so we can now only have retreat, no advance
+
+        N=sqrt(dphidx.*dphidx+dphidy.*dphidy+eps);
+        Vn=-(F.ub.*dphidx+F.vb.*dphidy)./N;  % Normal velocity. Note the sign convention
+
+        if isempty(Vn)
+
+            c=0; dcddphidx=[] ; dcddphidy=[];  % This can happen at the start of the run if, for example for plotting purposes, called from DefineCalving
+            % This will not happen within the integration point loop
+        else
+            c=Vn+RR ;  % Calving rate = Normal Velocity + Retreat Rate
+
+            dcddphidx=-(F.ub./N - dphidx.*(F.ub.*dphidx+F.vb.*dphidy)./( (dphidx.*dphidx+dphidy.*dphidy+eps).^(3/2))  ) ;
+            dcddphidy=-(F.vb./N - dphidy.*(F.ub.*dphidx+F.vb.*dphidy)./( (dphidx.*dphidx+dphidy.*dphidy+eps).^(3/2))  ) ;
+        end
+
+
 
     otherwise
 

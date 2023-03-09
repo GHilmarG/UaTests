@@ -5,21 +5,39 @@
 %  5km = 2.3km
 % 2.5km = 1.16km
 
+%%  To do:
+%
+% 20 July 2022: Send of additional PD and AC runs where the calving rate is interpreted as retreat rate (not sure why...)
+%               I'm referring this to -RR- runs
+%  
+%
+%
+%
+%%
+MR="10km" ; 
+
+UserVar.RunType="-FT-Cornford-Duvh-SW10-TM100-C-ACRR-T5-MR4-Ini5-BMGL-"+MR+"-Alim-Ca1-Cs100000-Aa1-As100000-" ;  % difficulties with convergence
+UserVar.RunType="-FT-Cornford-Duvh-SW10-TM100-C-DPRR-MR4-Ini5-BMGL-"+MR+"-Alim-Ca1-Cs100000-Aa1-As100000-" ;  % difficulties with convergence
+% UserVar.RunType="-FT-Cornford-TM100-C-ACRR-T5-MR4-Ini5-BMGL-"+MR+"-Alim-Ca1-Cs100000-Aa1-As100000-" ; 
+
+
 %% 5km runs which actually are 2.4 km runs:
 
-UserVar.RunType="-FT-C-DP-MR4-Ini5-BMGL-5km-Alim-Ca1-Cs100000-Aa1-As100000-" ; 
+% UserVar.RunType="-FT-C-DP-MR4-Ini5-BMGL-5km-Alim-Ca1-Cs100000-Aa1-As100000-" ; 
 % UserVar.RunType="-FT-C-AC-MR4-Ini1-BMGL-5km-Alim-Ca1-Cs100000-Aa1-As100000-" ; 
-% UserVar.RunType="-FT-C-AC-T5-MR4-Ini1-BMGL-5km-Alim-Ca1-Cs100000-Aa1-As100000-" ; 
+% UserVar.RunType="-FT-C-AC-T5-MR4-Ini1-BMGL-5km-Alim-Ca1-Cs100000-Aa1-As100000-" ;   % 20/07/2022: I think should be continued
 
 
-%%
+
+
+
 %% 20km runs which actually are 9.4 km runs:
 
 % Here I need: FC-Weertman-Ca1-Cs100000-Aa1-As100000-20km-Alim- 
 
 % UserVar.RunType="-FT-C-DP-MR4-Ini5-BMGL-20km-Alim-Ca1-Cs100000-Aa1-As100000-" ; 
 % UserVar.RunType="-FT-C-AC-MR4-Ini1-BMGL-20km-Alim-Ca1-Cs100000-Aa1-As100000-" ; 
- UserVar.RunType="-FT-C-AC-T5-MR4-Ini1-BMGL-10km-Alim-Ca1-Cs100000-Aa1-As100000-" ; 
+% UserVar.RunType="-FT-C-AC-T5-MR4-Ini1-BMGL-10km-Alim-Ca1-Cs100000-Aa1-As100000-" ; % possibly this was related to a convergence test
 
 %% UserVar.RunType="-FT-AM-C-AC-MR4-Ini1-BMGL-5km-Alim-Ca1-Cs100000-Aa1-As100000-" ; 
 
@@ -37,7 +55,15 @@ CtrlVar.Inverse.Regularize.logC.gs=str2double(extract(extract(UserVar.RunType,"-
 CtrlVar.Inverse.Regularize.logAGlen.ga=str2double(extract(extract(UserVar.RunType,"-Aa"+digitsPattern+"-"),digitsPattern)) ;
 CtrlVar.Inverse.Regularize.logAGlen.gs=str2double(extract(extract(UserVar.RunType,"-As"+digitsPattern+"-"),digitsPattern)) ; 
 
-CtrlVar.SlidingLaw="Weertman";
+CtrlVar.ThicknessBarrier=true; CtrlVar.ThicknessConstraints=1 ; CtrlVar.ResetThicknessToMinThickness=0;
+
+if contains(UserVar.RunType,"Cornford")
+    CtrlVar.SlidingLaw="Cornford";
+else
+    CtrlVar.SlidingLaw="Weertman";
+end
+
+
 
 CtrlVar.LevelSetDownstreamAGlen=AGlenVersusTemp(0);  
 

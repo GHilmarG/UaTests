@@ -102,7 +102,7 @@ switch fEx
         SubString(1)="-FT-C-AC-MR4-Ini1-BMGL-5km-Alim-Ca1-Cs100000-Aa1-As100000-";
         SubString(2)="-FT-C-DP-MR4-Ini5-BMGL-5km-Alim-Ca1-Cs100000-Aa1-As100000-"; 
         SubString(3)="-FT-C-AC-T5-MR4-Ini1-BMGL-5km-Alim-Ca1-Cs100000-Aa1-As100000-" ; 
-        IRange=1:3; 
+        IRange=3; 
 end
 
 

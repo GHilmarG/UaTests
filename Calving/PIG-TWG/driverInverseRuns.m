@@ -1,7 +1,7 @@
 %%
 Klear
 
-SubmitBathJobs=true;
+SubmitBathJobs=false;
 IRCase="AandC" ;
 more off
 
@@ -9,14 +9,25 @@ UserVar.RunType='Inverse-MatOpt';
 UserVar.RunType='Inverse-MatOpt-Alim-';
 
 UserVar.RunType='Inverse-MatOpt-Alim-Cornford-';
+UserVar.RunType='Inverse-MatOpt-Alim-Weertman-';
 
-UserVar.MeshResolution=10e3; IRange=0:7 ; JRange=0:7 ;
-% UserVar.MeshResolution=5e3; IRange=3:6 ; JRange=3:6 ;
-% UserVar.MeshResolution=20e3; IRange=0:7 ; JRange=0:7 ;
+UserVar.RunType='Inverse-MatOpt-Alim-Clim-Cornford-';
+UserVar.RunType='Inverse-MatOpt-Alim-Clim-Weertman-';
+
+
+UserVar.MeshResolution=5e3; IRange=3:6 ; JRange=3:6 ;
+UserVar.MeshResolution=20e3; IRange=0:7 ; JRange=0:7 ;
+UserVar.MeshResolution=10e3; IRange=5 ; JRange=5 ;
+
+UserVar.MeshResolution=2.5e3; IRange=5:5 ; JRange=5:5 ;
+
+UserVar.RunType='Inverse-MatOpt-Alim-Clim-Umbi-';  UserVar.MeshResolution=20e3; IRange=5:5 ; JRange=5:5 ;
+UserVar.RunType='Inverse-MatOpt-Alim-Clim-Umbi-';  UserVar.MeshResolution=5e3; IRange=5:5 ; JRange=5:5 ;
+UserVar.RunType='Inverse-MatOpt-Alim-Clim-Umbi-';  UserVar.MeshResolution=10e3; IRange=5:5 ; JRange=5:5 ;
 
 
 
-CtrlVar.Inverse.Iterations=5000;
+CtrlVar.Inverse.Iterations=5;
 
 if SubmitBathJobs
 
@@ -92,9 +103,14 @@ if SubmitBathJobs
                     CtrlVar.Inverse.Regularize.logC.gs=10^I;
                     CtrlVar.Inverse.Regularize.logAGlen.gs=10^J ;
 
-                    job{K}=batch("Ua",0,{UserVar,CtrlVar},"Pool",1) ; K=K+1;
-                    pause(10)
 
+                    
+                   % Ua(UserVar,CtrlVar) ; close all 
+
+
+                   job{K}=batch("Ua",0,{UserVar,CtrlVar},"Pool",1) ; 
+                   pause(10)
+                   K=K+1;
                 end
             end
 
@@ -113,7 +129,7 @@ else
  
  
 
-    CtrlVar.Inverse.Iterations=2;
+    CtrlVar.Inverse.Iterations=2500;
     CtrlVar.Inverse.Regularize.logC.ga=1;
     CtrlVar.Inverse.Regularize.logC.gs=100000  ; % 100000000  ; % 10000000 (c); %   5000000 (c) ; %     1000000 (c) ;
 

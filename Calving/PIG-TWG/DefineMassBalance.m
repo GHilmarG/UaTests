@@ -20,7 +20,7 @@ if isempty(Fas)
     load(UserVar.FasFile,"Fas")
 end
 
-as=Fas(F.x,F.y); 
+as=Fas(F.x,F.y);
 
 
 % Most of the melt-rate parameterisations below are based on that old Favier 2014 paper:
@@ -62,96 +62,20 @@ if contains(UserVar.RunType,"-I-")  % This is a 'dynamical' initialisation, use 
 
     end
 
+elseif contains(UserVar.RunType,"-MR")
 
-elseif contains(UserVar.RunType,"-MR0-")
+    MRP=extractBetween(UserVar.RunType,"-MR","-");
+    [ab,dabdh]=DraftDependentMeltParameterisations(UserVar,CtrlVar,F,MRP) ;
 
-
-    fprintf(CtrlVar.fidlog,' MeltRate0 \n ');
-
-    dabdh=zeros(MUA.Nnodes,1);
-
-    I=F.b<-800 ; ab(I)=-100; dabdh(I)=0;
-    I= F.b< -400 & F.b >= -800; ab(I)=100*(F.b(I)+400)/400; dabdh(I)=(-F.F.rho(I)/F.F.rhow)/4;
-    I=F.b>-400 ; ab(I)=0; dabdh(I)=0;
-
-
-elseif contains(UserVar.RunType,"-MR1-")
-
-
-    fprintf(CtrlVar.fidlog,' MeltRate1 \n ');
-
-    dabdh=zeros(MUA.Nnodes,1);
-
-    I=F.b<-800 ; ab(I)=-200; dabdh(I)=0;
-    I= F.b< -400 & F.b>= -800; ab(I)=200*(b(I)+400)/400; dabdh(I)=(-F.rho(I)/F.rhow)/2;
-    I=b>-400 ; ab(I)=0; dabdh(I)=0;
-    %I=MUA.coordinates(:,2)>-264e3;
-    %ab(I)=0; dabdh(I)=0;
-
-elseif contains(UserVar.RunType,"-MR2-")
-
-    fprintf(CtrlVar.fidlog,' MeltRate2 \n ');
-
-    dabdh=zeros(MUA.Nnodes,1);
-
-    I= F.b<-800 ; ab(I)=-100;  dabdh(I)=0;
-    I= F.b< -200 & F.b>= -800; ab(I)=100*(F.b(I)+200)/600; dabdh(I)=(-F.rho(I)/F.rhow)/6;
-    I=b>-200 ; ab(I)=0; dabdh(I)=0;
-
-elseif contains(UserVar.RunType,"-MR3-")
-
-    fprintf(CtrlVar.fidlog,' MeltRate3 \n ');
-
-    dabdh=zeros(MUA.Nnodes,1);
-
-    I=F.b<-800 ; ab(I)=-200; dabdh(I)=0;
-    I= F.b< -200 & F.b>= -800;  ab(I)=200*(F.b(I)+200)/600;  dabdh(I)=(-F.rho(I)/F.rhow)/3;
-    I=b>-200 ; ab(I)=0; dabdh(I)=0;
-
-elseif contains(UserVar.RunType,"-MR4-")
-
-    I=F.b>=0 ; ab(I)=0; dabdh(I)=0;
-    I= F.b< 0 & F.b>= -500;  ab(I)=50*F.b(I)/500;  dabdh(I)=(-F.rho(I)/F.rhow)/10;
-    I=F.b<-500 ; ab(I)=-50; dabdh(I)=0;
-
-
-elseif contains(UserVar.RunType,"-MR5-")
-
-    fprintf(CtrlVar.fidlog,' MeltRate5 \n ');
-
-    ab(F.b<-800)=-200;
-    I= F.b< -200 & F.b>= -800; ab(I)=200*(F.b(I)+200)/600;
-    ab(b>-200)=0;
-
-    I=MUA.coordinates(:,2)>-264e3;
-    ab(I)=0;
-
-elseif contains(UserVar.RunType,"-MR6-")
-
-    fprintf(CtrlVar.fidlog,' MeltRate6 \n ');
-
-    ab(F.b<-800)=-200;
-    I= F.b< -200 & F.b>= -800; ab(I)=200*(F.b(I)+200)/600;
-    ab(b>-200)=0;
-
-    I=MUA.coordinates(:,2)>-200e3;
-    ab(I)=0;
-
-elseif contains(UserVar.RunType,"-MR7-")
-
-    fprintf(CtrlVar.fidlog,'MR7:  Jan melt rate distribution \n ');
-
-    ab(F.b<-1000)=-50 ;
-    I=F.b> -1000 & F.b < -455 ; ab(I)=9e-4*F.b(I).^2+1.4*F.b(I)+450 ;
-    ab(b>-455)=0;
 
 end
 
-% only apply basal melt strictly below/outside of grounding lines
-F.GF=IceSheetIceShelves(CtrlVar,MUA,F.GF);
-ab(~F.GF.NodesDownstreamOfGroundingLines)=0;
-dabdh(~F.GF.NodesDownstreamOfGroundingLines)=0;
-
+if ~isfield(UserVar,"IceSheetIceShelves") || UserVar.IceSheetIceShelves
+    % only apply basal melt strictly below/outside of grounding lines
+    F.GF=IceSheetIceShelves(CtrlVar,MUA,F.GF);
+    ab(~F.GF.NodesDownstreamOfGroundingLines)=0;
+    dabdh(~F.GF.NodesDownstreamOfGroundingLines)=0;
+end
 
 return
 
