@@ -15,5 +15,6 @@ UserVar.Test.Norm.actValue=mean(F.ub+F.vb);
 % UserVar.Test.Norm.expValue=113315.884582759; 
 % UserVar.Test.Norm.expValue=113446.525611581  ;%  Labtop 11/05/2021
 UserVar.Test.Norm.expValue=113315.88458454;   % Workstation 321 08/09/2021 
+UserVar.Test.Norm.expValue=116500.144060475 ; % Z840   on 08/03/2023
 
 end

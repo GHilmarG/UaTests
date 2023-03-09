@@ -22,6 +22,7 @@ UserVar.MeshResolution=10e3; IRange=5 ; JRange=5 ;
 UserVar.MeshResolution=2.5e3; IRange=5:5 ; JRange=5:5 ;
 
 UserVar.RunType='Inverse-MatOpt-Alim-Clim-Umbi-';  UserVar.MeshResolution=20e3; IRange=5:5 ; JRange=5:5 ;
+UserVar.RunType='Inverse-MatOpt-Alim-Clim-Umbi-';  UserVar.MeshResolution=5e3; IRange=5:5 ; JRange=5:5 ;
 UserVar.RunType='Inverse-MatOpt-Alim-Clim-Umbi-';  UserVar.MeshResolution=10e3; IRange=5:5 ; JRange=5:5 ;
 
 
