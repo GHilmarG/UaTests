@@ -16,6 +16,8 @@ if ~contains(WorkDir,"ResultsFiles")
         UserVar.ResultsFileDirectory="D:\Runs\Calving\PIG-TWG\ResultsFiles\";
     elseif contains(hostname,"DESKTOP-014ILS5")
         UserVar.ResultsFileDirectory="E:\Runs\Calving\PIG-TWG\ResultsFiles\";
+    elseif contains(hostname,"C23000099")
+        UserVar.ResultsFileDirectory="E:\Runs\Calving\PIG-TWG\ResultsFiles\"; 
     else
         error("case not implemented")
     end
@@ -55,13 +57,17 @@ Experiment="5km-New-Cornford-PIG";
 Experiment= "Compare with ref: TWIS and PIG" ;
 Experiment="Compare Cornford and Weertman with respective ref"  ; % C and W for MR4 and Thwaites removal
 
-CreateVideo=false; CalculateVAF=true;  % defaults
+Experiment="5km-New-Cornford";
+Experiment="5km-New-Weertman"; 
+
+
+CreateVideo=true; CalculateVAF=false;  % defaults
 
 
 % Experiment= "ConvergenceStudy";
 
 VAFStep=25;
-VideoStep=10;
+VideoStep=25;
 PlotCase=""  ;
 
 switch Experiment
@@ -233,13 +239,15 @@ switch Experiment
         SubString(2)="-FT-P-Duvh-TWISC2-MR4-SM-TM001-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-";
         SubString(3)="-FT-P-TWISC0-MR4-SM-TM001-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-";
 
-        IRange=1:3;
+        IRange=1;
 
         LegendEntry=[...
             "2.3km: Thwaites ice shelf (Alim, Cornford)",...
             "2.3km: Thwaites ice shelf removed 2km downstream (Alim, Cornford)",...
             "2.3km: Thwaites ice shelf removed (Alim, Cornford)",...
             ];
+
+      VideoStep=1;
 
 
     case "5km-New-Cornford-PIG"
@@ -256,6 +264,9 @@ switch Experiment
 
         SubString(1)="-ThickMin0k01-FT-P-Duvh-TWIS-MR4-SM-TM001-Weertman-5km-Alim-Ca1-Cs100000-Aa1-As100000-"; 
         SubString(2)="-ThickMin0k01-FT-P-Duvh-TWISC0-MR4-SM-TM001-Weertman-5km-Alim-Ca1-Cs100000-Aa1-As100000-";
+
+        SubString(1)="-ThickMin0k01-FT-P-TWIS-MR4-SM-TM001-Weertman-5km-Alim-Ca1-Cs100000-Aa1-As100000-"; 
+        SubString(2)="-ThickMin0k01-FT-P-TWISC0-MR4-SM-TM001-Weertman-5km-Alim-Ca1-Cs100000-Aa1-As100000-"; 
 
         IRange=1:2;
 
@@ -454,7 +465,7 @@ if CreateVideo
         % ReadPlotSequenceOfResultFiles2(FileNameSubstring=SubString(I),PlotTimestep=Step,PlotType="-ubvb-B-") ;
         % ReadPlotSequenceOfResultFiles2(FileNameSubstring=SubString(I),PlotTimestep=Step,PlotType="-ubvb-VAF-",VAFBoundary=xyBoundary) ;
         % ReadPlotSequenceOfResultFiles2(FileNameSubstring=SubString(I),PlotTimestep=Step,PlotType="-ubvb-ds-",VAFBoundary=xyBoundary) ;
-        ReadPlotSequenceOfResultFiles2(FileNameSubstring=SubString(I),PlotTimestep=Step,PlotType="-ds-",VAFBoundary=xyBoundary,PlotTimeInterval=[0 400]) ;
+        ReadPlotSequenceOfResultFiles2(FileNameSubstring=SubString(I),PlotTimestep=Step,PlotType="-ds-VAF-",VAFBoundary=xyBoundary,PlotTimeInterval=[0 400]) ;
     end
 end
 

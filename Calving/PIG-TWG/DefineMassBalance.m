@@ -67,7 +67,30 @@ elseif contains(UserVar.RunType,"-MR")
     MRP=extractBetween(UserVar.RunType,"-MR","-");
     [ab,dabdh]=DraftDependentMeltParameterisations(UserVar,CtrlVar,F,MRP) ;
 
+elseif contains(UserVar.RunType,"-DMR")
 
+    dsdt=F.x*0 ; dhdt=F.x*0;
+
+    pat="DMR"+("+"|"-")+digitsPattern ;
+    mathSymbols = asManyOfPattern(digitsPattern | characterListPattern("+-*/="),1) ;
+    SubString=extract(extract(UserVar.RunType,pat),mathSymbols);
+
+
+    if ~isempty(SubString)
+        dhdtValue=str2double(SubString);
+        if isnumeric(dhdtValue)
+            dhdt=F.x*0+dhdtValue;
+        end
+    end
+
+
+
+    if ~isempty(F.ub)
+        [ab,qx,qy,dqxdx,dqxdy,dqydx,dqydy]=CalcIceShelfMeltRates(CtrlVar,MUA,F.ub,F.vb,F.s,F.b,F.S,F.B,F.rho,F.rhow,dsdt,F.as,dhdt) ;
+
+        ab(F.LSF<0.5)=0 ;
+        ab(ab>0)=0;
+    end
 end
 
 if ~isfield(UserVar,"IceSheetIceShelves") || UserVar.IceSheetIceShelves

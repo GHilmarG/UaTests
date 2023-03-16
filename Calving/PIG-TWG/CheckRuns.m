@@ -24,37 +24,41 @@ Res=["5km","10km","20km"];
 Reg=["TWIS","TWISC0","PIGC0"] ;
 SL=["Cornford","Weertman"] ;
 MR=["MR0","MR4"];
+D=["-","-Duvh-"];
 
 % Name="*P-TWIS-MR0-SM-TM001-Weertman*5km*.mat" ;
 % I=1 ; J=1; K=1; L=1;
 
 for L=1:3
-    for I=1:3
-        for J=1:2
-            for K=1:2
+    for M=1:2
 
-                Name="00*P-"+Reg(I)+"-"+MR(J)+"-SM-TM001-"+SL(K)+"*"+Res(L)+"*.mat" ;
+        for I=1:3
+            for J=1:2
+                for K=1:2
+
+                    Name="00*P"+D(M)+Reg(I)+"-"+MR(J)+"-SM-TM001-"+SL(K)+"*"+Res(L)+"*.mat" ;
 
 
-                Files=dir(Name);
+                    Files=dir(Name);
 
-                if numel(Files)==0
+                    if numel(Files)==0
 
-                    TimeString="-------";
+                        TimeString="-------";
 
-                else
+                    else
 
-                    TimeString=extractBefore(Files(end).name,"-");
+                        TimeString=extractBefore(Files(end).name,"-");
+
+                    end
+
+
+                    fprintf("%s: \t  %s \n",Name,TimeString)
 
                 end
-
-
-                fprintf("%s %s %s %s %s \n",Reg(I),MR(J),SL(K),Res(L),TimeString)
-
             end
         end
+        fprintf("\n")
     end
-    fprintf("\n")
 end
 
 cd(CurDir)

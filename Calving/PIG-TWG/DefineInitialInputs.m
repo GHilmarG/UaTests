@@ -253,6 +253,8 @@ CtrlVar.SaveInitialMeshFileName='MeshFile';
 
 if contains(UserVar.RunType,"Cornford")
     CtrlVar.SlidingLaw="Cornford" ;
+elseif contains(UserVar.RunType,"Umbi")
+    CtrlVar.SlidingLaw="Umbi" ;
 else
     CtrlVar.SlidingLaw="Weertman" ;
 end

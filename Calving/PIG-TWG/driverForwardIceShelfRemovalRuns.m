@@ -139,6 +139,19 @@ Resolution="-5km-" ;  CtrlVar.SlidingLaw="Weertman"; C="" ;     Duvh="" ;  Melt=
 % Resolution="-20km-" ;  CtrlVar.SlidingLaw="Cornford"; C="C0" ;     Duvh="" ;  Melt="-MR4-" ;  IceShelf="Thwaites" ; % done
 % Resolution="-20km-" ;  CtrlVar.SlidingLaw="Cornford"; C="C0" ;     Duvh="" ;  Melt="-MR4-" ;  IceShelf="PIG" ; % done
 
+
+% To do: continue the MR4 run:  Duvh-TWISC2-*TM001-Cornford-5km*.mat run and add one without Duvh
+Resolution="-5km-" ;  CtrlVar.SlidingLaw="Cornford"; C="C2" ;     Duvh="Duvh" ;  Melt="-MR4-" ;  IceShelf="Thwaites" ; 
+% Resolution="-5km-" ;  CtrlVar.SlidingLaw="Cornford"; C="C2" ;     Duvh="" ;  Melt="-MR4-" ;  IceShelf="Thwaites" ; 
+
+Resolution="-10km-" ;  CtrlVar.SlidingLaw="Cornford"; C="" ;     Duvh="" ;  Melt="-DMR-2-" ;  IceShelf="Thwaites" ; % testing dynamical melt rates
+Resolution="-10km-" ;  CtrlVar.SlidingLaw="Cornford"; C="" ;     Duvh="" ;  Melt="-DMR-10-" ;  IceShelf="Thwaites" ; % testing dynamical melt rates
+Resolution="-10km-" ;  CtrlVar.SlidingLaw="Cornford"; C="" ;     Duvh="" ;  Melt="-DMR-100-" ;  IceShelf="Thwaites" ; % testing dynamical melt rates
+
+Resolution="-5km-" ;  CtrlVar.SlidingLaw="Weertman"; C="" ;     Duvh="" ;  Melt="-MR4-" ;  IceShelf="Thwaites" ; % TWIS kept / Weertman  /MR4
+Resolution="-5km-" ;  CtrlVar.SlidingLaw="Weertman"; C="C0" ;     Duvh="" ;  Melt="-MR4-" ;  IceShelf="Thwaites" ; % TWIS removal / Weertman  /MR4
+
+
 CreateAndSaveACInterpolants=false;  % But still created if the files with the interpolants do not exist, 
                                     % but the data files with A and C do.
 
