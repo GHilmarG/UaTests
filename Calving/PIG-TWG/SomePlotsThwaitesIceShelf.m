@@ -58,6 +58,7 @@ Experiment= "Compare with ref: TWIS and PIG" ;
 Experiment="Compare Cornford and Weertman with respective ref"  ; % C and W for MR4 and Thwaites removal
 
 Experiment="5km-New-Cornford";
+Experiment="5km-New-Weertman"; 
 
 
 CreateVideo=true; CalculateVAF=false;  % defaults
@@ -263,6 +264,9 @@ switch Experiment
 
         SubString(1)="-ThickMin0k01-FT-P-Duvh-TWIS-MR4-SM-TM001-Weertman-5km-Alim-Ca1-Cs100000-Aa1-As100000-"; 
         SubString(2)="-ThickMin0k01-FT-P-Duvh-TWISC0-MR4-SM-TM001-Weertman-5km-Alim-Ca1-Cs100000-Aa1-As100000-";
+
+        SubString(1)="-ThickMin0k01-FT-P-TWIS-MR4-SM-TM001-Weertman-5km-Alim-Ca1-Cs100000-Aa1-As100000-"; 
+        SubString(2)="-ThickMin0k01-FT-P-TWISC0-MR4-SM-TM001-Weertman-5km-Alim-Ca1-Cs100000-Aa1-As100000-"; 
 
         IRange=1:2;
 
