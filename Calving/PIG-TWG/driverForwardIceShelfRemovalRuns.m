@@ -144,6 +144,10 @@ Resolution="-5km-" ;  CtrlVar.SlidingLaw="Weertman"; C="C0" ;     Duvh="" ;  Mel
 Resolution="-5km-" ;  CtrlVar.SlidingLaw="Cornford"; C="C2" ;     Duvh="Duvh" ;  Melt="-MR4-" ;  IceShelf="Thwaites" ; 
 % Resolution="-5km-" ;  CtrlVar.SlidingLaw="Cornford"; C="C2" ;     Duvh="" ;  Melt="-MR4-" ;  IceShelf="Thwaites" ; 
 
+Resolution="-10km-" ;  CtrlVar.SlidingLaw="Cornford"; C="" ;     Duvh="" ;  Melt="-DMR-2-" ;  IceShelf="Thwaites" ; % testing dynamical melt rates
+Resolution="-10km-" ;  CtrlVar.SlidingLaw="Cornford"; C="" ;     Duvh="" ;  Melt="-DMR-10-" ;  IceShelf="Thwaites" ; % testing dynamical melt rates
+Resolution="-10km-" ;  CtrlVar.SlidingLaw="Cornford"; C="" ;     Duvh="" ;  Melt="-DMR-100-" ;  IceShelf="Thwaites" ; % testing dynamical melt rates
+
 CreateAndSaveACInterpolants=false;  % But still created if the files with the interpolants do not exist, 
                                     % but the data files with A and C do.
 

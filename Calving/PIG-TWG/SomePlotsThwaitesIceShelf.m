@@ -238,7 +238,7 @@ switch Experiment
         SubString(2)="-FT-P-Duvh-TWISC2-MR4-SM-TM001-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-";
         SubString(3)="-FT-P-TWISC0-MR4-SM-TM001-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-";
 
-        IRange=1:3;
+        IRange=1;
 
         LegendEntry=[...
             "2.3km: Thwaites ice shelf (Alim, Cornford)",...
