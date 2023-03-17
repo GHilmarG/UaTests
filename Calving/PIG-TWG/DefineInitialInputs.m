@@ -274,9 +274,15 @@ if ~isfield(UserVar,'AFile') ||  isempty(UserVar.AFile)
     if contains(UserVar.RunType,"-Alim-")
         InvFile=InvFile+"-Alim-";
     end
+
     if contains(UserVar.RunType,"-Clim-")
         InvFile=InvFile+"-Clim-";
     end
+
+    if contains(UserVar.RunType,"-uvdhdt-")
+        InvFile=InvFile+"-uvdhdt-";
+    end
+
     InvFile=replace(InvFile,".","k");
 
     InvFile=replace(InvFile,"--","-");
@@ -324,9 +330,13 @@ if contains(UserVar.RunType,"Inverse")
     CtrlVar.Inverse.InvertFor="-logA-logC-" ; % {'C','logC','AGlen','logAGlen'}
     CtrlVar.Inverse.Regularize.Field=CtrlVar.Inverse.InvertFor;
     CtrlVar.Inverse.DataMisfit.GradientCalculation="-adjoint-" ; % "-FixpointC-"; "adjoint";
-    CtrlVar.Inverse.Measurements="-uv-" ;  % {'-uv-,'-uv-dhdt-','-dhdt-'}
 
-  
+    if contains(UserVar.RunType,"-uvdhdt-")
+        CtrlVar.Inverse.Measurements="-uv-dhdt-" ;  % {'-uv-,'-uv-dhdt-','-dhdt-'}
+    else
+        CtrlVar.Inverse.Measurements="-uv-" ;  % {'-uv-,'-uv-dhdt-','-dhdt-'}
+    end
+
 
     
     CtrlVar.NameOfFileForSavingSlipperinessEstimate="InvC-"+InvFile;

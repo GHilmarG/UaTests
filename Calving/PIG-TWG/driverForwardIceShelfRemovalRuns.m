@@ -216,6 +216,16 @@ InvFile=CtrlVar.SlidingLaw...
 if contains(UserVar.RunType,"-Alim-")
     InvFile=InvFile+"-Alim-";
 end
+
+if contains(UserVar.RunType,"-Clim-")
+    InvFile=InvFile+"-Clim-";
+end
+
+if contains(UserVar.RunType,"-uvdhdt-")
+    InvFile=InvFile+"-uvdhdt-";
+end
+
+
 InvFile=replace(InvFile,".","k");
 
 UserVar.AFile="FA-"+InvFile+".mat";
