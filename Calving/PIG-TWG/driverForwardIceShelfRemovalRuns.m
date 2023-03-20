@@ -240,7 +240,7 @@ if CreateAndSaveACInterpolants ||  (~isfile(UserVar.AFile)  || ~isfile(UserVar.C
     
     % Either 1) always create new interpolants from inverse files, even if the interpolants already
     %           exist (ie update interpolants),
-    %     or 2) always create  interpolants from inverse files.
+    %     or 2) create  interpolants from inverse files if no interpolants exists (create for first time).
 
     if isfile(AdataFile) && isfile(CdataFile)
 
