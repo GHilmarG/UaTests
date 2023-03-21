@@ -34,10 +34,12 @@ UserVar.RunType='Inverse-MatOpt-uvdhdt-Alim-Clim-Umbi-';  UserVar.MeshResolution
 UserVar.RunType='Inverse-MatOpt-uvdhdt-Alim-Clim-Umbi-';  UserVar.MeshResolution=20e3; IRange=5:5 ; JRange=5:5 ;
 
 
-UserVar.RunType='Inverse-MatOpt-uvdhdt-Alim-Clim-Cornford-';  UserVar.MeshResolution=5e3; IRange=5:5 ; JRange=5:5 ;
+
 UserVar.RunType='Inverse-MatOpt-uvdhdt-Alim-Clim-Cornford-';  UserVar.MeshResolution=20e3; IRange=5:5 ; JRange=5:5 ;
 
 UserVar.RunType='Inverse-MatOpt-uvdhdt-Alim-Clim-Umbi-';  UserVar.MeshResolution=10e3; IRange=5:5 ; JRange=5:5 ;
+UserVar.RunType='Inverse-MatOpt-uvdhdt-Alim-Clim-Cornford-';  UserVar.MeshResolution=5e3; IRange=5:5 ; JRange=5:5 ;
+
 
 CtrlVar.Inverse.Iterations=5;
 
