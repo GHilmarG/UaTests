@@ -16,7 +16,7 @@ function [UserVar,InvStartValues,Priors,Meas,BCsAdjoint,RunInfo]=...
 
 
 
-persistent FuMeas FvMeas FerrMeas  % keep scattered interpolants for the data in memory.
+persistent FuMeas FvMeas FerrMeas  Fdh2000to2018 % keep scattered interpolants for the data in memory.
 
 
 %% get measurments and define error covariance matrices
@@ -27,10 +27,30 @@ if isempty(FuMeas)
     fprintf(' done.\n')
 end
 
+if isempty(Fdh2000to2018)
+
+    fprintf('Loading interpolants for dhdt data based on Schroeder 2019 and Susheel.\n')
+    load("FdhdtMeasuredRatesOfElevationChanges2000to2018","Fdh2000to2018")
+
+
+end
+
+
+
+
+
 % Now interpolate the data onto the nodes of the mesh
 Meas.us=double(FuMeas(MUA.coordinates(:,1),MUA.coordinates(:,2)));
 Meas.vs=double(FvMeas(MUA.coordinates(:,1),MUA.coordinates(:,2)));
 Err=double(FerrMeas(MUA.coordinates(:,1),MUA.coordinates(:,2)));
+
+if contains(UserVar.RunType,"-uvdhdt-")
+
+    Meas.dhdt=double(Fdh2000to2018(MUA.coordinates(:,1),MUA.coordinates(:,2)));
+    dhdtErr=F.x*0+0.1 ; % seeting dhdt errors to 0.1 m/yr
+end
+
+
 
 % Here I set any NaN values to 0. The assumption here is that these NaN values represent missing data and I set these values to 0. This
 % may, or may not, be a good idea. But the important thing is to set the errors where data is missing to some really high value. Here I
@@ -38,17 +58,20 @@ Err=double(FerrMeas(MUA.coordinates(:,1),MUA.coordinates(:,2)));
 MissingData=isnan(Meas.us) | isnan(Meas.vs) | isnan(Err) | (Err==0);
 Meas.us(MissingData)=0 ;  Meas.vs(MissingData)=0 ; Err(MissingData)=1e10;
 
+
+
 io=inpoly2([F.x F.y],UserVar.BedMachineBoundary);  % And here I set all errors outside of the Bedmachine boundary to some very large value.
 NodesOutsideBoundary=~io ;
 Meas.us(NodesOutsideBoundary)=0 ;  Meas.vs(NodesOutsideBoundary)=0 ; Err(NodesOutsideBoundary)=1e10;
-
-
+Meas.dhdt(NodesOutsideBoundary)=0; dhdtErr(NodesOutsideBoundary)=1e10; 
+dhdtErr(F.GF.node<0.5) =1e10;  % also set errors over floating areas to a high value so that we are effectivly not using those meas there
 
 % The data errors as specified by these covariance matrices.
 % The data errors are assumed to be uncorrelated, hence we are here using diagonal covariance matrices.
 usError=Err ; vsError=Err ;
 Meas.usCov=sparse(1:MUA.Nnodes,1:MUA.Nnodes,usError.^2,MUA.Nnodes,MUA.Nnodes);
 Meas.vsCov=sparse(1:MUA.Nnodes,1:MUA.Nnodes,vsError.^2,MUA.Nnodes,MUA.Nnodes);
+Meas.dhdtCov=sparse(1:MUA.Nnodes,1:MUA.Nnodes,dhdtErr.^2,MUA.Nnodes,MUA.Nnodes);
 
 
 
@@ -144,6 +167,22 @@ InvStartValues.n=F.n ;
 % The A and C estimates in these file could, for example, have been obtained from a previous inversion.
 %
 
+%%
+% temporary modification to get the uvdhdt inversion stared with the corresponding resutls from the uv-only inversion
+
+UserVar.Slipperiness.ReadFromFile=true;
+UserVar.AGlen.ReadFromFile=true;
+
+% UserVar.CFile="FC-Cornford-Ca1-Cs100000-Aa1-As100000-5km-Alim-Clim-uvhdhdt.mat";
+UserVar.CFile="FC-"+CtrlVar.SlidingLaw+"-Ca1-Cs100000-Aa1-As100000-"+num2str(round(UserVar.MeshResolution/1000))+"km-Alim-Clim.mat";
+% UserVar.AFile="FA-Cornford-Ca1-Cs100000-Aa1-As100000-5km-Alim-Clim-uvhdhdt.mat";
+UserVar.AFile="FA-"+CtrlVar.SlidingLaw+"-Ca1-Cs100000-Aa1-As100000-"+num2str(round(UserVar.MeshResolution/1000))+"km-Alim-Clim.mat";
+
+
+
+%%
+
+
 if UserVar.Slipperiness.ReadFromFile
     
     fprintf('DefineInputsForInverseRun: loading start values for C from the file: %-s ',UserVar.CFile)
@@ -170,4 +209,5 @@ end
     
     
     
+
 end

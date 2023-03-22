@@ -116,11 +116,11 @@ Resolution="-10km-" ;  CtrlVar.SlidingLaw="Cornford"; C="" ;      Duvh="" ;  Mel
 % Resolution="-20km-" ;  CtrlVar.SlidingLaw="Cornford"; C="C0" ;     Duvh="" ;  Melt="-MR4-" ;  IceShelf="PIG" ; % PIG removal
 
 %%
-% Home Office HP
+% Home Office HP, now Dell Office
 Resolution="-5km-" ;  CtrlVar.SlidingLaw="Weertman"; C="C0" ;     Duvh="" ;  Melt="-MR4-" ;  IceShelf="PIG" ; % PIG removal / Weertman  /MR4
-% Resolution="-5km-" ;  CtrlVar.SlidingLaw="Weertman"; C="C0" ;     Duvh="" ;  Melt="-MR0-" ;  IceShelf="PIG" ; % PIG removal / Weertman  /MR0
-% Resolution="-5km-" ;  CtrlVar.SlidingLaw="Weertman"; C="C0" ;     Duvh="" ;  Melt="-MR0-" ;  IceShelf="Thwaites" ; % TWIS removal / Weertman  /MR0
-% Resolution="-5km-" ;  CtrlVar.SlidingLaw="Weertman"; C="" ;     Duvh="" ;  Melt="-MR0-" ;  IceShelf="Thwaites" ; % TWIS removal / Weertman  /MR0
+Resolution="-5km-" ;  CtrlVar.SlidingLaw="Weertman"; C="C0" ;     Duvh="" ;  Melt="-MR0-" ;  IceShelf="PIG" ; % PIG removal / Weertman  /MR0
+Resolution="-5km-" ;  CtrlVar.SlidingLaw="Weertman"; C="C0" ;     Duvh="" ;  Melt="-MR0-" ;  IceShelf="Thwaites" ; % TWIS removal / Weertman  /MR0
+Resolution="-5km-" ;  CtrlVar.SlidingLaw="Weertman"; C="" ;     Duvh="" ;  Melt="-MR0-" ;  IceShelf="Thwaites" ; % TWIS removal / Weertman  /MR0
 
 %C17777347
 % Resolution="-5km-" ;  CtrlVar.SlidingLaw="Cornford"; C="" ;       Duvh="" ;  Melt="-MR0-" ;  IceShelf="Thwaites" ; 
@@ -143,6 +143,14 @@ Resolution="-5km-" ;  CtrlVar.SlidingLaw="Weertman"; C="C0" ;     Duvh="" ;  Mel
 % To do: continue the MR4 run:  Duvh-TWISC2-*TM001-Cornford-5km*.mat run and add one without Duvh
 Resolution="-5km-" ;  CtrlVar.SlidingLaw="Cornford"; C="C2" ;     Duvh="Duvh" ;  Melt="-MR4-" ;  IceShelf="Thwaites" ; 
 Resolution="-5km-" ;  CtrlVar.SlidingLaw="Cornford"; C="C2" ;     Duvh=""     ;  Melt="-MR4-" ;  IceShelf="Thwaites" ; 
+
+Resolution="-10km-" ;  CtrlVar.SlidingLaw="Cornford"; C="" ;     Duvh="" ;  Melt="-DMR-2-" ;  IceShelf="Thwaites" ; % testing dynamical melt rates
+Resolution="-10km-" ;  CtrlVar.SlidingLaw="Cornford"; C="" ;     Duvh="" ;  Melt="-DMR-10-" ;  IceShelf="Thwaites" ; % testing dynamical melt rates
+Resolution="-10km-" ;  CtrlVar.SlidingLaw="Cornford"; C="" ;     Duvh="" ;  Melt="-DMR-100-" ;  IceShelf="Thwaites" ; % testing dynamical melt rates
+
+Resolution="-5km-" ;  CtrlVar.SlidingLaw="Weertman"; C="" ;     Duvh="" ;  Melt="-MR4-" ;  IceShelf="Thwaites" ; % TWIS kept / Weertman  /MR4
+Resolution="-5km-" ;  CtrlVar.SlidingLaw="Weertman"; C="C0" ;     Duvh="" ;  Melt="-MR4-" ;  IceShelf="Thwaites" ; % TWIS removal / Weertman  /MR4
+
 
 CreateAndSaveACInterpolants=false;  % But still created if the files with the interpolants do not exist, 
                                     % but the data files with A and C do.
@@ -208,6 +216,16 @@ InvFile=CtrlVar.SlidingLaw...
 if contains(UserVar.RunType,"-Alim-")
     InvFile=InvFile+"-Alim-";
 end
+
+if contains(UserVar.RunType,"-Clim-")
+    InvFile=InvFile+"-Clim-";
+end
+
+if contains(UserVar.RunType,"-uvdhdt-")
+    InvFile=InvFile+"-uvdhdt-";
+end
+
+
 InvFile=replace(InvFile,".","k");
 
 UserVar.AFile="FA-"+InvFile+".mat";
@@ -222,7 +240,7 @@ if CreateAndSaveACInterpolants ||  (~isfile(UserVar.AFile)  || ~isfile(UserVar.C
     
     % Either 1) always create new interpolants from inverse files, even if the interpolants already
     %           exist (ie update interpolants),
-    %     or 2) always create  interpolants from inverse files.
+    %     or 2) create  interpolants from inverse files if no interpolants exists (create for first time).
 
     if isfile(AdataFile) && isfile(CdataFile)
 

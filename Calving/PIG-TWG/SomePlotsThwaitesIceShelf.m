@@ -16,6 +16,8 @@ if ~contains(WorkDir,"ResultsFiles")
         UserVar.ResultsFileDirectory="D:\Runs\Calving\PIG-TWG\ResultsFiles\";
     elseif contains(hostname,"DESKTOP-014ILS5")
         UserVar.ResultsFileDirectory="E:\Runs\Calving\PIG-TWG\ResultsFiles\";
+    elseif contains(hostname,"C23000099")
+        UserVar.ResultsFileDirectory="E:\Runs\Calving\PIG-TWG\ResultsFiles\"; 
     else
         error("case not implemented")
     end
@@ -46,7 +48,7 @@ Experiment="5km-New-Weertman";
 Experiment="5km-New-Cornford";
 
 
-Experiment="Compare with ref: mesh convergence" ;
+
 
 
 Experiment="5km-New-Cornford-PIG";
@@ -56,15 +58,17 @@ Experiment= "Compare with ref: TWIS and PIG" ;
 Experiment="Compare Cornford and Weertman with respective ref"  ; % C and W for MR4 and Thwaites removal
 
 Experiment="5km-New-Cornford";
+Experiment="5km-New-Weertman"; 
+Experiment="5km-New-Cornford";   % now includes Weertman as well
+Experiment="Compare with ref: mesh convergence" ;
 
-
-CreateVideo=false; CalculateVAF=true;  % defaults
+CreateVideo=true; CalculateVAF=false;  % defaults
 
 
 % Experiment= "ConvergenceStudy";
 
 VAFStep=25;
-VideoStep=10;
+VideoStep=25;
 PlotCase=""  ;
 
 switch Experiment
@@ -232,17 +236,30 @@ switch Experiment
         SubString(2)="-FT-P-Duvh-TWISC2-MR4-SM-TM001-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-";
         SubString(3)="-FT-P-TWISC0-MR4-SM-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-";
 
-        SubString(1)="-FT-P-TWIS-MR4-SM-TM001-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-"; 
+        SubString(1)="-FT-P-TWIS-MR4-SM-TM001-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-";
         SubString(2)="-FT-P-Duvh-TWISC2-MR4-SM-TM001-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-";
         SubString(3)="-FT-P-TWISC0-MR4-SM-TM001-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-";
 
-        IRange=1:3;
+        SubString(4)="-FT-P-TWIS-MR0-SM-TM001-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-";
+        SubString(5)="-FT-P-TWISC2-MR0-SM-TM001-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-";  % has not been done
+        SubString(6)="-FT-P-TWISC0-MR0-SM-TM001-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-";
+
+        % adding Weertman in here as well
+        SubString(10)="-ThickMin0k01-FT-P-Duvh-TWIS-MR4-SM-TM001-Weertman-5km-Alim-Ca1-Cs100000-Aa1-As100000-";
+        SubString(11)="-ThickMin0k01-FT-P-Duvh-TWISC0-MR4-SM-TM001-Weertman-5km-Alim-Ca1-Cs100000-Aa1-As100000-";
+        SubString(12)="-ThickMin0k01-FT-P-Duvh-TWIS-MR4-SM-TM001-Weertman-5km-Alim-Ca1-Cs100000-Aa1-As100000-";
+        SubString(13)="-ThickMin0k01-FT-P-Duvh-TWISC0-MR4-SM-TM001-Weertman-5km-Alim-Ca1-Cs100000-Aa1-As100000-";
+
+        IRange=[4  6  10  11  12  13] ;
+
 
         LegendEntry=[...
             "2.3km: Thwaites ice shelf (Alim, Cornford)",...
             "2.3km: Thwaites ice shelf removed 2km downstream (Alim, Cornford)",...
             "2.3km: Thwaites ice shelf removed (Alim, Cornford)",...
             ];
+
+      VideoStep=1;
 
 
     case "5km-New-Cornford-PIG"
@@ -259,6 +276,12 @@ switch Experiment
 
         SubString(1)="-ThickMin0k01-FT-P-Duvh-TWIS-MR4-SM-TM001-Weertman-5km-Alim-Ca1-Cs100000-Aa1-As100000-"; 
         SubString(2)="-ThickMin0k01-FT-P-Duvh-TWISC0-MR4-SM-TM001-Weertman-5km-Alim-Ca1-Cs100000-Aa1-As100000-";
+
+        VideoStep=1;
+
+        % These runs are not finalized:
+        % SubString(1)="-ThickMin0k01-FT-P-TWIS-MR4-SM-TM001-Weertman-5km-Alim-Ca1-Cs100000-Aa1-As100000-";  
+        % SubString(2)="-ThickMin0k01-FT-P-TWISC0-MR4-SM-TM001-Weertman-5km-Alim-Ca1-Cs100000-Aa1-As100000-"; 
 
         IRange=1:2;
 
@@ -376,16 +399,17 @@ switch Experiment
 
     case "Compare with ref: mesh convergence"  % Mesh convergence for Cornford
 
-        PlotCase="Compare"  ;  
+        PlotCase=""  ;  
 
         ComparisionMatrix=[1 nan; 2 1 ; 3 1  ; 4 nan ; 5 4 ; 6 4 ; 7 nan ; 8 7]  ;
 
         IRange=ComparisionMatrix(:,1); IRange=IRange' ;
 
-        IRange=[1  3  4  6  7  8];
+        IRange=[1  3  4  6  7  8]; 
+        IRange=[4  7 ]; 
 
 
-
+        % MR4
         SubString(1)="-FT-P-TWIS-MR4-SM-TM001-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-.mat";
         SubString(2)="-FT-P-Duvh-TWISC2-MR4-SM-TM001-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-.mat";
         SubString(3)="-FT-P-TWISC0-MR4-SM-TM001-Cornford-5km-Alim-Ca1-Cs100000-Aa1-As100000-.mat";
@@ -395,23 +419,29 @@ switch Experiment
         SubString(5)="FT-P-Duvh-TWISC2-MR4-SM-TM001-Cornford-10km-Alim-Ca1-Cs100000-Aa1-As100000-.mat";
         SubString(6)="FT-P-Duvh-TWISC0-MR4-SM-TM001-Cornford-10km-Alim-Ca1-Cs100000-Aa1-As100000-.mat";
 
+        SubString(4)="FT-P-TWIS-MR4-SM-TM001-Cornford-10km-Alim-Ca1-Cs100000-Aa1-As100000-.mat";
+        SubString(5)="FT-P-TWISC2-MR4-SM-TM001-Cornford-10km-Alim-Ca1-Cs100000-Aa1-As100000-.mat";
+        SubString(6)="FT-P-TWISC0-MR4-SM-TM001-Cornford-10km-Alim-Ca1-Cs100000-Aa1-As100000-.mat";
 
 
         SubString(7)="-FT-P-TWIS-MR4-SM-TM001-Cornford-20km-Alim-Ca1-Cs100000-Aa1-As100000-.mat";
         SubString(8)="-FT-P-TWISC0-MR4-SM-TM001-Cornford-20km-Alim-Ca1-Cs100000-Aa1-As100000-.mat";
 
+
         LegendEntry=[...
-            "2.3km: Thwaites ice shelf (Alim, Cornford)",...
-            "2.3km: Thwaites ice shelf removed 2km downstream (Alim, Cornford)",...
-            "2.3km: Thwaites ice shelf removed (Alim, Cornford)",...
-            "4.6km: Thwaites ice shelf (Alim, Cornford)",...
-            "4.6km: Thwaites ice shelf removed 2km downstream (Alim, Cornford)",...
-            "4.6km: Thwaites ice shelf removed (Alim, Cornford)",...
-            "9.3km: Thwaites ice shelf (Alim, Cornford)",...
-            "9.3km: Thwaites ice shelf removed (Alim, Cornford)",...
+            "2.3km: Thwaites ice shelf kept (Alim, Cornford, MR4)",...
+            "2.3km: Thwaites ice shelf removed 2km downstream (Alim, Cornford, MR4)",...
+            "2.3km: Thwaites ice shelf removed (Alim, Cornford, MR4)",...
+            "4.6km: Thwaites ice shelf kept (Alim, Cornford, MR4)",...
+            "4.6km: Thwaites ice shelf removed 2km downstream (Alim, Cornford, MR4)",...
+            "4.6km: Thwaites ice shelf removed (Alim, Cornford, MR4)",...
+            "9.3km: Thwaites ice shelf kept (Alim, Cornford, MR4)",...
+            "9.3km: Thwaites ice shelf removed (Alim, Cornford, MR4)",...
             ];
 
-        TimeInterval=[0 400] ;  VAFStep=25;
+
+        TimeInterval=[0 400] ;  VAFStep=5; VideoStep=1;  CreateVideo=true; CalculateVAF=false; 
+
         xyBoundary=nan;  % since this is always with respect to a reference run, I think that limiting the region is not needed
 
 
@@ -457,7 +487,7 @@ if CreateVideo
         % ReadPlotSequenceOfResultFiles2(FileNameSubstring=SubString(I),PlotTimestep=Step,PlotType="-ubvb-B-") ;
         % ReadPlotSequenceOfResultFiles2(FileNameSubstring=SubString(I),PlotTimestep=Step,PlotType="-ubvb-VAF-",VAFBoundary=xyBoundary) ;
         % ReadPlotSequenceOfResultFiles2(FileNameSubstring=SubString(I),PlotTimestep=Step,PlotType="-ubvb-ds-",VAFBoundary=xyBoundary) ;
-        ReadPlotSequenceOfResultFiles2(FileNameSubstring=SubString(I),PlotTimestep=Step,PlotType="-ds-",VAFBoundary=xyBoundary,PlotTimeInterval=[0 400]) ;
+        ReadPlotSequenceOfResultFiles2(FileNameSubstring=SubString(I),PlotTimestep=Step,PlotType="-ds-VAF-",VAFBoundary=xyBoundary,PlotTimeInterval=[0 400]) ;
     end
 end
 
@@ -581,27 +611,27 @@ if CalculateVAF
             ylabel("Equivalent global sea level change (mm)")
             xlabel("time (yr)",Interpreter="latex") ;
 
-            
+
             %FindOrCreateFigure("Grounded area");
             %plot(DataCollect.time,DataCollect.GroundedArea/1e6,'-or');
             %xlabel("time (yr)") ; ylabel(" Grounded area(km^2)")
             hold on
         end
 
+
+        AreaOfTheOcean=3.625e14; % units m^2.
+
+        ax=gca();
+        ax.YAxis(2).Limits=ax.YAxis(1).Limits*1000*1e9/AreaOfTheOcean;
+        % Note!!!:  If zooming in, the zoom only is with respect to the left y-axis, after each zoom, the above statement must be
+        % rerun in the command line to get the right y limits on the right y-axis
+
+
+        lgRel=legend(ax,Interpreter="latex");
+        yyaxis left
+        figCompare.CurrentAxes.YAxis(1).Exponent=0;
+        yline(0) ; lgRel.String(end)=[];
     end
-    AreaOfTheOcean=3.625e14; % units m^2.
-
-    ax=gca();
-    ax.YAxis(2).Limits=ax.YAxis(1).Limits*1000*1e9/AreaOfTheOcean;
-    % Note!!!:  If zooming in, the zoom only is with respect to the left y-axis, after each zoom, the above statement must be
-    % rerun in the command line to get the right y limits on the right y-axis
-
-
-    lgRel=legend(ax,Interpreter="latex");
-    yyaxis left
-    figCompare.CurrentAxes.YAxis(1).Exponent=0;
-    yline(0) ; lgRel.String(end)=[];
-   
     %%
 
     if PlotCase=="Comparing ThickMin for 4.6km"
