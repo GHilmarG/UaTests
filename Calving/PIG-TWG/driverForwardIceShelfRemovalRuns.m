@@ -142,7 +142,7 @@ Resolution="-5km-" ;  CtrlVar.SlidingLaw="Weertman"; C="C0" ;     Duvh="" ;  Mel
 
 % To do: continue the MR4 run:  Duvh-TWISC2-*TM001-Cornford-5km*.mat run and add one without Duvh
 Resolution="-5km-" ;  CtrlVar.SlidingLaw="Cornford"; C="C2" ;     Duvh="Duvh" ;  Melt="-MR4-" ;  IceShelf="Thwaites" ; 
-% Resolution="-5km-" ;  CtrlVar.SlidingLaw="Cornford"; C="C2" ;     Duvh="" ;  Melt="-MR4-" ;  IceShelf="Thwaites" ; 
+Resolution="-5km-" ;  CtrlVar.SlidingLaw="Cornford"; C="C2" ;     Duvh=""     ;  Melt="-MR4-" ;  IceShelf="Thwaites" ; 
 
 CreateAndSaveACInterpolants=false;  % But still created if the files with the interpolants do not exist, 
                                     % but the data files with A and C do.
