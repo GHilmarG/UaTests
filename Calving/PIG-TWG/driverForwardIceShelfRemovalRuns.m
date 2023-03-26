@@ -79,7 +79,7 @@
 
 IceShelf="Thwaites" ; % send
 Melt="-MR4-" ;                  % BasalMeltRateParameterisation=
-
+UserVar.InvMeshResolution=[];
 
 % Resolution="-5km-" ;  CtrlVar.SlidingLaw="Cornford"; C="" ;     Duvh="-Duvh-" ;  % missing
 Resolution="-5km-" ;  CtrlVar.SlidingLaw="Cornford"; C="" ;     Duvh="" ;  % submitted
@@ -151,6 +151,8 @@ Resolution="-10km-" ;  CtrlVar.SlidingLaw="Cornford"; C="" ;     Duvh="" ;  Melt
 Resolution="-5km-" ;  CtrlVar.SlidingLaw="Weertman"; C="" ;     Duvh="" ;  Melt="-MR4-" ;  IceShelf="Thwaites" ; % TWIS kept / Weertman  /MR4
 Resolution="-5km-" ;  CtrlVar.SlidingLaw="Weertman"; C="C0" ;     Duvh="" ;  Melt="-MR4-" ;  IceShelf="Thwaites" ; % TWIS removal / Weertman  /MR4
 
+Resolution="-2.5km-" ;  CtrlVar.SlidingLaw="Cornford"; C="" ;     Duvh="" ;  Melt="-MR4-" ;  IceShelf="Thwaites" ;  UserVar.InvMeshResolution=5000; 
+
 
 CreateAndSaveACInterpolants=false;  % But still created if the files with the interpolants do not exist, 
                                     % but the data files with A and C do.
@@ -160,7 +162,7 @@ BatchJob=false;
 
 
 
-UserVar.RunType="-FT-P-"+Duvh+"-TWIS"+C+Melt+"SM-TM001-"+CtrlVar.SlidingLaw+Resolution+"Alim-Ca1-Cs100000-Aa1-As100000-" ;  
+UserVar.RunType="-FT-P-"+Duvh+"-TWIS"+C+Melt+"SM-TM001-"+CtrlVar.SlidingLaw+Resolution+"Alim-Ca1-Cs100000-Aa1-As100000-";  
 
 if CtrlVar.uvh.SUPG.tauMultiplier~=1  ||  CtrlVar.uvh.SUPG.tau~="taus"
     UserVar.RunType=UserVar.RunType+"-"+CtrlVar.uvh.SUPG.tau+"-SUPGm"+num2str(CtrlVar.uvh.SUPG.tauMultiplier) ;
@@ -173,6 +175,21 @@ if IceShelf~="Thwaites"
 
 end
 
+pat="-"+digitsPattern+"km";
+MR=str2double(extract(extract(UserVar.RunType,pat),digitsPattern));
+
+if isempty(MR)
+
+    pat="-"+digitsPattern+"."+digitsPattern+"km";
+    MR=str2double(extractBetween(extract(UserVar.RunType,pat),"-","km")) ;
+
+end
+
+UserVar.MeshResolution=MR*1000;   % MESH RESOLUTION
+
+if round(UserVar.MeshResolution)~=round(UserVar.InvMeshResolution)
+    UserVar.RunType=UserVar.RunType+"InvMR"+num2str(UserVar.InvMeshResolution/1000);
+end
 
                                                                                                      
 %%
@@ -200,9 +217,12 @@ CtrlVar.LevelSetDownstreamAGlen=AGlenVersusTemp(0);
 
 %%
 
-pat="-"+digitsPattern+"km";
-MR=str2double(extract(extract(UserVar.RunType,pat),digitsPattern));
-UserVar.MeshResolution=MR*1000;   % MESH RESOLUTION
+
+
+
+if isempty(UserVar.InvMeshResolution)
+    UserVar.InvMeshResolution=UserVar.MeshResolution;
+end
 
 % Now set UserVar
 
@@ -211,7 +231,7 @@ InvFile=CtrlVar.SlidingLaw...
     +"-Cs"+num2str(CtrlVar.Inverse.Regularize.logC.gs)...
     +"-Aa"+num2str(CtrlVar.Inverse.Regularize.logAGlen.ga)...
     +"-As"+num2str(CtrlVar.Inverse.Regularize.logAGlen.gs)...
-    +"-"+num2str(UserVar.MeshResolution/1000)+"km";
+    +"-"+num2str(UserVar.InvMeshResolution/1000)+"km";
 
 if contains(UserVar.RunType,"-Alim-")
     InvFile=InvFile+"-Alim-";
