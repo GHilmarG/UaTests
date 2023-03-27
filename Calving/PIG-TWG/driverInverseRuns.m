@@ -23,8 +23,8 @@ UserVar.MeshResolution=2.5e3; IRange=5:5 ; JRange=5:5 ;
 
 UserVar.RunType='Inverse-MatOpt-Alim-Clim-Umbi-';  UserVar.MeshResolution=20e3; IRange=5:5 ; JRange=5:5 ;
 UserVar.RunType='Inverse-MatOpt-Alim-Clim-Umbi-';  UserVar.MeshResolution=10e3; IRange=5:5 ; JRange=5:5 ;
-UserVar.RunType='Inverse-MatOpt-Alim-Clim-Weertman-';  UserVar.MeshResolution=2.5e3; IRange=5:5 ; JRange=5:5 ;
-UserVar.RunType='Inverse-MatOpt-Alim-Clim-Cornford-';  UserVar.MeshResolution=2.5e3; IRange=5:5 ; JRange=5:5 ;
+UserVar.RunType='Inverse-MatOpt-Alim-Clim-Weertman-';  UserVar.MeshResolution=2.5e3; IRange=5:5 ; JRange=5:5 ;  % done about 4000 iterations need to continue 25/03/2023
+UserVar.RunType='Inverse-MatOpt-Alim-Clim-Cornford-';  UserVar.MeshResolution=2.5e3; IRange=5:5 ; JRange=5:5 ;  % done about 7000 iterations, need to continue 26/03/2023
 UserVar.RunType='Inverse-MatOpt-Alim-Clim-Umbi-';  UserVar.MeshResolution=2.5e3; IRange=5:5 ; JRange=5:5 ;
 UserVar.RunType='Inverse-MatOpt-Alim-Clim-Umbi-';  UserVar.MeshResolution=5e3; IRange=5:5 ; JRange=5:5 ;
 
