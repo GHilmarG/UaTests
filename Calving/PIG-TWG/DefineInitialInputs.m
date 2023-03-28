@@ -405,6 +405,8 @@ elseif contains(UserVar.RunType,"GenerateMesh")
     end
 
 
+
+
 %     CtrlVar.MeshAdapt.GLrange=[2*CtrlVar.MeshSize   CtrlVar.MeshSize/2 ; ...
 %                                  CtrlVar.MeshSize   CtrlVar.MeshSize/5 ; ...
 %                                  CtrlVar.MeshSize/2   CtrlVar.MeshSize/10 ];
@@ -498,6 +500,28 @@ MeshBoundaryCoordinates=CreateMeshBoundaryCoordinatesForPIGandTWG(UserVar,CtrlVa
 CtrlVar.SaveAdaptMeshFileName='MeshFileAdapt';    %  file name for saving adapt mesh. If left empty, no file is written
 CtrlVar.AdaptMeshRunStepInterval=100 ; % remesh whenever mod(Itime,CtrlVar.AdaptMeshRunStepInterval)==0
 
+
+if contains(UserVar.RunType,"-GLrange-")
+
+    % testing if this speeds things up
+    CtrlVar.AGlenmax=1e-5;
+    CtrlVar.inUpdateFtimeDerivatives.SetTimeDerivativesAtMinIceThickToZero=true;
+    CtrlVar.inUpdateFtimeDerivatives.SetTimeDerivativesDowstreamOfCalvingFrontsToZero=true;
+    CtrlVar.InfoLevelAdaptiveMeshing=1000;
+
+    CtrlVar.AdaptMesh=1;
+    CtrlVar.MeshRefinementMethod="explicit:local:newest vertex bisection" ;
+    CtrlVar.AdaptMeshRunStepInterval=10 ;
+
+
+    CtrlVar.doplots=true; CtrlVar.doAdaptMeshPlots=true; CtrlVar.InfoLevelAdaptiveMeshing=1000;
+
+    CtrlVar.MeshAdapt.GLrange=...
+        [2*CtrlVar.MeshSize   CtrlVar.MeshSize/2 ; ...
+        CtrlVar.MeshSize   CtrlVar.MeshSize/5 ; ...
+        CtrlVar.MeshSize/2   CtrlVar.MeshSize/10 ];
+        
+end
 
 
 %%

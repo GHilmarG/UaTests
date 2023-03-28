@@ -30,6 +30,18 @@ BCs.ubFixedNode=MUA.Boundary.Nodes(I);
 BCs.ubFixedValue=BCs.ubFixedNode*0;
 BCs.vbFixedValue=BCs.vbFixedNode*0;
 
+%% Testing added fixed vel at boundary if grounded
+
+% 
+% BoundaryNodesGrounded=intersect(MUA.Boundary.Nodes,find(F.GF.node>0.1));
+% BoundaryNodesGrounded=intersect(MUA.Boundary.Nodes,find(F.h>10));
+% BoundaryNodesGroundedNoAlreadyIncluded=setdiff(BoundaryNodesGrounded,BCs.ubFixedNode);
+% 
+% BCs.ubFixedNode=[BCs.ubFixedNode ; BoundaryNodesGroundedNoAlreadyIncluded];
+% BCs.vbFixedNode=[BCs.vbFixedNode ; BoundaryNodesGroundedNoAlreadyIncluded];
+% BCs.ubFixedValue=BCs.ubFixedNode*0;
+% BCs.vbFixedValue=BCs.vbFixedNode*0;
+
 
 %% Testing
 Box=[-1735  -1690 -405. -375.]*1000;
