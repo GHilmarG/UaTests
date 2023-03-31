@@ -48,6 +48,7 @@ if isempty(UserVar) || ~isfield(UserVar,'RunType')
 
 end
 
+
 FileNameFormat="new" ; 
 
 %% UserVar
@@ -641,8 +642,4 @@ end
 
 %% Testing
 % CtrlVar.uvhDesiredWorkAndForceTolerances=[inf 0.1];  
-% CtrlVar.Implicituvh=0;
-
-%%
-
-end
+% CtrlVar.Implicituvh=0end
