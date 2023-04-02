@@ -41,7 +41,7 @@ CtrlVar.MeshRefinementMethod='explicit:local:red-green' ;
 CtrlVar.InfoLevelAdaptiveMeshing=1000;
 OutsideValues=[] ; 
 tic
-[RunInfo,ValuesNew]=MapNodalVariablesFromMesh1ToMesh2UsingShapeAndScattered(CtrlVar,RunInfo,MUAold,MUAnew,OutsideValues,ValuesOld);
+[RunInfo,ValuesNew]=MapNodalVariablesFromMesh1ToMesh2(CtrlVar,RunInfo,MUAold,MUAnew,OutsideValues,ValuesOld);
 toc
 
 FindOrCreateFigure("old and new values: Ex1")
@@ -91,7 +91,7 @@ CtrlVar.MeshRefinementMethod='explicit:local:newest vertex bisection' ;
 CtrlVar.InfoLevelAdaptiveMeshing=1000;
 OutsideValues=[] ; 
 tic
-[RunInfo,ValuesNew]=MapNodalVariablesFromMesh1ToMesh2UsingShapeAndScattered(CtrlVar,RunInfo,MUAold,MUAnew,OutsideValues,ValuesOld);
+[RunInfo,ValuesNew]=MapNodalVariablesFromMesh1ToMesh2(CtrlVar,RunInfo,MUAold,MUAnew,OutsideValues,ValuesOld);
 toc
 
 FindOrCreateFigure("old and new values: Ex3")
@@ -126,7 +126,7 @@ MUAnew=MUAnewTemp;
 CtrlVar.InfoLevelAdaptiveMeshing=1000;
 OutsideValues=[] ; 
 tic
-[RunInfo,ValuesNew]=MapNodalVariablesFromMesh1ToMesh2UsingShapeAndScattered(CtrlVar,RunInfo,MUAold,MUAnew,OutsideValues,ValuesOld);
+[RunInfo,ValuesNew]=MapNodalVariablesFromMesh1ToMesh2(CtrlVar,RunInfo,MUAold,MUAnew,OutsideValues,ValuesOld);
 toc
 
 FindOrCreateFigure("old and new values: Ex4")
@@ -135,7 +135,7 @@ tiledlayout(1,2)
 nexttile ; UaPlots(CtrlVar,MUAold,F,ValuesOld) ; hold on ; PlotMuaMesh(CtrlVar,MUAold) ;
 nexttile ; UaPlots(CtrlVar,MUAnew,F,ValuesNew) ; hold on ; PlotMuaMesh(CtrlVar,MUAnew) ;
 
-FindOrCreateFigure("residuals") ; UaPlots(CtrlVar,MUA,F,ValuesNew-MUAnew.coordinates(:,1))
+FindOrCreateFigure("residuals") ; UaPlots(CtrlVar,MUA,F,ValuesNew-MUAnew.coordinates(:,1));
 
 
 

@@ -66,7 +66,7 @@ FindOrCreateFigure("UA Logo") ; PlotMuaMesh(CtrlVar,MUAnew,'k') ; axis xy on ; t
 CtrlVar.InfoLevelAdaptiveMeshing=1000;
 
 tic
-[RunInfo,ValuesNew]=MapNodalVariablesFromMesh1ToMesh2UsingShapeAndScattered(CtrlVar,RunInfo,MUAold,MUAnew,OutsideValues,ValuesOld);
+ [RunInfo,ValuesNew]=MapNodalVariablesFromMesh1ToMesh2(CtrlVar,RunInfo,MUAold,MUAnew,OutsideValues,ValuesOld);
 toc
 
 FindOrCreateFigure("old and new values: Ex1")
@@ -95,7 +95,7 @@ CtrlVar.MeshRefinementMethod='explicit:local:newest vertex bisection' ;
 CtrlVar.InfoLevelAdaptiveMeshing=1000;
 
 tic
-[RunInfo,ValuesNew]=MapNodalVariablesFromMesh1ToMesh2UsingShapeAndScattered(CtrlVar,RunInfo,MUAold,MUAnew,OutsideValues,ValuesOld);
+[RunInfo,ValuesNew]=MapNodalVariablesFromMesh1ToMesh2(CtrlVar,RunInfo,MUAold,MUAnew,OutsideValues,ValuesOld);
 toc
 
 FindOrCreateFigure("old and new values: Ex2")
@@ -124,7 +124,7 @@ CtrlVar.MapOldToNew.method="ShapeAndScattered" ;
 CtrlVar.InfoLevelAdaptiveMeshing=1000;
 
 tic
-[RunInfo,ValuesNew]=MapNodalVariablesFromMesh1ToMesh2UsingShapeAndScattered(CtrlVar,RunInfo,MUAold,MUAnew,OutsideValues,ValuesOld);
+[RunInfo,ValuesNew]=MapNodalVariablesFromMesh1ToMesh2(CtrlVar,RunInfo,MUAold,MUAnew,OutsideValues,ValuesOld);
 toc
 
 FindOrCreateFigure("old and new values: Ex3")

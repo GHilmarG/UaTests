@@ -63,7 +63,7 @@ CtrlVar.MeshRefinementMethod='explicit:local:red-green' ;
 CtrlVar.InfoLevelAdaptiveMeshing=1000;
 OutsideValues=[] ; 
 tic
-[RunInfo,ValuesNew]=MapNodalVariablesFromMesh1ToMesh2UsingShapeAndScattered(CtrlVar,RunInfo,MUAold,MUAnew,OutsideValues,ValuesOld);
+[RunInfo,ValuesNew]=MapNodalVariablesFromMesh1ToMesh2(CtrlVar,RunInfo,MUAold,MUAnew,OutsideValues,ValuesOld);
 toc
 
 FindOrCreateFigure("old and new values: Ex1")
@@ -87,7 +87,8 @@ CtrlVar.MeshRefinementMethod='explicit:local:newest vertex bisection' ;
 CtrlVar.InfoLevelAdaptiveMeshing=1000;
 OutsideValues=[] ; 
 tic
-[RunInfo,ValuesNew]=MapNodalVariablesFromMesh1ToMesh2UsingShapeAndScattered(CtrlVar,RunInfo,MUAold,MUAnew,OutsideValues,ValuesOld);
+[RunInfo,ValuesNew]=MapNodalVariablesFromMesh1ToMesh2(CtrlVar,RunInfo,MUAold,MUAnew,OutsideValues,ValuesOld);
+
 toc
 
 FindOrCreateFigure("old and new values: Ex2")
