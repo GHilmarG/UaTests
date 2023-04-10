@@ -91,5 +91,9 @@ PlotMuaMesh(CtrlVar,MUAnew) ; clim([-10 100]) ;
 axis([-1640 -1580 -720 -680]) ; plot(xNew(7334)/1000,yNew(7334)/1000,"*r") ; title("t="+num2str(CtrlVar.time))
 
 
+%%
+% FindOrCreateFigure("sNew from sOld using mixed approach") ; 
+% UaPlots(CtrlVar,MUA,[],F.s) ; hold on ;   PlotMuaMesh(CtrlVar,MUA) ; clim([-10 100]) ;  axis([-1640 -1580 -720 -680]) ; 
+% plot(F.x(7334)/1000,F.x(7334)/1000,"*r") ; title("t="+num2str(CtrlVar.time))
 
 
