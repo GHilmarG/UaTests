@@ -121,14 +121,14 @@ end
 %%
 save("PFFinitial.mat","UserVar","RunInfo","CtrlVar","MUA","F","BCs","lm","phi")
 
-%%
+%% Now change A and recalculate uv
 load("PFFinitial.mat","UserVar","RunInfo","CtrlVar","MUA","F","BCs","lm","phi")
 
 UserVar=[] ; RunInfo=UaRunInfo;
 Aold=F.AGlen;
 
 % Some constraints on phi
-phi(phi<0)=0; phi(phi>1)=1; phiMax=0.50 ; phi(phi>phiMax)=phiMax ;
+phi(phi<0)=0; phi(phi>1)=1; phiMax=0.750 ; phi(phi>phiMax)=phiMax ;
 
 
 D=(1-phi).^(2*F.n(1));
@@ -166,8 +166,9 @@ hold on
 PlotMuaBoundary(CtrlVar,MUA,'k') ; axis equal
 
 
-FindOrCreateFigure("e2") ;
-UaPlots(CtrlVar,MUA,F,e);
+fige2=FindOrCreateFigure("e2") ; clf(fige2) ; UaPlots(CtrlVar,MUA,F,e);
+
+figtyy2=FindOrCreateFigure("tyy") ; clf(figetyy2) ; UaPlots(CtrlVar,MUA,F,tyy);
 
 
 
