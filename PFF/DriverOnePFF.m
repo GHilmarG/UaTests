@@ -43,7 +43,7 @@ FindOrCreateFigure("Mesh") ; PlotMuaMesh(CtrlVar,MUA); drawnow
 FindOrCreateFigure("ele sizes histogram") ; histogram( sqrt(2*MUA.EleAreas)) ; xlabel("Element size")
 
 %%
-close all
+
 
 F=DefineF(CtrlVar,MUA) ;
 
@@ -77,12 +77,16 @@ while true
     BCsphi=BoundaryConditions;
 
     % y=0 nodes
-    Iy0=find(abs(F.y)<CtrlVar.MeshSize/2 & F.x > 0 );
+    lEleMin=min(sqrt(2*MUA.EleAreas)) ; 
+    Iy0=find(abs(F.y)<lEleMin & F.x > 50e3 );
 
     iBoundary=setdiff(MUA.Boundary.Nodes,Iy0);
 
-    % set all phi values along boundary to 0
-    BCsphi.hFixedNode=[Iy0;iBoundary] ;  BCsphi.hFixedValue=[Iy0*0+1; iBoundary*0];
+    % set all phi values along boundary to 0 and over crack to 1
+    % BCsphi.hFixedNode=[Iy0;iBoundary] ;  BCsphi.hFixedValue=[Iy0*0+1; iBoundary*0];
+    
+    % only set \phi values over the cract to 1 and use the natural boundary condition elsewhere
+    BCsphi.hFixedNode=Iy0 ;  BCsphi.hFixedValue=Iy0*0+1 ;
     % Set phi values along y=0 to 1
     FindOrCreateFigure("BCs Phi") ; PlotBoundaryConditions(CtrlVar,MUA,BCsphi);
 
@@ -106,7 +110,7 @@ while true
     MUAold=MUA;
     phiEle=Nodes2EleMean(MUAold.connectivity,phi) ;
     ElementsToBeCoarsened=false(MUAold.Nele,1);
-    ElementsToBeRefined=phiEle >0.9 ;
+    ElementsToBeRefined=phiEle >0.5 ;
 
     CtrlVar.MeshRefinementMethod='explicit:local:newest vertex bisection' ; CtrlVar.InfoLevelAdaptiveMeshing=1;
     [MUAnew,RunInfo]=LocalMeshRefinement(CtrlVar,RunInfo,MUAold,ElementsToBeRefined,ElementsToBeCoarsened) ;
@@ -124,20 +128,24 @@ save("PFFinitial.mat","UserVar","RunInfo","CtrlVar","MUA","F","BCs","lm","phi")
 %% Now change A and recalculate uv
 load("PFFinitial.mat","UserVar","RunInfo","CtrlVar","MUA","F","BCs","lm","phi")
 
-UserVar=[] ; RunInfo=UaRunInfo;
 Aold=F.AGlen;
-
+phiOld=phi;
+rhoOld=F.rho; 
 % Some constraints on phi
-phi(phi<0)=0; phi(phi>1)=1; phiMax=0.750 ; phi(phi>phiMax)=phiMax ;
+for I=1:3
 
+    phi=phiOld ; 
+    phiMax=1- 0.5/I ; phi(phi>phiMax)=phiMax ;
 
-D=(1-phi).^(2*F.n(1));
-F.AGlen=Aold./D;
+    phi(phi<0)=0; phi(phi>1)=1;
+    D=(1-phi).^(2*F.n(1)); 
+    
+   F.rho=rhoOld.*(1-phi).^2 ; 
+    F.AGlen=Aold./D;
 
+    [UserVar,RunInfo,F,lm,Kuv,Ruv,Lubvb]= uv(UserVar,RunInfo,CtrlVar,MUA,BCs,F,lm) ;
 
-
-[UserVar,RunInfo,F,lm,Kuv,Ruv,Lubvb]= uv(UserVar,RunInfo,CtrlVar,MUA,BCs,F,lm) ;
-
+end
 
 
 %Figures
@@ -159,7 +167,7 @@ end
 I=nearestNeighbor(MUA.TR,[X(:) Y(:)]);  % find nodes within computational grid closest to the regularly scape X and Y grid points.
 
 
-FindOrCreateFigure("dev stresses 2")
+figtau2=FindOrCreateFigure("dev stresses 2") ; clf(figtau2)
 scale=1e-2;
 PlotTensor(F.x(I)/CtrlVar.PlotXYscale,F.y(I)/CtrlVar.PlotXYscale,txx(I),txy(I),tyy(I),scale);
 hold on
@@ -168,7 +176,54 @@ PlotMuaBoundary(CtrlVar,MUA,'k') ; axis equal
 
 fige2=FindOrCreateFigure("e2") ; clf(fige2) ; UaPlots(CtrlVar,MUA,F,e);
 
-figtyy2=FindOrCreateFigure("tyy") ; clf(figetyy2) ; UaPlots(CtrlVar,MUA,F,tyy);
+figtyy2=FindOrCreateFigure("tyy") ; clf(figtyy2) ; UaPlots(CtrlVar,MUA,F,tyy);
+
+
+save("uvRecalculated.mat","UserVar","RunInfo","CtrlVar","MUA","F","BCs","lm","phi","phiOld")
+
+%% Now recalculate \phi
+load("uvRecalculated.mat","UserVar","RunInfo","CtrlVar","MUA","F","BCs","lm","phi","phiOld")
+
+
+BCsphi=BoundaryConditions;
+
+
+NodesPhiFixed=find(phiOld>0.99) ; 
+
+
+BCsphi.hFixedNode=NodesPhiFixed ;  BCsphi.hFixedValue=NodesPhiFixed*0+1; 
+% Set phi values along y=0 to 1
+FindOrCreateFigure("BCs Phi") ; PlotBoundaryConditions(CtrlVar,MUA,BCsphi);
+
+
+[txzb,tyzb,txx,tyy,txy,exx,eyy,exy,e,eta]=CalcNodalStrainRatesAndStresses(CtrlVar,UserVar,MUA,F) ;
+
+
+Psi=tyy ;  Psi(Psi<0)=0;  Psi=Psi/1e8;
+
+
+figPsi=FindOrCreateFigure("Psi") ;  clf(figPsi) ;  UaPlots(CtrlVar,MUA,F,Psi) ;
+
+Gc=1;
+l=10e3;
+[UserVar,phi,lambda,HEmatrix,HErhs]=PFFequation(UserVar,CtrlVar,MUA,BCsphi,Gc,l,Psi);
+
+
+figphi=FindOrCreateFigure("phi 2")  ; clf(figphi) ;  UaPlots(CtrlVar,MUA,F,phi) ;
+figphiy=FindOrCreateFigure("Phi(y) 2") ; clf(figphiy) ; Ind=F.x>50e3 & F.x <60e3 ;   plot(F.y(Ind)/CtrlVar.PlotXYscale,phi(Ind),'.r')
+
+
+figDphi=FindOrCreateFigure("Delta phi") ; clf(figDphi) ; UaPlots(CtrlVar,MUA,F,phi-phiOld) ; 
+
+
+
+
+
+
+
+
+
+
 
 
 

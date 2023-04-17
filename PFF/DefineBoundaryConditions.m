@@ -61,7 +61,7 @@ UpperEdgeNodes= MUA.Boundary.Nodes(abs(F.y(MUA.Boundary.Nodes)-ymax) <tolerance)
 LowerEdgeNodes= MUA.Boundary.Nodes(abs(F.y(MUA.Boundary.Nodes)-ymin) <tolerance) ; 
 
 BCs.ubFixedNode=[UpperEdgeNodes; LowerEdgeNodes] ;  BCs.ubFixedValue=BCs.ubFixedNode*0;
-BCs.vbFixedNode=[UpperEdgeNodes ; LowerEdgeNodes] ; BCs.vbFixedValue=[UpperEdgeNodes*0+1000 ; LowerEdgeNodes*0-1000]; 
+BCs.vbFixedNode=[UpperEdgeNodes ; LowerEdgeNodes] ; BCs.vbFixedValue=[UpperEdgeNodes*0 ; LowerEdgeNodes*0-5000]; 
 % BCs.ubFixedNode=1 ;  BCs.ubFixedValue=BCs.ubFixedNode*0;
 
 
