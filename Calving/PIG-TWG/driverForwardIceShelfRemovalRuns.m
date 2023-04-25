@@ -81,6 +81,8 @@ IceShelf="Thwaites" ; % send
 Melt="-MR4-" ;                  % BasalMeltRateParameterisation=
 UserVar.InvMeshResolution=[];
 GLrange="";
+uvh="" ;  % uvh="-uv-h-" implies semi-implicit
+
 
 % Resolution="-5km-" ;  CtrlVar.SlidingLaw="Cornford"; C="" ;     Duvh="-Duvh-" ;  % missing
 Resolution="-5km-" ;  CtrlVar.SlidingLaw="Cornford"; C="" ;     Duvh="" ;  % submitted
@@ -164,6 +166,8 @@ Resolution="-2.5km-" ;  CtrlVar.SlidingLaw="Cornford"; C="" ;     Duvh="" ;  Mel
 
 Resolution="-20km-" ;  CtrlVar.SlidingLaw="Cornford"; C="" ;     Duvh="" ;  Melt="-MR4-" ;  IceShelf="Thwaites" ;  UserVar.InvMeshResolution=[];  GLrange="-GLrange-";
 
+Resolution="-20km-" ;  CtrlVar.SlidingLaw="Cornford"; C="" ;     Duvh="" ;  Melt="-MR4-" ;  IceShelf="Thwaites" ;  UserVar.InvMeshResolution=[];  GLrange="-GLrange-"; uvh="-uv-h-" ;  % uvh="-uv-h-" implies semi-implicit
+
 %% Testing new SPMD option in uv, using parallel loop over integration points
 % CtrlVar.Parallel.isTest=true; 
 % CtrlVar.Parallel.uvAssembly.spmdInt.isOn=true;
@@ -178,7 +182,7 @@ BatchJob=false;
 
 
 
-UserVar.RunType="-FT-P-"+Duvh+"-TWIS"+C+Melt+"SM-TM001-"+CtrlVar.SlidingLaw+Resolution+GLrange+"Alim-Ca1-Cs100000-Aa1-As100000-";  
+UserVar.RunType="-FT-P-"+Duvh+"-TWIS"+C+Melt+"SM-TM001-"+CtrlVar.SlidingLaw+Resolution+GLrange+uvh+"Alim-Ca1-Cs100000-Aa1-As100000-";  
 
 if CtrlVar.uvh.SUPG.tauMultiplier~=1  ||  CtrlVar.uvh.SUPG.tau~="taus"
     UserVar.RunType=UserVar.RunType+"-"+CtrlVar.uvh.SUPG.tau+"-SUPGm"+num2str(CtrlVar.uvh.SUPG.tauMultiplier) ;

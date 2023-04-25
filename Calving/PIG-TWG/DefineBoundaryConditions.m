@@ -51,16 +51,16 @@ end
 
 
 %% Testing
-Box=[-1735  -1690 -405. -375.]*1000;
-
-In=find(IsInBox(Box,F.x,F.y)) ;
-
-
-
-BCs.vbFixedNode=[BCs.ubFixedNode ; In];
-BCs.ubFixedNode=[BCs.vbFixedNode ; In];
-BCs.ubFixedValue=BCs.ubFixedNode*0;
-BCs.vbFixedValue=BCs.vbFixedNode*0;
+% Box=[-1735  -1690 -405. -375.]*1000;
+% 
+% In=find(IsInBox(Box,F.x,F.y)) ;
+% 
+% 
+% 
+% BCs.vbFixedNode=[BCs.ubFixedNode ; In];
+% BCs.ubFixedNode=[BCs.vbFixedNode ; In];
+% BCs.ubFixedValue=BCs.ubFixedNode*0;
+% BCs.vbFixedValue=BCs.vbFixedNode*0;
 
 
 %

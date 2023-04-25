@@ -220,8 +220,8 @@ CtrlVar.CalvingLaw.Evaluation="-int-";
 CtrlVar.LevelSetMethodSolveOnAStrip=1; 
 
 if contains(UserVar.RunType,"-SW")
-     CtrlVar.LevelSetMethodStripWidth=str2double(extract(extract(UserVar.RunType,"-SW"+digitsPattern+"-"),digitsPattern));
-     CtrlVar.LevelSetMethodStripWidth=CtrlVar.LevelSetMethodStripWidth*1000;
+    CtrlVar.LevelSetMethodStripWidth=str2double(extract(extract(UserVar.RunType,"-SW"+digitsPattern+"-"),digitsPattern));
+    CtrlVar.LevelSetMethodStripWidth=CtrlVar.LevelSetMethodStripWidth*1000;
 else
     CtrlVar.LevelSetMethodStripWidth=50e3;
 end
@@ -231,6 +231,15 @@ if contains(UserVar.RunType,"-Duvh")   % 'Forward-Transient-Calving-Initialisati
 else
     CtrlVar.LevelSetMethodAutomaticallyDeactivateElements=0 ;
 end
+
+
+if contains(UserVar.RunType,'-uv-h')
+    CtrlVar.Implicituvh=0;           % 0: prognostic run is semi-implicit (implicit with respect to h only)
+    % CtrlVar.etaZero=100 ;  
+end
+
+
+
 
 CtrlVar.LevelSetInfoLevel=1 ;
 
