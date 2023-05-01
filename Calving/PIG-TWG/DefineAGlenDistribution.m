@@ -41,19 +41,24 @@ else
 end
 
 
+% 
+% if contains(UserVar.RunType,"-Alim-")
+% 
+%     Box=[ -1616.3      -1491.8      -530.00      -395.07]*1000;
+%     In=IsInBox(Box,F.x,F.y) ;
+% 
+%     AminTWIS=AGlenVersusTemp(-20) ;
+% 
+%     I= AGlen < AminTWIS & In ;
+% 
+%     AGlen(I)=AminTWIS;
+% 
+% end
 
-if contains(UserVar.RunType,"-Alim-")
 
-    Box=[ -1616.3      -1491.8      -530.00      -395.07]*1000;
-    In=IsInBox(Box,F.x,F.y) ;
+n=n+zeros(MUA.Nnodes,1);
 
-    AminTWIS=AGlenVersusTemp(-20) ;
-
-    I= AGlen < AminTWIS & In ;
-
-    AGlen(I)=AminTWIS;
-
-end
+%% LSF modifications?
 
 
 

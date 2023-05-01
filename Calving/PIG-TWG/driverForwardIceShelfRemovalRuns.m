@@ -82,7 +82,7 @@ Melt="-MR4-" ;                  % BasalMeltRateParameterisation=
 UserVar.InvMeshResolution=[];
 GLrange="";
 uvh="" ;  % uvh="-uv-h-" implies semi-implicit
-
+UserVar.CtrlVar.LevelSetDownstreamRheology="";
 
 % Resolution="-5km-" ;  CtrlVar.SlidingLaw="Cornford"; C="" ;     Duvh="-Duvh-" ;  % missing
 Resolution="-5km-" ;  CtrlVar.SlidingLaw="Cornford"; C="" ;     Duvh="" ;  % submitted
@@ -166,7 +166,7 @@ Resolution="-2.5km-" ;  CtrlVar.SlidingLaw="Cornford"; C="" ;     Duvh="" ;  Mel
 
 Resolution="-20km-" ;  CtrlVar.SlidingLaw="Cornford"; C="" ;     Duvh="" ;  Melt="-MR4-" ;  IceShelf="Thwaites" ;  UserVar.InvMeshResolution=[];  GLrange="-GLrange-";
 
-Resolution="-20km-" ;  CtrlVar.SlidingLaw="Cornford"; C="" ;     Duvh="" ;  Melt="-MR4-" ;  IceShelf="Thwaites" ;  UserVar.InvMeshResolution=[];  GLrange="-GLrange-"; uvh="-uv-h-" ;  % uvh="-uv-h-" implies semi-implicit
+Resolution="-20km-" ;  CtrlVar.SlidingLaw="Cornford"; C="" ;     Duvh="" ;  Melt="-MR4-" ;  IceShelf="Thwaites" ;  UserVar.InvMeshResolution=[];  GLrange="-GLrange-"; uvh="-uv-h-" ;  UserVar.LevelSetDownstreamRheology="-LSDRlin-" ;
 
 %% Testing new SPMD option in uv, using parallel loop over integration points
 % CtrlVar.Parallel.isTest=true; 
@@ -182,7 +182,7 @@ BatchJob=false;
 
 
 
-UserVar.RunType="-FT-P-"+Duvh+"-TWIS"+C+Melt+"SM-TM001-"+CtrlVar.SlidingLaw+Resolution+GLrange+uvh+"Alim-Ca1-Cs100000-Aa1-As100000-";  
+UserVar.RunType="-FT-P-"+Duvh+"-TWIS"+C+Melt+"SM-TM001-"+CtrlVar.SlidingLaw+Resolution+GLrange+uvh+ UserVar.LevelSetDownstreamRheology+"Alim-Clim-Ca1-Cs100000-Aa1-As100000-";  
 
 if CtrlVar.uvh.SUPG.tauMultiplier~=1  ||  CtrlVar.uvh.SUPG.tau~="taus"
     UserVar.RunType=UserVar.RunType+"-"+CtrlVar.uvh.SUPG.tau+"-SUPGm"+num2str(CtrlVar.uvh.SUPG.tauMultiplier) ;
@@ -216,14 +216,14 @@ end
 
 UserVar.RunType=replace(UserVar.RunType,"--","-");
 UserVar.RunType=replace(UserVar.RunType,".","k");
- 
+
 
 CtrlVar.TotalTime=400;
 
-CtrlVar.Inverse.Regularize.logC.ga=str2double(extract(extract(UserVar.RunType,"-Ca"+digitsPattern+"-"),digitsPattern)) ; 
-CtrlVar.Inverse.Regularize.logC.gs=str2double(extract(extract(UserVar.RunType,"-Cs"+digitsPattern+"-"),digitsPattern)) ; 
+CtrlVar.Inverse.Regularize.logC.ga=str2double(extract(extract(UserVar.RunType,"-Ca"+digitsPattern+"-"),digitsPattern)) ;
+CtrlVar.Inverse.Regularize.logC.gs=str2double(extract(extract(UserVar.RunType,"-Cs"+digitsPattern+"-"),digitsPattern)) ;
 CtrlVar.Inverse.Regularize.logAGlen.ga=str2double(extract(extract(UserVar.RunType,"-Aa"+digitsPattern+"-"),digitsPattern)) ;
-CtrlVar.Inverse.Regularize.logAGlen.gs=str2double(extract(extract(UserVar.RunType,"-As"+digitsPattern+"-"),digitsPattern)) ; 
+CtrlVar.Inverse.Regularize.logAGlen.gs=str2double(extract(extract(UserVar.RunType,"-As"+digitsPattern+"-"),digitsPattern)) ;
 
 
 if contains(UserVar.RunType,"Cornford")
@@ -232,8 +232,10 @@ else
     CtrlVar.SlidingLaw="Weertman";
 end
 
-CtrlVar.LevelSetDownstreamAGlen=AGlenVersusTemp(0);     
 
+CtrlVar.LevelSetDownstream_nGlen=1;
+eta= 1e10  / (1000*365.25*24*60*60);
+CtrlVar.LevelSetDownstreamAGlen=1/(2*eta);
 
 %%
 
@@ -267,6 +269,7 @@ end
 
 
 InvFile=replace(InvFile,".","k");
+InvFile=replace(InvFile,"--","-");
 
 UserVar.AFile="FA-"+InvFile+".mat";
 UserVar.CFile="FC-"+InvFile+".mat";

@@ -93,12 +93,13 @@ elseif contains(UserVar.RunType,"-DMR")
     end
 end
 
-if ~isfield(UserVar,"IceSheetIceShelves") || UserVar.IceSheetIceShelves
-    % only apply basal melt strictly below/outside of grounding lines
-    F.GF=IceSheetIceShelves(CtrlVar,MUA,F.GF);
-    ab(~F.GF.NodesDownstreamOfGroundingLines)=0;
-    dabdh(~F.GF.NodesDownstreamOfGroundingLines)=0;
-end
+% if ~isfield(UserVar,"IceSheetIceShelves") || UserVar.IceSheetIceShelves
+%     % only apply basal melt strictly below/outside of grounding lines
+%     F.GF=IceSheetIceShelves(CtrlVar,MUA,F.GF);
+%     ab(~F.GF.NodesDownstreamOfGroundingLines)=0;
+%     dabdh(~F.GF.NodesDownstreamOfGroundingLines)=0;
+%     % figure ; plot(F.b(F.GF.NodesDownstreamOfGroundingLines),F.ab(F.GF.NodesDownstreamOfGroundingLines),'.')
+% end
 
 return
 

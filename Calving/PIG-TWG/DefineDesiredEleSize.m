@@ -94,17 +94,7 @@ switch lower(CtrlVar.MeshRefinementMethod)
         %
         % ElementsToBeCoarsened is only used in combination with the 'newest vertex bisection' local mesh-refinement method
         %
-        % 
-        ymax=-700e3;
-        ind= MUA.yEle < ymax ;
-        ElementsToBeRefined(ind)=false;
-
-
-
-        xmax=-1700e3; 
-        ind=MUA.xEle < xmax ;
-        ElementsToBeRefined(ind)=false;
-
+   
 
 
         

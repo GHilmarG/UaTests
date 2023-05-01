@@ -271,6 +271,9 @@ end
 % "Umbi" ; % "Weertman" ; % "Tsai" ; % "Cornford" ;  "Umbi" ; "Cornford" ; % "Tsai" , "Budd"
 
 
+    
+
+
 if ~isfield(UserVar,'AFile') ||  isempty(UserVar.AFile)
 
 
@@ -626,6 +629,15 @@ else
     end
 end
 
+if ~CtrlVar.InverseRun
+    if contains(UserVar.LevelSetDownstreamRheology,"-LSDRlin-")
+
+        CtrlVar.LevelSetDownstream_nGlen=1;
+        eta= 1e10  / (1000*365.25*24*60*60);
+        CtrlVar.LevelSetDownstreamAGlen=1/(2*eta);
+
+    end
+end
 
 if contains(UserVar.RunType,"GenerateMesh")
     CtrlVar.Restart=0;
