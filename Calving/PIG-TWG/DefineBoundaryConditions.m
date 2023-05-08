@@ -30,6 +30,8 @@ BCs.ubFixedNode=MUA.Boundary.Nodes(I);
 BCs.ubFixedValue=BCs.ubFixedNode*0;
 BCs.vbFixedValue=BCs.vbFixedNode*0;
 
+
+return 
 %% Testing added fixed vel at boundary if grounded
 
 

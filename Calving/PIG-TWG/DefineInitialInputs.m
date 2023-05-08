@@ -232,10 +232,15 @@ else
     CtrlVar.LevelSetMethodAutomaticallyDeactivateElements=0 ;
 end
 
+CtrlVar.TriNodes=3; 
 
 if contains(UserVar.RunType,'-uv-h')
     CtrlVar.Implicituvh=0;           % 0: prognostic run is semi-implicit (implicit with respect to h only)
     % CtrlVar.etaZero=100 ;  
+    CtrlVar.LevelSetMethodStripWidth=20000;
+    CtrlVar.LevelSetMethodAutomaticallyDeactivateElements=1;                    %  
+    CtrlVar.LevelSetMethodAutomaticallyDeactivateElementsRunStepInterval=20;    % 
+    CtrlVar.TriNodes=6; 
 end
 
 
@@ -476,8 +481,6 @@ end
 
 CtrlVar.TotalTime=100;
 
-% Element type
-CtrlVar.TriNodes=3 ;
 
 
 
@@ -517,7 +520,7 @@ CtrlVar.AdaptMeshRunStepInterval=100 ; % remesh whenever mod(Itime,CtrlVar.Adapt
 if contains(UserVar.RunType,"-GLrange-")
 
     % testing if this speeds things up
-    CtrlVar.AGlenmax=1e-5;
+   
     CtrlVar.inUpdateFtimeDerivatives.SetTimeDerivativesAtMinIceThickToZero=true;
     CtrlVar.inUpdateFtimeDerivatives.SetTimeDerivativesDowstreamOfCalvingFrontsToZero=true;
     CtrlVar.InfoLevelAdaptiveMeshing=1000;
@@ -641,6 +644,8 @@ end
 
 if contains(UserVar.RunType,"GenerateMesh")
     CtrlVar.Restart=0;
+    CtrlVar.ReadInitialMesh=0;
+elseif CtrlVar.Restart
     CtrlVar.ReadInitialMesh=0;
 else
     CtrlVar.ReadInitialMesh=1;

@@ -15,6 +15,8 @@ function [UserVar,CtrlVar,MeshBoundaryCoordinates]=DefineInitialInputs(UserVar,C
 
 %%
 
+CtrlVar.UaRunType="-uvh-" ; 
+CtrlVar.UaRunType="-uv-h-" ;  CtrlVar.MassBalance.Evaluation="-node-"; 
 
 CtrlVar.FlowApproximation='SSTREAM' ;  % any off ['SSTREAM'|'SSHEET'|'Hybrid']  
 CtrlVar.Experiment='MB';
