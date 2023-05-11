@@ -236,11 +236,12 @@ CtrlVar.TriNodes=3;
 
 if contains(UserVar.RunType,'-uv-h')
     CtrlVar.Implicituvh=0;           % 0: prognostic run is semi-implicit (implicit with respect to h only)
-    % CtrlVar.etaZero=100 ;  
+     CtrlVar.etaZero=100 ;  
     CtrlVar.LevelSetMethodStripWidth=20000;
     CtrlVar.LevelSetMethodAutomaticallyDeactivateElements=1;                    %  
     CtrlVar.LevelSetMethodAutomaticallyDeactivateElementsRunStepInterval=20;    % 
-    CtrlVar.TriNodes=6; 
+    CtrlVar.TriNodes=3; 
+     CtrlVar.uvGroupAssembly=true; 
 end
 
 
@@ -513,7 +514,7 @@ MeshBoundaryCoordinates=CreateMeshBoundaryCoordinatesForPIGandTWG(UserVar,CtrlVa
 
 % useful, for example, when trying out different remeshing options (then use CtrlVar.doAdaptMeshPlots=1 to get plots)
 
-CtrlVar.SaveAdaptMeshFileName='MeshFileAdapt';    %  file name for saving adapt mesh. If left empty, no file is written
+CtrlVar.SaveAdaptMeshFileName="";    %  file name for saving adapt mesh. If left empty, no file is written
 CtrlVar.AdaptMeshRunStepInterval=100 ; % remesh whenever mod(Itime,CtrlVar.AdaptMeshRunStepInterval)==0
 
 
@@ -636,7 +637,7 @@ if ~CtrlVar.InverseRun
     if contains(UserVar.LevelSetDownstreamRheology,"-LSDRlin-")
 
         CtrlVar.LevelSetDownstream_nGlen=1;
-        eta= 1e10  / (1000*365.25*24*60*60);
+        eta= 1e12  / (1000*365.25*24*60*60);
         CtrlVar.LevelSetDownstreamAGlen=1/(2*eta);
 
     end

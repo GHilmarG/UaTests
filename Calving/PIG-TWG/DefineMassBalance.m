@@ -68,11 +68,7 @@ elseif contains(UserVar.RunType,"-MR")
     [ab,dabdh]=DraftDependentMeltParameterisations(UserVar,CtrlVar,F,MRP) ;
     
 
-    % TestIng testing
-    as=zeros(MUA.Nnodes,1) ;
-    ab=zeros(MUA.Nnodes,1) ;
-    dasdh=zeros(MUA.Nnodes,1) ;
-    dabdh=zeros(MUA.Nnodes,1) ;
+  
 
 
 elseif contains(UserVar.RunType,"-MRZERO")
