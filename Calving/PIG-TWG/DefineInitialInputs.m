@@ -135,7 +135,13 @@ CtrlVar.uvh.SUPG.tau="taus" ; % default,  issues with uvh convergence in the beg
 
 %%
 
-CtrlVar.kH=10;
+
+if UserVar.kH==""
+    CtrlVar.kH=10;
+else
+    CtrlVar.kH=str2double(extract(UserVar.kH,digitsPattern));
+end
+
 CtrlVar.MeshSize=UserVar.MeshResolution ;
 CtrlVar.MeshSizeMax=CtrlVar.MeshSize ; 
 %%  Level-set parameters
@@ -232,19 +238,31 @@ else
     CtrlVar.LevelSetMethodAutomaticallyDeactivateElements=0 ;
 end
 
-CtrlVar.TriNodes=3; 
+CtrlVar.TriNodes=3;
 
 if contains(UserVar.RunType,'-uv-h')
     CtrlVar.Implicituvh=0;           % 0: prognostic run is semi-implicit (implicit with respect to h only)
-     CtrlVar.etaZero=100 ;  
+    CtrlVar.etaZero=100 ;
     CtrlVar.LevelSetMethodStripWidth=20000;
-    CtrlVar.LevelSetMethodAutomaticallyDeactivateElements=1;                    %  
-    CtrlVar.LevelSetMethodAutomaticallyDeactivateElementsRunStepInterval=20;    % 
-    CtrlVar.TriNodes=3; 
-     CtrlVar.uvGroupAssembly=true; 
+    CtrlVar.LevelSetMethodAutomaticallyDeactivateElements=1;                    %
+    CtrlVar.LevelSetMethodAutomaticallyDeactivateElementsRunStepInterval=20;    %
+    CtrlVar.TriNodes=3;
+    
 end
 
 
+
+if  contains(UserVar.GroupAssembly,"-uvhGroup-")
+    CtrlVar.uvhGroupAssembly=true;
+else
+    CtrlVar.uvhGroupAssembly=false;
+end
+
+if  contains(UserVar.GroupAssembly,"-uvGroup-")
+    CtrlVar.uvGroupAssembly=true;
+else
+    CtrlVar.uvGroupAssembly=false;
+end
 
 
 CtrlVar.LevelSetInfoLevel=1 ;
