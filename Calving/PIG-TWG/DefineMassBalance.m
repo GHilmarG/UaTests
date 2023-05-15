@@ -65,6 +65,7 @@ if contains(UserVar.RunType,"-I-")  % This is a 'dynamical' initialisation, use 
 elseif contains(UserVar.RunType,"-MR")
 
     MRP=extractBetween(UserVar.RunType,"-MR","-");
+    MRP="l"+MRP; 
     [ab,dabdh]=DraftDependentMeltParameterisations(UserVar,CtrlVar,F,MRP) ;
     
 
@@ -111,6 +112,12 @@ if ~isfield(UserVar,"IceSheetIceShelves") || UserVar.IceSheetIceShelves
     dabdh(~F.GF.NodesDownstreamOfGroundingLines)=0;
     % figure ; plot(F.b(F.GF.NodesDownstreamOfGroundingLines),F.ab(F.GF.NodesDownstreamOfGroundingLines),'.')
 end
+
+
+% only apply basal melt strictly below/outside of grounding lines over nodes connected to the ocean
+[LakeNodes,OceanNodes] = LakeOrOcean3(CtrlVar,MUA,F.GF,[],"Strickt") ;
+ab(~OceanNodes)=0;
+dabdh(~OceanNodes)=0;
 
 return
 
