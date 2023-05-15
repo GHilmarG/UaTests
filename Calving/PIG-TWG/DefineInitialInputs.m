@@ -677,14 +677,15 @@ CtrlVar.WriteRestartFileInterval=20;
 
 %%
 
-if CtrlVar.InverseRun && CtrlVar.Restart
-
-    [UserVar]=DefineModificationsToInverseRestartRunData(UserVar,CtrlVar) ;
-
-end
+% if CtrlVar.InverseRun && CtrlVar.Restart
+% 
+%     [UserVar]=DefineModificationsToInverseRestartRunData(UserVar,CtrlVar) ;
+% 
+% end
 
 % ModifyInverseRestartFile
 
 %% Testing
-% CtrlVar.uvhDesiredWorkAndForceTolerances=[inf 0.1];  
-% CtrlVar.Implicituvh=0end
+CtrlVar.uvhDesiredWorkOrForceTolerances=[1 1e-14];
+CtrlVar.uvhDesiredWorkAndForceTolerances=[inf inf];
+
