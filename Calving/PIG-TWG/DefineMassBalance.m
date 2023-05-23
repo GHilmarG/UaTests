@@ -27,7 +27,7 @@ as=Fas(F.x,F.y);
 % Favier, L., Durand, G., Cornford, S. L., Gudmundsson, G. H., Gagliardini, O.,
 % Gillet-Chaulet, F., Zwinger, T., Payne, A. J., & Le Brocq, a. M. (2014).
 % Retreat of Pine Island Glacier controlled by marine ice-sheet instability.
-% Nature Climate Change, 4(2), 117–121. https://doi.org/10.1038/nclimate2094
+% Nature Climate Change, 4(2), 117121. https://doi.org/10.1038/nclimate2094
 
 
 %
@@ -65,10 +65,9 @@ if contains(UserVar.RunType,"-I-")  % This is a 'dynamical' initialisation, use 
 elseif contains(UserVar.RunType,"-MR")
 
     MRP=extractBetween(UserVar.RunType,"-MR","-");
-    MRP="l"+MRP; 
+   % MRP="l"+MRP; 
     [ab,dabdh]=DraftDependentMeltParameterisations(UserVar,CtrlVar,F,MRP) ;
     
-
   
 
 
@@ -78,6 +77,7 @@ elseif contains(UserVar.RunType,"-MRZERO")
     ab=zeros(MUA.Nnodes,1) ;
     dasdh=zeros(MUA.Nnodes,1) ;
     dabdh=zeros(MUA.Nnodes,1) ;
+
 
 elseif contains(UserVar.RunType,"-DMR")
 
