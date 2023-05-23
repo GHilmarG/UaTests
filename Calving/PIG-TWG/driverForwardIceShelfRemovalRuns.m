@@ -173,8 +173,8 @@ Resolution="-20km-" ;  CtrlVar.SlidingLaw="Cornford"; C="" ;     Duvh="" ;  Melt
                         uvh="-uv-h-" ; UserVar.GroupAssembly="-uvGroup-"  ;  UserVar.kH="-kH1000-" ; 
                         uvh="-uvh-"  ; UserVar.GroupAssembly="-uvhGroup-uvGroup-" ;  UserVar.kH="-kH10-" ; 
                         
-Resolution="-2.5km-" ;  CtrlVar.SlidingLaw="Cornford"; C="" ;     Duvh="" ;  Melt="-MR4-" ;  IceShelf="Thwaites" ;  UserVar.InvMeshResolution=5000; GLrange="" ; 
-                        GLrange="-GLrange-";  UserVar.LevelSetDownstreamRheology="-LSDRlin-" ;  
+% Resolution="-2.5km-" ;  CtrlVar.SlidingLaw="Cornford"; C="" ;     Duvh="" ;  Melt="-MR4-" ;  IceShelf="Thwaites" ;  UserVar.InvMeshResolution=5000; GLrange="" ; 
+%                        GLrange="-GLrange-";  UserVar.LevelSetDownstreamRheology="-LSDRlin-" ;  
 
 
 
