@@ -50,7 +50,9 @@ UserVar.RunType='Inverse-MatOpt-uvdhdt-Alim-Clim-Umbi-';  UserVar.MeshResolution
 UserVar.RunType='Inverse-MatOpt-Alim-Clim-Umbi-';  UserVar.MeshResolution=2.5e3; IRange=5:5 ; JRange=5:5 ;  % done about 2500 iterations
 
 UserVar.RunType='Inverse-MatOpt-Alim-Clim-Cornford-';  UserVar.MeshResolution=20e3; IRange=5:5 ; JRange=5:5 ;  
-UserVar.RunType='Inverse-MatOpt-Alim-Clim-Cornford-';  UserVar.MeshResolution=5e3; IRange=5:5 ; JRange=5:5 ;  
+UserVar.RunType='Inverse-MatOpt-Alim-Clim-Cornford-uvGroup-';  UserVar.MeshResolution=5e3; IRange=5:5 ; JRange=5:5 ;  
+
+
 
 CtrlVar.Inverse.Iterations=5;
 

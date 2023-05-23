@@ -258,7 +258,7 @@ else
     CtrlVar.uvhGroupAssembly=false;
 end
 
-if  contains(UserVar.GroupAssembly,"-uvGroup-")
+if  contains(UserVar.GroupAssembly,"-uvGroup-") || contains(UserVar.RunType,"-uvGroup-") 
     CtrlVar.uvGroupAssembly=true;
 else
     CtrlVar.uvGroupAssembly=false;
@@ -320,6 +320,10 @@ if ~isfield(UserVar,'AFile') ||  isempty(UserVar.AFile)
         InvFile=InvFile+"-uvdhdt-";
     end
 
+     if contains(UserVar.RunType,"-uvGroup-")
+        InvFile=InvFile+"-uvGroup-";
+    end
+
     InvFile=replace(InvFile,".","k");
 
     InvFile=replace(InvFile,"--","-");
@@ -352,8 +356,8 @@ if contains(UserVar.RunType,"Inverse")
 
     CtrlVar.Restart=0;
     CtrlVar.Inverse.InfoLevel=1;
-    CtrlVar.InfoLevelNonLinIt=0;
-    CtrlVar.InfoLevel=0;
+    CtrlVar.InfoLevelNonLinIt=0;  CtrlVar.InfoLevel=0;
+    CtrlVar.InfoLevelNonLinIt=1;  CtrlVar.InfoLevel=1;
 
     UserVar.Slipperiness.ReadFromFile=0;
     UserVar.AGlen.ReadFromFile=0;
@@ -688,4 +692,12 @@ CtrlVar.WriteRestartFileInterval=20;
 %% Testing
 CtrlVar.uvhDesiredWorkOrForceTolerances=[1 1e-14];
 CtrlVar.uvhDesiredWorkAndForceTolerances=[inf inf];
+
+
+CtrlVar.uvDesiredWorkAndForceTolerances=[inf 1e-12];
+CtrlVar.uvDesiredWorkOrForceTolerances=[inf 1e-12];
+CtrlVar.uvExitBackTrackingStepLength=1e-4;
+CtrlVar.uvAcceptableWorkAndForceTolerances=[inf 1e-6];
+CtrlVar.uvAcceptableWorkOrForceTolerances=[inf 1e-8];
+
 

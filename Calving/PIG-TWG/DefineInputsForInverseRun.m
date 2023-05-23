@@ -169,14 +169,14 @@ InvStartValues.n=F.n ;
 
 %%
 % temporary modification to get the uvdhdt inversion stared with the corresponding resutls from the uv-only inversion
-
-UserVar.Slipperiness.ReadFromFile=true;
-UserVar.AGlen.ReadFromFile=true;
-
-% UserVar.CFile="FC-Cornford-Ca1-Cs100000-Aa1-As100000-5km-Alim-Clim-uvhdhdt.mat";
-UserVar.CFile="FC-"+CtrlVar.SlidingLaw+"-Ca1-Cs100000-Aa1-As100000-"+num2str(round(UserVar.MeshResolution/1000))+"km-Alim-Clim.mat";
-% UserVar.AFile="FA-Cornford-Ca1-Cs100000-Aa1-As100000-5km-Alim-Clim-uvhdhdt.mat";
-UserVar.AFile="FA-"+CtrlVar.SlidingLaw+"-Ca1-Cs100000-Aa1-As100000-"+num2str(round(UserVar.MeshResolution/1000))+"km-Alim-Clim.mat";
+% 
+% UserVar.Slipperiness.ReadFromFile=true;
+% UserVar.AGlen.ReadFromFile=true;
+% 
+% % UserVar.CFile="FC-Cornford-Ca1-Cs100000-Aa1-As100000-5km-Alim-Clim-uvhdhdt.mat";
+% UserVar.CFile="FC-"+CtrlVar.SlidingLaw+"-Ca1-Cs100000-Aa1-As100000-"+num2str(round(UserVar.MeshResolution/1000))+"km-Alim-Clim.mat";
+% % UserVar.AFile="FA-Cornford-Ca1-Cs100000-Aa1-As100000-5km-Alim-Clim-uvhdhdt.mat";
+% UserVar.AFile="FA-"+CtrlVar.SlidingLaw+"-Ca1-Cs100000-Aa1-As100000-"+num2str(round(UserVar.MeshResolution/1000))+"km-Alim-Clim.mat";
 
 
 
