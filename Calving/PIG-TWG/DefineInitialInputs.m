@@ -219,7 +219,7 @@ CtrlVar.LevelSetReinitializePDist=true ;
 CtrlVar.LevelSetFixPointSolverApproach="-PTS-" ;   % pseudo forward stepping
 CtrlVar.LevelSetPseudoFixPointSolverTolerance=100;
 CtrlVar.LevelSetPseudoFixPointSolverMaxIterations=100;
-CtrlVar.DevelopmentVersion=true;
+CtrlVar.DevelopmentVersion=false;
 CtrlVar.LevelSetFABmu.Scale="-u-cl-" ; % "-constant-";
 CtrlVar.LevelSetFABmu.Value=0.1;
 CtrlVar.CalvingLaw.Evaluation="-int-";
@@ -690,14 +690,15 @@ CtrlVar.WriteRestartFileInterval=20;
 % ModifyInverseRestartFile
 
 %% Testing
-CtrlVar.uvhDesiredWorkOrForceTolerances=[1 1e-14];
+CtrlVar.uvhDesiredWorkOrForceTolerances=[inf 1e-15];
 CtrlVar.uvhDesiredWorkAndForceTolerances=[inf inf];
 
-
-CtrlVar.uvDesiredWorkAndForceTolerances=[inf 1e-12];
-CtrlVar.uvDesiredWorkOrForceTolerances=[inf 1e-12];
+CtrlVar.uvMinimisationQuantity="Work Residuals";
+CtrlVar.uvMinimisationQuantity="Force Residuals";
+CtrlVar.uvDesiredWorkAndForceTolerances=[1e3 1e-15];
+CtrlVar.uvDesiredWorkOrForceTolerances=[1e3 1e-15];
 CtrlVar.uvExitBackTrackingStepLength=1e-4;
-CtrlVar.uvAcceptableWorkAndForceTolerances=[inf 1e-6];
-CtrlVar.uvAcceptableWorkOrForceTolerances=[inf 1e-8];
+CtrlVar.uvAcceptableWorkAndForceTolerances=[1e3 1e-10];
+CtrlVar.uvAcceptableWorkOrForceTolerances=[1e3 1e-10];
 
 
