@@ -31,8 +31,9 @@ end
 
 JSeq=nan(ItMax+1);
 JGrad=nan(ItMax+1);
+NDC=blanks(ItMax) ;
 
-gminSteepest=nan;
+gminSteepest=nan;   gammaCauchy = nan ; DeltaCauchy=0.01 ; 
 
 x=x0;
 dx=x0*0;
@@ -80,7 +81,7 @@ while true
 
 
     % Reduction as expected by a quadratic model
-    dJQuad=-( dJdx0'*dxNewton + dxNewton'*H0*dxNewton /2 );  % must use dJdx and H the values at start point
+    dJQuadNewton=-( dJdx0'*dxNewton + dxNewton'*H0*dxNewton /2 );  % must use dJdx and H the values at start point
 
     [JNewton,dJdxNewton]=func(xNewton) ;
     
@@ -89,14 +90,14 @@ while true
 
     % Actual Newton reduction:
     dJNewton=J0 - JNewton ;
-
+    rNewton=dJNewton/dJQuadNewton ;
     fprintf("\t Full Newton step: \t J=%g \t norm(grad J)=%g \n",JNewton,norm(dJdxNewton))
-    fprintf("\t \t \t \t \t (Quad reduction)/(Actual Newton reduction)=%g \n ",dJQuad/dJNewton)
+    fprintf("\t \t \t \t \t (Actual Newton reduction)/(Quad reduction)=%g \n ",rNewton)
 
 
     if JNewton > J0  && CtrlVar.fminconUa.Backtracking
 
-        fprintf("Going into backtracing. \n")
+        fprintf("Going into Newton backtracing. \n")
         %% backtracking
 
 
@@ -171,29 +172,54 @@ while true
         fprintf ("dHdJ < 0 , not convex \n")
         % if H0 is nod semi-psd, the search directon is reversed, solution: pick steepest gradient as a search
         % direction with another step size,
-        
-        xCauchy=x0; 
-        JCauchy=J0;
-        dJdxCauchy=dJdxNewton ; 
+
+        slope0 = -frhs'*frhs ;
+
+        if isnan(gammaCauchy)
+            gammaCauchy = -0.01 *J0/slope0 * norm(dJdx0);  % initial step size
+            DeltaCauchy=gammaCauchy ;
+        end
+
 
     else
 
         gammaCauchy = (dJdx0' * dJdx0) / (dJdx0' * H0 * dJdx0 ) ;  % To do, add a check if pos def, is dJdx0' H0 dJdx0 > 0
-
-        dxCauchy = - gammaCauchy * dJdx0 ;
-        xCauchy  =   x0 + dxCauchy ;
-
-        [JCauchy,dJdxCauchy]=func(xCauchy) ;
-
-        dJCauchy=J0 - JCauchy ;
-
-        dJQuad=-( dJdx0'*dxCauchy + dxCauchy'*H0*dxCauchy /2 );  % must use dJdx and H the values at start point
-
-
-        fprintf("\t Cauchy step: \t J=%g \t norm(grad J)=%g \n",JCauchy,norm(dJdxCauchy))
-        fprintf("\t \t \t \t \t (Quad reduction)/(Actual Cauchy reduction)=%g \n ",dJQuad/dJCauchy)
+      
 
     end
+
+    if isnan(gammaCauchy)  ||  gammaCauchy > DeltaCauchy
+        gammaCauchy=DeltaCauchy;
+    end
+
+    % gammaCauchy=DeltaCauchy;  % fixing step based on quad reduction
+
+
+    dxCauchy = - gammaCauchy * dJdx0/norm(dJdx0) ;
+    xCauchy  =   x0 + dxCauchy ;
+
+    [JCauchy,dJdxCauchy]=func(xCauchy) ;
+
+    dJCauchy=J0 - JCauchy ;
+
+    dJQuad=-( dJdx0'*dxCauchy + dxCauchy'*H0*dxCauchy /2 );  % must use dJdx and H the values at start point
+
+
+    fprintf("\t Cauchy step: \t J=%g \t norm(grad J)=%g \n",JCauchy,norm(dJdxCauchy))
+    rCauchy=dJCauchy/dJQuad ;
+    fprintf("\t \t \t \t \t (Actual Cauchy reduction)/(Quad Reduction)=%g \n ",rCauchy)
+
+    
+    if rCauchy> 0.8
+        % define step size in terms of changes in |x|
+
+        DeltaCauchy=1.2*DeltaCauchy; % successfull
+       
+    elseif rCauchy < 0.5
+        DeltaCauchy=DeltaCauchy/1.5; % unsuccessfull
+    end
+
+
 
     %% Add in a line search option along steepest gradient
 
@@ -210,7 +236,9 @@ while true
     end
 
     fb=Func(b) ;
-    CtrlVar.InfoLevelBackTrack=1 ;   CtrlVar.doplots= 1 ;  CtrlVar.LineSearchAllowedToUseExtrapolation=true;
+    CtrlVar.InfoLevelBackTrack=1 ;   CtrlVar.doplots= 1 ;  
+    CtrlVar.LineSearchAllowedToUseExtrapolation=true;
+    CtrlVar.NewtonAcceptRatio=0.01;
     [gminSteepest,fmin,BackTrackInfo]=BackTracking(slope0,b,J0,fb,Func,CtrlVar);
 
     xSteepest=x0-gminSteepest*dJdx0 ;
@@ -218,7 +246,7 @@ while true
 
     %% Compare func and quad approximation along Newton direction
 
-    CtrlVar.fminconUa.InfoLevel=1000 ;
+    CtrlVar.fminconUa.InfoLevel=1 ;
     if CtrlVar.fminconUa.InfoLevel>=1000
         nPoints=20;
         Quad=nan(nPoints,1); step=nan(nPoints,1);   F=nan(nPoints,1);
@@ -247,20 +275,21 @@ while true
 
     if CtrlVar.fminconUa.Step=="Auto"
 
+        fprintf("\n J0=%g \t JNewton=%g \t JCauchy=%g \t JSteepest=%g \n \n",J0,JNewton,JCauchy,JSteepest)
         if JNewton < J0 && JNewton < JCauchy  && JNewton< JSteepest
 
             fprintf("Accepting Newton step \n")
-            x=xNewton; J=JNewton ;  dJdx=dJdxNewton ;
+            x=xNewton; J=JNewton ;  dJdx=dJdxNewton ; NDC(It)='N';
 
         elseif JCauchy < J0 && JCauchy < JNewton  && JCauchy < JSteepest
 
             fprintf("Accepting Cauchy step \n")
-            x=xCauchy ;  J=JCauchy ; dJdx=dJdxCauchy ;
+            x=xCauchy ;  J=JCauchy ; dJdx=dJdxCauchy ;  NDC(It)='C';
 
         else
 
             fprintf("Accepting steepest descend step \n")
-            x=xSteepest ;  J=JSteepest ; dJdx=dJdxSteepest ;
+            x=xSteepest ;  J=JSteepest ; dJdx=dJdxSteepest ;  NDC(It)='D';
 
         end
 
@@ -307,6 +336,6 @@ end
 
 output.JSeq=JSeq;
 output.JGrad=JGrad ;
-
+output.NDC=NDC ; 
 
 end

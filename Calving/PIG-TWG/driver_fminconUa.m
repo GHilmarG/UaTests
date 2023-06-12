@@ -17,17 +17,18 @@ func=@(x) RosenbrockFunction(x) ;
 A=[] ; b=[] ; Aeq=[] ; beq=[] ; xLb=[] ; xUb=[] ; nonlcon=[] ;
 
 x0=[-1 ; 6] ;
+x0=[-3 ;-1] ;
 
 
-CtrlVar.fminconUa.Itmax=10;
+CtrlVar.fminconUa.Itmax=4;
 
 
 
 
 CtrlVar.fminconUa.TolNorm=1e-6 ;
 CtrlVar.fminconUa.Step="Newton" ;
-CtrlVar.fminconUa.Step="Cauchy" ;
-CtrlVar.fminconUa.Step="Steepest" ;
+% CtrlVar.fminconUa.Step="Cauchy" ;
+ CtrlVar.fminconUa.Step="Steepest" ;
 CtrlVar.fminconUa.Step="Auto" ;
 
 CtrlVar.fminconUa.ReturnEachIterate=true ; 
@@ -44,12 +45,15 @@ if doPlotFunction
     x1=linspace(-3,2,n);
     x2=linspace(-1,7,n);
 
-    [X,Y]=ndgrid(x1,x2); Z=X*0;  % for plotting
+    [X,Y]=ndgrid(x1,x2); Z=X*0; L=X*0 ;   % for plotting
 
     for I=1:n
         for J=1:n
             x=[x1(I) , x2(J)] ;
-            Z(I,J)=func(x);
+            [f,grad,Hess]=func(x);
+            Z(I,J)=f;
+            lmin=eigs(Hess,1,'smallestreal');
+            L(I,J)=lmin;
         end
     end
 
@@ -63,22 +67,14 @@ if doPlotFunction
     if ~isempty(xSeq)
         plot(xSeq(:,1),xSeq(:,2),'-or',MarkerFaceColor="r")
     end
+    xlabel("$x$",Interpreter="latex") ; ylabel("$y$",Interpreter="latex")
 
-    Nit=numel(output.JSeq) ;
-    I=~isnan(output.JSeq);
-    N=numel(find(I));
-    fprog=FindOrCreateFigure("prog") ; clf(fprog) ;
-    semilogy(0:(N-1),output.JSeq(I),"ob-",LineWidth=1.5) ; 
+    feig=FindOrCreateFigure("min eig") ; clf(feig);
+    contourf(X,Y,L,40) ; colorbar ; axis equal ; ModifyColormap(0,20);
+    title("Smallest eigenvalue")
+    
+    xlabel("$x$",Interpreter="latex") ; ylabel("$y$",Interpreter="latex")
 
-    ylabel("$J$",Interpreter="latex")
 
-    yyaxis right
-
-      I=~isnan(output.JGrad);
-    semilogy(0:(N-1),output.JGrad(I),"or-") ; 
-
-    xlabel("Iteration",Interpreter="latex")
-    title(sprintf("J=%g \t",Jexit))
-    legend("$J$","$\|\nabla J\|$",interpreter="latex")
 
 end
