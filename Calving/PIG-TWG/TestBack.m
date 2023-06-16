@@ -1,5 +1,7 @@
 load TestSaveBack.mat
 
+load ../../GaussPeak/TestSaveBacktrack.mat
+
 
 %%
 CtrlVar.InfoLevelBackTrack=1000;
@@ -37,9 +39,10 @@ dJdl=grhs ;
 R=[dJdu;dJdv;dJdl]; 
 [nL,mL]=size(L);
 C=sparse(nL,nL);
-H=[Kuv L' ;L -C] ;
+H=[Kuv L' ;L C] ;
 
-slope0Descent=2*R'*H*R/Normalisation ;
+
+slope0Descent=-2*R'*H*R/Normalisation ;
 
 FuncDescent=@(gamma) CalcCostFunctionNR(UserVar,RunInfo,CtrlVar,MUA,gamma,F,fext0,L,l,cuv,dJdu,dJdv,dJdl) ;
 
@@ -54,6 +57,13 @@ gamma=b ; [rb,UserVar,RunInfo,rForce1,rWork1,D21]=FuncDescent(gamma);
 CtrlVar.InfoLevelBackTrack=1000;
 CtrlVar.BacktrackingGammaMin=1e-13; CtrlVar.LineSearchAllowedToUseExtrapolation=true;
 [gamma,r,BackTrackInfo]=BackTracking(slope0Descent,b,r0,rb,FuncDescent,CtrlVar);
+
+
+
+%% Cauchy
+
+
+ gammaCauchy = (R' * R) / (R' * H * R ) ;
 
 
 
