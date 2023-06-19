@@ -1,11 +1,32 @@
 load TestSaveBack.mat
 
-load ../../GaussPeak/TestSaveBacktrack.mat
+
+%%
+Klear
+load("../../GaussPeak/TestSaveBacktrack.mat","CtrlVar","UserVar","RunInfo","MUA","F","l","Kuv","L","cuv","dl","dub","dvb","frhs","grhs","fext0")
+
+
+CtrlVar.BacktrackingGammaMin=1e-11; CtrlVar.InfoLevelBackTrack=1000;
+
+
+func=@(gamma,Du,Dv,Dl) CalcCostFunctionNR(UserVar,RunInfo,CtrlVar,MUA,gamma,F,fext0,L,l,cuv,Du,Dv,Dl) ;
+
+dh=[] ; dJdh=[] ; 
+
+dJdu=frhs(1:MUA.Nnodes);
+dJdv=frhs(MUA.Nnodes+1:2*MUA.Nnodes);
+dJdl=grhs ;
+
+Normalisation=fext0'*fext0+1000*eps;
+[gammamin,rmin,BackTrackInfo] = rLineminUa(CtrlVar,UserVar,func,Kuv,L,dub,dvb,dh,dl,dJdu,dJdv,dJdh,dJdl,Normalisation) ; 
+
+
 
 
 %%
 CtrlVar.InfoLevelBackTrack=1000;
 CtrlVar.BacktrackingGammaMin=1e-11; 
+
 
 
 Func=@(gamma) CalcCostFunctionNR(UserVar,RunInfo,CtrlVar,MUA,gamma,F,fext0,L,l,cuv,dub,dvb,dl) ;
@@ -16,12 +37,7 @@ slope0=-2*r0 ;
 dxNewton=[dub ;dvb ;dl ] ;
 gradJ=[frhs;grhs] ;
 
-% J^2(x0+gamma dxNewton)   
-% d(J^2)/dgamma = 2 J  gradJ  \cdot dxNewton
-%               = 2 J  gradJ \cdot (H \ gradJ)
-%  
-% = 2 J 
-slope0Test = -(gradJ'*dxNewton)/Normalisation ;
+
 
 CtrlVar.uvMinimisationQuantity="Force Residuals" ;
 [gamma,r,BackTrackInfo]=BackTracking(slope0,1,r0,r1,Func,CtrlVar);
@@ -63,7 +79,9 @@ CtrlVar.BacktrackingGammaMin=1e-13; CtrlVar.LineSearchAllowedToUseExtrapolation=
 %% Cauchy
 
 
- gammaCauchy = (R' * R) / (R' * H * R ) ;
+ gammaCauchy = (R' * H * R) / (R' *H'* H * R ) ;
+
+  [rCauchy]=FuncDescent(gammaCauchy);
 
 
 
