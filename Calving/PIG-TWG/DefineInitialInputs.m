@@ -689,16 +689,6 @@ CtrlVar.WriteRestartFileInterval=20;
 
 % ModifyInverseRestartFile
 
-%% Testing
-CtrlVar.uvhDesiredWorkOrForceTolerances=[inf 1e-15];
-CtrlVar.uvhDesiredWorkAndForceTolerances=[inf inf];
 
-CtrlVar.uvMinimisationQuantity="Work Residuals";
-CtrlVar.uvMinimisationQuantity="Force Residuals";
-CtrlVar.uvDesiredWorkAndForceTolerances=[1e3 1e-15];
-CtrlVar.uvDesiredWorkOrForceTolerances=[1e3 1e-15];
-CtrlVar.uvExitBackTrackingStepLength=1e-4;
-CtrlVar.uvAcceptableWorkAndForceTolerances=[1e3 1e-10];
-CtrlVar.uvAcceptableWorkOrForceTolerances=[1e3 1e-10];
 
 

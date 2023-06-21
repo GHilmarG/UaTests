@@ -53,13 +53,12 @@ UserVar.RunType='Inverse-MatOpt-Alim-Clim-Cornford-';  UserVar.MeshResolution=20
 
 
 UserVar.RunType='Inverse-MatOpt-Alim-Clim-Cornford-uvGroup-';  UserVar.MeshResolution=20e3; IRange=5:5 ; JRange=5:5 ;  
-UserVar.RunType='Inverse-MatOpt-Alim-Clim-Cornford-uvGroup-';  UserVar.MeshResolution=10e3; IRange=5:5 ; JRange=5:5 ;  
-UserVar.RunType='Inverse-MatOpt-Alim-Clim-Cornford-uvGroup-';  UserVar.MeshResolution=5e3; IRange=5:5 ; JRange=5:5 ;  
+% UserVar.RunType='Inverse-MatOpt-Alim-Clim-Cornford-uvGroup-';  UserVar.MeshResolution=10e3; IRange=5:5 ; JRange=5:5 ;  
+% UserVar.RunType='Inverse-MatOpt-Alim-Clim-Cornford-uvGroup-';  UserVar.MeshResolution=5e3; IRange=5:5 ; JRange=5:5 ;  
+% UserVar.RunType='Inverse-MatOpt-Alim-Clim-Cornford-uvGroup-';  UserVar.MeshResolution=2.5e3; IRange=5:5 ; JRange=5:5 ;  
 
 
-
-
-CtrlVar.Inverse.Iterations=5;
+CtrlVar.Inverse.Iterations=5000;
 
 if SubmitBathJobs
 
@@ -158,10 +157,6 @@ else
     %% Test Run
    
     
- 
- 
-
-    CtrlVar.Inverse.Iterations=5;
     CtrlVar.Inverse.Regularize.logC.ga=1;
     CtrlVar.Inverse.Regularize.logC.gs=100000  ; % 100000000  ; % 10000000 (c); %   5000000 (c) ; %     1000000 (c) ;
 

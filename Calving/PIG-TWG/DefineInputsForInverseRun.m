@@ -48,6 +48,8 @@ if contains(UserVar.RunType,"-uvdhdt-")
 
     Meas.dhdt=double(Fdh2000to2018(MUA.coordinates(:,1),MUA.coordinates(:,2)));
     dhdtErr=F.x*0+0.1 ; % seeting dhdt errors to 0.1 m/yr
+else
+    dhdtErr=F.x*0+1e10 ; 
 end
 
 
