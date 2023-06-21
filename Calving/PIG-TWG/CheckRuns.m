@@ -21,7 +21,7 @@ end
 
 
 Res=["5km","10km","20km"];
-Reg=["TWIS","TWISC0","PIGC0"] ;
+Reg=["TWIS","TWISC0","TWISC2","PIGC0"] ;
 SL=["Cornford","Weertman"] ;
 MR=["MR0","MR4"];
 D=["-","-Duvh-"];

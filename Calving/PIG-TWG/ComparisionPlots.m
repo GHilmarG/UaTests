@@ -32,6 +32,7 @@ TextString="";
 SaveFigures=false;  
 % FigureDirectory="C:\Users\lapnjc6\OneDrive - Northumbria University - Production Azure AD\Work\Manuscripts\2022 ThwaitesIceShelfButtressing\Figures\"; 
 FigureDirectory="C:\Users\Hilmar\OneDrive - Northumbria University - Production Azure AD\Work\Manuscripts\2022 ThwaitesIceShelfButtressing\Figures\";
+FigureDirectory=".\";
 
 Region="Thwaites" ;  % only one implemented
 
@@ -375,8 +376,8 @@ for J=1:numel(TimeVector)
         title("")  % get rid of title
         % cbarVel.Position=[0.85 0.2 0.03, 0.6];
         FigureName="VelocityDiff"+TimeString+Region;
-        exportgraphics(figVAF,FigureDirectory+FigureName+".pdf")
-        savefig(figVAF,FigureDirectory+FigureName+".fig","compact")
+        exportgraphics(figVAF,FigureDirectory+FigureName+"18-05-2023.pdf","contenttype","vector")
+        savefig(figVAF,FigureDirectory+FigureName+"18-05-2018.fig")
 
     end
 

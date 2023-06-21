@@ -15,6 +15,8 @@ if isempty(UserVar) || ~isfield(UserVar,'RunType')
     % UserVar.RunType='Inverse-MatOpt-FixPoint';
     UserVar.RunType='Forward-Diagnostic';
     UserVar.RunType='Forward-Transient';
+    % UserVar.RunType='Forward-Transient-uv-h';
+    
     % UserVar.RunType='TestingMeshOptions';
 end
 
@@ -30,7 +32,7 @@ CtrlVar.FlowApproximation="SSTREAM" ; % "SSTREAM-rho" ;
 %
 % You can https://livenorthumbriaac-my.sharepoint.com/:f:/g/personal/hilmar_gudmundsson_northumbria_ac_uk/EgrEImnkQuJNmf1GEB80VbwB1hgKNnRMscUitVpBrghjRg?e=yMZEOs
 % 
-% Put the OneDrive folder `Interpolants' into you directory so that it can be reaced as ../Interpolants with respect to you rundirectory. 
+% Put the OneDrive folder `Interpolants' into you directory so that it can be reaced as ../../Interpolants with respect to you rundirectory. 
 %
 %
 
@@ -65,6 +67,8 @@ end
 %%
 
 CtrlVar.Experiment=UserVar.RunType;
+CtrlVar.TotalNumberOfForwardRunSteps=1; 
+
 
 switch UserVar.RunType
     
@@ -103,9 +107,9 @@ switch UserVar.RunType
           
         end
         
-        
-    case 'Forward-Transient'
-        
+
+    case {'Forward-Transient','Forward-Transient-uv-h'}
+
         CtrlVar.InverseRun=0;
         CtrlVar.TimeDependentRun=1;
         CtrlVar.Restart=0;
@@ -114,7 +118,25 @@ switch UserVar.RunType
         UserVar.AGlen.ReadFromFile=1;
         CtrlVar.ReadInitialMesh=1;
         CtrlVar.AdaptMesh=0;
-        
+
+        if contains(UserVar.RunType,'-uv-h')
+            CtrlVar.Implicituvh=0;           % 0: prognostic run is semi-implicit (implicit with respect to h only)
+            CtrlVar.TotalNumberOfForwardRunSteps=inf; 
+            CtrlVar.etaZero=100 ;  % it turned out that setting this lower value to the effective viscosity, had almost no impact on the calculate viscosity distrbution
+                                   % but greatly improved numerical
+                                   % convergence. With etaZero=0, there
+                                   % were a few localized nodes with very high
+                                   % velocities, resulting in high strain
+                                   % rates, and very small effective
+                                   % viscosity over this area
+                             
+        else
+            CtrlVar.Implicituvh=1;                 % 1: prognostic run is fully-implicit (implicit with respect to uvh)
+            CtrlVar.TotalNumberOfForwardRunSteps=inf; 
+            CtrlVar.etaZero=100 ;  % it turned out that setting this lower value to the effective viscosity, had almost no impact on the calculate viscosity distrbution
+        end
+
+
     case 'Forward-Diagnostic'
                
         CtrlVar.InverseRun=0;
@@ -147,7 +169,7 @@ end
 
 CtrlVar.dt=1e-1; % For some reason with bedmachine I need much smaller initial time step than with bedmap2...?
 CtrlVar.time=0;
-CtrlVar.TotalNumberOfForwardRunSteps=1; 
+
 CtrlVar.TotalTime=10;
 
 % Element type
@@ -287,7 +309,7 @@ CtrlVar.Inverse.Regularize.logAGlen.gs=1e3 ;
 %%
 CtrlVar.ThicknessConstraints=0;
 CtrlVar.ResetThicknessToMinThickness=1;  % change this later on
-CtrlVar.ThickMin=50;
+CtrlVar.ThickMin=1;
 
 %% Filenames
 

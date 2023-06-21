@@ -63,8 +63,17 @@ else
     rhow=NaN;
 end
 
+
+% Warning:  There is a shallow sill just downstream of Dotson ice shelf crossing the edges of the computational boundary
+%           This can cause occasional grounding right at the boundary when using mesh refinement.
+%           The ice thicknesses there are supprisingly large (>100m) but Bedmachine indicates no grounded areas there.
+%           Grounding right at the bounday causes numerical issus. I've decided to modify the bathymetry in this area to get
+%           rid of this. 
+
+
+Box= [-1628.8      -1603.5      -704.61      -677.35]*1000;
+In=IsInBox(Box,F.x,F.y) ;
+F.B(In)=-1000; 
+
+
 end
-
-
-
-
