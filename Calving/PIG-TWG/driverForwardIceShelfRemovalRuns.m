@@ -149,7 +149,7 @@ Resolution="-10km-" ;  CtrlVar.SlidingLaw="Cornford"; C="" ;     Duvh="" ;  Melt
 Resolution="-10km-" ;  CtrlVar.SlidingLaw="Cornford"; C="" ;     Duvh="" ;  Melt="-DMR-100-" ;  IceShelf="Thwaites" ; % testing dynamical melt rates
 
 Resolution="-5km-" ;  CtrlVar.SlidingLaw="Weertman"; C="" ;     Duvh="" ;  Melt="-MR4-" ;  IceShelf="Thwaites" ; % TWIS kept / Weertman  /MR4
-Resolution="-5km-" ;  CtrlVar.SlidingLaw="Weertman"; C="C0" ;     Duvh="" ;  Melt="-MR4-" ;  IceShelf="Thwaites" ; % TWIS removal / Weertman  /MR4
+% Resolution="-5km-" ;  CtrlVar.SlidingLaw="Weertman"; C="C0" ;     Duvh="" ;  Melt="-MR4-" ;  IceShelf="Thwaites" ; % TWIS removal / Weertman  /MR4
 
 
 CreateAndSaveACInterpolants=false;  % But still created if the files with the interpolants do not exist, 
