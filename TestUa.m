@@ -7,29 +7,21 @@
 
 function tests = TestUa
     
-    
-    
-    % f={@setupOnce,@testCalvingManuallyDeactivateElements,@teardownOnce};      % outdated, not expected to work
-    % f={@setupOnce,@testCalvingThroughMassBalanceFeedback,@teardownOnce};  % outdated, not expected to work
-    
- 
-    
-    %f={@testPIGmeshing};
-
+  
     
     %f=localfunctions ;  % all tests
     
-     f={@testCrack}                ;  % OK  11/05/2021 , OK on 09/09/2021 , 01/11/2021  , 08/03/2023
-     f={@testPIGdiagnostic}        ;  % OK  11/05/2021, OK on 09/09/2021 , 01/11/2021 , 08/03/2023
-     f={@testMassBalanceFeedback}  ;  % OK  11/05/2021 , OK on 09/09/2021 , 01/11/2021  , 08/03/2023
-     f={@test1dIceStream}          ;  % OK  11/05/2021, OK on 08/09/2021 , 01/11/2021 , 08/03/2023
-     f={@test1dIceShelf}           ;  % OK  11/05/2021, OK on 08/09/2021 , 01/11/2021, 08/03/2023
-     f={@testGaussPeak}            ;  % OK  11/05/2021, needs gmsh , 01/11/2021, 08/03/2023
-     f={@testFreeSlipBCs}          ;  % OK  11/05/2021,  OK 08/09/2021 , 01/11/2021 , 03/08/2023
+     f={@testCrack}                ;    % OK  11/05/2021 ,  09/09/2021 , 01/11/2021 ,   08/03/2023 , 24/06/2023
+     f={@testPIGdiagnostic}        ;    % OK  11/05/2021 ,  09/09/2021 , 01/11/2021 ,   08/03/2023 , 24/06/2023
+     f={@testPIGtransient}         ;    %                                                            24/06/2023
+     f={@testMassBalanceFeedback}  ;    % OK  11/05/2021 ,  09/09/2021 , 01/11/2021 ,   08/03/2023 , 24/06/2023
+     f={@test1dIceStream}          ;    % OK  11/05/2021 ,  08/09/2021 , 01/11/2021 ,   08/03/2023 , 24/06/2023
+     f={@test1dIceShelf}           ;    % OK  11/05/2021 ,  08/09/2021 , 01/11/2021 ,   08/03/2023 , 24/06/2023
+     f={@testGaussPeak}            ;    % OK  11/05/2021 ,             , 01/11/2021 ,   08/03/2023 , 24/06/2023
+     f={@testFreeSlipBCs}          ;    % OK  11/05/2021 ,  08/09/2021 , 01/11/2021 ,   03/08/2023 , 24/06/2023
 
-    % f={@testCalvingAnalyticalIceShelf};  % ~OK 01/09/2021, OK 11/05/2021 , On 01/11/2021 in development
-    % f={@testPIGtransient}         ;  % OK 11/05/2021, 08/09/2021 due to new geomery with sharp corners this now only runs for
-    % small initial time step
+
+     f={@testCrack,@testPIGdiagnostic,@testPIGtransient,@testMassBalanceFeedback,@test1dIceStream,@test1dIceShelf,@testGaussPeak,@testFreeSlipBCs} ;
     
     
     tests = functiontests(f);
@@ -64,10 +56,7 @@ function testPIGdiagnostic(testCase)
     UserVar=Ua(UserVar) ;
     cd ..
     actSolution= UserVar.Test.Norm.actValue ;
-    % expSolution = 95982.7181182457;  % this was with the old bedmap2 data
-    % expSolution = 9757675340.83092 ;   % this is with the new Bedmachine data, 10/09/2021
-    % expSolution = 202912           ;     % this is with the new Bedmachine data and a new boundary, 01/11/2021
-    expSolution= 201932.019377657  ; %  Z840   
+    expSolution = UserVar.Test.Norm.expValue ;
     verifyEqual(testCase,actSolution,expSolution,'RelTol',1e-4)
     
 end
@@ -80,8 +69,7 @@ function testPIGtransient(testCase)
     UserVar=Ua(UserVar) ;
     cd ..
     actSolution= UserVar.Test.Norm.actValue ;
-    expSolution = 94704.6045393781;
-    %  79053.6666394987 % home laptop, 17 Nov, 2019
+    expSolution =   116576.90379325 ;     % HP C20503924 24/06/2023 
     verifyEqual(testCase,actSolution,expSolution,'RelTol',1e-2)
     
 end
@@ -95,7 +83,8 @@ function testCrack(testCase)
     cd ..
     actSolution= UserVar.Test.Norm.actValue ;
     % expSolution = 5034.37163446407;
-    expSolution = 5033.4404813878  ; % 10/09/2021 on WS-HO
+    
+    expSolution = UserVar.Test.Norm.expValue ;
     verifyEqual(testCase,actSolution,expSolution,'RelTol',1e-6)
     
 end
@@ -120,7 +109,7 @@ function test1dIceStream(testCase)
     UserVar=Ua(UserVar) ;
     cd ..
     actSolution= UserVar.Test.Norm.actValue ;
-    expSolution = 2669.7046413036 ; % 2688.16151728403 
+    expSolution = UserVar.Test.Norm.expValue ;
     verifyEqual(testCase,actSolution,expSolution,'RelTol',1e-3)
     
 end

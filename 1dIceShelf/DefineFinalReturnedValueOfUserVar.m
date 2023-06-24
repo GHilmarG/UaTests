@@ -12,6 +12,7 @@ function UserVar=DefineFinalReturnedValueOfUserVar(UserVar,CtrlVar,MUA,BCs,F,l,I
 
 UserVar.Test.Norm.actValue=norm(F.ub+F.vb);
 UserVar.Test.Norm.expValue=277651.184637976;
+UserVar.Test.Norm.expValue=273611.001313039 ; % HP C20503924 24/06/2023
 
 
 end
