@@ -69,7 +69,7 @@ function testPIGtransient(testCase)
     UserVar=Ua(UserVar) ;
     cd ..
     actSolution= UserVar.Test.Norm.actValue ;
-    expSolution =   116576.90379325 ;     % HP C20503924 24/06/2023 
+    expSolution =   116576.90379325 ;          % HP C20503924 24/06/2023 
     verifyEqual(testCase,actSolution,expSolution,'RelTol',1e-2)
     
 end
