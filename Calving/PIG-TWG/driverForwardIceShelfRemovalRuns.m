@@ -168,9 +168,9 @@ Resolution="-20km-" ;  CtrlVar.SlidingLaw="Cornford"; C="" ;     Duvh="" ;  Melt
 
 
 Resolution="-20km-" ;  CtrlVar.SlidingLaw="Cornford"; C="" ;     Duvh="" ;  Melt="-MR4-" ;  IceShelf="Thwaites" ;  UserVar.InvMeshResolution=[];  
-                        GLrange="-GLrange-";  UserVar.LevelSetDownstreamRheology="-LSDRlin-" ;  
-                        uvh="-uv-h-" ; UserVar.GroupAssembly="-uvGroup-"  ;  UserVar.kH="-kH1000-" ; 
-                        uvh="-uvh-"  ; UserVar.GroupAssembly="-uvhGroup-uvGroup-" ;  UserVar.kH="-kH10-" ; 
+                        GLrange="-GLrange-";  UserVar.LevelSetDownstreamRheology="-LSDRlin-" ;  UserVar.kH="-kH10-" ; 
+                    %    uvh="-uv-h-" ; UserVar.GroupAssembly="-uvGroup-"  ;  UserVar.kH="-kH1000-" ; 
+                    %    uvh="-uvh-"  ; UserVar.GroupAssembly="-uvhGroup-uvGroup-" ;  UserVar.kH="-kH10-" ; 
                         
 
 % Resolution="-2.5km-" ;  CtrlVar.SlidingLaw="Cornford"; C="" ;     Duvh="" ;  Melt="-MR4-" ;  IceShelf="Thwaites" ;  UserVar.InvMeshResolution=5000; GLrange="" ; 
@@ -185,7 +185,7 @@ Resolution="-20km-" ;  CtrlVar.SlidingLaw="Cornford"; C="" ;     Duvh="" ;  Melt
 % Old Defaults:
 % GLrange=""; uvh="" ;  UserVar.CtrlVar.LevelSetDownstreamRheology=""; UserVar.GroupAssembly=""; UserVar.kH="" ; 
 
-CtrlVar.ExplicitEstimationMethod="-no extrapolation-";
+% CtrlVar.ExplicitEstimationMethod="-no extrapolation-";
 
 
 %% Testing new SPMD option in uv, using parallel loop over integration points
@@ -285,6 +285,10 @@ end
 
 if contains(UserVar.RunType,"-uvdhdt-")
     InvFile=InvFile+"-uvdhdt-";
+end
+
+if contains(UserVar.RunType,"Group-")
+    InvFile=InvFile+"-uvGroup-";
 end
 
 
