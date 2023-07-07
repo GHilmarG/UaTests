@@ -168,10 +168,12 @@ Resolution="-20km-" ;  CtrlVar.SlidingLaw="Cornford"; C="" ;     Duvh="" ;  Melt
 
 
 Resolution="-20km-" ;  CtrlVar.SlidingLaw="Cornford"; C="" ;     Duvh="" ;  Melt="-MR4-" ;  IceShelf="Thwaites" ;  UserVar.InvMeshResolution=[];  
-                        GLrange="-GLrange-";  UserVar.LevelSetDownstreamRheology="-LSDRlin-" ;  UserVar.kH="-kH10-" ; 
+                        GLrange="-GLrange-";  UserVar.LevelSetDownstreamRheology="-LSDRlin-" ;  UserVar.kH="-kH10-" ; Duvh="-Duvh-" ; 
                     %    uvh="-uv-h-" ; UserVar.GroupAssembly="-uvGroup-"  ;  UserVar.kH="-kH1000-" ; 
-                    %   uvh="-uvh-"  ; UserVar.GroupAssembly="-uvhGroup-uvGroup-" ;  UserVar.kH="-kH10-" ; 
-                        
+                    %    uvh="-uvh-"  ; UserVar.GroupAssembly="-uvhGroup-uvGroup-" ;  UserVar.kH="-kH10-" ; 
+                  
+
+% Note: Setting Duvh="-Duvh-" gives automated element deactivation based on the level-set                    
 
 % Resolution="-2.5km-" ;  CtrlVar.SlidingLaw="Cornford"; C="" ;     Duvh="" ;  Melt="-MR4-" ;  IceShelf="Thwaites" ;  UserVar.InvMeshResolution=5000; GLrange="" ; 
 %                        GLrange="-GLrange-";  UserVar.LevelSetDownstreamRheology="-LSDRlin-" ;  
