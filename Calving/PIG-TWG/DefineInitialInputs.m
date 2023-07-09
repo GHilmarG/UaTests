@@ -485,6 +485,9 @@ end
 
 %% Time step, total run time, run steps
 
+
+
+%%
 CtrlVar.dt=1e-5;   
 CtrlVar.ATSdtMax=0.1;
 CtrlVar.ATSdtMin=1e-5;  
@@ -678,8 +681,9 @@ end
 
 CtrlVar.WriteRestartFileInterval=20;
 
-
-
+%% Testing
+CtrlVar.DefineOutputsDt=10 ; CtrlVar.ATSdtMax=20; CtrlVar.ATSTargetIterations=10 ; CtrlVar.dt=0.001;   CtrlVar.ATSdtMin=0.001;  CtrlVar.NRitmax=50;   CtrlVar.TotalTime=1000;    % maximum number of NR iteration
+CtrlVar.ExplicitEstimationMethod="-no extrapolation-" ;
 %%
 
 % if CtrlVar.InverseRun && CtrlVar.Restart
