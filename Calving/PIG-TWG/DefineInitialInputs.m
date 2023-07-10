@@ -684,6 +684,8 @@ CtrlVar.WriteRestartFileInterval=20;
 %% Testing
 CtrlVar.DefineOutputsDt=10 ; CtrlVar.ATSdtMax=20; CtrlVar.ATSTargetIterations=10 ; CtrlVar.dt=0.001;   CtrlVar.ATSdtMin=0.001;  CtrlVar.NRitmax=50;   CtrlVar.TotalTime=1000;    % maximum number of NR iteration
 CtrlVar.ExplicitEstimationMethod="-no extrapolation-" ;
+CtrlVar.ResetTimeStep=1;    CtrlVar.dt=1;
+
 %%
 
 % if CtrlVar.InverseRun && CtrlVar.Restart
