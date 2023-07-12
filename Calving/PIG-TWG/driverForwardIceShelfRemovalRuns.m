@@ -169,8 +169,7 @@ Resolution="-20km-" ;  CtrlVar.SlidingLaw="Cornford"; C="" ;     Duvh="" ;  Melt
 
 Resolution="-20km-" ;  CtrlVar.SlidingLaw="Cornford"; C="" ;     Duvh="" ;  Melt="-MR4-" ;  IceShelf="Thwaites" ;  UserVar.InvMeshResolution=[];  
                         GLrange="-GLrange-";  UserVar.LevelSetDownstreamRheology="-LSDRlin-" ;  UserVar.kH="-kH10-" ; Duvh="-Duvh-" ; 
-                    %    uvh="-uv-h-" ; UserVar.GroupAssembly="-uvGroup-"  ;  UserVar.kH="-kH1000-" ; 
-                    %    uvh="-uvh-"  ; UserVar.GroupAssembly="-uvhGroup-uvGroup-" ;  UserVar.kH="-kH10-" ; 
+                        uvh="-uvh-"  ; UserVar.GroupAssembly="-uvhGroup-uvGroup-" ; 
                   
 
 % Note: Setting Duvh="-Duvh-" gives automated element deactivation based on the level-set                    
@@ -196,7 +195,7 @@ Resolution="-20km-" ;  CtrlVar.SlidingLaw="Cornford"; C="" ;     Duvh="" ;  Melt
 
 %%
 
-if uvh=="-uvh-"
+if uvh=="-uvh-"   % this means implicit with respect to uvh as opposed to "-uv-h-" which is semi-implicit
     uvh="";  % keep the old default
 end
 
@@ -206,7 +205,7 @@ CreateAndSaveACInterpolants=false;  % But still created if the files with the in
 RunJob=true; 
 BatchJob=false;
 
-CtrlVar.InfoLevelNonLinIt=5;
+
 
 UserVar.RunType="-FT-P-"+Duvh+"-TWIS"+C+Melt+"SM-TM001-"+CtrlVar.SlidingLaw+Resolution+GLrange+uvh+ UserVar.LevelSetDownstreamRheology+UserVar.GroupAssembly+UserVar.kH+"Alim-Clim-Ca1-Cs100000-Aa1-As100000-";  
 

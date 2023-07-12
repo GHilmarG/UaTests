@@ -462,7 +462,7 @@ elseif contains(UserVar.RunType,"GenerateMesh")
     CtrlVar.AdaptMeshInitial=1  ;       % remesh in first iteration (Itime=1)  even if mod(Itime,CtrlVar.AdaptMeshRunStepInterval)~=0.
     
     
-    CtrlVar.InfoLevelAdaptiveMeshing=100;
+    CtrlVar.InfoLevelAdaptiveMeshing=1;
 
    UserVar.AFile="FA-Weertman-PIG-TWG-20km";
    UserVar.CFile="FC-Weertman-PIG-TWG-20km";
@@ -550,14 +550,14 @@ if contains(UserVar.RunType,"-GLrange-")
    
     CtrlVar.inUpdateFtimeDerivatives.SetTimeDerivativesAtMinIceThickToZero=true;
     CtrlVar.inUpdateFtimeDerivatives.SetTimeDerivativesDowstreamOfCalvingFrontsToZero=true;
-    CtrlVar.InfoLevelAdaptiveMeshing=1000;
+    CtrlVar.InfoLevelAdaptiveMeshing=1;
 
     CtrlVar.AdaptMesh=1;
     CtrlVar.MeshRefinementMethod="explicit:local:newest vertex bisection" ;
     CtrlVar.AdaptMeshRunStepInterval=10 ;
 
 
-    CtrlVar.doplots=true; CtrlVar.doAdaptMeshPlots=true; CtrlVar.InfoLevelAdaptiveMeshing=1000;
+    CtrlVar.doplots=true; CtrlVar.doAdaptMeshPlots=true; CtrlVar.InfoLevelAdaptiveMeshing=1;
 
     CtrlVar.MeshAdapt.GLrange=...
         [2*CtrlVar.MeshSize   CtrlVar.MeshSize/2 ; ...
@@ -684,7 +684,7 @@ CtrlVar.WriteRestartFileInterval=20;
 %% Testing
 CtrlVar.DefineOutputsDt=10 ; CtrlVar.ATSdtMax=20; CtrlVar.ATSTargetIterations=10 ; CtrlVar.dt=0.001;   CtrlVar.ATSdtMin=0.001;  CtrlVar.NRitmax=50;   CtrlVar.TotalTime=1000;    % maximum number of NR iteration
 CtrlVar.ExplicitEstimationMethod="-no extrapolation-" ;
-CtrlVar.ResetTimeStep=1;    CtrlVar.dt=1;
+
 
 %%
 
