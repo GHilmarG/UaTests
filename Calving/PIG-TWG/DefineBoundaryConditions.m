@@ -31,17 +31,38 @@ BCs.ubFixedValue=BCs.ubFixedNode*0;
 BCs.vbFixedValue=BCs.vbFixedNode*0;
 
 
+return 
+%% Testing added fixed vel at boundary if grounded
+
+
+BoundaryNodesGrounded=intersect(MUA.Boundary.Nodes,find(F.GF.node>0.1));
+BoundaryNodesGrounded=intersect(MUA.Boundary.Nodes,find(F.h>10));
+
+BoundaryNodesGroundedNotAlreadyIncluded=setdiff(BoundaryNodesGrounded,BCs.ubFixedNode);
+
+if ~isempty(BoundaryNodesGroundedNotAlreadyIncluded)
+
+    BCs.ubFixedNode=[BCs.ubFixedNode ; BoundaryNodesGroundedNotAlreadyIncluded];
+    BCs.vbFixedNode=[BCs.vbFixedNode ; BoundaryNodesGroundedNotAlreadyIncluded];
+    BCs.ubFixedValue=BCs.ubFixedNode*0;
+    BCs.vbFixedValue=BCs.vbFixedNode*0;
+
+end
+
+
+
+
 %% Testing
-Box=[-1735  -1690 -405. -375.]*1000;
-
-In=find(IsInBox(Box,F.x,F.y)) ;
-
-
-
-BCs.vbFixedNode=[BCs.ubFixedNode ; In];
-BCs.ubFixedNode=[BCs.vbFixedNode ; In];
-BCs.ubFixedValue=BCs.ubFixedNode*0;
-BCs.vbFixedValue=BCs.vbFixedNode*0;
+% Box=[-1735  -1690 -405. -375.]*1000;
+% 
+% In=find(IsInBox(Box,F.x,F.y)) ;
+% 
+% 
+% 
+% BCs.vbFixedNode=[BCs.ubFixedNode ; In];
+% BCs.ubFixedNode=[BCs.vbFixedNode ; In];
+% BCs.ubFixedValue=BCs.ubFixedNode*0;
+% BCs.vbFixedValue=BCs.vbFixedNode*0;
 
 
 %

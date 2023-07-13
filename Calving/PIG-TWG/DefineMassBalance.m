@@ -27,7 +27,7 @@ as=Fas(F.x,F.y);
 % Favier, L., Durand, G., Cornford, S. L., Gudmundsson, G. H., Gagliardini, O.,
 % Gillet-Chaulet, F., Zwinger, T., Payne, A. J., & Le Brocq, a. M. (2014).
 % Retreat of Pine Island Glacier controlled by marine ice-sheet instability.
-% Nature Climate Change, 4(2), 117–121. https://doi.org/10.1038/nclimate2094
+% Nature Climate Change, 4(2), 117121. https://doi.org/10.1038/nclimate2094
 
 
 %
@@ -65,9 +65,44 @@ if contains(UserVar.RunType,"-I-")  % This is a 'dynamical' initialisation, use 
 elseif contains(UserVar.RunType,"-MR")
 
     MRP=extractBetween(UserVar.RunType,"-MR","-");
+   % MRP="l"+MRP; 
     [ab,dabdh]=DraftDependentMeltParameterisations(UserVar,CtrlVar,F,MRP) ;
+    
+  
 
 
+elseif contains(UserVar.RunType,"-MRZERO")
+
+    as=zeros(MUA.Nnodes,1) ;
+    ab=zeros(MUA.Nnodes,1) ;
+    dasdh=zeros(MUA.Nnodes,1) ;
+    dabdh=zeros(MUA.Nnodes,1) ;
+
+
+elseif contains(UserVar.RunType,"-DMR")
+
+    dsdt=F.x*0 ; dhdt=F.x*0;
+
+    pat="DMR"+("+"|"-")+digitsPattern ;
+    mathSymbols = asManyOfPattern(digitsPattern | characterListPattern("+-*/="),1) ;
+    SubString=extract(extract(UserVar.RunType,pat),mathSymbols);
+
+
+    if ~isempty(SubString)
+        dhdtValue=str2double(SubString);
+        if isnumeric(dhdtValue)
+            dhdt=F.x*0+dhdtValue;
+        end
+    end
+
+
+
+    if ~isempty(F.ub)
+        [ab,qx,qy,dqxdx,dqxdy,dqydx,dqydy]=CalcIceShelfMeltRates(CtrlVar,MUA,F.ub,F.vb,F.s,F.b,F.S,F.B,F.rho,F.rhow,dsdt,F.as,dhdt) ;
+
+        ab(F.LSF<0.5)=0 ;
+        ab(ab>0)=0;
+    end
 end
 
 if ~isfield(UserVar,"IceSheetIceShelves") || UserVar.IceSheetIceShelves
@@ -75,7 +110,14 @@ if ~isfield(UserVar,"IceSheetIceShelves") || UserVar.IceSheetIceShelves
     F.GF=IceSheetIceShelves(CtrlVar,MUA,F.GF);
     ab(~F.GF.NodesDownstreamOfGroundingLines)=0;
     dabdh(~F.GF.NodesDownstreamOfGroundingLines)=0;
+    % figure ; plot(F.b(F.GF.NodesDownstreamOfGroundingLines),F.ab(F.GF.NodesDownstreamOfGroundingLines),'.')
 end
+
+
+% only apply basal melt strictly below/outside of grounding lines over nodes connected to the ocean
+[LakeNodes,OceanNodes] = LakeOrOcean3(CtrlVar,MUA,F.GF,[],"Strickt") ;
+ab(~OceanNodes)=0;
+dabdh(~OceanNodes)=0;
 
 return
 
