@@ -169,7 +169,7 @@ Resolution="-20km-" ;  CtrlVar.SlidingLaw="Cornford"; C="" ;     Duvh="" ;  Melt
 
 Resolution="-20km-" ;  CtrlVar.SlidingLaw="Cornford"; C="" ;     Duvh="" ;  Melt="-MR4-" ;  IceShelf="Thwaites" ;  UserVar.InvMeshResolution=[];  
                         GLrange="-GLrange-";  UserVar.LevelSetDownstreamRheology="-LSDRlin-" ;  UserVar.kH="-kH10-" ; Duvh="-Duvh-" ; 
-                        uvh="-uvh-"  ; UserVar.GroupAssembly="-uvhGroup-uvGroup-" ; 
+%                        uvh="-uvh-"  ; UserVar.GroupAssembly="-uvhGroup-uvGroup-" ; 
                   
 
 % Note: Setting Duvh="-Duvh-" gives automated element deactivation based on the level-set                    
@@ -243,7 +243,7 @@ UserVar.RunType=replace(UserVar.RunType,"--","-");
 UserVar.RunType=replace(UserVar.RunType,".","k");
 
 
-CtrlVar.TotalTime=400;
+CtrlVar.TotalTime=500;
 
 CtrlVar.Inverse.Regularize.logC.ga=str2double(extract(extract(UserVar.RunType,"-Ca"+digitsPattern+"-"),digitsPattern)) ;
 CtrlVar.Inverse.Regularize.logC.gs=str2double(extract(extract(UserVar.RunType,"-Cs"+digitsPattern+"-"),digitsPattern)) ;
