@@ -181,6 +181,7 @@ for Iint=1:MUA.nip
         Barrier1=-dt*(1-theta)*alpha.*(h1int.^(-1)).*SUPGdetJw ;
         Barrier0=-dt*   theta *alpha.*(h0int.^(-1)).*SUPGdetJw ;
 
+        
 
         Relements(:,Inod)=Relements(:,Inod)+h0term+h1term+a0term+a1term+C0+C1+D0+D1+Barrier0+Barrier1;
 
