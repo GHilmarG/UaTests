@@ -44,7 +44,7 @@ switch UserVar.Example
                 % 
                  nodes=MUA.Boundary.Nodes;
                  BCs.hFixedNode=nodes;
-                 BCs.hFixedValue=nodes*0+10; % fixing water-film thickness at the boundary
+                 BCs.hFixedValue=nodes*0; % fixing water-film thickness at the boundary
                  % 
 
             otherwise
