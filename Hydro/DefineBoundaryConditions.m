@@ -18,7 +18,7 @@ switch UserVar.Example
 
         switch CtrlVar.GWE.Variable
 
-            case "-phi-" 
+            case "-phi-"
 
                 % Setting \phi=rhow g b + pw at boundary
                 BCs.hFixedNode=MUA.Boundary.Nodes;
@@ -29,15 +29,23 @@ switch UserVar.Example
 
 
                 % Setting N=0 at boundary
-                
+
                 % pw=0 -> g rho (s-b) - N =0
                 %      -> N= g rho h
-                
+
                 nodes=MUA.Boundary.Nodes;
                 BCs.hFixedNode=nodes;
                 BCs.hFixedValue=F.g.*F.rho.*(F.s(nodes)-F.b(nodes)) ;
 
-
+            case "-hw-"
+                
+                % If left empty, the natural boundary conditions are applied
+                
+                % 
+                 nodes=MUA.Boundary.Nodes;
+                 BCs.hFixedNode=nodes;
+                 BCs.hFixedValue=nodes*0+10; % fixing water-film thickness at the boundary
+                 % 
 
             otherwise
 
