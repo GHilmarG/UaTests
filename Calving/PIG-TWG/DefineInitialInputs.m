@@ -575,6 +575,11 @@ CtrlVar.ResetThicknessToMinThickness=0;
 if contains(UserVar.RunType,"-Alim-")
     CtrlVar.AGlenmin=AGlenVersusTemp(-20) ;
 end
+CtrlVar.Cmin=1e-8; % This is based on having done some inversions for C for m=3 where no such contraint was used
+                   % and finding that only inverted values where
+                   % velocity data was available, where higher than this.
+               
+     
 %%
 if batchStartupOptionUsed
     CtrlVar.doplots=0;   % disable plotting if running as batch
