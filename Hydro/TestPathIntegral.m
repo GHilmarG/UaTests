@@ -7,11 +7,18 @@ load("RestartWaterFilmThicknessEquationDriver","UserVar","CtrlVar","MUA","F0","F
 [~,xGL,yGL]=UaPlots(CtrlVar,MUA,F1,F1.hw,FigureTitle="hw",CreateNewFigure=true) ;
 title(sprintf("$h_w$ time=%g",CtrlVar.time),Interpreter="latex")
 
-Phi1=F1.g.* ( (F1.rhow-F1.rho).*F1.B + F1.rho.*F1.s) ;
-phi1=Phi1+F1.g.*(F1.rhow-F1.rho).*F1.hw ;
-[dphi1dx,dphi1dy]=gradUa(CtrlVar,MUA,phi1) ;
-qwx1=-F1.hw.*k.*dphi1dx;  qwy1=-F1.hw.*k.*dphi1dy;  % Achtung, this implies a boundary condition, compare with the integration
+% Phi1=F1.g.* ( (F1.rhow-F1.rho).*F1.B + F1.rho.*F1.s) ;
+% phi1=Phi1+F1.g.*(F1.rhow-F1.rho).*F1.hw ;
+% [dphi1dx,dphi1dy]=gradUa(CtrlVar,MUA,phi1) ;
+% qwx1=-F1.hw.*k.*dphi1dx;  qwy1=-F1.hw.*k.*dphi1dy;  % Achtung, this implies a boundary condition, compare with the integration
 
+Phi1=F1.g.* ( (F1.rhow-F1.rho).*F1.B + F1.rho.*F1.s) ;   % does not change, if s and b do not
+Phi0=F0.g.* ( (F0.rhow-F0.rho).*F0.B + F0.rho.*F0.s) ;   % does not change, if s and b do not
+
+[dPhidx,dPhidy]=gradUa(CtrlVar,MUA,Phi1) ; uw1=-k.*dPhidx;  vw1=-k.*dPhidy;
+[dPhidx,dPhidy]=gradUa(CtrlVar,MUA,Phi0) ; uw0=-k.*dPhidx;  vw0=-k.*dPhidy;
+
+[UserVar,qwx1,qwy1,qphix,qphiy,qPhix,qPhiy]=WaterFilmFlux(UserVar,CtrlVar,MUA,F0,F1,k,uw0,vw0,uw1,vw1) ; 
 
 figqw=FindOrCreateFigure("(qwx,qwy)") ; clf(figqw) ;
 QuiverColorGHG(F1.x,F1.y,qwx1,qwy1,CtrlVar) ;
@@ -69,6 +76,8 @@ for I=1:numel(RVector)
 
     figNPc=FindOrCreateFigure("Boundary fluxes circle") ; clf(figNPc);
     qnx=qn.*normal(:,1) ; qny=qn.*normal(:,2) ;
+    PlotMuaMesh(CtrlVar,MUA)
+    hold on
     [cbar,QuiverHandel,Par]=QuiverColorGHG(Xc,Yc,qnx,qny,CtrlVar) ;
     hold on
     plot(xGL/CtrlVar.PlotXYscale,yGL/CtrlVar.PlotXYscale,'r')

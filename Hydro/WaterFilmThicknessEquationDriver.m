@@ -2,7 +2,7 @@
 
 ReadData=1;
 CalcFluxes=1;
-isRestart=1; 
+isRestart=0; 
 
 UserVar.Example="-Antarctica-" ;
 UserVar.Example="-Dome-Phi-" ;
@@ -50,6 +50,7 @@ if ReadData  &&~isRestart
             CtrlVar.PlotXYscale=1000;
             DomainSize=100e3 ;
             CtrlVar.MeshSize=DomainSize/20;
+            CtrlVar.MeshSize=DomainSize/10;
             CtrlVar.MeshSizeMin=CtrlVar.MeshSize/2 ;
             CtrlVar.MeshSizeMax=CtrlVar.MeshSize*2 ;
             MeshBoundaryCoordinates=[-DomainSize -DomainSize ; DomainSize -DomainSize ; DomainSize DomainSize ; -DomainSize DomainSize ];
@@ -120,13 +121,14 @@ CtrlVar.GWE.Variable="-hw-" ;
 if CalcFluxes
 
 
-    dN=zeros(MUA.Nnodes,1);  dlambda=[];
-    CtrlVar.time=0;  F.time=0;
+    
+  
 
     if isRestart
         load("RestartWaterFilmThicknessEquationDriver","UserVar","CtrlVar","MUA","F0","F1","k")
     else
 
+          CtrlVar.time=0;  F.time=0;
         aw=zeros(MUA.Nnodes,1)+0.1 ;
         hmin=300;
         II=F.h<hmin;
@@ -138,6 +140,8 @@ if CalcFluxes
 
         F0=F ; F1=F ;
     end
+
+    dN=zeros(MUA.Nnodes,1);  dlambda=[];
 
    
     for Isteps=1:nTimeSteps
@@ -157,13 +161,47 @@ if CalcFluxes
         CtrlVar.time=F1.time ;
 
         Phi1=F1.g.* ( (F1.rhow-F1.rho).*F1.B + F1.rho.*F1.s) ;
-        
         phi1=Phi1+F1.g.*(F1.rhow-F1.rho).*F1.hw ;
-
-
         [dphi1dx,dphi1dy]=gradUa(CtrlVar,MUA,phi1) ;
-        qwx1=-F1.hw.*k.*dphi1dx;  qwy1=-F1.hw.*k.*dphi1dy;  % Achtung, this implies a boundary condition, compare with the integration points
+        qwx1=-F1.hw.*k.*dphi1dx;  qwy1=-F1.hw.*k.*dphi1dy; 
 
+        figqw1=FindOrCreateFigure("(qwx,qwy) Old") ; clf(figqw1) ;
+        QuiverColorGHG(F1.x,F1.y,qwx1,qwy1,CtrlVar) ;
+        hold on
+        %plot(xGL/CtrlVar.PlotXYscale,yGL/CtrlVar.PlotXYscale,'r')
+        PlotMuaBoundary(CtrlVar,MUA) ;
+        title(sprintf("$\\mathbf{q}_w$ Old time=%g",CtrlVar.time),Interpreter="latex")
+        hold off
+
+        
+        [UserVar,qwx,qwy,qphix,qphiy,qPhix,qPhiy]=WaterFilmFlux(UserVar,CtrlVar,MUA,F0,F1,k,uw1,vw1,uw1,vw1);
+
+        figqw=FindOrCreateFigure("(qwx,qwy) New") ; clf(figqw) ;
+        QuiverColorGHG(F1.x,F1.y,qwx,qwy,CtrlVar) ;
+        hold on
+        %plot(xGL/CtrlVar.PlotXYscale,yGL/CtrlVar.PlotXYscale,'r')
+        PlotMuaBoundary(CtrlVar,MUA) ;
+        title(sprintf("$\\mathbf{q}_w$ time=%g",CtrlVar.time),Interpreter="latex")
+        hold off
+
+
+        figqwNO=FindOrCreateFigure("(qwx,qwy) New-Old") ; clf(figqwNO) ;
+        QuiverColorGHG(F1.x,F1.y,qwx-qwx1,qwy-qwy1,CtrlVar) ;
+        hold on
+        %plot(xGL/CtrlVar.PlotXYscale,yGL/CtrlVar.PlotXYscale,'r')
+        PlotMuaBoundary(CtrlVar,MUA) ;
+        title(sprintf("$\\mathbf{q}_w$ time=%g",CtrlVar.time),Interpreter="latex")
+        hold off
+
+
+
+        figqphi=FindOrCreateFigure("(qphix,qphiy)") ; clf(figqphi) ;
+        QuiverColorGHG(F1.x,F1.y,qphix,qphiy,CtrlVar) ;
+        hold on
+        %plot(xGL/CtrlVar.PlotXYscale,yGL/CtrlVar.PlotXYscale,'r')
+        PlotMuaBoundary(CtrlVar,MUA) ;
+        title(sprintf("$\\mathbf{q}_w$ time=%g",CtrlVar.time),Interpreter="latex")
+        hold off
 
         hwMaxVector(icount)=max(F1.hw) ;
         hwMinVector(icount)=min(F1.hw) ;
@@ -194,7 +232,7 @@ if CalcFluxes
             hold off
 
             figqw=FindOrCreateFigure("(qwx,qwy)") ; clf(figqw) ;
-            QuiverColorGHG(F1.x,F1.y,qwx1,qwy1,CtrlVar) ;
+            QuiverColorGHG(F1.x,F1.y,qwx,qwy,CtrlVar) ;
             hold on
             plot(xGL/CtrlVar.PlotXYscale,yGL/CtrlVar.PlotXYscale,'r')
             PlotMuaBoundary(CtrlVar,MUA) ;
@@ -207,7 +245,7 @@ if CalcFluxes
 
             Int=FEintegrate2D(CtrlVar,MUA,F1.aw) ;
             QInt=sum(Int) ;
-            [Qn,Qt,qn,qt,xc,yc,normal]=PathIntegral(CtrlVar,F1.x(BoundaryNodes),F1.y(BoundaryNodes),qwx1(BoundaryNodes),qwy1(BoundaryNodes));
+            [Qn,Qt,qn,qt,xc,yc,normal]=PathIntegral(CtrlVar,F1.x(BoundaryNodes),F1.y(BoundaryNodes),qwx(BoundaryNodes),qwy(BoundaryNodes));
             figNP=FindOrCreateFigure("Boundary fluxes") ; clf(figNP);
 
             qnx=qn.*normal(:,1) ; qny=qn.*normal(:,2) ;
@@ -224,6 +262,6 @@ if CalcFluxes
 
     end
 
-  
+  save("RestartWaterFilmThicknessEquationDriver","UserVar","CtrlVar","MUA","F0","F1","k")  
 
 end
