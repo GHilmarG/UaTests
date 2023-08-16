@@ -42,10 +42,10 @@ switch UserVar.Example
                 % If left empty, the natural boundary conditions are applied
                 
                 % 
-                 nodes=MUA.Boundary.Nodes;
-                 BCs.hFixedNode=nodes;
-                 BCs.hFixedValue=nodes*0; % fixing water-film thickness at the boundary
-                 % 
+                 % nodes=MUA.Boundary.Nodes;
+                 % BCs.hFixedNode=nodes;
+                 % BCs.hFixedValue=nodes*0; % fixing water-film thickness at the boundary
+                 % % 
 
             otherwise
 
@@ -56,6 +56,6 @@ switch UserVar.Example
 end
 
 
-FindOrCreateFigure("BCs") ; PlotBoundaryConditions(CtrlVar,MUA,BCs);
+% FindOrCreateFigure("BCs") ; PlotBoundaryConditions(CtrlVar,MUA,BCs);
 
 end

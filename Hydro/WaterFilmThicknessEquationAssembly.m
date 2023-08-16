@@ -3,7 +3,6 @@ function [UserVar,RR,KK]=WaterFilmThicknessEquationAssembly(UserVar,CtrlVar,MUA,
 
 
 
-
 %% Water film thickness equation
 %
 %
