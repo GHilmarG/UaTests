@@ -2,13 +2,15 @@
 
 ReadData=1;
 CalcFluxes=1;
-isRestart=1; 
+isRestart=0; 
 
 UserVar.Example="-Antarctica-" ;
-UserVar.Example="-Dome-Phi-" ;
+% UserVar.Example="-Dome-Phi-" ;
 % UserVar.Example="-Hat-Phi-" ;
 CtrlVar=Ua2D_DefaultParameters();
 %%
+nTimeSteps=20000;   CtrlVar.dt=100;
+ qw1x=0 ; qw1y=0 ; 
 
 if ReadData  &&~isRestart
 
@@ -16,16 +18,21 @@ if ReadData  &&~isRestart
 
 
         case "-Antarctica-"
+        
             UserVar.GeometryInterpolant='../../Interpolants/BedMachineGriddedInterpolants.mat';
             UserVar.SurfaceVelocityInterpolant='../../Interpolants/SurfVelMeasures990mInterpolants.mat';
             UserVar.MeshBoundaryCoordinatesFile='../../Interpolants/MeshBoundaryCoordinatesForAntarcticaBasedOnBedmachine';
-            fprintf('DefineGeometry: loading file: %-s ',UserVar.GeometryInterpolant)
-            load(UserVar.GeometryInterpolant,'FB','Fb','Fs','Frho')
-            fprintf(' done \n')
-            %load("MeshFile20km-PIG-TWG.mat","MUA")
-            load("AntarcticaMUAwith54kElements.mat","MUA") ;
+            
+            if ~exist("Fb","var")
+                fprintf('DefineGeometry: loading file: %-s ',UserVar.GeometryInterpolant)
+                load(UserVar.GeometryInterpolant,'FB','Fb','Fs','Frho')
+                fprintf(' done \n')
+            end
 
-            CtrlVar.TriNodes=6;  MUA=UpdateMUA(CtrlVar,MUA);
+            load("..\Calving\PIG-TWG\MeshFile20km-PIG-TWG.mat","MUA")
+            % load("AntarcticaMUAwith54kElements.mat","MUA") ;
+
+            CtrlVar.TriNodes=3;  MUA=UpdateMUA(CtrlVar,MUA);
             F=UaFields;
             F.x=MUA.coordinates(:,1) ; F.y=MUA.coordinates(:,2) ;
             F.s=Fs(F.x,F.y);
@@ -36,13 +43,37 @@ if ReadData  &&~isRestart
             [F.b,F.h,F.GF]=Calc_bh_From_sBS(CtrlVar,MUA,F.s,F.B,F.S,F.rho,F.rhow);
 
             LL=10e3 ;  % Smoothing length scale
-            LL=100e3 ;  % Smoothing length scale
-            [UserVar,F.s]=HelmholtzEquation([],CtrlVar,MUA,1,LL^2,F.s,0);
-            UaPlots(CtrlVar,MUA,F,F.s,FigureTitle="s smoothed") ;
-            [UserVar,F.b]=HelmholtzEquation([],CtrlVar,MUA,1,LL^2,F.b,0);
-            [UserVar,F.B]=HelmholtzEquation([],CtrlVar,MUA,1,LL^2,F.B,0);
+            % LL=100e3 ;  % Smoothing length scale
+            [UserVar,F.s]=HelmholtzEquation(UserVar,CtrlVar,MUA,1,LL^2,F.s,0);
+
+            [UserVar,F.b]=HelmholtzEquation(UserVar,CtrlVar,MUA,1,LL^2,F.b,0);
+            [UserVar,F.B]=HelmholtzEquation(UserVar,CtrlVar,MUA,1,LL^2,F.B,0);
 
             [F.b,F.h,F.GF]=Calc_bh_From_sBS(CtrlVar,MUA,F.s,F.B,F.S,F.rho,F.rhow);
+
+            UaPlots(CtrlVar,MUA,F,F.B,FigureTitle="B smoothed") ;
+            UaPlots(CtrlVar,MUA,F,F.b,FigureTitle="b smoothed") ;
+            UaPlots(CtrlVar,MUA,F,F.s,FigureTitle="s smoothed") ;
+
+            aw=zeros(MUA.Nnodes,1);             
+            
+            Box=[-1600 -1500 -200 -100]*1000; 
+            Box=[-1500 -1400 -500 -400]*1000; 
+            In=IsInBox(Box,F.x,F.y) ;
+            aw(In)=10; 
+            UaPlots(CtrlVar,MUA,F,aw,FigureTitle="aw")
+
+
+            F.aw=aw;
+            F.hw=zeros(MUA.Nnodes,1)+1 ;    % Initial water film thickness
+            k=zeros(MUA.Nnodes,1)+1e4;
+            CtrlVar.dt=1;
+
+            CtrlVar.WaterFilm.Barrier=1 ; 
+
+
+
+
 
         case {"-Dome-N-","-Dome-Phi-"}
 
@@ -65,6 +96,16 @@ if ReadData  &&~isRestart
             s0=1000; F.s=s0*(1-sqrt(r/(1.2*DomainSize))) ; F.s(F.s<0)=0;
             [F.b,F.h,F.GF]=Calc_bh_From_sBS(CtrlVar,MUA,F.s,F.B,F.S,F.rho,F.rhow);
             UaPlots(CtrlVar,MUA,F,F.s) ;
+
+            hmin=300;
+            II=F.h<hmin;
+            aw(II)=0 ; % set water input to zero where the region is ice free.
+
+            F.aw=aw;
+            F.hw=zeros(MUA.Nnodes,1)+1 ;    % Initial water film thickness
+            k=zeros(MUA.Nnodes,1)+1e2;
+
+            CtrlVar.WaterFilm.Barrier=10; ; 
 
 
         case {"-Hat-Phi-"}
@@ -101,15 +142,14 @@ if ReadData  &&~isRestart
             %%
     end
 
-hwMaxVector=nan(nTimeSteps,1);
-hwMinVector=nan(nTimeSteps,1);
-tVector=nan(nTimeSteps,1);
+
 icount=1;
+
 end
 
-%%
-nTimeSteps=20000;   CtrlVar.dt=100;
-nPlotStep=10; 
+
+
+nPlotStep=1; 
 
 
 
@@ -119,29 +159,27 @@ CtrlVar.GWE.Variable="-hw-" ;
 
 
 if CalcFluxes
-    
-  
+
+
 
     if isRestart
-        
-        load("RestartWaterFilmThicknessEquationDriver","UserVar","CtrlVar","MUA","F0","F1","k","tVector","hwMaxVector","hwMinVector")  
+
+        load("RestartWaterFilmThicknessEquationDriver","UserVar","CtrlVar","MUA","F0","F1","k","tVector","hwMaxVector","hwMinVector")
         icount=numel(tVector) ;
         hwMinVector=[hwMinVector;hwMinVector+nan];
         hwMaxVector=[hwMaxVector;hwMaxVector+nan];
         tVector=[tVector;tVector+nan];
     else
 
-          CtrlVar.time=0;  F.time=0;
-        aw=zeros(MUA.Nnodes,1)+0.1 ;
-        hmin=300;
-        II=F.h<hmin;
-        aw(II)=0 ; % set water input to zero where the region is ice free.
-        F.aw=aw;
 
-        F.hw=zeros(MUA.Nnodes,1)+1 ;    % Initial water film thickness
-        k=zeros(MUA.Nnodes,1)+1e2;
+        CtrlVar.time=0;  F.time=0;
+        
+      
 
         F0=F ; F1=F ;
+        hwMaxVector=nan(nTimeSteps,1);
+        hwMinVector=nan(nTimeSteps,1);
+        tVector=nan(nTimeSteps,1);
     end
 
     dN=zeros(MUA.Nnodes,1);  dlambda=[];
@@ -150,6 +188,7 @@ if CalcFluxes
     for Isteps=1:nTimeSteps
 
         F0.hw=F1.hw;
+        qw0x=qw1x ; qw0y=qw1y ; 
 
         [UserVar,hw1,Phi1,uw1,vw1,RR,KK]=WaterFilmThicknessEquation(UserVar,CtrlVar,MUA,F0,F1,k);
 
@@ -158,6 +197,7 @@ if CalcFluxes
         % dtcritical=min(l)./max(speed+eps);
         % 
         % fprintf("CFL dt=%f \n",dtcritical)
+
 
         F1.hw=hw1;
         F1.time=F1.time+CtrlVar.dt ;
@@ -177,7 +217,8 @@ if CalcFluxes
         % hold off
 
         % 
-        [UserVar,qwx,qwy,qphix,qphiy,qPhix,qPhiy]=WaterFilmFlux(UserVar,CtrlVar,MUA,F0,F1,k,uw1,vw1,uw1,vw1);
+
+        [UserVar,qw1x,qw1y,qphix,qphiy,qPhix,qPhiy]=WaterFilmFlux(UserVar,CtrlVar,MUA,F0,F1,k,uw1,vw1,uw1,vw1);
  
         % 
         % figqw=FindOrCreateFigure("(qwx,qwy) New") ; clf(figqw) ;
@@ -214,7 +255,10 @@ if CalcFluxes
 
         %% figures
         if mod(Isteps,nPlotStep)==0
+            
             [~,xGL,yGL]=UaPlots(CtrlVar,MUA,F1,F1.hw,FigureTitle="hw",CreateNewFigure=true) ;
+            IhwNeg=F1.hw<0 ; 
+            hold on ; plot(F1.x(IhwNeg)/CtrlVar.PlotXYscale,F1.y(IhwNeg)/CtrlVar.PlotXYscale,'or')
             title(sprintf("$h_w$ time=%g",CtrlVar.time),Interpreter="latex")
 
             [~,xGL,yGL]=UaPlots(CtrlVar,MUA,F1,F1.hw-F0.hw,FigureTitle="Delta hw",CreateNewFigure=true) ;
@@ -236,12 +280,23 @@ if CalcFluxes
             hold off
 
             figqw=FindOrCreateFigure("(qwx,qwy)") ; clf(figqw) ;
-            QuiverColorGHG(F1.x,F1.y,qwx,qwy,CtrlVar) ;
+            QuiverColorGHG(F1.x,F1.y,qw1x,qw1y,CtrlVar) ;
             hold on
             plot(xGL/CtrlVar.PlotXYscale,yGL/CtrlVar.PlotXYscale,'r')
             PlotMuaBoundary(CtrlVar,MUA) ;
             title(sprintf("$\\mathbf{q}_w$ time=%g",CtrlVar.time),Interpreter="latex")
             hold off
+
+
+            figqw=FindOrCreateFigure("Delta(qwx,qwy)") ; clf(figqw) ;
+            QuiverColorGHG(F1.x,F1.y,qw1x-qw0x,qw1y-qw0y,CtrlVar) ;
+            hold on
+            plot(xGL/CtrlVar.PlotXYscale,yGL/CtrlVar.PlotXYscale,'r')
+            PlotMuaBoundary(CtrlVar,MUA) ;
+            title(sprintf("$\\Delta \\mathbf{q}_w$ time=%g",CtrlVar.time),Interpreter="latex")
+            hold off
+
+
 
             BoundaryNodes=MUA.Boundary.EdgeCornerNodes ;
             BoundaryNodes=[BoundaryNodes;BoundaryNodes(1)] ;
@@ -249,7 +304,7 @@ if CalcFluxes
 
             Int=FEintegrate2D(CtrlVar,MUA,F1.aw) ;
             QInt=sum(Int) ;
-            [Qn,Qt,qn,qt,xc,yc,normal]=PathIntegral(CtrlVar,F1.x(BoundaryNodes),F1.y(BoundaryNodes),qwx(BoundaryNodes),qwy(BoundaryNodes));
+            [Qn,Qt,qn,qt,xc,yc,normal]=PathIntegral(CtrlVar,F1.x(BoundaryNodes),F1.y(BoundaryNodes),qw1x(BoundaryNodes),qw1y(BoundaryNodes));
             
             figNP=FindOrCreateFigure("Boundary fluxes") ; clf(figNP);
             qnx=qn.*normal(:,1) ; qny=qn.*normal(:,2) ;

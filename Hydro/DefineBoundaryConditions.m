@@ -7,9 +7,10 @@ switch UserVar.Example
 
     case "-Antarctica-"
 
-        r=vecnorm([F.x F.y],2,2)  ;
-        I=find(r<100e3 | F.x< -2000e3) ;
-        BCs.hFixedNode=I ; BCs.hFixedValue=F.N(I) ;   % N set to Phi, -> gradient of (Phi-N) will be zeros
+
+        % nodes=MUA.Boundary.Nodes;
+        % BCs.hFixedNode=nodes;
+        % BCs.hFixedValue=nodes*0; % fixing water-film thickness at the boundary
 
 
     case {"-Dome-Phi-", "-Hat-Phi-"}
@@ -38,14 +39,14 @@ switch UserVar.Example
                 BCs.hFixedValue=F.g.*F.rho.*(F.s(nodes)-F.b(nodes)) ;
 
             case "-hw-"
-                
+
                 % If left empty, the natural boundary conditions are applied
-                
-                % 
-                 % nodes=MUA.Boundary.Nodes;
-                 % BCs.hFixedNode=nodes;
-                 % BCs.hFixedValue=nodes*0; % fixing water-film thickness at the boundary
-                 % % 
+
+                %
+                % nodes=MUA.Boundary.Nodes;
+                % BCs.hFixedNode=nodes;
+                % BCs.hFixedValue=nodes*0; % fixing water-film thickness at the boundary
+                % %
 
             otherwise
 

@@ -134,7 +134,7 @@ for Iint=1:MUA.nip
 
     %kappaint=0 ; 
     
-    alpha=1;
+    alpha=CtrlVar.WaterFilm.Barrier ; 
     for Inod=1:MUA.nod
 
         SUPG=fun(Inod)+CtrlVar.Tracer.SUPG.Use*tauSUPGint.*(u0int.*Deriv(:,1,Inod)+v0int.*Deriv(:,2,Inod));

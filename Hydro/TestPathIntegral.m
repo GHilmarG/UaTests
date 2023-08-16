@@ -50,6 +50,16 @@ title(sprintf("Qn=%g  \t QInt=%g \t time=%g",Qn,QInt,CtrlVar.time))
 hold off
 
 %%
+
+figNP=FindOrCreateFigure("(uw,vw)") ; clf(figNP);
+qnx=qn.*normal(:,1) ; qny=qn.*normal(:,2) ;
+[cbar,QuiverHandel,Par]=QuiverColorGHG(F1.x,F1.y,uw1,vw1,CtrlVar) ;
+hold on
+plot(xGL/CtrlVar.PlotXYscale,yGL/CtrlVar.PlotXYscale,'r')
+PlotMuaBoundary(CtrlVar,MUA) ;
+title(sprintf("$\\mathbf{v}_w$ time=%g",CtrlVar.time),Interpreter="latex")
+hold off
+%%
 % circle integral
 
 theta=linspace(0,1,200) ;
@@ -88,7 +98,7 @@ for I=1:numel(RVector)
 
     QVector(I)=Qn;  
 
-   figQR=FindOrCreateFigure("Q(R)") ; clf(figQR);
+    figQR=FindOrCreateFigure("Q(R)") ; clf(figQR);
     plot(RVector/1e3,QVector,"o-")
     yline(QInt,"--")
 
