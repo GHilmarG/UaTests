@@ -304,8 +304,8 @@ if CalcFluxes
 
             Int=FEintegrate2D(CtrlVar,MUA,F1.aw) ;
             QInt=sum(Int) ;
+
             [Qn,Qt,qn,qt,xc,yc,normal]=PathIntegral(CtrlVar,F1.x(BoundaryNodes),F1.y(BoundaryNodes),qw1x(BoundaryNodes),qw1y(BoundaryNodes));
-            
             figNP=FindOrCreateFigure("Boundary fluxes") ; clf(figNP);
             qnx=qn.*normal(:,1) ; qny=qn.*normal(:,2) ;
             [cbar,QuiverHandel,Par]=QuiverColorGHG(xc,yc,qnx,qny,CtrlVar) ;
@@ -314,6 +314,21 @@ if CalcFluxes
             PlotMuaBoundary(CtrlVar,MUA) ;
             title(sprintf("Qn=%g  \t QInt=%g \t time=%g",Qn,QInt,CtrlVar.time))
             hold off
+
+
+            [Qn,Qt,qn,qt,xc,yc,normal]=PathIntegral(CtrlVar,F1.x(BoundaryNodes),F1.y(BoundaryNodes),qw1x(BoundaryNodes),qw1y(BoundaryNodes));
+            figNP=FindOrCreateFigure("Boundary fluxes") ; clf(figNP);
+            qnx=qn.*normal(:,1) ; qny=qn.*normal(:,2) ;
+            [cbar,QuiverHandel,Par]=QuiverColorGHG(xc,yc,qnx,qny,CtrlVar) ;
+            hold on
+            plot(xGL/CtrlVar.PlotXYscale,yGL/CtrlVar.PlotXYscale,'r')
+            PlotMuaBoundary(CtrlVar,MUA) ;
+            title(sprintf("Qn=%g  \t QInt=%g \t time=%g",Qn,QInt,CtrlVar.time))
+            hold off
+
+
+
+
         end
 
         %%
