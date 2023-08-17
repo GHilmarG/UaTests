@@ -49,7 +49,8 @@ u1nod=reshape(u0(MUA.connectivity,1),MUA.Nele,MUA.nod);
 v0nod=reshape(v1(MUA.connectivity,1),MUA.Nele,MUA.nod);
 v1nod=reshape(v0(MUA.connectivity,1),MUA.Nele,MUA.nod);
 
-
+FG=1-F1.GF.node ;
+FGnod=reshape(FG(MUA.connectivity,1),MUA.Nele,MUA.nod);
 
 kappanod=reshape(kappa(MUA.connectivity,1),MUA.Nele,MUA.nod);
 
@@ -80,6 +81,8 @@ for Iint=1:MUA.nip
 
     a0int=a0nod*fun;
     a1int=a1nod*fun;
+
+    FGint=FGnod*fun; 
 
     kappaint=kappanod*fun;
 
@@ -146,6 +149,8 @@ for Iint=1:MUA.nip
 
             dh1term=fun(Jnod).*SUPGdetJw;
 
+            daFG=dt*FGint.*0.1.*fun(Jnod).*SUPGdetJw ;  
+
             dC1=dt*theta* (fun(Jnod).*du1dx+Deriv(:,1,Jnod).*u1int+fun(Jnod).*dv1dy+Deriv(:,2,Jnod).*v1int).*SUPGdetJw;
 
             dBarrier1=dt*(1-theta)*alpha*(h1int.^(-2)).*fun(Jnod).*SUPGdetJw ;
@@ -155,7 +160,7 @@ for Iint=1:MUA.nip
                 + fun(Jnod) .*   (  dh1dx        .*Deriv(:,1,Inod)+    dh1dy        .*Deriv(:,2,Inod)))   .*detJw ;
 
 
-            Kelements(:,Inod,Jnod)=Kelements(:,Inod,Jnod)+dh1term+dC1+dD1+dBarrier1;
+            Kelements(:,Inod,Jnod)=Kelements(:,Inod,Jnod)+dh1term+dC1+dD1+dBarrier1+daFG;
 
         end
 
@@ -167,6 +172,10 @@ for Iint=1:MUA.nip
 
         a0term=- dt*(1-theta)* a0int.*SUPGdetJw;
         a1term=-    dt*theta * a1int.*SUPGdetJw;
+
+        aFG=0.1*dt*FGint.*h1int.*SUPGdetJw ;  
+
+
 
         C0=dt*(1-theta)*  (h0int.*du0dx+dh0dx.*u0int+h0int.*dv0dy+dh0dy.*v0int).*SUPGdetJw;
         C1=dt*theta*      (h1int.*du1dx+dh1dx.*u1int+h1int.*dv1dy+dh1dy.*v1int).*SUPGdetJw;
@@ -180,7 +189,7 @@ for Iint=1:MUA.nip
 
         
 
-        Relements(:,Inod)=Relements(:,Inod)+h0term+h1term+a0term+a1term+C0+C1+D0+D1+Barrier0+Barrier1;
+        Relements(:,Inod)=Relements(:,Inod)+h0term+h1term+a0term+a1term+C0+C1+D0+D1+Barrier0+Barrier1+aFG;
 
     end
 end

@@ -4,6 +4,9 @@ ReadData=1;
 CalcFluxes=1;
 isRestart=0; 
 
+
+FluxGate=[]; 
+
 UserVar.Example="-Antarctica-" ;
 % UserVar.Example="-Dome-Phi-" ;
 % UserVar.Example="-Hat-Phi-" ;
@@ -11,6 +14,10 @@ CtrlVar=Ua2D_DefaultParameters();
 %%
 nTimeSteps=20000;   CtrlVar.dt=100;
  qw1x=0 ; qw1y=0 ; 
+
+
+CtrlVar.WaterFilm.ResetThickness=true;
+CtrlVar.WaterFilm.ThickMin=0.1 ;
 
 if ReadData  &&~isRestart
 
@@ -72,7 +79,10 @@ if ReadData  &&~isRestart
             CtrlVar.WaterFilm.Barrier=1 ; 
 
 
-
+            FluxGate=[-1550 -388 ; -1500 -543]*1000;
+            Npoints=300 ; FluxGate=interparc(Npoints,FluxGate(:,1),FluxGate(:,2),'linear');  
+            hold on ;
+            plot(FluxGate(:,1)/CtrlVar.PlotXYscale,FluxGate(:,2)/CtrlVar.PlotXYscale,"o-") ; axis equal
 
 
         case {"-Dome-N-","-Dome-Phi-"}
@@ -105,7 +115,7 @@ if ReadData  &&~isRestart
             F.hw=zeros(MUA.Nnodes,1)+1 ;    % Initial water film thickness
             k=zeros(MUA.Nnodes,1)+1e2;
 
-            CtrlVar.WaterFilm.Barrier=10; ; 
+            CtrlVar.WaterFilm.Barrier=10; 
 
 
         case {"-Hat-Phi-"}
@@ -284,6 +294,7 @@ if CalcFluxes
             hold on
             plot(xGL/CtrlVar.PlotXYscale,yGL/CtrlVar.PlotXYscale,'r')
             PlotMuaBoundary(CtrlVar,MUA) ;
+            plot(FluxGate(:,1)/CtrlVar.PlotXYscale,FluxGate(:,2)/CtrlVar.PlotXYscale,Color="k",LineWidth=2) ;
             title(sprintf("$\\mathbf{q}_w$ time=%g",CtrlVar.time),Interpreter="latex")
             hold off
 
@@ -326,7 +337,20 @@ if CalcFluxes
             title(sprintf("Qn=%g  \t QInt=%g \t time=%g",Qn,QInt,CtrlVar.time))
             hold off
 
+            if ~isempty(FluxGate)
 
+                Fqwx=scatteredInterpolant(F1.x,F1.y,qw1x);
+                Fqwy=scatteredInterpolant(F1.x,F1.y,qw1y);
+                [Qn,Qt,qn,qt,xc,yc,normal]=PathIntegral(CtrlVar,FluxGate(:,1),FluxGate(:,2),Fqwx,Fqwy);
+                figFG=FindOrCreateFigure("Flux Gate") ; clf(figFG);
+                qnx=qn.*normal(:,1) ; qny=qn.*normal(:,2) ;
+                [cbar,QuiverHandel,Par]=QuiverColorGHG(xc,yc,qnx,qny,CtrlVar) ;
+                hold on
+                plot(xGL/CtrlVar.PlotXYscale,yGL/CtrlVar.PlotXYscale,'r')
+                PlotMuaBoundary(CtrlVar,MUA) ;
+                title(sprintf("Qn=%g  \t QInt=%g \t time=%g",Qn,QInt,CtrlVar.time))
+                hold off
+            end
 
 
         end

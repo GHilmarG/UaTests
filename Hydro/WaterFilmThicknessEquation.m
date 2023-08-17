@@ -53,21 +53,34 @@ if ~isempty(LL)
     end
 end
 
+if CtrlVar.WaterFilm.ResetThickness 
+    ThickMin=CtrlVar.WaterFilm.ThickMin; 
+    F0.hw(F0.hw<ThickMin)=ThickMin;
+    F1.hw(F1.hw<ThickMin)=ThickMin;
+
+end
 
 for JNL=1:5  % since the system is linear, only one iteration is required
 
 
     [UserVar,RR,KK]=WaterFilmThicknessEquationAssembly(UserVar,CtrlVar,MUA,F0,F1,k,uw0,vw0,uw1,vw1);
+ 
+    [UserVar,BCs]=GetBoundaryConditions(UserVar,CtrlVar,MUA,BCs,F1) ;
+    MLC=BCs2MLC(CtrlVar,MUA,BCs);
+    LL=MLC.hL ; cc=MLC.hRhs ;
 
     if ~isempty(LL)
         hh=cc-LL*F1.hw;
+        
     else
         hh=[];
     end
+    dlambda=[]; 
+
 
     [dhw,dlambda]=solveKApeSymmetric(KK,LL,RR,hh,dhw,dlambda,CtrlVar) ;
     F1.hw=F1.hw+dhw ;
-    lambda=lambda+dlambda ;
+   % lambda=lambda+dlambda ;
 
 
     fprintf("nit=%i \t norm(dphi)=%g \t norm(hh)=%g \n",JNL,norm(dhw),norm(hh))
@@ -75,7 +88,7 @@ for JNL=1:5  % since the system is linear, only one iteration is required
 
 end
 
-hw1=F1.hw; 
+hw1=F1.hw;
 
 end
 
