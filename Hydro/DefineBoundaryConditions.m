@@ -12,14 +12,15 @@ switch UserVar.Example
         % BCs.hFixedNode=nodes;
         % BCs.hFixedValue=nodes*0; % fixing water-film thickness at the boundary
 
+        % 
+        % nodes=find(F.hw<CtrlVar.WaterFilm.ThickMin) ;
+        % fprintf("BCS: #neg thicknesses %i \n",numel(nodes))
+        % BCs.hFixedNode=nodes;
+        % BCs.hFixedValue=BCs.hFixedNode*0+CtrlVar.WaterFilm.ThickMin; 
 
-        nodes=find(F.hw<CtrlVar.WaterFilm.ThickMin) ;
-        BCs.hFixedNode=nodes;
-        BCs.hFixedValue=BCs.hFixedNode*0+CtrlVar.WaterFilm.ThickMin; 
 
 
-
-    case {"-Dome-Phi-", "-Hat-Phi-"}
+    case {"-Dome-Phi-", "-Hat-Phi-","-Dome-hw-A-"} 
 
 
 

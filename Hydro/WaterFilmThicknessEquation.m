@@ -1,7 +1,13 @@
 
 
-function [UserVar,hw1,Phi1,uw1,vw1,RR,KK]=WaterFilmThicknessEquation(UserVar,CtrlVar,MUA,F0,F1,k)
 
+
+
+
+function [UserVar,hw1,ActiveSet,lambda]=WaterFilmThicknessEquation(UserVar,CtrlVar,MUA,F0,F1,k,eta,ActiveSet,lambda)
+
+narginchk(9,9)
+nargoutchk(4,4)
 
 %% Water film thickness equation
 %
@@ -16,79 +22,115 @@ function [UserVar,hw1,Phi1,uw1,vw1,RR,KK]=WaterFilmThicknessEquation(UserVar,Ctr
 %
 %%
 
-Phi1=F1.g.* ( (F1.rhow-F1.rho).*F1.B + F1.rho.*F1.s) ;   % does not change, if s and b do not
-Phi0=F0.g.* ( (F0.rhow-F0.rho).*F0.B + F0.rho.*F0.s) ;   % does not change, if s and b do not
 
-[dPhidx,dPhidy]=gradUa(CtrlVar,MUA,Phi1) ; uw1=-k.*dPhidx;  vw1=-k.*dPhidy;
-[dPhidx,dPhidy]=gradUa(CtrlVar,MUA,Phi0) ; uw0=-k.*dPhidx;  vw0=-k.*dPhidy;
-
-% %% Figure
-% figP=FindOrCreateFigure("(uw,vw)") ; clf(figP) ;
-% QuiverColorGHG(F1.x,F1.y,uw1,vw1,CtrlVar) ;
-% hold on
-% % plot(xGL/CtrlVar.PlotXYscale,yGL/CtrlVar.PlotXYscale,'r')
-% PlotMuaBoundary(CtrlVar,MUA) ;
-% title(sprintf("$\\mathbf{v}_w$ time=%g",CtrlVar.time),Interpreter="latex")
-% hold off
-% 
-% %%
+if  CtrlVar.WaterFilm.Assembly=="-A-"
+    CtrlVar.WaterFilm.AdvectionFlag=1;
+    CtrlVar.WaterFilm.DiffusionFlag=0;
+elseif CtrlVar.WaterFilm.Assembly=="-AD-"
+    CtrlVar.WaterFilm.AdvectionFlag=1;
+    CtrlVar.WaterFilm.DiffusionFlag=1;
+end
 
 
 
-dhw=zeros(MUA.Nnodes,1) ;
-dlambda=[]; lambda=0;
-
+ActiveSetUpdated=ActiveSet; 
+nActiveSetDeactivations=nan ; 
 
 BCs=BoundaryConditions ;
 [UserVar,BCs]=GetBoundaryConditions(UserVar,CtrlVar,MUA,BCs,F1) ;
 MLC=BCs2MLC(CtrlVar,MUA,BCs);
 LL=MLC.hL ; cc=MLC.hRhs ;
+BCsUser=BCs;
 
-if ~isempty(LL)
-    BCsRes=LL*F1.hw-cc ;
-    if norm(BCsRes) > 1e-6
-        F1.hw(BCs.hFixedNode)= BCs.hFixedValue; 
-        F0.hw(BCs.hFixedNode)= BCs.hFixedValue; 
-%        F1.hw=LL\cc;   % make feasable
+
+nActiveSetIterations=CtrlVar.WaterFilm.MaxActiveSetIterations;
+useActiveSetMethod=CtrlVar.WaterFilm.useActiveSetMethod;
+
+if ~useActiveSetMethod
+    nActiveSetIterations=1;
+end
+
+
+for I=1:nActiveSetIterations
+
+    if useActiveSetMethod
+        ActiveSetAdditions=find(F1.hw<CtrlVar.WaterFilm.ThickMin) ;
+        nActiveSetAdditions=numel(ActiveSetAdditions) ;
+
+        fprintf("Active Set iteration: #%i \t Added=%i \t Removed=%i \n",I,nActiveSetAdditions,nActiveSetDeactivations)
+
+        lambda=[lambda;ActiveSetAdditions*0] ;
+        ActiveSet=union(ActiveSetAdditions,ActiveSetUpdated);
+        nActiveSet=numel(ActiveSet); 
+        if nActiveSetAdditions==0 && nActiveSetDeactivations==0
+            fprintf(" Breaking out of active set iteration #%i, with %i active constraints, because number of new activated and deactivated constraints is %i and %i, respectivily. \n",I,nActiveSet,nActiveSetAdditions,nActiveSetDeactivations)
+            break
+        end
+
+      
+
+        ActiveSet=setdiff(ActiveSet,BCsUser.hFixedNode) ;       % Don't add a node to the active set if it already has a user-defined BCs.
+
+        if ~isempty(ActiveSet)
+
+            BCs.hFixedNode=[BCsUser.hFixedNode;ActiveSet];
+            BCs.hFixedValue=[BCsUser.hFixedValue;ActiveSet*0+CtrlVar.WaterFilm.ThickMin];
+
+        end
+
+        MLC=BCs2MLC(CtrlVar,MUA,BCs);
+        LL=MLC.hL ; cc=MLC.hRhs ;
+
     end
-end
-
-if CtrlVar.WaterFilm.ResetThickness 
-    ThickMin=CtrlVar.WaterFilm.ThickMin; 
-    F0.hw(F0.hw<ThickMin)=ThickMin;
-    F1.hw(F1.hw<ThickMin)=ThickMin;
-
-end
-
-for JNL=1:5  % since the system is linear, only one iteration is required
-
-
-    [UserVar,RR,KK]=WaterFilmThicknessEquationAssembly(UserVar,CtrlVar,MUA,F0,F1,k,uw0,vw0,uw1,vw1);
- 
-    [UserVar,BCs]=GetBoundaryConditions(UserVar,CtrlVar,MUA,BCs,F1) ;
-    MLC=BCs2MLC(CtrlVar,MUA,BCs);
-    LL=MLC.hL ; cc=MLC.hRhs ;
 
     if ~isempty(LL)
-        hh=cc-LL*F1.hw;
-        
-    else
-        hh=[];
+        BCsRes=LL*F1.hw-cc ;
+        if norm(BCsRes) > 1e-6
+            F1.hw(BCs.hFixedNode)= BCs.hFixedValue;
+            F0.hw(BCs.hFixedNode)= BCs.hFixedValue;
+            %        F1.hw=LL\cc;   % make feasable
+        end
+        if numel(lambda)~=numel(cc)
+            lambda=cc*0;
+        end
     end
-    dlambda=[]; 
 
 
-    [dhw,dlambda]=solveKApeSymmetric(KK,LL,RR,hh,dhw,dlambda,CtrlVar) ;
-    F1.hw=F1.hw+dhw ;
-   % lambda=lambda+dlambda ;
+    % if CtrlVar.WaterFilm.Assembly=="-AD-"    || CtrlVar.WaterFilm.Assembly=="-A-"   
+    %     [UserVar,RR,KK]=WaterFilmThicknessEquationAssembly(UserVar,CtrlVar,MUA,F0,F1,k,eta,uw0,vw0,uw1,vw1);
+    % elseif CtrlVar.WaterFilm.Assembly=="-D-"   % "-AD-"   either diffusive only (D) or advective/diffusive "-AD-"
+    %     [UserVar,RR,KK]=WaterFilmThicknessDiffusionEquationAssembly(UserVar,CtrlVar,MUA,F0,F1,k,eta,uw0,vw0,uw1,vw1);
+    % else
+    %     error("case not found")
+    % end
 
+    x=F1.hw;
+    fun =@(x) lsqUaFunc(x,UserVar,CtrlVar,MUA,F0,F1,k,eta)  ;
 
-    fprintf("nit=%i \t norm(dphi)=%g \t norm(hh)=%g \n",JNL,norm(dhw),norm(hh))
+    CtrlVar.lsqUa.CostMeasure="r2";
+    CtrlVar.lsqUa.isLSQ=false ;
+    [hw1,lambda,R2,r2]= lsqUa(CtrlVar,fun,x,lambda,LL,cc) ;
+    F1.hw=hw1 ;
 
+    if useActiveSetMethod
+        if ~isempty(lambda)
+
+            lambdaActiveSet=lambda(1+numel(lambda)-numel(ActiveSet):end) ;
+
+            II=lambdaActiveSet<0 ;
+            ActiveSetUpdated=ActiveSet(II) ;
+            lambda=lambda(II);
+            % If this set difference is empty, then no constraints were deactivated
+            DeactivatedConstraints=setxor(ActiveSet,ActiveSetUpdated)         ;
+            nActiveSetDeactivations=numel(DeactivatedConstraints);
+        else
+            nActiveSetDeactivations=0;
+        end
+    end
 
 end
 
-hw1=F1.hw;
+
 
 end
 
