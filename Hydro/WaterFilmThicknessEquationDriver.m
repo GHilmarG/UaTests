@@ -177,12 +177,17 @@ if ReadData  &&~isRestart
 
             CtrlVar.PlotXYscale=1000;
             l=100e3 ;
-            dl=l/40;
-            dl=l/20;
-            dl=l/10;
             dl=l/5;
-            dl=l/60;
-            dl=l/80;
+            dl=l/10;
+            % dl=l/20;
+            dl=l/30;
+             dl=l/40;
+            % dl=l/60;
+            % dl=l/80;
+            % dl=l/100;
+            dl=2000;
+            dl=500;
+
             CtrlVar.MeshSize=dl;
 
             CtrlVar.MeshSizeMin=CtrlVar.MeshSize/2 ;
@@ -290,7 +295,8 @@ if CalcFluxes
     if isRestart
 
 
-        load("RestartWaterFilmThicknessEquationDriver","UserVar","CtrlVar","MUA","F0","F1","k","tVector","hwMaxVector","qwVector","hwMinVector","FluxGate")
+        
+        load("RestartWaterFilmThicknessEquationDriver","UserVar","CtrlVar","MUA","F0","F1","k","eta","tVector","hwMaxVector","qwVector","hwMinVector","FluxGate")
         %FluxGate=[-1550 -388 ; -1500 -543]*1000;   Npoints=300 ; FluxGate=interparc(Npoints,FluxGate(:,1),FluxGate(:,2),'linear');
         %qwVector=tVector*0+nan;
 
@@ -409,14 +415,16 @@ if CalcFluxes
             hold off
 
             figqw=FindOrCreateFigure("(qwx,qwy)") ; clf(figqw) ;
-            CtrlVar.VelColorBarTitle="($\mathrm{m^2 \, yr^{-1}}$)" ;
-            QuiverColorGHG(F1.x,F1.y,qw1x,qw1y,CtrlVar) ;
+            CtrlVar.VelColorBarTitle="($\mathrm{km^2 \, yr^{-1}}$)" ;
+            QuiverColorGHG(F1.x,F1.y,qw1x/1e6,qw1y/1e6,CtrlVar) ;
             hold on
             plot(xGL/CtrlVar.PlotXYscale,yGL/CtrlVar.PlotXYscale,'r')
             PlotMuaBoundary(CtrlVar,MUA) ;
             if ~isempty(FluxGate)
                 plot(FluxGate(:,1)/CtrlVar.PlotXYscale,FluxGate(:,2)/CtrlVar.PlotXYscale,Color="k",LineWidth=2) ;
             end
+            xlabel("$x\,(\mathrm{km})$",interpreter="latex")
+            ylabel("$y\,(\mathrm{km})$",interpreter="latex")
             title(sprintf("$\\mathbf{q}_w$ time=%g",CtrlVar.time),Interpreter="latex")
             hold off
 
@@ -488,11 +496,11 @@ if CalcFluxes
                 hold off
 
                 figFGt=FindOrCreateFigure("Flux Gate(t)") ; clf(figFGt);
-                plot(tVector,qwVector,"ob")
-                title(sprintf("$Q_n$=%g $Q_{\\mathrm{int}}$=%g  $t$=%g",Qn,QnTheoretical,CtrlVar.time),Interpreter="latex")
-                yline(QnTheoretical,"--")
-                xlabel("time")
-                ylabel("Flux")
+                plot(tVector,qwVector/1e9,"ob")
+                title(sprintf("$Q_n$=%g $(\\mathrm{km}^3/\\mathrm{yr})$ $Q_{\\mathrm{int}}$=%g $(\\mathrm{km}^3/\\mathrm{yr})$ $t$=%g $(\\mathrm{yr})$",Qn/1e9,QnTheoretical/1e9,CtrlVar.time),Interpreter="latex")
+                yline(QnTheoretical/1e9,"--")
+                xlabel("time, $t$ $(\mathrm{yr})$",Interpreter="latex")
+                ylabel("Water flux, $Q$ $(\mathrm{km}^3/\mathrm{yr})$",Interpreter="latex")
 
 
             end
@@ -508,7 +516,7 @@ if CalcFluxes
 
     end
 
-    save("RestartWaterFilmThicknessEquationDriver","UserVar","CtrlVar","MUA","F0","F1","k","eta","tVector","hwMaxVector","qwVector","hwMinVector","FluxGate")
+    save("RestartWaterFilmThicknessEquationDriver","UserVar","CtrlVar","MUA","F0","F1","k","eta","tVector","hwMaxVector","qwVector","hwMinVector","FluxGate","ActiveSet","lambda") ;
 
 end
 
