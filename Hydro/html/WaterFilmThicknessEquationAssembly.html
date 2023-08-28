@@ -6,7 +6,7 @@
    <!--
 This HTML was auto-generated from MATLAB code.
 To make changes, update the MATLAB code and republish this document.
-      --><title>WaterFilmThicknessEquationAssembly</title><meta name="generator" content="MATLAB 9.14"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2023-08-13"><meta name="DC.source" content="WaterFilmThicknessEquationAssembly.m"><style type="text/css">
+      --><title>WaterFilmThicknessEquationAssembly</title><meta name="generator" content="MATLAB 9.14"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2023-08-27"><meta name="DC.source" content="WaterFilmThicknessEquationAssembly.m"><style type="text/css">
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
 
 html { min-height:100%; margin-bottom:1px; }
@@ -67,50 +67,42 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 
 
 
-  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#2">Water film thickness equation</a></li></ul></div><pre class="codeinput"><span class="keyword">function</span> [UserVar,RR,KK]=WaterFilmThicknessEquationAssembly(UserVar,CtrlVar,MUA,F0,F1,k)
-</pre><h2 id="2">Water film thickness equation</h2><p><img src="WaterFilmThicknessEquationAssembly_eq05175076099572988715.png" alt="$$\partial_t h_w -  \nabla \cdot ( k h_w \nabla \Phi )  - \nabla \cdot (\kappa h_w \nabla h_w) = a_w $$" style="width:270px;height:15px;"></p><p>where</p><p><img src="WaterFilmThicknessEquationAssembly_eq00693791512563130797.png" alt="$$\Phi = (\rho_w-\rho) g \nabla B - \rho g \nabla s  $$" style="width:165px;height:15px;"></p><p><img src="WaterFilmThicknessEquationAssembly_eq01817340782510986881.png" alt="$$N=0 $$" style="width:39px;height:11px;"></p><p>I think of</p><p><img src="WaterFilmThicknessEquationAssembly_eq04529673746101108937.png" alt="$$ \mathbf{v}:=k \nabla \Phi $$" style="width:63px;height:11px;"></p><p>as a velocity, and write the equation as</p><p><img src="WaterFilmThicknessEquationAssembly_eq16301541141895947357.png" alt="$$\partial_t h_w -  \nabla \cdot (  h_w \mathbf{v} )  - \nabla \cdot (\kappa h_w \nabla h_w) = a_w $$" style="width:248px;height:15px;"></p><pre class="codeinput">ndim=2; dof=1; neq=dof*MUA.Nnodes;
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#3">Water film thickness equation</a></li></ul></div><pre class="codeinput"><span class="keyword">function</span> [UserVar,RR,KK]=WaterFilmThicknessEquationAssembly(UserVar,CtrlVar,MUA,F0,F1,k,eta)
+</pre><pre class="codeinput">narginchk(7,7)
+</pre><h2 id="3">Water film thickness equation</h2><p><img src="WaterFilmThicknessEquationAssembly_eq05175076099572988715.png" alt="$$\partial_t h_w -  \nabla \cdot ( k h_w \nabla \Phi )  - \nabla \cdot (\kappa h_w \nabla h_w) = a_w $$" style="width:270px;height:15px;"></p><p>where</p><p><img src="WaterFilmThicknessEquationAssembly_eq00693791512563130797.png" alt="$$\Phi = (\rho_w-\rho) g \nabla B - \rho g \nabla s  $$" style="width:165px;height:15px;"></p><p><img src="WaterFilmThicknessEquationAssembly_eq01817340782510986881.png" alt="$$N=0 $$" style="width:39px;height:11px;"></p><p>I think of</p><p><img src="WaterFilmThicknessEquationAssembly_eq00245782581230228728.png" alt="$$ \mathbf{v}_w:=-k \nabla \Phi $$" style="width:83px;height:13px;"></p><p>as a velocity, and write the equation as</p><p><img src="WaterFilmThicknessEquationAssembly_eq14825399667063520773.png" alt="$$\partial_t h_w +  \nabla \cdot (  h_w \mathbf{v}_w )  - \nabla \cdot (\kappa h_w \nabla h_w) = a_w $$" style="width:256px;height:15px;"></p><p>It is also possible to add some further linear diffusion term, and to enable/disable the advection and the non-linear diffusion term by selecting the parameters <img src="WaterFilmThicknessEquationAssembly_eq00988259845630519888.png" alt="$\alpha$" style="width:9px;height:7px;">, <img src="WaterFilmThicknessEquationAssembly_eq05794602797221842019.png" alt="$\beta$" style="width:9px;height:13px;"> , and <img src="WaterFilmThicknessEquationAssembly_eq00747499779863439571.png" alt="$\eta$" style="width:7px;height:10px;">, accordingly</p><p><img src="WaterFilmThicknessEquationAssembly_eq13650481010666126936.png" alt="$$\partial_t h_w +  \alpha \, \nabla \cdot (  h_w \mathbf{v}_w )  - \beta \, \nabla \cdot (\kappa h_w \nabla h_w)  - \nabla \cdot (\eta  \nabla h_w ) = a_w $$" style="width:369px;height:15px;"></p><p>The system to solve if K dx = -R</p><p>Notice the sign on the right-hand side</p><pre class="codeinput">ndim=2; dof=1; neq=dof*MUA.Nnodes;
 
 theta=CtrlVar.theta;
 dt=CtrlVar.dt ;
-<span class="comment">%tauSUPG=CalcSUPGtau(CtrlVar,MUA.EleAreas,u0,v0,dt,MUA);</span>
+alphaFlag=CtrlVar.WaterFilm.AdvectionFlag;
+betaFlag=CtrlVar.WaterFilm.DiffusionFlag;
 
-Phi=F1.g.* ( (F1.rhow-F1.rho).*F1.B + F1.rho.*F1.s) ;   <span class="comment">% does not change, if s and b do not</span>
+<span class="comment">% Phi=F1.g.* ( (F1.rhow-F1.rho).*F1.B + F1.rho.*F1.s) ;   % does not change, if s and b do not</span>
 kappa=F1.g*(F1.rhow-F1.rho).*k ;
 
+etanod=reshape(eta(MUA.connectivity,1),MUA.Nele,MUA.nod);
 
-hw0nod=reshape(F0.hw(MUA.connectivity,1),MUA.Nele,MUA.nod);
-hw1nod=reshape(F1.hw(MUA.connectivity,1),MUA.Nele,MUA.nod);
+h0nod=reshape(F0.hw(MUA.connectivity,1),MUA.Nele,MUA.nod);
+h1nod=reshape(F1.hw(MUA.connectivity,1),MUA.Nele,MUA.nod);
 
-knod=reshape(k(MUA.connectivity,1),MUA.Nele,MUA.nod);
+a0nod=reshape(F0.aw(MUA.connectivity,1),MUA.Nele,MUA.nod);
+a1nod=reshape(F1.aw(MUA.connectivity,1),MUA.Nele,MUA.nod);
+
+u0nod=reshape(F0.uw(MUA.connectivity,1),MUA.Nele,MUA.nod);
+u1nod=reshape(F1.uw(MUA.connectivity,1),MUA.Nele,MUA.nod);
+
+v0nod=reshape(F0.vw(MUA.connectivity,1),MUA.Nele,MUA.nod);
+v1nod=reshape(F1.vw(MUA.connectivity,1),MUA.Nele,MUA.nod);
+
+FG=1-F1.GF.node ;
+<span class="comment">% FG=HeavisideApprox(100,F1.b-F1.B,CtrlVar.WaterFilm.qwAfloatTreshold);</span>
+FGnod=reshape(FG(MUA.connectivity,1),MUA.Nele,MUA.nod);
+
 kappanod=reshape(kappa(MUA.connectivity,1),MUA.Nele,MUA.nod);
 
-<span class="comment">% s0nod=reshape(F0.s(MUA.connectivity,1),MUA.Nele,MUA.nod);</span>
-<span class="comment">% s1nod=reshape(F1.s(MUA.connectivity,1),MUA.Nele,MUA.nod);</span>
-<span class="comment">%</span>
-<span class="comment">% b0nod=reshape(F0.b(MUA.connectivity,1),MUA.Nele,MUA.nod);</span>
-<span class="comment">% b1nod=reshape(F1.b(MUA.connectivity,1),MUA.Nele,MUA.nod);</span>
+Kelements=zeros(MUA.Nele,MUA.nod,MUA.nod);
+Relements=zeros(MUA.Nele,MUA.nod);
 
-<span class="comment">% Vx0nod=reshape(Vx0(MUA.connectivity,1),MUA.Nele,MUA.nod);</span>
-<span class="comment">% Vy0nod=reshape(Vy0(MUA.connectivity,1),MUA.Nele,MUA.nod);</span>
-<span class="comment">% Vx1nod=reshape(Vx1(MUA.connectivity,1),MUA.Nele,MUA.nod);</span>
-<span class="comment">% Vy1nod=reshape(Vy1(MUA.connectivity,1),MUA.Nele,MUA.nod);</span>
-<span class="comment">%</span>
-
-aw0nod=reshape(aw1(MUA.connectivity,1),MUA.Nele,MUA.nod);
-aw1nod=reshape(aw0(MUA.connectivity,1),MUA.Nele,MUA.nod);
-
-
-Knod=reshape(K(MUA.connectivity,1),MUA.Nele,MUA.nod);
-
-
-Swnod=reshape(Sw(MUA.connectivity,1),MUA.Nele,MUA.nod);
-Phinod=reshape(Phi(MUA.connectivity,1),MUA.Nele,MUA.nod);
-
-
-d1d1=zeros(MUA.Nele,MUA.nod,MUA.nod);
-b1=zeros(MUA.Nele,MUA.nod);
-
-<span class="comment">% l=sqrt(2*MUA.EleAreas);</span>
+l=sqrt(2*MUA.EleAreas);
 
 <span class="comment">% vector over all elements for each integration point</span>
 <span class="keyword">for</span> Iint=1:MUA.nip
@@ -126,94 +118,150 @@ b1=zeros(MUA.Nele,MUA.nod);
 
     <span class="comment">% values at integration point</span>
 
-    f0int=hw0nod*fun;
-    f1int=hw1nod*fun;
-    <span class="comment">%</span>
-    <span class="comment">% Vx0int=Vx0nod*fun; Vy0int=Vy0nod*fun;</span>
-    <span class="comment">% Vx1int=Vx1nod*fun; Vy1int=Vy1nod*fun;</span>
-    <span class="comment">%</span>
-    aw0int=aw0nod*fun;
-    aw1int=aw1nod*fun;
+    h0int=h0nod*fun;
+    h1int=h1nod*fun;
 
-    K=Knod*fun;
-    Sw=Swnod*fun;
+    u0int=u0nod*fun; u1int=u1nod*fun;
+    v0int=v0nod*fun; v1int=v1nod*fun;
 
+    a0int=a0nod*fun;
+    a1int=a1nod*fun;
 
+    FGint=FGnod*fun;
 
-    <span class="comment">% ds0dx=zeros(MUA.Nele,1); ds0dy=zeros(MUA.Nele,1);</span>
-    <span class="comment">% ds1dx=zeros(MUA.Nele,1); ds1dy=zeros(MUA.Nele,1);</span>
-    <span class="comment">%</span>
-    <span class="comment">% db0dx=zeros(MUA.Nele,1); db0dy=zeros(MUA.Nele,1);</span>
-    <span class="comment">% db1dx=zeros(MUA.Nele,1); db1dy=zeros(MUA.Nele,1);</span>
-
-    df0dx=zeros(MUA.Nele,1); df0dy=zeros(MUA.Nele,1);
-    df1dx=zeros(MUA.Nele,1); df1dy=zeros(MUA.Nele,1);
-
-    dPhidx=zeros(MUA.Nele,1); dPhidy=zeros(MUA.Nele,1);
+    kappaint=kappanod*fun;
+    etaint=etanod*fun;
 
 
+    dh0dx=zeros(MUA.Nele,1); dh0dy=zeros(MUA.Nele,1);
+    dh1dx=zeros(MUA.Nele,1); dh1dy=zeros(MUA.Nele,1);
+
+    du0dx=zeros(MUA.Nele,1); du0dy=zeros(MUA.Nele,1);
+    du1dx=zeros(MUA.Nele,1); du1dy=zeros(MUA.Nele,1);
+
+    dv0dx=zeros(MUA.Nele,1); dv0dy=zeros(MUA.Nele,1);
+    dv1dx=zeros(MUA.Nele,1); dv1dy=zeros(MUA.Nele,1);
 
 
     <span class="comment">% derivatives at one integration point for all elements</span>
     <span class="keyword">for</span> Inod=1:MUA.nod
 
+        dh0dx=dh0dx+Deriv(:,1,Inod).*h0nod(:,Inod);
+        dh0dy=dh0dy+Deriv(:,2,Inod).*h0nod(:,Inod);
 
+        dh1dx=dh1dx+Deriv(:,1,Inod).*h1nod(:,Inod);
+        dh1dy=dh1dy+Deriv(:,2,Inod).*h1nod(:,Inod);
 
-        df0dx=df0dx+Deriv(:,1,Inod).*hw0nod(:,Inod);
-        df0dy=df0dy+Deriv(:,2,Inod).*hw0nod(:,Inod);
+        du0dx=du0dx+Deriv(:,1,Inod).*u0nod(:,Inod);
+        du0dy=du0dy+Deriv(:,2,Inod).*u0nod(:,Inod);
 
-        df1dx=df1dx+Deriv(:,1,Inod).*hw1nod(:,Inod);
-        df1dy=df1dy+Deriv(:,2,Inod).*hw1nod(:,Inod);
+        du1dx=du1dx+Deriv(:,1,Inod).*u1nod(:,Inod);
+        du1dy=du1dy+Deriv(:,2,Inod).*u1nod(:,Inod);
 
-        dPhidx=dPhidx+Deriv(:,1,Inod).*Phinod(:,Inod);
-        dPhidy=dPhidy+Deriv(:,2,Inod).*Phinod(:,Inod);
+        dv0dx=dv0dx+Deriv(:,1,Inod).*v0nod(:,Inod);
+        dv0dy=dv0dy+Deriv(:,2,Inod).*v0nod(:,Inod);
+
+        dv1dx=dv1dx+Deriv(:,1,Inod).*v1nod(:,Inod);
+        dv1dy=dv1dy+Deriv(:,2,Inod).*v1nod(:,Inod);
 
     <span class="keyword">end</span>
 
     detJw=detJ*MUA.weights(Iint);
+    speed0=sqrt(u0int.*u0int+v0int.*v0int+CtrlVar.SpeedZero^2);
+    tau=SUPGtau(CtrlVar,speed0,l,dt,CtrlVar.Tracer.SUPG.tau) ;
+    tauSUPGint=CtrlVar.SUPG.beta0*tau;
 
+    <span class="comment">% Sign convention:</span>
+    <span class="comment">% Generally we solve   dR/dh \dh = - R</span>
+    <span class="comment">% And this is how the system is assembled.</span>
+    <span class="comment">% However, on return, the sign of R is reversed so that outside this assembly the system to solve is</span>
+    <span class="comment">% K dh = R</span>
+    <span class="comment">%</span>
+    <span class="comment">% Also, I put the accumulation term to the left-hand side, rather then putting all the other terms over to the right-hande</span>
+    <span class="comment">% side. So all terms R (ie in the vector loop) have the usual signs, but the mass balance terms gets a minus sign.</span>
+    <span class="comment">%</span>
 
+    <span class="comment">%kappaint=0 ;</span>
 
+    alpha=CtrlVar.WaterFilm.Barrier ;
+    beta=CtrlVar.WaterFilm.Penalty ;
+    gamma=CtrlVar.WaterFilm.qwAfloatMultiplier ;
 
     <span class="keyword">for</span> Inod=1:MUA.nod
+
+        SUPG=fun(Inod)+CtrlVar.Tracer.SUPG.Use*tauSUPGint.*(u0int.*Deriv(:,1,Inod)+v0int.*Deriv(:,2,Inod));
+        SUPGdetJw=SUPG.*detJw;
+        He0=HeavisideApprox(100,h0int,0);
+        He1=HeavisideApprox(100,h1int,0);
+        <span class="comment">% Matrix loop:  Here the terms are the derivatives of the terms in the vector loop with respect to h1</span>
+
         <span class="keyword">for</span> Jnod=1:MUA.nod
 
-            df1term=Sw.*fun(Jnod).*fun(Inod);
-            dKgradf=-dt*theta.*K.*(Deriv(:,1,Jnod).*Deriv(:,1,Inod)+ Deriv(:,2,Jnod).*Deriv(:,2,Inod));
+            dh1term=fun(Jnod).*SUPGdetJw;
 
-            d1d1(:,Inod,Jnod)=d1d1(:,Inod,Jnod)+(df1term+dKgradf).*detJw;
+            daFG=dt*FGint.*gamma.*fun(Jnod).*SUPGdetJw ;
+
+            dC1=alphaFlag*  dt*theta* (fun(Jnod).*du1dx+Deriv(:,1,Jnod).*u1int+fun(Jnod).*dv1dy+Deriv(:,2,Jnod).*v1int).*SUPGdetJw;
+
+            dBarrier1=dt*(1-theta)*alpha* (h1int.^(-2).*fun(Jnod).*He1 - h1int.^(-1).*DiracDelta(100,h1int,0).*fun(Jnod))  .*SUPGdetJw ;
+
+
+            dPenalty1=dt* theta *beta.* (fun(Jnod).*HeavisideApprox(100,-h1int,0)-h1int.*DiracDelta(100,h1int,0).*fun(Jnod)).*SUPGdetJw ;
+
+            <span class="comment">% the non-linear diffusion term</span>
+            dD1=betaFlag*  dt*theta.*kappaint.* (   <span class="keyword">...</span>
+                h1int     .*   (Deriv(:,1,Jnod).*Deriv(:,1,Inod)+ Deriv(:,2,Jnod).*Deriv(:,2,Inod)) <span class="keyword">...</span>
+                + fun(Jnod) .*   (  dh1dx        .*Deriv(:,1,Inod)+    dh1dy        .*Deriv(:,2,Inod)))   .*detJw ;
+
+
+            dDLI1=dt*theta    * etaint.*(Deriv(:,1,Jnod).*Deriv(:,1,Inod)+Deriv(:,2,Jnod).*Deriv(:,2,Inod)).*detJw;
+
+
+            Kelements(:,Inod,Jnod)=Kelements(:,Inod,Jnod)+dh1term+dC1+dD1+dBarrier1+dPenalty1+daFG+dDLI1;
 
         <span class="keyword">end</span>
 
-        f0term=Sw.*f0int.*fun(Inod);
-        f1term=-Sw.*f1int.*fun(Inod);
+        <span class="comment">% Vector loop</span>
+
+        h1term=+h1int.*SUPGdetJw;
+        h0term=-h0int.*SUPGdetJw;
 
 
-        Kgradf0=dt*(1-theta)*K.*(df0dx.*Deriv(:,1,Inod)+df0dy.*Deriv(:,2,Inod));
-        Kgradf1=dt*theta    *K.*(df1dx.*Deriv(:,1,Inod)+df1dy.*Deriv(:,2,Inod));
+        a0term=- dt*(1-theta)* a0int.*SUPGdetJw;
+        a1term=-    dt*theta * a1int.*SUPGdetJw;
 
-        <span class="comment">% total contribution, to be changed later</span>
-        <span class="comment">% PhiTerm =-dt*Kint.*g.*  (((rhow-rho).*db0dx-rho.*ds0dx) .*Deriv(:,1,Inod) + ((rhow-rho).*db0dy-rho.*ds0dy) .*Deriv(:,2,Inod) ).*detJw;</span>
-
-        Phi01Term=-dt.*K.*(dPhidx.*Deriv(:,1,Inod)+dPhidy.*Deriv(:,2,Inod));
+        aFG=gamma*dt*FGint.*h1int.*SUPGdetJw ;
 
 
-        aw0term=dt*(1-theta)*aw0int.*fun(Inod);
-        aw1term=dt*theta*aw1int.*fun(Inod);
 
+        C0=alphaFlag*  dt*(1-theta)*  (h0int.*du0dx+dh0dx.*u0int+h0int.*dv0dy+dh0dy.*v0int).*SUPGdetJw;
+        C1=alphaFlag*  dt*theta*      (h1int.*du1dx+dh1dx.*u1int+h1int.*dv1dy+dh1dy.*v1int).*SUPGdetJw;
 
-        b1(:,Inod)=b1(:,Inod)+(f0term+f1term+Kgradf0+Kgradf1+Phi01Term+aw0term+aw1term).*detJw;
+        <span class="comment">% This is a non-linear diffusion term</span>
+        D0=betaFlag*  dt*(1-theta)* kappaint.*h0int.*   (dh0dx.*Deriv(:,1,Inod)+dh0dy.*Deriv(:,2,Inod)).*detJw;
+        D1=betaFlag*  dt*theta    * kappaint.*h1int.*   (dh1dx.*Deriv(:,1,Inod)+dh1dy.*Deriv(:,2,Inod)).*detJw;
+
+      <span class="comment">% This is a linear isotropic diffusion term</span>
+        DLI0=dt*(1-theta)* etaint.*(dh0dx.*Deriv(:,1,Inod)+dh0dy.*Deriv(:,2,Inod)).*detJw;
+        DLI1=dt*theta    * etaint.*(dh1dx.*Deriv(:,1,Inod)+dh1dy.*Deriv(:,2,Inod)).*detJw;
+
+        Barrier1=-dt*(1-theta)*alpha.*(h1int.^(-1)).*He1.*SUPGdetJw ;
+        Barrier0=-dt*   theta *alpha.*(h0int.^(-1)).*He0.*SUPGdetJw ;
+
+        Penalty0=dt*(1-theta)*beta.*h0int.*(1-He0).*SUPGdetJw ;
+        Penalty1=dt*   theta *beta.*h1int.*(1-He1).*SUPGdetJw ;
+
+        Relements(:,Inod)=Relements(:,Inod)+h0term+h1term+a0term+a1term+C0+C1+D0+D1+Barrier0+Barrier1+Penalty0+Penalty1+aFG+DLI0+DLI1;
 
     <span class="keyword">end</span>
 <span class="keyword">end</span>
 
 <span class="comment">% assemble right-hand side</span>
 
-RR=sparseUA(neq,1);
+RR=sparseUA(neq,1);  <span class="comment">% There is presumably no need to define this as a sparse vector</span>
 <span class="keyword">for</span> Inod=1:MUA.nod
-    RR=RR+sparseUA(MUA.connectivity(:,Inod),ones(MUA.Nele,1),b1(:,Inod),neq,1);
+    RR=RR+sparseUA(MUA.connectivity(:,Inod),ones(MUA.Nele,1),Relements(:,Inod),neq,1);
 <span class="keyword">end</span>
-
 
 Iind=zeros(MUA.nod*MUA.nod*MUA.Nele,1); Jind=zeros(MUA.nod*MUA.nod*MUA.Nele,1);Xval=zeros(MUA.nod*MUA.nod*MUA.Nele,1);
 istak=0;
@@ -222,7 +270,7 @@ istak=0;
     <span class="keyword">for</span> Jnod=1:MUA.nod
         Iind(istak+1:istak+MUA.Nele)=MUA.connectivity(:,Inod);
         Jind(istak+1:istak+MUA.Nele)=MUA.connectivity(:,Jnod);
-        Xval(istak+1:istak+MUA.Nele)=d1d1(:,Inod,Jnod);
+        Xval(istak+1:istak+MUA.Nele)=Kelements(:,Inod,Jnod);
         istak=istak+MUA.Nele;
     <span class="keyword">end</span>
 <span class="keyword">end</span>
@@ -231,9 +279,13 @@ KK=sparseUA(Iind,Jind,Xval,neq,neq);
 </pre><p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2023a</a><br></p></div><!--
 ##### SOURCE BEGIN #####
 
-function [UserVar,RR,KK]=WaterFilmThicknessEquationAssembly(UserVar,CtrlVar,MUA,F0,F1,k)
 
 
+
+function [UserVar,RR,KK]=WaterFilmThicknessEquationAssembly(UserVar,CtrlVar,MUA,F0,F1,k,eta)
+
+
+narginchk(7,7)
 
 
 %% Water film thickness equation
@@ -249,11 +301,22 @@ function [UserVar,RR,KK]=WaterFilmThicknessEquationAssembly(UserVar,CtrlVar,MUA,
 %
 % I think of
 %
-% $$ \mathbf{v}:=k \nabla \Phi $$
+% $$ \mathbf{v}_w:=-k \nabla \Phi $$
 %
 % as a velocity, and write the equation as
 %
-% $$\partial_t h_w -  \nabla \cdot (  h_w \mathbf{v} )  - \nabla \cdot (\kappa h_w \nabla h_w) = a_w $$
+%
+% $$\partial_t h_w +  \nabla \cdot (  h_w \mathbf{v}_w )  - \nabla \cdot (\kappa h_w \nabla h_w) = a_w $$
+%
+% It is also possible to add some further linear diffusion term, and to enable/disable the advection and the non-linear
+% diffusion term by selecting the parameters $\alpha$, $\beta$ , and $\eta$, accordingly
+%
+% $$\partial_t h_w +  \alpha \, \nabla \cdot (  h_w \mathbf{v}_w )  - \beta \, \nabla \cdot (\kappa h_w \nabla h_w)  - \nabla \cdot (\eta  \nabla h_w ) = a_w $$
+%
+% The system to solve if K dx = -R
+%
+% Notice the sign on the right-hand side
+% 
 %
 %%
 
@@ -263,46 +326,37 @@ function [UserVar,RR,KK]=WaterFilmThicknessEquationAssembly(UserVar,CtrlVar,MUA,
 ndim=2; dof=1; neq=dof*MUA.Nnodes;
 
 theta=CtrlVar.theta;
-dt=CtrlVar.dt ; 
-%tauSUPG=CalcSUPGtau(CtrlVar,MUA.EleAreas,u0,v0,dt,MUA);
+dt=CtrlVar.dt ;
+alphaFlag=CtrlVar.WaterFilm.AdvectionFlag;
+betaFlag=CtrlVar.WaterFilm.DiffusionFlag;
 
-Phi=F1.g.* ( (F1.rhow-F1.rho).*F1.B + F1.rho.*F1.s) ;   % does not change, if s and b do not
-kappa=F1.g*(F1.rhow-F1.rho).*k ; 
+% Phi=F1.g.* ( (F1.rhow-F1.rho).*F1.B + F1.rho.*F1.s) ;   % does not change, if s and b do not
+kappa=F1.g*(F1.rhow-F1.rho).*k ;
 
+etanod=reshape(eta(MUA.connectivity,1),MUA.Nele,MUA.nod);
 
-hw0nod=reshape(F0.hw(MUA.connectivity,1),MUA.Nele,MUA.nod);
-hw1nod=reshape(F1.hw(MUA.connectivity,1),MUA.Nele,MUA.nod);
+h0nod=reshape(F0.hw(MUA.connectivity,1),MUA.Nele,MUA.nod);
+h1nod=reshape(F1.hw(MUA.connectivity,1),MUA.Nele,MUA.nod);
 
-knod=reshape(k(MUA.connectivity,1),MUA.Nele,MUA.nod);
+a0nod=reshape(F0.aw(MUA.connectivity,1),MUA.Nele,MUA.nod);
+a1nod=reshape(F1.aw(MUA.connectivity,1),MUA.Nele,MUA.nod);
+
+u0nod=reshape(F0.uw(MUA.connectivity,1),MUA.Nele,MUA.nod);
+u1nod=reshape(F1.uw(MUA.connectivity,1),MUA.Nele,MUA.nod);
+
+v0nod=reshape(F0.vw(MUA.connectivity,1),MUA.Nele,MUA.nod);
+v1nod=reshape(F1.vw(MUA.connectivity,1),MUA.Nele,MUA.nod);
+
+FG=1-F1.GF.node ;
+% FG=HeavisideApprox(100,F1.b-F1.B,CtrlVar.WaterFilm.qwAfloatTreshold);
+FGnod=reshape(FG(MUA.connectivity,1),MUA.Nele,MUA.nod);
+
 kappanod=reshape(kappa(MUA.connectivity,1),MUA.Nele,MUA.nod);
 
-% s0nod=reshape(F0.s(MUA.connectivity,1),MUA.Nele,MUA.nod);
-% s1nod=reshape(F1.s(MUA.connectivity,1),MUA.Nele,MUA.nod);
-% 
-% b0nod=reshape(F0.b(MUA.connectivity,1),MUA.Nele,MUA.nod);
-% b1nod=reshape(F1.b(MUA.connectivity,1),MUA.Nele,MUA.nod);
+Kelements=zeros(MUA.Nele,MUA.nod,MUA.nod);
+Relements=zeros(MUA.Nele,MUA.nod);
 
-% Vx0nod=reshape(Vx0(MUA.connectivity,1),MUA.Nele,MUA.nod);   
-% Vy0nod=reshape(Vy0(MUA.connectivity,1),MUA.Nele,MUA.nod);   
-% Vx1nod=reshape(Vx1(MUA.connectivity,1),MUA.Nele,MUA.nod);   
-% Vy1nod=reshape(Vy1(MUA.connectivity,1),MUA.Nele,MUA.nod);   
-% 
-
-aw0nod=reshape(aw1(MUA.connectivity,1),MUA.Nele,MUA.nod);
-aw1nod=reshape(aw0(MUA.connectivity,1),MUA.Nele,MUA.nod);
-
-
-Knod=reshape(K(MUA.connectivity,1),MUA.Nele,MUA.nod);
-
-
-Swnod=reshape(Sw(MUA.connectivity,1),MUA.Nele,MUA.nod);
-Phinod=reshape(Phi(MUA.connectivity,1),MUA.Nele,MUA.nod);
-
-
-d1d1=zeros(MUA.Nele,MUA.nod,MUA.nod);
-b1=zeros(MUA.Nele,MUA.nod);
-
-% l=sqrt(2*MUA.EleAreas);
+l=sqrt(2*MUA.EleAreas);
 
 % vector over all elements for each integration point
 for Iint=1:MUA.nip
@@ -317,95 +371,151 @@ for Iint=1:MUA.nip
     %  detJ : Nele
 
     % values at integration point
-    
-    f0int=hw0nod*fun;
-    f1int=hw1nod*fun;
-    % 
-    % Vx0int=Vx0nod*fun; Vy0int=Vy0nod*fun;
-    % Vx1int=Vx1nod*fun; Vy1int=Vy1nod*fun;
-    % 
-    aw0int=aw0nod*fun;
-    aw1int=aw1nod*fun;
-    
-    K=Knod*fun;
-    Sw=Swnod*fun; 
-    
-    
-    
-    % ds0dx=zeros(MUA.Nele,1); ds0dy=zeros(MUA.Nele,1); 
-    % ds1dx=zeros(MUA.Nele,1); ds1dy=zeros(MUA.Nele,1); 
-    % 
-    % db0dx=zeros(MUA.Nele,1); db0dy=zeros(MUA.Nele,1); 
-    % db1dx=zeros(MUA.Nele,1); db1dy=zeros(MUA.Nele,1); 
-    
-    df0dx=zeros(MUA.Nele,1); df0dy=zeros(MUA.Nele,1); 
-    df1dx=zeros(MUA.Nele,1); df1dy=zeros(MUA.Nele,1); 
-    
-    dPhidx=zeros(MUA.Nele,1); dPhidy=zeros(MUA.Nele,1); 
-    
-    
- 
-    
+
+    h0int=h0nod*fun;
+    h1int=h1nod*fun;
+
+    u0int=u0nod*fun; u1int=u1nod*fun;
+    v0int=v0nod*fun; v1int=v1nod*fun;
+
+    a0int=a0nod*fun;
+    a1int=a1nod*fun;
+
+    FGint=FGnod*fun; 
+
+    kappaint=kappanod*fun;
+    etaint=etanod*fun;
+
+
+    dh0dx=zeros(MUA.Nele,1); dh0dy=zeros(MUA.Nele,1);
+    dh1dx=zeros(MUA.Nele,1); dh1dy=zeros(MUA.Nele,1);
+
+    du0dx=zeros(MUA.Nele,1); du0dy=zeros(MUA.Nele,1);
+    du1dx=zeros(MUA.Nele,1); du1dy=zeros(MUA.Nele,1);
+
+    dv0dx=zeros(MUA.Nele,1); dv0dy=zeros(MUA.Nele,1);
+    dv1dx=zeros(MUA.Nele,1); dv1dy=zeros(MUA.Nele,1);
+
+
     % derivatives at one integration point for all elements
     for Inod=1:MUA.nod
-        
-     
-        
-        df0dx=df0dx+Deriv(:,1,Inod).*hw0nod(:,Inod);
-        df0dy=df0dy+Deriv(:,2,Inod).*hw0nod(:,Inod);
 
-        df1dx=df1dx+Deriv(:,1,Inod).*hw1nod(:,Inod);
-        df1dy=df1dy+Deriv(:,2,Inod).*hw1nod(:,Inod);
+        dh0dx=dh0dx+Deriv(:,1,Inod).*h0nod(:,Inod);
+        dh0dy=dh0dy+Deriv(:,2,Inod).*h0nod(:,Inod);
 
-        dPhidx=dPhidx+Deriv(:,1,Inod).*Phinod(:,Inod);
-        dPhidy=dPhidy+Deriv(:,2,Inod).*Phinod(:,Inod);
-        
+        dh1dx=dh1dx+Deriv(:,1,Inod).*h1nod(:,Inod);
+        dh1dy=dh1dy+Deriv(:,2,Inod).*h1nod(:,Inod);
+
+        du0dx=du0dx+Deriv(:,1,Inod).*u0nod(:,Inod);
+        du0dy=du0dy+Deriv(:,2,Inod).*u0nod(:,Inod);
+
+        du1dx=du1dx+Deriv(:,1,Inod).*u1nod(:,Inod);
+        du1dy=du1dy+Deriv(:,2,Inod).*u1nod(:,Inod);
+
+        dv0dx=dv0dx+Deriv(:,1,Inod).*v0nod(:,Inod);
+        dv0dy=dv0dy+Deriv(:,2,Inod).*v0nod(:,Inod);
+
+        dv1dx=dv1dx+Deriv(:,1,Inod).*v1nod(:,Inod);
+        dv1dy=dv1dy+Deriv(:,2,Inod).*v1nod(:,Inod);
+
     end
-    
+
     detJw=detJ*MUA.weights(Iint);
+    speed0=sqrt(u0int.*u0int+v0int.*v0int+CtrlVar.SpeedZero^2);
+    tau=SUPGtau(CtrlVar,speed0,l,dt,CtrlVar.Tracer.SUPG.tau) ;
+    tauSUPGint=CtrlVar.SUPG.beta0*tau;
+
+    % Sign convention:
+    % Generally we solve   dR/dh \dh = - R
+    % And this is how the system is assembled.
+    % However, on return, the sign of R is reversed so that outside this assembly the system to solve is
+    % K dh = R
+    %
+    % Also, I put the accumulation term to the left-hand side, rather then putting all the other terms over to the right-hande
+    % side. So all terms R (ie in the vector loop) have the usual signs, but the mass balance terms gets a minus sign.
+    %
+
+    %kappaint=0 ;
+
+    alpha=CtrlVar.WaterFilm.Barrier ;
+    beta=CtrlVar.WaterFilm.Penalty ;
+    gamma=CtrlVar.WaterFilm.qwAfloatMultiplier ;
     
-   
-
-
     for Inod=1:MUA.nod
+
+        SUPG=fun(Inod)+CtrlVar.Tracer.SUPG.Use*tauSUPGint.*(u0int.*Deriv(:,1,Inod)+v0int.*Deriv(:,2,Inod));
+        SUPGdetJw=SUPG.*detJw;
+        He0=HeavisideApprox(100,h0int,0);
+        He1=HeavisideApprox(100,h1int,0);
+        % Matrix loop:  Here the terms are the derivatives of the terms in the vector loop with respect to h1
+
         for Jnod=1:MUA.nod
 
-            df1term=Sw.*fun(Jnod).*fun(Inod);
-            dKgradf=-dt*theta.*K.*(Deriv(:,1,Jnod).*Deriv(:,1,Inod)+ Deriv(:,2,Jnod).*Deriv(:,2,Inod));
+            dh1term=fun(Jnod).*SUPGdetJw;
 
-            d1d1(:,Inod,Jnod)=d1d1(:,Inod,Jnod)+(df1term+dKgradf).*detJw;
+            daFG=dt*FGint.*gamma.*fun(Jnod).*SUPGdetJw ;
+
+            dC1=alphaFlag*  dt*theta* (fun(Jnod).*du1dx+Deriv(:,1,Jnod).*u1int+fun(Jnod).*dv1dy+Deriv(:,2,Jnod).*v1int).*SUPGdetJw;
+
+            dBarrier1=dt*(1-theta)*alpha* (h1int.^(-2).*fun(Jnod).*He1 - h1int.^(-1).*DiracDelta(100,h1int,0).*fun(Jnod))  .*SUPGdetJw ;
+
+
+            dPenalty1=dt* theta *beta.* (fun(Jnod).*HeavisideApprox(100,-h1int,0)-h1int.*DiracDelta(100,h1int,0).*fun(Jnod)).*SUPGdetJw ;
+
+            % the non-linear diffusion term
+            dD1=betaFlag*  dt*theta.*kappaint.* (   ...
+                h1int     .*   (Deriv(:,1,Jnod).*Deriv(:,1,Inod)+ Deriv(:,2,Jnod).*Deriv(:,2,Inod)) ...
+                + fun(Jnod) .*   (  dh1dx        .*Deriv(:,1,Inod)+    dh1dy        .*Deriv(:,2,Inod)))   .*detJw ;
+
+
+            dDLI1=dt*theta    * etaint.*(Deriv(:,1,Jnod).*Deriv(:,1,Inod)+Deriv(:,2,Jnod).*Deriv(:,2,Inod)).*detJw;
+
+
+            Kelements(:,Inod,Jnod)=Kelements(:,Inod,Jnod)+dh1term+dC1+dD1+dBarrier1+dPenalty1+daFG+dDLI1;
 
         end
 
-        f0term=Sw.*f0int.*fun(Inod);
-        f1term=-Sw.*f1int.*fun(Inod);
+        % Vector loop
+
+        h1term=+h1int.*SUPGdetJw;
+        h0term=-h0int.*SUPGdetJw;
 
 
-        Kgradf0=dt*(1-theta)*K.*(df0dx.*Deriv(:,1,Inod)+df0dy.*Deriv(:,2,Inod));
-        Kgradf1=dt*theta    *K.*(df1dx.*Deriv(:,1,Inod)+df1dy.*Deriv(:,2,Inod));
+        a0term=- dt*(1-theta)* a0int.*SUPGdetJw;
+        a1term=-    dt*theta * a1int.*SUPGdetJw;
 
-        % total contribution, to be changed later
-        % PhiTerm =-dt*Kint.*g.*  (((rhow-rho).*db0dx-rho.*ds0dx) .*Deriv(:,1,Inod) + ((rhow-rho).*db0dy-rho.*ds0dy) .*Deriv(:,2,Inod) ).*detJw;
-
-        Phi01Term=-dt.*K.*(dPhidx.*Deriv(:,1,Inod)+dPhidy.*Deriv(:,2,Inod));
-        
-
-        aw0term=dt*(1-theta)*aw0int.*fun(Inod);
-        aw1term=dt*theta*aw1int.*fun(Inod);
+        aFG=gamma*dt*FGint.*h1int.*SUPGdetJw ;
 
 
-        b1(:,Inod)=b1(:,Inod)+(f0term+f1term+Kgradf0+Kgradf1+Phi01Term+aw0term+aw1term).*detJw;
+
+        C0=alphaFlag*  dt*(1-theta)*  (h0int.*du0dx+dh0dx.*u0int+h0int.*dv0dy+dh0dy.*v0int).*SUPGdetJw;
+        C1=alphaFlag*  dt*theta*      (h1int.*du1dx+dh1dx.*u1int+h1int.*dv1dy+dh1dy.*v1int).*SUPGdetJw;
+
+        % This is a non-linear diffusion term
+        D0=betaFlag*  dt*(1-theta)* kappaint.*h0int.*   (dh0dx.*Deriv(:,1,Inod)+dh0dy.*Deriv(:,2,Inod)).*detJw;
+        D1=betaFlag*  dt*theta    * kappaint.*h1int.*   (dh1dx.*Deriv(:,1,Inod)+dh1dy.*Deriv(:,2,Inod)).*detJw;
+
+      % This is a linear isotropic diffusion term
+        DLI0=dt*(1-theta)* etaint.*(dh0dx.*Deriv(:,1,Inod)+dh0dy.*Deriv(:,2,Inod)).*detJw;
+        DLI1=dt*theta    * etaint.*(dh1dx.*Deriv(:,1,Inod)+dh1dy.*Deriv(:,2,Inod)).*detJw;
+
+        Barrier1=-dt*(1-theta)*alpha.*(h1int.^(-1)).*He1.*SUPGdetJw ;
+        Barrier0=-dt*   theta *alpha.*(h0int.^(-1)).*He0.*SUPGdetJw ;
+
+        Penalty0=dt*(1-theta)*beta.*h0int.*(1-He0).*SUPGdetJw ;
+        Penalty1=dt*   theta *beta.*h1int.*(1-He1).*SUPGdetJw ;
+
+        Relements(:,Inod)=Relements(:,Inod)+h0term+h1term+a0term+a1term+C0+C1+D0+D1+Barrier0+Barrier1+Penalty0+Penalty1+aFG+DLI0+DLI1; 
 
     end
 end
 
 % assemble right-hand side
 
-RR=sparseUA(neq,1);
+RR=sparseUA(neq,1);  % There is presumably no need to define this as a sparse vector
 for Inod=1:MUA.nod
-    RR=RR+sparseUA(MUA.connectivity(:,Inod),ones(MUA.Nele,1),b1(:,Inod),neq,1);
+    RR=RR+sparseUA(MUA.connectivity(:,Inod),ones(MUA.Nele,1),Relements(:,Inod),neq,1);
 end
-
 
 Iind=zeros(MUA.nod*MUA.nod*MUA.Nele,1); Jind=zeros(MUA.nod*MUA.nod*MUA.Nele,1);Xval=zeros(MUA.nod*MUA.nod*MUA.Nele,1);
 istak=0;
@@ -414,7 +524,7 @@ for Inod=1:MUA.nod
     for Jnod=1:MUA.nod
         Iind(istak+1:istak+MUA.Nele)=MUA.connectivity(:,Inod);
         Jind(istak+1:istak+MUA.Nele)=MUA.connectivity(:,Jnod);
-        Xval(istak+1:istak+MUA.Nele)=d1d1(:,Inod,Jnod);
+        Xval(istak+1:istak+MUA.Nele)=Kelements(:,Inod,Jnod);
         istak=istak+MUA.Nele;
     end
 end

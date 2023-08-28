@@ -25,9 +25,13 @@ narginchk(7,7)
 %
 % as a velocity, and write the equation as
 %
+%
 % $$\partial_t h_w +  \nabla \cdot (  h_w \mathbf{v}_w )  - \nabla \cdot (\kappa h_w \nabla h_w) = a_w $$
 %
+% It is also possible to add some further linear diffusion term, and to enable/disable the advection and the non-linear
+% diffusion term by selecting the parameters $\alpha$, $\beta$ , and $\eta$, accordingly
 %
+% $$\partial_t h_w +  \alpha \, \nabla \cdot (  h_w \mathbf{v}_w )  - \beta \, \nabla \cdot (\kappa h_w \nabla h_w)  - \nabla \cdot (\eta  \nabla h_w ) = a_w $$
 %
 % The system to solve if K dx = -R
 %
@@ -43,10 +47,10 @@ ndim=2; dof=1; neq=dof*MUA.Nnodes;
 
 theta=CtrlVar.theta;
 dt=CtrlVar.dt ;
-AFlag=CtrlVar.WaterFilm.AdvectionFlag;
-DFlag=CtrlVar.WaterFilm.DiffusionFlag;
+alphaFlag=CtrlVar.WaterFilm.AdvectionFlag;
+betaFlag=CtrlVar.WaterFilm.DiffusionFlag;
 
-% Phi=F1.g.* ( (F1.rhow-F1.rho).*F1.B + F1.rho.*F1.s) ;   % does not change, if s and b do not
+
 kappa=F1.g*(F1.rhow-F1.rho).*k ;
 
 etanod=reshape(eta(MUA.connectivity,1),MUA.Nele,MUA.nod);
@@ -171,7 +175,7 @@ for Iint=1:MUA.nip
 
             daFG=dt*FGint.*gamma.*fun(Jnod).*SUPGdetJw ;
 
-            dC1=AFlag*  dt*theta* (fun(Jnod).*du1dx+Deriv(:,1,Jnod).*u1int+fun(Jnod).*dv1dy+Deriv(:,2,Jnod).*v1int).*SUPGdetJw;
+            dC1=alphaFlag*  dt*theta* (fun(Jnod).*du1dx+Deriv(:,1,Jnod).*u1int+fun(Jnod).*dv1dy+Deriv(:,2,Jnod).*v1int).*SUPGdetJw;
 
             dBarrier1=dt*(1-theta)*alpha* (h1int.^(-2).*fun(Jnod).*He1 - h1int.^(-1).*DiracDelta(100,h1int,0).*fun(Jnod))  .*SUPGdetJw ;
 
@@ -179,11 +183,11 @@ for Iint=1:MUA.nip
             dPenalty1=dt* theta *beta.* (fun(Jnod).*HeavisideApprox(100,-h1int,0)-h1int.*DiracDelta(100,h1int,0).*fun(Jnod)).*SUPGdetJw ;
 
             % the non-linear diffusion term
-            dD1=DFlag*  dt*theta.*kappaint.* (   ...
+            dD1=betaFlag*  dt*theta.*kappaint.* (   ...
                 h1int     .*   (Deriv(:,1,Jnod).*Deriv(:,1,Inod)+ Deriv(:,2,Jnod).*Deriv(:,2,Inod)) ...
                 + fun(Jnod) .*   (  dh1dx        .*Deriv(:,1,Inod)+    dh1dy        .*Deriv(:,2,Inod)))   .*detJw ;
 
-
+            % the linear diffusion term
             dDLI1=dt*theta    * etaint.*(Deriv(:,1,Jnod).*Deriv(:,1,Inod)+Deriv(:,2,Jnod).*Deriv(:,2,Inod)).*detJw;
 
 
@@ -204,12 +208,12 @@ for Iint=1:MUA.nip
 
 
 
-        C0=AFlag*  dt*(1-theta)*  (h0int.*du0dx+dh0dx.*u0int+h0int.*dv0dy+dh0dy.*v0int).*SUPGdetJw;
-        C1=AFlag*  dt*theta*      (h1int.*du1dx+dh1dx.*u1int+h1int.*dv1dy+dh1dy.*v1int).*SUPGdetJw;
+        C0=alphaFlag*  dt*(1-theta)*  (h0int.*du0dx+dh0dx.*u0int+h0int.*dv0dy+dh0dy.*v0int).*SUPGdetJw;
+        C1=alphaFlag*  dt*theta*      (h1int.*du1dx+dh1dx.*u1int+h1int.*dv1dy+dh1dy.*v1int).*SUPGdetJw;
 
         % This is a non-linear diffusion term
-        D0=DFlag*  dt*(1-theta)* kappaint.*h0int.*   (dh0dx.*Deriv(:,1,Inod)+dh0dy.*Deriv(:,2,Inod)).*detJw;
-        D1=DFlag*  dt*theta    * kappaint.*h1int.*   (dh1dx.*Deriv(:,1,Inod)+dh1dy.*Deriv(:,2,Inod)).*detJw;
+        D0=betaFlag*  dt*(1-theta)* kappaint.*h0int.*   (dh0dx.*Deriv(:,1,Inod)+dh0dy.*Deriv(:,2,Inod)).*detJw;
+        D1=betaFlag*  dt*theta    * kappaint.*h1int.*   (dh1dx.*Deriv(:,1,Inod)+dh1dy.*Deriv(:,2,Inod)).*detJw;
 
       % This is a linear isotropic diffusion term
         DLI0=dt*(1-theta)* etaint.*(dh0dx.*Deriv(:,1,Inod)+dh0dy.*Deriv(:,2,Inod)).*detJw;

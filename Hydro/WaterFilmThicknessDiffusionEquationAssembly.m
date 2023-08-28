@@ -46,6 +46,7 @@ Phi0=PhiPotential(CtrlVar,MUA,F0);
 
 kappa=F1.g*(F1.rhow-F1.rho).*k ;
 
+etanod=reshape(eta(MUA.connectivity,1),MUA.Nele,MUA.nod);
 
 h0nod=reshape(F0.hw(MUA.connectivity,1),MUA.Nele,MUA.nod);
 h1nod=reshape(F1.hw(MUA.connectivity,1),MUA.Nele,MUA.nod);
@@ -99,6 +100,7 @@ for Iint=1:MUA.nip
     FGint=FGnod*fun; 
 
     kappaint=kappanod*fun;
+    etaint=etanod*fun;
     kint=knod*fun;
 
 
@@ -166,7 +168,7 @@ for Iint=1:MUA.nip
     alpha=CtrlVar.WaterFilm.Barrier ;
     beta=CtrlVar.WaterFilm.Penalty ;
     gamma=CtrlVar.WaterFilm.qwAfloatMultiplier ;
-    
+
     for Inod=1:MUA.nod
 
         SUPG=fun(Inod)+CtrlVar.Tracer.SUPG.Use*tauSUPGint.*(u0int.*Deriv(:,1,Inod)+v0int.*Deriv(:,2,Inod));
@@ -181,22 +183,26 @@ for Iint=1:MUA.nip
 
             daFG=dt*FGint.*gamma.*fun(Jnod).*SUPGdetJw ;
 
-        %    dC1=dt*theta* (fun(Jnod).*du1dx+Deriv(:,1,Jnod).*u1int+fun(Jnod).*dv1dy+Deriv(:,2,Jnod).*v1int).*SUPGdetJw;
+            %    dC1=dt*theta* (fun(Jnod).*du1dx+Deriv(:,1,Jnod).*u1int+fun(Jnod).*dv1dy+Deriv(:,2,Jnod).*v1int).*SUPGdetJw;
 
             dBarrier1=dt*(1-theta)*alpha* (h1int.^(-2).*fun(Jnod).*He1 - h1int.^(-1).*DiracDelta(100,h1int,0).*fun(Jnod))  .*SUPGdetJw ;
 
 
             dPenalty1=dt* theta *beta.* (fun(Jnod).*HeavisideApprox(100,-h1int,0)-h1int.*DiracDelta(100,h1int,0).*fun(Jnod)).*SUPGdetJw ;
 
+            % the non-linear diffusion term
             dD1=+dt*theta.*kappaint.* (   ...
                 h1int     .*   (Deriv(:,1,Jnod).*Deriv(:,1,Inod)+ Deriv(:,2,Jnod).*Deriv(:,2,Inod)) ...
                 + fun(Jnod) .*   (  dh1dx        .*Deriv(:,1,Inod)+    dh1dy        .*Deriv(:,2,Inod)))   .*detJw ;
 
+            % the "velocity"-diffusion term
             dDPhi1=+dt*theta.*kint.* (   ...
-                                + fun(Jnod) .*   (  dPhi1dx        .*Deriv(:,1,Inod)+    dPhi1dy        .*Deriv(:,2,Inod)))   .*detJw ;
+                + fun(Jnod) .*   (  dPhi1dx        .*Deriv(:,1,Inod)+    dPhi1dy        .*Deriv(:,2,Inod)))   .*detJw ;
 
+            % the linear diffusion term
+            dDLI1=dt*theta    * etaint.*(Deriv(:,1,Jnod).*Deriv(:,1,Inod)+Deriv(:,2,Jnod).*Deriv(:,2,Inod)).*detJw;
 
-            Kelements(:,Inod,Jnod)=Kelements(:,Inod,Jnod)+dh1term+dD1+dDPhi1++dBarrier1+dPenalty1+daFG;
+            Kelements(:,Inod,Jnod)=Kelements(:,Inod,Jnod)+dh1term+dD1+dDLI1+dDPhi1++dBarrier1+dPenalty1+daFG;
 
         end
 
@@ -213,17 +219,21 @@ for Iint=1:MUA.nip
 
 
 
-      %  C0=dt*(1-theta)*  (h0int.*du0dx+dh0dx.*u0int+h0int.*dv0dy+dh0dy.*v0int).*SUPGdetJw;
-      %  C1=dt*theta*      (h1int.*du1dx+dh1dx.*u1int+h1int.*dv1dy+dh1dy.*v1int).*SUPGdetJw;
+        %  C0=dt*(1-theta)*  (h0int.*du0dx+dh0dx.*u0int+h0int.*dv0dy+dh0dy.*v0int).*SUPGdetJw;
+        %  C1=dt*theta*      (h1int.*du1dx+dh1dx.*u1int+h1int.*dv1dy+dh1dy.*v1int).*SUPGdetJw;
 
 
+        % This is a non-linear diffusion term
         D0=dt*(1-theta)* kappaint.*h0int.*   (dh0dx.*Deriv(:,1,Inod)+dh0dy.*Deriv(:,2,Inod)).*detJw;
         D1=dt*theta    * kappaint.*h1int.*   (dh1dx.*Deriv(:,1,Inod)+dh1dy.*Deriv(:,2,Inod)).*detJw;
 
+        % the "velocity"-diffusion term
         DPhi0=dt*(1-theta)* kint.*h0int.*   (dPhi0dx.*Deriv(:,1,Inod)+dPhi0dy.*Deriv(:,2,Inod)).*detJw;
         DPhi1=dt*theta    * kint.*h1int.*   (dPhi1dx.*Deriv(:,1,Inod)+dPhi1dy.*Deriv(:,2,Inod)).*detJw;
 
-   
+        % This is a linear isotropic diffusion term
+        DLI0=dt*(1-theta)* etaint.*(dh0dx.*Deriv(:,1,Inod)+dh0dy.*Deriv(:,2,Inod)).*detJw;
+        DLI1=dt*theta    * etaint.*(dh1dx.*Deriv(:,1,Inod)+dh1dy.*Deriv(:,2,Inod)).*detJw;
 
         Barrier1=-dt*(1-theta)*alpha.*(h1int.^(-1)).*He1.*SUPGdetJw ;
         Barrier0=-dt*   theta *alpha.*(h0int.^(-1)).*He0.*SUPGdetJw ;
@@ -232,7 +242,7 @@ for Iint=1:MUA.nip
         Penalty1=dt*   theta *beta.*h1int.*(1-He1).*SUPGdetJw ;
 
         % Relements(:,Inod)=Relements(:,Inod)+h0term+h1term+a0term+a1term+C0+C1+D0+D1+Barrier0+Barrier1+Penalty0+Penalty1+aFG;
-        Relements(:,Inod)=Relements(:,Inod)+h0term+h1term+a0term+a1term+D0+D1+DPhi0+DPhi1+Barrier0+Barrier1+Penalty0+Penalty1+aFG;
+        Relements(:,Inod)=Relements(:,Inod)+h0term+h1term+a0term+a1term+D0+D1+DLI0+DLI1+DPhi0+DPhi1+Barrier0+Barrier1+Penalty0+Penalty1+aFG;
 
     end
 end

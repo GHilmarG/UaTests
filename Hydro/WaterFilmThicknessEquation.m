@@ -33,14 +33,19 @@ end
 
 
 
-ActiveSetUpdated=ActiveSet; 
-nActiveSetDeactivations=nan ; 
 
 BCs=BoundaryConditions ;
 [UserVar,BCs]=GetBoundaryConditions(UserVar,CtrlVar,MUA,BCs,F1) ;
-MLC=BCs2MLC(CtrlVar,MUA,BCs);
-LL=MLC.hL ; cc=MLC.hRhs ;
 BCsUser=BCs;
+
+LastAdded=[];
+LastDeleted=[];
+nActiveSetDeletions=nan ;
+nActiveSetAdditions=nan ;
+
+
+nBCsUser=numel(BCsUser.hFixedNode) ; % These are the number of BCs defined by the user
+
 
 
 nActiveSetIterations=CtrlVar.WaterFilm.MaxActiveSetIterations;
@@ -48,40 +53,22 @@ useActiveSetMethod=CtrlVar.WaterFilm.useActiveSetMethod;
 
 if ~useActiveSetMethod
     nActiveSetIterations=1;
+
+else
+
+    if ~isempty(ActiveSet)
+
+        BCs.hFixedNode=[BCsUser.hFixedNode;ActiveSet];
+        BCs.hFixedValue=[BCsUser.hFixedNode;ActiveSet*0+CtrlVar.WaterFilm.ThickMin];
+
+    end
+
 end
 
 
 for I=1:nActiveSetIterations
 
-    if useActiveSetMethod
-        ActiveSetAdditions=find(F1.hw<CtrlVar.WaterFilm.ThickMin) ;
-        nActiveSetAdditions=numel(ActiveSetAdditions) ;
-
-        fprintf("Active Set iteration: #%i \t Added=%i \t Removed=%i \n",I,nActiveSetAdditions,nActiveSetDeactivations)
-
-        lambda=[lambda;ActiveSetAdditions*0] ;
-        ActiveSet=union(ActiveSetAdditions,ActiveSetUpdated);
-        nActiveSet=numel(ActiveSet); 
-        if nActiveSetAdditions==0 && nActiveSetDeactivations==0
-            fprintf(" Breaking out of active set iteration #%i, with %i active constraints, because number of new activated and deactivated constraints is %i and %i, respectivily. \n",I,nActiveSet,nActiveSetAdditions,nActiveSetDeactivations)
-            break
-        end
-
-      
-
-        ActiveSet=setdiff(ActiveSet,BCsUser.hFixedNode) ;       % Don't add a node to the active set if it already has a user-defined BCs.
-
-        if ~isempty(ActiveSet)
-
-            BCs.hFixedNode=[BCsUser.hFixedNode;ActiveSet];
-            BCs.hFixedValue=[BCsUser.hFixedValue;ActiveSet*0+CtrlVar.WaterFilm.ThickMin];
-
-        end
-
-        MLC=BCs2MLC(CtrlVar,MUA,BCs);
-        LL=MLC.hL ; cc=MLC.hRhs ;
-
-    end
+    MLC=BCs2MLC(CtrlVar,MUA,BCs);  LL=MLC.hL ; cc=MLC.hRhs ;
 
     if ~isempty(LL)
         BCsRes=LL*F1.hw-cc ;
@@ -90,13 +77,13 @@ for I=1:nActiveSetIterations
             F0.hw(BCs.hFixedNode)= BCs.hFixedValue;
             %        F1.hw=LL\cc;   % make feasable
         end
-        if numel(lambda)~=numel(cc)
+        if numel(lambda) ~= numel(BCs.hFixedNode)
             lambda=cc*0;
         end
     end
 
 
-    % if CtrlVar.WaterFilm.Assembly=="-AD-"    || CtrlVar.WaterFilm.Assembly=="-A-"   
+    % if CtrlVar.WaterFilm.Assembly=="-AD-"    || CtrlVar.WaterFilm.Assembly=="-A-"
     %     [UserVar,RR,KK]=WaterFilmThicknessEquationAssembly(UserVar,CtrlVar,MUA,F0,F1,k,eta,uw0,vw0,uw1,vw1);
     % elseif CtrlVar.WaterFilm.Assembly=="-D-"   % "-AD-"   either diffusive only (D) or advective/diffusive "-AD-"
     %     [UserVar,RR,KK]=WaterFilmThicknessDiffusionEquationAssembly(UserVar,CtrlVar,MUA,F0,F1,k,eta,uw0,vw0,uw1,vw1);
@@ -109,24 +96,112 @@ for I=1:nActiveSetIterations
 
     CtrlVar.lsqUa.CostMeasure="r2";
     CtrlVar.lsqUa.isLSQ=false ;
-    [hw1,lambda,R2,r2]= lsqUa(CtrlVar,fun,x,lambda,LL,cc) ;
+    [hw1,lambda]= lsqUa(CtrlVar,fun,x,lambda,LL,cc) ;
     F1.hw=hw1 ;
 
     if useActiveSetMethod
-        if ~isempty(lambda)
 
-            lambdaActiveSet=lambda(1+numel(lambda)-numel(ActiveSet):end) ;
+        if mod(I,2)==1 % add constraints
 
-            II=lambdaActiveSet<0 ;
-            ActiveSetUpdated=ActiveSet(II) ;
-            lambda=lambda(II);
-            % If this set difference is empty, then no constraints were deactivated
-            DeactivatedConstraints=setxor(ActiveSet,ActiveSetUpdated)         ;
-            nActiveSetDeactivations=numel(DeactivatedConstraints);
-        else
-            nActiveSetDeactivations=0;
+            ActiveSetAdditionsLogical=F1.hw<CtrlVar.WaterFilm.ThickMin ;
+            ActiveSetAdditionsNodes=find(ActiveSetAdditionsLogical) ;
+            nActiveSetAdditions=numel(ActiveSetAdditionsNodes) ;
+
+            if nActiveSetAdditions>0
+                BCs.hFixedNode=[BCs.hFixedNode;ActiveSetAdditionsNodes];
+                BCs.hFixedValue=[BCs.hFixedValue;ActiveSetAdditionsNodes*0+CtrlVar.WaterFilm.ThickMin];
+                lambda=[lambda;ActiveSetAdditionsNodes*0] ;
+                LastAdded=ActiveSetAdditionsNodes;
+            else
+                LastAdded=[];
+            end
+
+
+
+            fprintf("Active Set iteration: #%i \t Added=%i  \n",I,nActiveSetAdditions)
+
+        else  % delete contraints
+
+            if ~isempty(lambda)
+
+                % Here I must know the original number of BCs as defined by the user.
+                % The rest is the current active set
+                %
+                nBCs=numel(BCs.hFixedNode) ;
+                nBCsActiveConstraints=nBCs-nBCsUser;
+
+                if nBCsActiveConstraints>0
+
+                    ActiveSetLogical=logical([zeros(nBCsUser,1);ones(nBCsActiveConstraints,1)]) ;
+                    ActiveSetDeletionsLogical=lambda>0 & ActiveSetLogical ;
+                    nActiveSetDeletions=numel(find(ActiveSetDeletionsLogical));
+
+                    if nActiveSetDeletions>0
+
+                        DeleteCandidates=BCs.hFixedNode(ActiveSetDeletionsLogical);
+
+                        Delete=setdiff(DeleteCandidates,LastAdded) ;
+                        [C2,ia,ib]=intersect(BCs.hFixedNode,Delete) ;
+
+                        BCs.hFixedNode(ia)=[];
+                        BCs.hFixedValue(ia)=[];
+                        lambda(ia)=[];
+
+                        LastDeleted=Delete;
+                        nActiveSetDeletions=numel(Delete);
+                    else
+                        LastDeleted=[];
+                        nActiveSetDeletions=0;
+                    end
+
+                    fprintf("Active Set iteration: #%i \t Deleted=%i  \n",I,nActiveSetDeletions)
+
+
+                    AddedThenDeleted=intersect(LastAdded,LastDeleted);
+                    if ~isempty(AddedThenDeleted)
+                        fprintf("nodes deleted that were previously added: \n")
+                        AddedThenDeleted'
+                    end
+
+
+                end
+            else
+                LastDeleted=[];
+                nActiveSetDeletions=0;
+            end
+
         end
+
+        nBCs=numel(BCs.hFixedNode) ;
+        nBCsActiveConstraints=nBCs-nBCsUser;
+
+        if nBCsActiveConstraints>0
+            nBCsUser=numel(BCsUser.hFixedNode) ; % These are the number of BCs defined by the user
+            ActiveSet=BCs.hFixedNode(nBCsUser+1:end);
+        else
+            ActiveSetLogical=[];
+            ActiveSet=[];
+        end
+
+        if nActiveSetDeletions==0 && nActiveSetAdditions==0 &&   all(F1.hw>=CtrlVar.WaterFilm.ThickMin)
+            fprintf(" Breaking out of active set iteration #%i. All constraints fulfilled. \n",I)
+            break
+        end
+
+        % sort(LastAdded')
+
+        % sort(LastDeleted')
+
+      
+        ActiveSetUpdate=setxor(LastAdded,LastDeleted);
+
+        if isempty(ActiveSetUpdate)
+            fprintf(" Active set is cyclical. \n")
+        end
+
     end
+
+
 
 end
 

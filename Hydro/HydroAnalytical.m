@@ -4,9 +4,9 @@
 %%
 
 l=100e3 ; 
-x=linspace(0,l) ;
-hl=1; aw=1;
-rhow=1000; g=9.81 ; k=10000 ;
+x=linspace(0,l,200) ;
+hl=0; aw=1;
+rhow=1000; g=9.81 ; k=1e6 ;
 
 
 % prescribing q(x=0)=0 and hw(x=l)=hl :

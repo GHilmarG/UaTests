@@ -1,8 +1,10 @@
 function WaterFilmThicknessEquationDriver
 
+
+
 ReadData=1;
 CalcFluxes=1;
-isRestart=0;
+isRestart=0;  ResetTime=0;
 
 %%
 %
@@ -27,30 +29,35 @@ isRestart=0;
 %
 %%
 
+CtrlVar=Ua2D_DefaultParameters();
 FluxGate=[]; xGL=[] ; yGL=[] ;
 
-UserVar.Example="-Antarctica-" ;
+
 UserVar.Example="-Dome-Phi-" ;
-UserVar.Example="-Dome-hw-A-" ;
-UserVar.Example="-Island-hw-A-" ;
-% UserVar.Example="-Hat-Phi-" ;
-CtrlVar=Ua2D_DefaultParameters();
+UserVar.Example="-Dome-hw-" ;
+UserVar.Example="-Island-hw-" ;
+UserVar.Example="-Island-Retrograde-hw-" ;
+UserVar.Example="-Island-Retrograde-Peaks-hw-" ;
+% UserVar.Example="-Antarctica-" ;  CtrlVar.WaterFilm.Assembly="-D-";  UserVar.HelmholtzSmoothingLengthScale=0.1e3;
+
+
 %%
-nTimeSteps=20000;
-maxTime=5000;
+nTimeSteps=10000;
+nRestartSaveIntervale=1000;
+maxTime=1e8;
 CtrlVar.dt=100;
 qw1x=0 ; qw1y=0 ;
 
 
 CtrlVar.InfoLevelBackTrack=0;  CtrlVar.InfoLevelNonLinIt=10 ;  CtrlVar.doplots=1 ;
 
-CtrlVar.WaterFilm.ThickMin=0.01 ;  % can be small, but not zero
+CtrlVar.WaterFilm.ThickMin=0.001 ;  % can be small, but not zero
 CtrlVar.WaterFilm.qwAfloatMultiplier=10;
-CtrlVar.WaterFilm.qwAfloatTreshold=100 ; % b-B distance above which melt-feedback is applied
-CtrlVar.lsqUa.gTol=1e-6;
+
+CtrlVar.lsqUa.gTol=1e-5;
 
 CtrlVar.WaterFilm.MaxActiveSetIterations=10;
-CtrlVar.WaterFilm.PotentialExtended=true;
+CtrlVar.WaterFilm.Potential="-bs-" ;
 CtrlVar.lsqUa.ItMax=20;
 CtrlVar.WaterFilm.useActiveSetMethod=true;
 CtrlVar.WaterFilm.Barrier=0 ;
@@ -58,6 +65,9 @@ CtrlVar.WaterFilm.Penalty=0 ;
 
 
 
+
+
+ActiveSet=[]; lambda=[];
 QnTheoretical=nan;
 PlotWaterFilmFlux=false;
 
@@ -65,201 +75,156 @@ nPlotStep=1;
 
 if ReadData  &&~isRestart
 
-    switch UserVar.Example
-
-
-        case "-Antarctica-"
-
-            CtrlVar.WaterFilm.Assembly="-D-";
-
-            UserVar.GeometryInterpolant='../../Interpolants/BedMachineGriddedInterpolants.mat';
-            UserVar.SurfaceVelocityInterpolant='../../Interpolants/SurfVelMeasures990mInterpolants.mat';
-            UserVar.MeshBoundaryCoordinatesFile='../../Interpolants/MeshBoundaryCoordinatesForAntarcticaBasedOnBedmachine';
-
-            if ~exist("Fb","var")
-                fprintf('DefineGeometry: loading file: %-s ',UserVar.GeometryInterpolant)
-                load(UserVar.GeometryInterpolant,'FB','Fb','Fs','Frho')
-                fprintf(' done \n')
-            end
-
-            load("..\Calving\PIG-TWG\MeshFile20km-PIG-TWG.mat","MUA")
-            % load("AntarcticaMUAwith54kElements.mat","MUA") ;
-
-            CtrlVar.TriNodes=3;  MUA=UpdateMUA(CtrlVar,MUA);
-            F=UaFields;
-            F.x=MUA.coordinates(:,1) ; F.y=MUA.coordinates(:,2) ;
-            F.s=Fs(F.x,F.y);
-            F.B=FB(F.x,F.y);
-            F.b=Fb(F.x,F.y);
-            F.rho=920; F.rhow=1030; F.g=9.81/1000;
-            F.S=F.s*0 ;
-            [F.b,F.h,F.GF]=Calc_bh_From_sBS(CtrlVar,MUA,F.s,F.B,F.S,F.rho,F.rhow);
-
-            % LL=10e3 ;  % Smoothing length scale
-            % % LL=100e3 ;  % Smoothing length scale
-            % [UserVar,F.s]=HelmholtzEquation(UserVar,CtrlVar,MUA,1,LL^2,F.s,0);
-            %
-            % [UserVar,F.b]=HelmholtzEquation(UserVar,CtrlVar,MUA,1,LL^2,F.b,0);
-            % [UserVar,F.B]=HelmholtzEquation(UserVar,CtrlVar,MUA,1,LL^2,F.B,0);
-            %
-            % [F.b,F.h,F.GF]=Calc_bh_From_sBS(CtrlVar,MUA,F.s,F.B,F.S,F.rho,F.rhow);
-            %
-            % UaPlots(CtrlVar,MUA,F,F.B,FigureTitle="B smoothed") ;
-            % UaPlots(CtrlVar,MUA,F,F.b,FigureTitle="b smoothed") ;
-            % UaPlots(CtrlVar,MUA,F,F.s,FigureTitle="s smoothed") ;
-
-            aw=zeros(MUA.Nnodes,1);
-
-            % Box=[-1600 -1500 -200 -100]*1000;
-            % Box=[-1500 -1400 -500 -400]*1000;
-            % In=IsInBox(Box,F.x,F.y) ;
-            % aw(In)=100;
-            UaPlots(CtrlVar,MUA,F,aw,FigureTitle="aw")
-
-
-            F.aw=aw;
-            F.hw=zeros(MUA.Nnodes,1)+0.01;    % Initial water film thickness
-            k=zeros(MUA.Nnodes,1)+1e6;
-            eta=zeros(MUA.Nnodes,1);
-            CtrlVar.dt=0.001;
+    if contains(UserVar.Example,"-Antarctica-")
 
 
 
-            FluxGate=[-1550 -388 ; -1500 -543]*1000;  Npoints=300 ; FluxGate=interparc(Npoints,FluxGate(:,1),FluxGate(:,2),'linear');
-            hold on ;
-            plot(FluxGate(:,1)/CtrlVar.PlotXYscale,FluxGate(:,2)/CtrlVar.PlotXYscale,"o-") ; axis equal
+        load("..\Calving\PIG-TWG\MeshFile20km-PIG-TWG.mat","MUA")
+        % load("AntarcticaMUAwith54kElements.mat","MUA") ;
+
+        CtrlVar.TriNodes=3;  MUA=UpdateMUA(CtrlVar,MUA);
+        F=UaFields;
+        F.x=MUA.coordinates(:,1) ; F.y=MUA.coordinates(:,2) ;
+
+        FieldsToBeDefined="";
+        [UserVar,F.s,F.b,F.S,F.B,F.rho,F.rhow,F.g]=DefineGeometryAndDensities(UserVar,CtrlVar,MUA,F,FieldsToBeDefined);
+        [F.b,F.h,F.GF]=Calc_bh_From_sBS(CtrlVar,MUA,F.s,F.B,F.S,F.rho,F.rhow);
+
+        UaPlots(CtrlVar,MUA,F,F.B,FigureTitle="B") ;
+        UaPlots(CtrlVar,MUA,F,F.b,FigureTitle="b") ;
+        UaPlots(CtrlVar,MUA,F,F.s,FigureTitle="s") ;
+
+        aw=zeros(MUA.Nnodes,1);
+        F.aw=aw;
+        F.hw=zeros(MUA.Nnodes,1)+0.1;    % Initial water film thickness
+
+        k=zeros(MUA.Nnodes,1)+1e10;
+        eta=zeros(MUA.Nnodes,1)+1e2;
+
+        CtrlVar.dt=1e10;
+        CtrlVar.lsqUa.gTol=20;
+        CtrlVar.WaterFilm.qwAfloatMultiplier=100;
+
+        FluxGate=[-1550 -388 ; -1500 -543]*1000;  Npoints=300 ; FluxGate=interparc(Npoints,FluxGate(:,1),FluxGate(:,2),'linear');
+        hold on ;
+        plot(FluxGate(:,1)/CtrlVar.PlotXYscale,FluxGate(:,2)/CtrlVar.PlotXYscale,"o-") ; axis equal
 
 
-        case {"-Dome-N-","-Dome-Phi-","-Dome-hw-A-"}
-
-            %%
-            CtrlVar.PlotXYscale=1000;
-            l=100e3 ;
-            CtrlVar.MeshSize=l/10;
-            CtrlVar.MeshSize=l/20;
-            CtrlVar.MeshSize=l/40;
-
-            CtrlVar.MeshSizeMin=CtrlVar.MeshSize/2 ;
-            CtrlVar.MeshSizeMax=CtrlVar.MeshSize*2 ;
-            MeshBoundaryCoordinates=[-l -l ; l -l ; l l ; -l l ];
-            CtrlVar.MeshBoundaryCoordinates=MeshBoundaryCoordinates;
-            [UserVar,MUA]=genmesh2d(UserVar,CtrlVar);
-            CtrlVar.TriNodes=3;  MUA=UpdateMUA(CtrlVar,MUA);
-            FindOrCreateFigure("Mesh") ; PlotMuaMesh(CtrlVar,MUA); drawnow
-
-            F=UaFields  ; F.x=MUA.coordinates(:,1) ; F.y=MUA.coordinates(:,2) ;
-
-            % Geometry
-            F.B=zeros(MUA.Nnodes,1) ; F.b=zeros(MUA.Nnodes,1) ; F.S=zeros(MUA.Nnodes,1)-1000 ; F.rho=920; F.rhow=1030; F.g=9.81/1000;
-            r=vecnorm([F.x F.y],2,2)  ;
-            s0=1000; F.s=s0*(1-sqrt(r/(1.2*l))) ; F.s(F.s<0)=0;
-            [F.b,F.h,F.GF]=Calc_bh_From_sBS(CtrlVar,MUA,F.s,F.B,F.S,F.rho,F.rhow);
-            UaPlots(CtrlVar,MUA,F,F.s) ;
-
-            % Initial water film thickness
-            F.hw=zeros(MUA.Nnodes,1)+10 ;    % Initial water film thickness
-
-            % distributed water input/output
-            F.aw=zeros(MUA.Nnodes,1)+0;
-            II=r>75e3;
-            F.aw(II)=-10 ; % get rid of all water, this could be done internally as a feedback
-
-            %
-            k=zeros(MUA.Nnodes,1)+1e2;
-            eta=zeros(MUA.Nnodes,1)+1e2;
-
-            CtrlVar.WaterFilm.Barrier=0;
-            CtrlVar.WaterFilm.Penalty=1 ;
+    elseif contains(UserVar.Example,"-Island-")
 
 
+        CtrlVar.PlotXYscale=1000;
+        l=100e3 ;
+        UserVar.l=l;
+        dl=l/5;
+        dl=l/10;
+        % dl=l/20;
+        dl=l/30;
+        dl=l/40;
+        % dl=l/60;
+        % dl=l/80;
+        % dl=l/100;
+        % dl=2000;
+        % dl=500;
+        dl=4e3 ;
+        dl=6000 ;
+        dl=7000 ;
+        dl=8000 ;
+        dl=7500 ;
+        dl=7250 ;
+        dl=7100 ;
+        dl=4500 ;
+        dl=15000 ;
+        dl=2500 ;
+       % dl=5000 ;
 
-        case "-Island-hw-A-"
+        CtrlVar.MeshSize=dl;
 
-            CtrlVar.PlotXYscale=1000;
-            l=100e3 ;
-            dl=l/5;
-            dl=l/10;
-            % dl=l/20;
-            dl=l/30;
-             dl=l/40;
-            % dl=l/60;
-            % dl=l/80;
-            % dl=l/100;
-            dl=2000;
-            dl=500;
+        CtrlVar.MeshSizeMin=CtrlVar.MeshSize/2 ;
+        CtrlVar.MeshSizeMax=CtrlVar.MeshSize*2 ;
+        MeshBoundaryCoordinates=[-l -l ; l -l ; l l ; -l l ];
+        CtrlVar.MeshBoundaryCoordinates=MeshBoundaryCoordinates;
+        [UserVar,MUA]=genmesh2d(UserVar,CtrlVar);
+        CtrlVar.TriNodes=3;  MUA=UpdateMUA(CtrlVar,MUA);
+        FindOrCreateFigure("Mesh") ; PlotMuaMesh(CtrlVar,MUA); drawnow
 
-            CtrlVar.MeshSize=dl;
+        F=UaFields  ; F.x=MUA.coordinates(:,1) ; F.y=MUA.coordinates(:,2) ;
 
-            CtrlVar.MeshSizeMin=CtrlVar.MeshSize/2 ;
-            CtrlVar.MeshSizeMax=CtrlVar.MeshSize*2 ;
-            MeshBoundaryCoordinates=[-l -l ; l -l ; l l ; -l l ];
-            CtrlVar.MeshBoundaryCoordinates=MeshBoundaryCoordinates;
-            [UserVar,MUA]=genmesh2d(UserVar,CtrlVar);
-            CtrlVar.TriNodes=3;  MUA=UpdateMUA(CtrlVar,MUA);
-            FindOrCreateFigure("Mesh") ; PlotMuaMesh(CtrlVar,MUA); drawnow
+        FieldsToBeDefined="";
+        [UserVar,F.s,F.b,F.S,F.B,F.rho,F.rhow,F.g]=DefineGeometryAndDensities(UserVar,CtrlVar,MUA,F,FieldsToBeDefined);
+        [F.b,F.h,F.GF]=Calc_bh_From_sBS(CtrlVar,MUA,F.s,F.B,F.S,F.rho,F.rhow);
 
-            F=UaFields  ; F.x=MUA.coordinates(:,1) ; F.y=MUA.coordinates(:,2) ;
+        UaPlots(CtrlVar,MUA,F,F.B,FigureTitle="B") ;
+        UaPlots(CtrlVar,MUA,F,F.b,FigureTitle="b") ;
+        UaPlots(CtrlVar,MUA,F,F.s,FigureTitle="s") ;
 
-            % Geometry
-            r=vecnorm([F.x F.y],2,2)  ;
-            F.B=-2000*(r/l).^2 ;
-            F.b=F.B;
-            F.S=zeros(MUA.Nnodes,1);
-            F.rho=920; F.rhow=1030; F.g=9.81/1000;
 
-            lmax=sqrt(2)*l ;
-            h0=1000; hmin=100; h=h0*(1-sqrt(r/lmax))+hmin ;% h(h<hmin)=0;
-            F.h=h;
-
-            [F.b,F.s,F.h,F.GF]=Calc_bs_From_hBS(CtrlVar,MUA,F.h,F.S,F.B,F.rho,F.rhow) ;
-            %[F.b,F.h,F.GF]=Calc_bh_From_sBS(CtrlVar,MUA,F.s,F.B,F.S,F.rho,F.rhow);
+        figsbB=FindOrCreateFigure("sbB2") ; clf(figsbB) 
+        Plot_sbB(CtrlVar,MUA,F.s,F.b,F.B) ;
+        % Initial water film thickness
 
 
 
-            figure ; Plot_sbB(CtrlVar,MUA,F.s,F.b,F.B) ;
-            % Initial water film thickness
-            
-            F.hw=zeros(MUA.Nnodes,1)+10 ;    % Initial water film thickness
 
-            % distributed water input/output
-            aw=10;
-            F.aw=zeros(MUA.Nnodes,1)+aw;
-            
-            
-            RadiusWaterAdded=30e3 ;
-            RadiusWaterAdded=nan ;
-            RadiusFluxGate=35e3; 
-            
-            
-            if ~isnan(RadiusWaterAdded)
-                F.aw(r>RadiusWaterAdded)=0;
-                QnTheoretical=pi*RadiusWaterAdded^2*aw ;
-            else
-                QnTheoretical=pi*RadiusFluxGate^2*aw ;
-            end
-            
+        UserVar.aw=10;
+        UserVar.RadiusWaterAdded=30e3 ;
+        UserVar.RadiusWaterAdded=nan ;  % in nan, water added everywhere
+        UserVar.RadiusFluxGate=35e3;
 
 
-            k=zeros(MUA.Nnodes,1)+1e2;
-            eta=zeros(MUA.Nnodes,1)+1e3;
+        if ~isnan(UserVar.RadiusWaterAdded)
+            F.aw(r>UserVar.RadiusWaterAdded)=0;
+            QnTheoretical=pi*UserVar.RadiusWaterAdded^2*UserVar.aw ;
+        else
+            QnTheoretical=pi*UserVar.RadiusFluxGate^2*UserVar.aw ;
+        end
 
-            CtrlVar.WaterFilm.Barrier=0;
-            CtrlVar.WaterFilm.Penalty=1 ;
 
 
-            [cbar,xGL,yGL]=UaPlots(CtrlVar,MUA,F,F.s) ;
-            % Npoints=300 ; FluxGate=interparc(Npoints,FluxGate(:,1),FluxGate(:,2),'linear');
+        k=zeros(MUA.Nnodes,1)+1e2;     % works fine in all cases with A/D/AD
+        k=zeros(MUA.Nnodes,1)+1e10;    % For "-A-" had to reduce min thick from 0.001 to 1e-5. Then a very good agreement was found
+        % Further reduction in CtrlVar.WaterFilm.ThickMin had no effect and was not needed.
+        % "-D-" ran into numerical issues
+        % "-AD-" works as "-A-",
+        % With very sharp peaks, solution appear not to be mass conserving unless sufficient diffusion flux is included
+        %
+        eta=zeros(MUA.Nnodes,1)+1e5;
+        % eta=zeros(MUA.Nnodes,1)+1e12; % testing the importance of the linear diffusion term
+        eta=10*k;  nPlotStep=1;
 
-            % FluxGate=[xGL(:) yGL(:)];
-            angle=linspace(0,2*pi,500); angle=angle(:);
+        CtrlVar.WaterFilm.Assembly="-A-" ;     % excellent 
+        CtrlVar.WaterFilm.Assembly="-AD-" ;    % excellent
+        %  CtrlVar.WaterFilm.Assembly="-D-" ;  % excellent
 
-            FluxGate=RadiusFluxGate*[sin(-angle) cos(-angle) ];
+        CtrlVar.Tracer.SUPG.Use=1;
+        CtrlVar.WaterFilm.Barrier=0;
+        CtrlVar.WaterFilm.Penalty=1 ;
+        CtrlVar.WaterFilm.Potential="-bs-" ;
+        CtrlVar.WaterFilm.qwAfloatMultiplier=1000; 
+        CtrlVar.lsqUa.gTol=1;
+        CtrlVar.WaterFilm.MaxActiveSetIterations=2;
 
-            hold on ;
+        CtrlVar.dt=10e3/k(1) ;
+        CtrlVar.WaterFilm.ThickMin=10e3/k(1);
+        F.hw=zeros(MUA.Nnodes,1)+10*CtrlVar.WaterFilm.ThickMin   ;
 
-            plot(FluxGate(:,1)/CtrlVar.PlotXYscale,FluxGate(:,2)/CtrlVar.PlotXYscale,"o-") ; axis equal
+        maxTime=5000;
 
-            %%
+        [cbar,xGL,yGL]=UaPlots(CtrlVar,MUA,F,F.s) ;
+        % Npoints=300 ; FluxGate=interparc(Npoints,FluxGate(:,1),FluxGate(:,2),'linear');
+
+        % FluxGate=[xGL(:) yGL(:)];
+        angle=linspace(0,2*pi,500); angle=angle(:);
+
+        FluxGate=UserVar.RadiusFluxGate*[sin(-angle) cos(-angle) ];
+
+        hold on ;
+
+        plot(FluxGate(:,1)/CtrlVar.PlotXYscale,FluxGate(:,2)/CtrlVar.PlotXYscale,"o-") ; axis equal
+
+        %%
+    else
+        error("case not found")
     end
 
 
@@ -268,25 +233,10 @@ if ReadData  &&~isRestart
 end
 
 
-if  contains(UserVar.Example,"-A-")
-    CtrlVar.WaterFilm.Assembly="-A-" ;
-    CtrlVar.Tracer.SUPG.Use=1;
-elseif contains(UserVar.Example,"-AD-")
-    CtrlVar.WaterFilm.Assembly="-AD-";
-else
-    CtrlVar.WaterFilm.Assembly="-D-";
-    CtrlVar.Tracer.SUPG.Use=0;
-end
-
-
-
-
 % CtrlVar.GWE.Variable="-phi-" ;
 % CtrlVar.GWE.Variable="-N-" ;
 CtrlVar.GWE.Variable="-hw-" ;
 
-ActiveSet=[];
-lambda=[];
 
 if CalcFluxes
 
@@ -294,25 +244,45 @@ if CalcFluxes
 
     if isRestart
 
-
         
-        load("RestartWaterFilmThicknessEquationDriver","UserVar","CtrlVar","MUA","F0","F1","k","eta","tVector","hwMaxVector","qwVector","hwMinVector","FluxGate")
+        load("RestartWaterFilmThicknessEquationDriver","UserVar","CtrlVar","MUA","F0","F1","k","eta","tVector","hwMaxVector","qwVector","hwMinVector","hwMaxGroundedVector","hwMaxAfloatVector","FluxGate","ActiveSet","lambda") ;
+
         %FluxGate=[-1550 -388 ; -1500 -543]*1000;   Npoints=300 ; FluxGate=interparc(Npoints,FluxGate(:,1),FluxGate(:,2),'linear');
         %qwVector=tVector*0+nan;
 
-        icount=numel(tVector) ;
-        hwMinVector=[hwMinVector;hwMinVector+nan];
-        hwMaxVector=[hwMaxVector;hwMaxVector+nan];
-        qwVector=[qwVector;qwVector+nan];
-        tVector=[tVector;tVector+nan];
+        if ResetTime
+            CtrlVar.time=0 ;
+            F1.time=0;
+            F0.time=0;
+            CtrlVar.dt=10;
+            icount=0;
+            nTimeSteps=10000;
+
+            hwMaxGroundedVector=nan(nTimeSteps,1);
+            hwMaxAfloatVector=nan(nTimeSteps,1);
+            hwMaxVector=nan(nTimeSteps,1);
+            hwMinVector=nan(nTimeSteps,1);
+            qwVector=nan(nTimeSteps,1);
+            tVector=nan(nTimeSteps,1);
+
+        else
+            icount=numel(tVector) ;
+            
+            hwMinVector=[hwMinVector;hwMinVector+nan];
+            hwMaxVector=[hwMaxVector;hwMaxVector+nan];
+            hwMaxGroundedVector=[hwMaxGroundedVector;hwMaxGroundedVector+nan];
+            hwMaxAfloatVector=[hwMaxAloatVector;hwMaxAfloatVector+nan];
+            qwVector=[qwVector;qwVector+nan];
+            tVector=[tVector;tVector+nan];
+        end
+
     else
 
 
-        CtrlVar.time=0;  F.time=0;
-
-
-
+        F.time=0;
         F0=F ; F1=F ;
+        hwMaxGroundedVector=nan(nTimeSteps,1);
+        hwMaxAfloatVector=nan(nTimeSteps,1);
         hwMaxVector=nan(nTimeSteps,1);
         hwMinVector=nan(nTimeSteps,1);
         qwVector=nan(nTimeSteps,1);
@@ -321,20 +291,30 @@ if CalcFluxes
 
     dN=zeros(MUA.Nnodes,1);  dlambda=[];
 
-%% Initialize (uw,vw)
+    %% Initialize (uw,vw)
 
-[F0.uw,F0.vw]=WaterFilmVelocities(CtrlVar,MUA,F0,k) ; 
-[F1.uw,F1.vw]=WaterFilmVelocities(CtrlVar,MUA,F1,k) ; 
+    [F0.uw,F0.vw]=WaterFilmVelocities(CtrlVar,UserVar,MUA,F0,k) ;
+    [F1.uw,F1.vw]=WaterFilmVelocities(CtrlVar,UserVar,MUA,F1,k) ;
 
 
 
 
     for Isteps=1:nTimeSteps
 
-        F0.hw=F1.hw;
+
+        [UserVar,~,ab]=DefineMassBalance(UserVar,CtrlVar,MUA,F1) ;
+
+        F0.aw=ab ;
+        F1.aw=ab ;
+
+        F0.hw=F1.hw ;
+        F1.aw=F1.aw ;
+
         qw0x=qw1x ; qw0y=qw1y ;
 
-        [UserVar,hw1,ActiveSet,lambda]=WaterFilmThicknessEquation(UserVar,CtrlVar,MUA,F0,F1,k,eta,ActiveSet,lambda) ;
+
+
+        [UserVar,hw1,ActiveSet,lambda]=WaterFilmThicknessEquation(UserVar,CtrlVar,MUA,F0,F1,k,eta,ActiveSet,lambda*0) ;
 
 
 
@@ -385,11 +365,22 @@ if CalcFluxes
         icount=icount+1;
         hwMaxVector(icount)=max(F1.hw) ;
         hwMinVector(icount)=min(F1.hw) ;
+        hwMaxGroundedVector(icount)=max(F1.hw(F1.GF.node>0.5)) ;
+        hwMaxAfloatVector(icount)=max(F1.hw(F1.GF.node<0.5)) ;
         tVector(icount)=F1.time;
 
+        % Restart file
+        if mod(Isteps,nRestartSaveIntervale)==0
+            fprintf("Saving Restart File. \n")
+            
+            save("RestartWaterFilmThicknessEquationDriver","UserVar","CtrlVar","MUA","F0","F1","k","eta","tVector","hwMaxVector","qwVector","hwMinVector","hwMaxGroundedVector","hwMaxAfloatVector","FluxGate","ActiveSet","lambda") ;
+        end
 
         %% figures
-        if mod(Isteps,nPlotStep)==0
+
+
+
+        if mod(Isteps-1,nPlotStep)==0 || abs(CtrlVar.time-maxTime)<0.1
 
             [~,xGL,yGL]=UaPlots(CtrlVar,MUA,F1,F1.hw,FigureTitle="hw",CreateNewFigure=true) ;
             % IhwNeg=F1.hw<0 ; hold on ; plot(F1.x(IhwNeg)/CtrlVar.PlotXYscale,F1.y(IhwNeg)/CtrlVar.PlotXYscale,'or')
@@ -399,9 +390,11 @@ if CalcFluxes
             title(sprintf("$\\Delta h_w$ time=%g",CtrlVar.time),Interpreter="latex")
 
             figNp=FindOrCreateFigure("max(hw)(t)")  ; clf(figNp) ;
-            plot(tVector,hwMaxVector,"-ob")
+            plot(tVector,hwMaxVector,"-ok")
             hold on
             plot(tVector,hwMinVector,"-*r")
+            plot(tVector,hwMaxGroundedVector,"-*g")
+            plot(tVector,hwMaxAfloatVector,"-*b")
             yline(0,"--")
             title(sprintf("$h_w$"),Interpreter="latex")
 
@@ -430,7 +423,7 @@ if CalcFluxes
 
 
             figqw=FindOrCreateFigure("Delta(qwx,qwy)") ; clf(figqw) ;
-            QuiverColorGHG(F1.x,F1.y,qw1x-qw0x,qw1y-qw0y,CtrlVar) ;
+            QuiverColorGHG(F1.x,F1.y,(qw1x-qw0x)/1e6,(qw1y-qw0y)/1e6,CtrlVar) ;
             hold on
             plot(xGL/CtrlVar.PlotXYscale,yGL/CtrlVar.PlotXYscale,'r')
             PlotMuaBoundary(CtrlVar,MUA) ;
@@ -446,27 +439,27 @@ if CalcFluxes
             Int=FEintegrate2D(CtrlVar,MUA,F1.aw) ;
             QInt=sum(Int) ;
 
-            [Qn,Qt,qn,qt,xc,yc,normal]=PathIntegral(CtrlVar,F1.x(BoundaryNodes),F1.y(BoundaryNodes),qw1x(BoundaryNodes),qw1y(BoundaryNodes));
-            figNP=FindOrCreateFigure("Boundary fluxes") ; clf(figNP);
-            qnx=qn.*normal(:,1) ; qny=qn.*normal(:,2) ;
-            [cbar,QuiverHandel,Par]=QuiverColorGHG(xc,yc,qnx,qny,CtrlVar) ;
-            hold on
-            plot(xGL/CtrlVar.PlotXYscale,yGL/CtrlVar.PlotXYscale,'r')
-            PlotMuaBoundary(CtrlVar,MUA) ;
-            title(sprintf("Qn=%g  \t QInt=%g \t time=%g",Qn,QInt,CtrlVar.time))
-            hold off
+            % [Qn,Qt,qn,qt,xc,yc,normal]=PathIntegral(CtrlVar,F1.x(BoundaryNodes),F1.y(BoundaryNodes),qw1x(BoundaryNodes),qw1y(BoundaryNodes));
+            % figNP=FindOrCreateFigure("Boundary fluxes") ; clf(figNP);
+            % qnx=qn.*normal(:,1) ; qny=qn.*normal(:,2) ;
+            % [cbar,QuiverHandel,Par]=QuiverColorGHG(xc,yc,qnx,qny,CtrlVar) ;
+            % hold on
+            % plot(xGL/CtrlVar.PlotXYscale,yGL/CtrlVar.PlotXYscale,'r')
+            % PlotMuaBoundary(CtrlVar,MUA) ;
+            % title(sprintf("Qn=%g  \t QInt=%g \t time=%g",Qn,QInt,CtrlVar.time))
+            % hold off
 
 
             [Qn,Qt,qn,qt,xc,yc,normal]=PathIntegral(CtrlVar,F1.x(BoundaryNodes),F1.y(BoundaryNodes),qw1x(BoundaryNodes),qw1y(BoundaryNodes));
 
-            figNP=FindOrCreateFigure("Boundary fluxes") ; clf(figNP);
-            qnx=qn.*normal(:,1) ; qny=qn.*normal(:,2) ;
-            [cbar,QuiverHandel,Par]=QuiverColorGHG(xc,yc,qnx,qny,CtrlVar) ;
-            hold on
-            plot(xGL/CtrlVar.PlotXYscale,yGL/CtrlVar.PlotXYscale,'r')
-            PlotMuaBoundary(CtrlVar,MUA) ;
-            title(sprintf("Qn=%g  \t QInt=%g \t time=%g",Qn,QInt,CtrlVar.time))
-            hold off
+            % figNP=FindOrCreateFigure("Boundary fluxes") ; clf(figNP);
+            % qnx=qn.*normal(:,1) ; qny=qn.*normal(:,2) ;
+            % [cbar,QuiverHandel,Par]=QuiverColorGHG(xc,yc,qnx,qny,CtrlVar) ;
+            % hold on
+            % plot(xGL/CtrlVar.PlotXYscale,yGL/CtrlVar.PlotXYscale,'r')
+            % PlotMuaBoundary(CtrlVar,MUA) ;
+            % title(sprintf("Qn=%g  \t QInt=%g \t time=%g",Qn,QInt,CtrlVar.time))
+            % hold off
 
             if ~isempty(FluxGate)
 
@@ -496,7 +489,7 @@ if CalcFluxes
                 hold off
 
                 figFGt=FindOrCreateFigure("Flux Gate(t)") ; clf(figFGt);
-                plot(tVector,qwVector/1e9,"ob")
+                semilogy(tVector,qwVector/1e9,"ob")
                 title(sprintf("$Q_n$=%g $(\\mathrm{km}^3/\\mathrm{yr})$ $Q_{\\mathrm{int}}$=%g $(\\mathrm{km}^3/\\mathrm{yr})$ $t$=%g $(\\mathrm{yr})$",Qn/1e9,QnTheoretical/1e9,CtrlVar.time),Interpreter="latex")
                 yline(QnTheoretical/1e9,"--")
                 xlabel("time, $t$ $(\mathrm{yr})$",Interpreter="latex")
@@ -516,7 +509,9 @@ if CalcFluxes
 
     end
 
-    save("RestartWaterFilmThicknessEquationDriver","UserVar","CtrlVar","MUA","F0","F1","k","eta","tVector","hwMaxVector","qwVector","hwMinVector","FluxGate","ActiveSet","lambda") ;
+    
+    fprintf("Saving Restart File. \n")
+    save("RestartWaterFilmThicknessEquationDriver","UserVar","CtrlVar","MUA","F0","F1","k","eta","tVector","hwMaxVector","qwVector","hwMinVector","hwMaxGroundedVector","hwMaxAfloatVector","FluxGate","ActiveSet","lambda") ;
 
 end
 
