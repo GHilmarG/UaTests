@@ -68,7 +68,6 @@ v0nod=reshape(F0.vw(MUA.connectivity,1),MUA.Nele,MUA.nod);
 v1nod=reshape(F1.vw(MUA.connectivity,1),MUA.Nele,MUA.nod);
 
 FG=1-F1.GF.node ;
-% FG=HeavisideApprox(100,F1.b-F1.B,CtrlVar.WaterFilm.qwAfloatTreshold);
 FGnod=reshape(FG(MUA.connectivity,1),MUA.Nele,MUA.nod);
 
 kappanod=reshape(kappa(MUA.connectivity,1),MUA.Nele,MUA.nod);

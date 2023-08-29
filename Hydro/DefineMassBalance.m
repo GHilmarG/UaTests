@@ -86,7 +86,12 @@ elseif contains(UserVar.Example,"-Island-")
     if ~isnan(UserVar.RadiusWaterAdded)
         r=vecnorm([F.x F.y],2,2)  ;
         aw(r>UserVar.RadiusWaterAdded)=0;
+        UserVar.QnTheoretical=pi*UserVar.RadiusFluxGate^2*UserVar.aw ;
     end
+    UserVar.QnTheoretical=pi*UserVar.RadiusFluxGate^2*UserVar.aw ;
+
+    aw(F.x<0) =0 ; UserVar.QnTheoretical=0.5*UserVar.QnTheoretical;
+
 
 else
 

@@ -68,7 +68,7 @@ CtrlVar.WaterFilm.Penalty=0 ;
 
 
 ActiveSet=[]; lambda=[];
-QnTheoretical=nan;
+
 PlotWaterFilmFlux=false;
 
 nPlotStep=1;
@@ -136,7 +136,8 @@ if ReadData  &&~isRestart
         dl=4500 ;
         dl=15000 ;
         dl=2500 ;
-       % dl=5000 ;
+        dl=5000 ;
+        dl=1000;
 
         CtrlVar.MeshSize=dl;
 
@@ -153,13 +154,14 @@ if ReadData  &&~isRestart
         FieldsToBeDefined="";
         [UserVar,F.s,F.b,F.S,F.B,F.rho,F.rhow,F.g]=DefineGeometryAndDensities(UserVar,CtrlVar,MUA,F,FieldsToBeDefined);
         [F.b,F.h,F.GF]=Calc_bh_From_sBS(CtrlVar,MUA,F.s,F.B,F.S,F.rho,F.rhow);
-
+        F.GF=IceSheetIceShelves(CtrlVar,MUA,F.GF);
+        
         UaPlots(CtrlVar,MUA,F,F.B,FigureTitle="B") ;
         UaPlots(CtrlVar,MUA,F,F.b,FigureTitle="b") ;
         UaPlots(CtrlVar,MUA,F,F.s,FigureTitle="s") ;
 
 
-        figsbB=FindOrCreateFigure("sbB2") ; clf(figsbB) 
+        figsbBnew=FindOrCreateFigure("sbB new") ; clf(figsbBnew) 
         Plot_sbB(CtrlVar,MUA,F.s,F.b,F.B) ;
         % Initial water film thickness
 
@@ -169,15 +171,10 @@ if ReadData  &&~isRestart
         UserVar.aw=10;
         UserVar.RadiusWaterAdded=30e3 ;
         UserVar.RadiusWaterAdded=nan ;  % in nan, water added everywhere
-        UserVar.RadiusFluxGate=35e3;
+        UserVar.RadiusFluxGate=40e3;
 
 
-        if ~isnan(UserVar.RadiusWaterAdded)
-            F.aw(r>UserVar.RadiusWaterAdded)=0;
-            QnTheoretical=pi*UserVar.RadiusWaterAdded^2*UserVar.aw ;
-        else
-            QnTheoretical=pi*UserVar.RadiusFluxGate^2*UserVar.aw ;
-        end
+   
 
 
 
@@ -190,7 +187,10 @@ if ReadData  &&~isRestart
         %
         eta=zeros(MUA.Nnodes,1)+1e5;
         % eta=zeros(MUA.Nnodes,1)+1e12; % testing the importance of the linear diffusion term
-        eta=10*k;  nPlotStep=1;
+        eta=10*k; 
+
+      
+        eta(~F.GF.NodesUpstreamOfGroundingLines)=eta(1)*1000;
 
         CtrlVar.WaterFilm.Assembly="-A-" ;     % excellent 
         CtrlVar.WaterFilm.Assembly="-AD-" ;    % excellent
@@ -296,8 +296,7 @@ if CalcFluxes
     [F0.uw,F0.vw]=WaterFilmVelocities(CtrlVar,UserVar,MUA,F0,k) ;
     [F1.uw,F1.vw]=WaterFilmVelocities(CtrlVar,UserVar,MUA,F1,k) ;
 
-
-
+        
 
     for Isteps=1:nTimeSteps
 
@@ -485,13 +484,13 @@ if CalcFluxes
                 plot(xGL/CtrlVar.PlotXYscale,yGL/CtrlVar.PlotXYscale,'r')
 
                 PlotMuaBoundary(CtrlVar,MUA) ;
-                title(sprintf("$Q_n$=%g $Q_{\\mathrm{int}}$=%g  $t$=%g",Qn,QnTheoretical,CtrlVar.time),Interpreter="latex")
+                title(sprintf("$Q_n$=%g $Q_{\\mathrm{int}}$=%g  $t$=%g",Qn,UserVar.QnTheoretical,CtrlVar.time),Interpreter="latex")
                 hold off
 
                 figFGt=FindOrCreateFigure("Flux Gate(t)") ; clf(figFGt);
                 semilogy(tVector,qwVector/1e9,"ob")
-                title(sprintf("$Q_n$=%g $(\\mathrm{km}^3/\\mathrm{yr})$ $Q_{\\mathrm{int}}$=%g $(\\mathrm{km}^3/\\mathrm{yr})$ $t$=%g $(\\mathrm{yr})$",Qn/1e9,QnTheoretical/1e9,CtrlVar.time),Interpreter="latex")
-                yline(QnTheoretical/1e9,"--")
+                title(sprintf("$Q_n$=%g $(\\mathrm{km}^3/\\mathrm{yr})$ $Q_{\\mathrm{int}}$=%g $(\\mathrm{km}^3/\\mathrm{yr})$ $t$=%g $(\\mathrm{yr})$",Qn/1e9,UserVar.QnTheoretical/1e9,CtrlVar.time),Interpreter="latex")
+                yline(UserVar.QnTheoretical/1e9,"--")
                 xlabel("time, $t$ $(\mathrm{yr})$",Interpreter="latex")
                 ylabel("Water flux, $Q$ $(\mathrm{km}^3/\mathrm{yr})$",Interpreter="latex")
 

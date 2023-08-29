@@ -18,3 +18,39 @@ ylabel("Water flux, $Q$ $(\mathrm{km}^3/\mathrm{yr})$",Interpreter="latex")
 title(sprintf("$h_w$ time=%g",CtrlVar.time),Interpreter="latex")
 
 %%
+
+figqwP=FindOrCreateFigure("(qwx,qwy)") ; clf(figqwP) ;
+CtrlVar.VelColorBarTitle="($\mathrm{km^2 \, yr^{-1}}$)" ;
+
+qwx=qw1x ; qwy=qw1y ; 
+qwx(~F1.GF.NodesUpstreamOfGroundingLines)=0;
+qwy(~F1.GF.NodesUpstreamOfGroundingLines)=0;
+
+QuiverColorGHG(F1.x,F1.y,qwx/1e6,qwy/1e6,CtrlVar) ;
+hold on
+plot(xGL/CtrlVar.PlotXYscale,yGL/CtrlVar.PlotXYscale,'r')
+PlotMuaBoundary(CtrlVar,MUA) ;
+if ~isempty(FluxGate)
+    plot(FluxGate(:,1)/CtrlVar.PlotXYscale,FluxGate(:,2)/CtrlVar.PlotXYscale,Color="k",LineWidth=2) ;
+end
+xlabel("$x\,(\mathrm{km})$",interpreter="latex")
+ylabel("$y\,(\mathrm{km})$",interpreter="latex")
+
+title(sprintf("$\\mathbf{q}_w$ time=%g",CtrlVar.time),Interpreter="latex")
+hold off
+
+%%
+
+ax = gca;  exportgraphics(ax,'HydroSyntheticPeaksFluxExample.pdf')
+
+ax = gca;  exportgraphics(ax,'HydroSyntheticPotentialVelocitiesExample.pdf')
+
+ax = gca;  exportgraphics(ax,'HydroSyntheticGeometryExample.pdf')
+
+%%
+xlabel("$x\,(\mathrm{km})$",interpreter="latex")
+ylabel("$y\,(\mathrm{km})$",interpreter="latex")
+
+zlabel("$z\,(\mathrm{m})$",interpreter="latex")
+zlim([-2000 1600])
+title("")
