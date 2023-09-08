@@ -4,10 +4,10 @@
 
 
 
-function [UserVar,hw1,ActiveSet,lambda]=WaterFilmThicknessEquation(UserVar,CtrlVar,MUA,F0,F1,k,eta,ActiveSet,lambda)
+function [UserVar,hw1,ActiveSet,lambda,output]=WaterFilmThicknessEquation(UserVar,CtrlVar,MUA,F0,F1,k,eta,ActiveSet,lambda)
 
 narginchk(9,9)
-nargoutchk(4,4)
+nargoutchk(5,5)
 
 %% Water film thickness equation
 %
@@ -22,17 +22,20 @@ nargoutchk(4,4)
 %
 %%
 
+% 
+% if  CtrlVar.WaterFilm.Assembly=="-A-"
+%     CtrlVar.WaterFilm.AdvectionFlag=1;
+%     CtrlVar.WaterFilm.DiffusionFlag=0;
+% elseif CtrlVar.WaterFilm.Assembly=="-AD-"
+%     CtrlVar.WaterFilm.AdvectionFlag=1;
+%     CtrlVar.WaterFilm.DiffusionFlag=1;
+% end
 
-if  CtrlVar.WaterFilm.Assembly=="-A-"
-    CtrlVar.WaterFilm.AdvectionFlag=1;
-    CtrlVar.WaterFilm.DiffusionFlag=0;
-elseif CtrlVar.WaterFilm.Assembly=="-AD-"
-    CtrlVar.WaterFilm.AdvectionFlag=1;
-    CtrlVar.WaterFilm.DiffusionFlag=1;
-end
-
-
-
+nlambda=numel(lambda);
+nActiveSet=numel(ActiveSet);
+nBCsUser=nlambda-nActiveSet; 
+lambdaActiveSet=lambda(nlambda-nActiveSet+1:nlambda) ;
+lambdaUser=lambda(1:nBCsUser) ; 
 
 BCs=BoundaryConditions ;
 [UserVar,BCs]=GetBoundaryConditions(UserVar,CtrlVar,MUA,BCs,F1) ;
@@ -44,9 +47,12 @@ nActiveSetDeletions=nan ;
 nActiveSetAdditions=nan ;
 
 
-nBCsUser=numel(BCsUser.hFixedNode) ; % These are the number of BCs defined by the user
+if nBCsUser~=numel(BCsUser.hFixedNode)  % These are the number of BCs defined by the user
+    nBCsUser=numel(BCsUser.hFixedNode) ;   % I don't have the information about last BCs defined by the user, (this could be added to the call in the future)
+    % So if the #BCs defined by the user has changed, all I can do is to reset the lambdas
+    lambdaUser=zeros(nBCsUser,1) ;
 
-
+end
 
 nActiveSetIterations=CtrlVar.WaterFilm.MaxActiveSetIterations;
 useActiveSetMethod=CtrlVar.WaterFilm.useActiveSetMethod;
@@ -58,8 +64,14 @@ else
 
     if ~isempty(ActiveSet)
 
+        % Take out of active set any nodes that are part of the user-defined BCs.
+
+        [ActiveSet,ia]=setdiff(ActiveSet,BCsUser.hFixedNode) ;
+        lambdaActiveSet=lambdaActiveSet(ia) ; 
+
         BCs.hFixedNode=[BCsUser.hFixedNode;ActiveSet];
-        BCs.hFixedValue=[BCsUser.hFixedNode;ActiveSet*0+CtrlVar.WaterFilm.ThickMin];
+        BCs.hFixedValue=[BCsUser.hFixedValue;ActiveSet*0+CtrlVar.WaterFilm.ThickMin];
+        lambda=[lambdaUser;lambdaActiveSet] ;
 
     end
 
@@ -83,26 +95,24 @@ for I=1:nActiveSetIterations
     end
 
 
-    % if CtrlVar.WaterFilm.Assembly=="-AD-"    || CtrlVar.WaterFilm.Assembly=="-A-"
-    %     [UserVar,RR,KK]=WaterFilmThicknessEquationAssembly(UserVar,CtrlVar,MUA,F0,F1,k,eta,uw0,vw0,uw1,vw1);
-    % elseif CtrlVar.WaterFilm.Assembly=="-D-"   % "-AD-"   either diffusive only (D) or advective/diffusive "-AD-"
-    %     [UserVar,RR,KK]=WaterFilmThicknessDiffusionEquationAssembly(UserVar,CtrlVar,MUA,F0,F1,k,eta,uw0,vw0,uw1,vw1);
-    % else
-    %     error("case not found")
-    % end
+    
 
     x=F1.hw;
     fun =@(x) lsqUaFunc(x,UserVar,CtrlVar,MUA,F0,F1,k,eta)  ;
 
     CtrlVar.lsqUa.CostMeasure="r2";
     CtrlVar.lsqUa.isLSQ=false ;
-    [hw1,lambda]= lsqUa(CtrlVar,fun,x,lambda,LL,cc) ;
+    [hw1,lambda,~,~,~,~,~,~,~,~,output] = lsqUa(CtrlVar,fun,x,lambda,LL,cc) ;
     F1.hw=hw1 ;
+    lambdaActiveSet=lambda(nBCsUser+1:end) ; 
 
     if useActiveSetMethod
 
         if mod(I,2)==1 % add constraints
-
+            %
+            % Constraints are always added based on violatons of the applied constraints. This addition does not require knowing the
+            % lagrange parameters.
+            %
             ActiveSetAdditionsLogical=F1.hw<CtrlVar.WaterFilm.ThickMin ;
             ActiveSetAdditionsNodes=find(ActiveSetAdditionsLogical) ;
             nActiveSetAdditions=numel(ActiveSetAdditionsNodes) ;
@@ -122,6 +132,9 @@ for I=1:nActiveSetIterations
 
         else  % delete contraints
 
+            % Constraints are deleted based on the sign of the lagrange parameters in the active set
+            % So I must have solved the system once in order to be able to select nodes for deltion from the active set. 
+            %
             if ~isempty(lambda)
 
                 % Here I must know the original number of BCs as defined by the user.

@@ -2,26 +2,44 @@
 
 
 
-function [UserVar,RR,KK]=WaterFilmThicknessEquationAssembly(UserVar,CtrlVar,MUA,F0,F1,k,eta)
+function [UserVar,RR,KK,qx1int,qy1int,x1int,y1int]=WaterFilmThicknessEquationAssembly(UserVar,CtrlVar,MUA,F0,F1,k,eta)
 
 
 narginchk(7,7)
-
+nargoutchk(7,7)
 
 %% Water film thickness equation
 %
+% Solves:
 %
-% $$\partial_t h_w -  \nabla \cdot ( k h_w \nabla \Phi )  - \nabla \cdot (\kappa h_w \nabla h_w) = a_w $$
+% $$\partial_t h_w +  \alpha \, \nabla \cdot (  h_w \mathbf{v}_w )  - \beta \, \nabla \cdot (\kappa h_w \nabla h_w)  - \nabla \cdot (\eta  \nabla h_w ) = a_w + \gamma (1-\mathcal{G}) \, h_w + \delta  (1-\mathcal{H}) h_w$$
 %
 % where
 %
+% $$\mathcal{G} $$
+%
+% is the floating/grounding mask, which is equal to 1 if grounded, 0 otherwise.
+%
+% And
+%
+% $$\mathcal{H}$$
+%
+% is 1 if $h_w>0$ and zero otherwise.
+%
+% The water velocity is provided as an input through the field (F.uw,F.vw)
+%
+% We may think of the velocity as
+%
+% $$ \mathbf{v}_w= - k \nabla \Phi$$
+%
+% where, for example,
+%
 % $$\Phi = (\rho_w-\rho) g \nabla B - \rho g \nabla s  $$
 %
-% $$N=0 $$
+% But here $\mathbf{v}_w$ is simply an input field.
 %
-% I think of
-%
-% $$ \mathbf{v}_w:=-k \nabla \Phi $$
+%%
+
 %
 % as a velocity, and write the equation as
 %
@@ -32,6 +50,17 @@ narginchk(7,7)
 % diffusion term by selecting the parameters $\alpha$, $\beta$ , and $\eta$, accordingly
 %
 % $$\partial_t h_w +  \alpha \, \nabla \cdot (  h_w \mathbf{v}_w )  - \beta \, \nabla \cdot (\kappa h_w \nabla h_w)  - \nabla \cdot (\eta  \nabla h_w ) = a_w $$
+%
+% This can also be written as
+%
+% $$\partial_t h_w +  \alpha \, \nabla \cdot ( \mathbf{q} ) = a_w $$
+%
+% with
+%
+% $$\mathbf{q} = \alpha \,  h_w \mathbf{v}_w   - \beta \,  \kappa h_w \nabla h_w   -   \eta  \nabla h_w  $$
+%
+% However, in the FE formulation, the resulting  second-order two terms containing $\nabla h_w$ are integrated
+% 
 %
 % The system to solve if K dx = -R
 %
@@ -55,6 +84,9 @@ kappa=F1.g*(F1.rhow-F1.rho).*k ;
 
 etanod=reshape(eta(MUA.connectivity,1),MUA.Nele,MUA.nod);
 
+x1nod=reshape(F1.x(MUA.connectivity,1),MUA.Nele,MUA.nod);
+y1nod=reshape(F1.y(MUA.connectivity,1),MUA.Nele,MUA.nod);
+
 h0nod=reshape(F0.hw(MUA.connectivity,1),MUA.Nele,MUA.nod);
 h1nod=reshape(F1.hw(MUA.connectivity,1),MUA.Nele,MUA.nod);
 
@@ -76,6 +108,9 @@ Kelements=zeros(MUA.Nele,MUA.nod,MUA.nod);
 Relements=zeros(MUA.Nele,MUA.nod);
 
 l=sqrt(2*MUA.EleAreas);
+
+qx1int=zeros(MUA.Nele,MUA.nip) ; qy1int=zeros(MUA.Nele,MUA.nip) ; 
+x1int=zeros(MUA.Nele,MUA.nip) ; y1int=zeros(MUA.Nele,MUA.nip) ; 
 
 % vector over all elements for each integration point
 for Iint=1:MUA.nip
@@ -206,7 +241,7 @@ for Iint=1:MUA.nip
         aFG=gamma*dt*FGint.*h1int.*SUPGdetJw ;
 
 
-
+        % This is the advection term:  \nabla (h v)
         C0=alphaFlag*  dt*(1-theta)*  (h0int.*du0dx+dh0dx.*u0int+h0int.*dv0dy+dh0dy.*v0int).*SUPGdetJw;
         C1=alphaFlag*  dt*theta*      (h1int.*du1dx+dh1dx.*u1int+h1int.*dv1dy+dh1dy.*v1int).*SUPGdetJw;
 
@@ -224,9 +259,27 @@ for Iint=1:MUA.nip
         Penalty0=dt*(1-theta)*beta.*h0int.*(1-He0).*SUPGdetJw ;
         Penalty1=dt*   theta *beta.*h1int.*(1-He1).*SUPGdetJw ;
 
+    
+
         Relements(:,Inod)=Relements(:,Inod)+h0term+h1term+a0term+a1term+C0+C1+D0+D1+Barrier0+Barrier1+Penalty0+Penalty1+aFG+DLI0+DLI1; 
 
     end
+
+    % Flux at each integration point, and for all elements
+    qx1int(:,Iint)=qx1int(:,Iint) ...  
+        + alphaFlag*h0int.*u1int ...
+        - betaFlag* kappaint.*h0int.*dh0dx ...
+        - etaint.*dh0dx ;
+
+    qy1int(:,Iint)=qy1int(:,Iint) ...  
+        + alphaFlag*h0int.*v1int ...
+        - betaFlag*kappaint.*h0int.*dh0dy ...
+        - etaint.*dh0dy ;
+
+     x1int(:,Iint)=x1nod*fun;
+     y1int(:,Iint)=y1nod*fun;
+
+
 end
 
 % assemble right-hand side

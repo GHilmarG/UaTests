@@ -41,7 +41,7 @@ function  [UserVar,s,b,S,B,rho,rhow,g]=DefineGeometryAndDensities(UserVar,CtrlVa
 %
 %%
 
-persistent Fs Fb FB
+persistent Fs FB
 
 
 if contains(UserVar.Example,"-Antarctica-")
@@ -49,12 +49,11 @@ if contains(UserVar.Example,"-Antarctica-")
     if isempty(Fs)
 
         UserVar.GeometryInterpolant='../../Interpolants/BedMachineGriddedInterpolants.mat';
-        UserVar.SurfaceVelocityInterpolant='../../Interpolants/SurfVelMeasures990mInterpolants.mat';
-        UserVar.MeshBoundaryCoordinatesFile='../../Interpolants/MeshBoundaryCoordinatesForAntarcticaBasedOnBedmachine';
+
 
         if isempty(Fs)
             fprintf('DefineGeometry: loading file: %-s ',UserVar.GeometryInterpolant)
-            load(UserVar.GeometryInterpolant,'FB','Fb','Fs','Frho')
+            load(UserVar.GeometryInterpolant,'FB','Fs')
             fprintf(' done \n')
         end
 

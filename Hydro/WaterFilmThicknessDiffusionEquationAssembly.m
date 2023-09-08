@@ -13,9 +13,9 @@ function [UserVar,RR,KK]=WaterFilmThicknessDiffusionEquationAssembly(UserVar,Ctr
 %% Water film thickness equation
 %
 %
-% $$\partial_t h_w - \nabla \cdot ( k h_w \nabla \Phi )  - \nabla \cdot (\kappa h_w \nabla h_w) = a_w $$
 %
-% $$\partial_t h_w  - \nabla \cdot ( h_w k \nabal \Phi + \kappa h_w \nabla h_w) = a_w $$
+%
+% $$\partial_t h_w -  \nabla \cdot ( k h_w \nabla \Phi )  - \nabla \cdot (\kappa h_w \nabla h_w) = a_w $$
 %
 % where
 %
@@ -23,7 +23,29 @@ function [UserVar,RR,KK]=WaterFilmThicknessDiffusionEquationAssembly(UserVar,Ctr
 %
 % $$N=0 $$
 %
+% We define the water velocity
 %
+% $$ \mathbf{v}_w:=-k \nabla \Phi $$
+%
+% and write the equation as
+%
+% $$\partial_t h_w +  \nabla \cdot (  h_w \mathbf{v}_w )  - \nabla \cdot (\kappa h_w \nabla h_w) = a_w $$
+%
+% It is also possible to add some further linear diffusion term, and to enable/disable the advection and the non-linear
+% diffusion term by selecting the parameters $\alpha$, $\beta$ , and $\eta$, accordingly
+%
+% $$\partial_t h_w +  \alpha \, \nabla \cdot (  h_w \mathbf{v}_w )  - \beta \, \nabla \cdot (\kappa h_w \nabla h_w)  - \nabla \cdot (\eta  \nabla h_w ) = a_w $$
+%
+% This can also be written as
+%
+% $$\partial_t h_w +  \alpha \, \nabla \cdot ( \mathbf{q} ) = a_w $$
+%
+% with
+%
+% $$\mathbf{q} = \alpha \,  h_w \mathbf{v}_w   - \beta \,  \kappa h_w \nabla h_w   -   \eta  \nabla h_w  $$
+%
+% However, in the FE formulation, the resulting  second-order two terms containing $\nabla h_w$ are integrated
+% 
 %
 % The system to solve if K dx = -R
 %

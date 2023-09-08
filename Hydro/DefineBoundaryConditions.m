@@ -8,9 +8,9 @@ switch UserVar.Example
     case "-Antarctica-"
 
 
-        % nodes=MUA.Boundary.Nodes;
-        % BCs.hFixedNode=nodes;
-        % BCs.hFixedValue=nodes*0; % fixing water-film thickness at the boundary
+       
+        BCs.hFixedNode=MUA.Boundary.Nodes;
+        BCs.hFixedValue= BCs.hFixedNode*0+CtrlVar.WaterFilm.ThickMin ; % fixing water-film thickness at the boundary
 
         % 
         % nodes=find(F.hw<CtrlVar.WaterFilm.ThickMin) ;

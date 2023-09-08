@@ -67,7 +67,7 @@ aw=zeros(MUA.Nnodes,1);
 if contains(UserVar.Example,"-Antarctica-")
 
 
-    if F.time>0.5
+    if UserVar.awSource==1 
 
         aw=zeros(MUA.Nnodes,1);
         % Box=[-1600 -1500 -200 -100]*1000;
