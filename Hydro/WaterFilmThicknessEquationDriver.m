@@ -4,7 +4,7 @@ function WaterFilmThicknessEquationDriver
 
 ReadData=1;
 CalcFluxes=1;
-isRestart=1;  ResetTime=0;
+isRestart=0;  ResetTime=0;
 
 %%
 %
@@ -38,7 +38,7 @@ UserVar.Example="-Dome-hw-" ;
 UserVar.Example="-Island-hw-" ;
 UserVar.Example="-Island-Retrograde-hw-" ;
 UserVar.Example="-Island-Retrograde-Peaks-hw-" ;
-UserVar.Example="-Antarctica-" ;   UserVar.HelmholtzSmoothingLengthScale=0.1e3;  RestartFileName="Antarctica-aw1-.mat";
+UserVar.Example="-Antarctica-" ;   UserVar.HelmholtzSmoothingLengthScale=nan;  RestartFileName="Antarctica-aw1-.mat";
 UserVar.VelocityFieldPrescribed=false;
 
 %%
@@ -103,7 +103,8 @@ if ReadData  &&~isRestart
         k=zeros(MUA.Nnodes,1)+1e10;
         eta=k*10 ;
         eta(~F.GF.NodesUpstreamOfGroundingLines)=eta(1)*1000;
-        UserVar.awSource=1 ; 
+        UserVar.awSource="-Box-" ; 
+        UserVar.awSource="-BasalFriction-" ; 
 
         CtrlVar.WaterFilm.Assembly="-AD-" ;   
         CtrlVar.Tracer.SUPG.Use=1;
@@ -125,7 +126,8 @@ if ReadData  &&~isRestart
             % just use the prescibed velocity alone
             CtrlVar.WaterFilm.AdvectionFlag=1;
             CtrlVar.WaterFilm.DiffusionFlag=0;
-            eta=eta*0 ; 
+            eta=eta*0+1e5 ; 
+            CtrlVar.dt=1; 
 
         end
 
@@ -138,7 +140,7 @@ if ReadData  &&~isRestart
         hold on ;
         plot(FluxGate(:,1)/CtrlVar.PlotXYscale,FluxGate(:,2)/CtrlVar.PlotXYscale,"o-") ; axis equal
 
-        RestartFileName="Antarctica-"+"aw"+num2str(UserVar.awSource)+"-.mat"; 
+        RestartFileName="Antarctica-"+"aw"+UserVar.awSource+"-.mat"; 
 
     elseif contains(UserVar.Example,"-Island-")
 

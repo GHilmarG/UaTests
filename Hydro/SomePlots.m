@@ -86,7 +86,10 @@ figqw=FindOrCreateFigure("(qwx,qwy)") ; clf(figqw) ;
 CtrlVar.VelColorBarTitle="($\mathrm{km^2 \, yr^{-1}}$)" ;
 
 
-cbar=QuiverColorGHG(xint,yint,qwxint/1e6,qwyint/1e6,CtrlVar) ;
+speed=sqrt(qwxint.*qwxint+qwyint.*qwyint) ;
+I=speed<0.1e6 ;
+
+cbar=QuiverColorGHG(xint(I),yint(I),qwxint(I)/1e6,qwyint(I)/1e6,CtrlVar) ;
 hold on
 plot(xGL/CtrlVar.PlotXYscale,yGL/CtrlVar.PlotXYscale,'r')
 PlotMuaBoundary(CtrlVar,MUA) ;

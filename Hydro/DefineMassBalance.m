@@ -67,7 +67,15 @@ aw=zeros(MUA.Nnodes,1);
 if contains(UserVar.Example,"-Antarctica-")
 
 
-    if UserVar.awSource==1 
+    if UserVar.awSource=="-BasalFriction-" 
+
+     [UserVar,aw]=BasalWaterProduction(UserVar,CtrlVar,MUA,F) ;
+
+      % Sometimes these values are a bit bonkers
+      awmax=100;
+      aw(aw>awmax)=awmax ; 
+
+    elseif UserVar.awSource=="-Box-" 
 
         aw=zeros(MUA.Nnodes,1);
         % Box=[-1600 -1500 -200 -100]*1000;
@@ -78,6 +86,13 @@ if contains(UserVar.Example,"-Antarctica-")
 
     end
 
+    aw(~F.GF.NodesUpstreamOfGroundingLines)=0 ; % Set water production downstream and across grounding lines to zero
+
+    ds=100e3; 
+    CtrlVar.PlotGLs=0;
+    [xGL,yGL]=PlotGroundingLines(CtrlVar,MUA,F.GF,[],[],[],'LineWidth',2);
+    ID=FindAllNodesWithinGivenRangeFromGroundingLine([],MUA,xGL,yGL,ds) ;
+    aw(ID)=0; 
 
 elseif contains(UserVar.Example,"-Island-")
 

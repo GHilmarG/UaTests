@@ -41,7 +41,7 @@ function  [UserVar,s,b,S,B,rho,rhow,g]=DefineGeometryAndDensities(UserVar,CtrlVa
 %
 %%
 
-persistent Fs FB
+persistent Fs FB Frho
 
 
 if contains(UserVar.Example,"-Antarctica-")
@@ -53,7 +53,7 @@ if contains(UserVar.Example,"-Antarctica-")
 
         if isempty(Fs)
             fprintf('DefineGeometry: loading file: %-s ',UserVar.GeometryInterpolant)
-            load(UserVar.GeometryInterpolant,'FB','Fs')
+            load(UserVar.GeometryInterpolant,'FB','Fs','Frho')
             fprintf(' done \n')
         end
 
@@ -62,7 +62,7 @@ if contains(UserVar.Example,"-Antarctica-")
     s=Fs(F.x,F.y);
     B=FB(F.x,F.y);
     % b=Fb(x,y);
-    rho=920;
+    rho=Frho(F.x,F.y); 
     rhow=1030;
     g=9.81/1000;
     S=s*0 ;
