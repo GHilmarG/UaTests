@@ -42,4 +42,25 @@ UaPlots(CtrlVarInRestartFile,MUA,F,full(diag(Meas.usCov)),FigureTitle="new uv da
 
 save("Antarctica-Inverse-AntarcticaMUAwith54kElements-logC-logA-MatlabOptimization-HessianBased-MAdjointRHA=E-RHC=E-IHC=FP-IHA=FP-Weertman-0-InverseRestartFile.mat")
 
+%% Set erros at the boundary nodes to a high value
+
+load("Antarctica-Inverse-AntarcticaMUAwith54kElements-logC-logA-MatlabOptimization-HessianBased-MAdjointRHA=E-RHC=E-IHC=FP-IHA=FP-Weertman-0-InverseRestartFile.mat")
+CtrlVar=CtrlVarInRestartFile;
+UserVar=UserVarInRestartFile;
+% PlotResultsFromInversion(UserVar,CtrlVar,MUA,BCs,F,l,F.GF,InvStartValues,InvFinalValues,Priors,Meas,BCsAdjoint,RunInfo);
+
+
+
+Nodes=MUA.Boundary.Nodes;
+
+for k=1:numel(Nodes)
+    ii=Nodes(k);
+    Meas.usCov(ii,ii)=1e+5;
+    Meas.vsCov(ii,ii)=1e+5;
+end
+
+
+% PlotResultsFromInversion(UserVar,CtrlVar,MUA,BCs,F,l,F.GF,InvStartValues,InvFinalValues,Priors,Meas,BCsAdjoint,RunInfo);
+save("Antarctica-Inverse-AntarcticaMUAwith54kElements-logC-logA-MatlabOptimization-HessianBased-MAdjointRHA=E-RHC=E-IHC=FP-IHA=FP-Weertman-0-InverseRestartFile.mat")
+
 %%
