@@ -50,7 +50,7 @@ if ~isRestart
     if contains(UserVar.Example,"-PIG-")
 
 
-        CtrlVar.MeshSize=5e3 ;
+        CtrlVar.MeshSize=2.5e3 ;
         CtrlVar.MeshSizeMin=0.1*CtrlVar.MeshSize ;
         CtrlVar.MeshSizeMax=10*CtrlVar.MeshSize ;
         [UserVar,MUA]=CreateMeshAndMua(UserVar,CtrlVar);
