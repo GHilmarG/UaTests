@@ -11,18 +11,20 @@ function tests = TestUa
     
     %f=localfunctions ;  % all tests
     
-     f={@testCrack}                ;    % OK  11/05/2021 ,  09/09/2021 , 01/11/2021 ,   08/03/2023 , 24/06/2023
-     f={@testPIGdiagnostic}        ;    % OK  11/05/2021 ,  09/09/2021 , 01/11/2021 ,   08/03/2023 , 24/06/2023
-     f={@testPIGtransient}         ;    %                                                            24/06/2023
-     f={@testMassBalanceFeedback}  ;    % OK  11/05/2021 ,  09/09/2021 , 01/11/2021 ,   08/03/2023 , 24/06/2023
-     f={@test1dIceStream}          ;    % OK  11/05/2021 ,  08/09/2021 , 01/11/2021 ,   08/03/2023 , 24/06/2023
-     f={@test1dIceShelf}           ;    % OK  11/05/2021 ,  08/09/2021 , 01/11/2021 ,   08/03/2023 , 24/06/2023
-     f={@testGaussPeak}            ;    % OK  11/05/2021 ,             , 01/11/2021 ,   08/03/2023 , 24/06/2023
-     f={@testFreeSlipBCs}          ;    % OK  11/05/2021 ,  08/09/2021 , 01/11/2021 ,   03/08/2023 , 24/06/2023
+     f={@testCrack}                ;    % OK  11/05/2021 ,  09/09/2021 , 01/11/2021 ,   08/03/2023 , 24/06/2023 , 02/10/2013
+     f={@testPIGdiagnostic}        ;    % OK  11/05/2021 ,  09/09/2021 , 01/11/2021 ,   08/03/2023 , 24/06/2023 , 02/10/2013
+     f={@testPIGtransient}         ;    %                                                            24/06/2023 , 02/10/2013
+     f={@testMassBalanceFeedback}  ;    % OK  11/05/2021 ,  09/09/2021 , 01/11/2021 ,   08/03/2023 , 24/06/2023 , 02/10/2013
+     f={@test1dIceStream}          ;    % OK  11/05/2021 ,  08/09/2021 , 01/11/2021 ,   08/03/2023 , 24/06/2023 , 02/10/2013
+     f={@test1dIceShelf}           ;    % OK  11/05/2021 ,  08/09/2021 , 01/11/2021 ,   08/03/2023 , 24/06/2023 , 02/10/2013
+     f={@testGaussPeak}            ;    % OK  11/05/2021 ,             , 01/11/2021 ,   08/03/2023 , 24/06/2023 , 02/10/2013
+     f={@testFreeSlipBCs}          ;    % OK  11/05/2021 ,  08/09/2021 , 01/11/2021 ,   03/08/2023 , 24/06/2023 , 02/10/2013
 
 
      f={@testCrack,@testPIGdiagnostic,@testPIGtransient,@testMassBalanceFeedback,@test1dIceStream,@test1dIceShelf,@testGaussPeak,@testFreeSlipBCs} ;
     
+   
+
     
     tests = functiontests(f);
 end
