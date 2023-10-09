@@ -54,8 +54,24 @@ UserVar.DataFileWithPriors="Priors-panAntartica-Weertman-m3-n3-54kElements-28kNo
 UserVar.DataFileWithPriors="";
 
 
-UserVar.DataFileWithInverseStartA="A-panAntarctic-m3-n3-Weertman-Nod3-Cga1-Cgs1000000-Aga1-Ags1000000-logC-logA-N28k-E55k-.mat";
-UserVar.DataFileWithInverseStartC="C-panAntarctic-m3-n3-Weertman-Nod3-Cga1-Cgs1000000-Aga1-Ags1000000-logC-logA-N28k-E55k-.mat";
+
+
+Reg=1e5; 
+RegString=num2str(Reg); 
+
+
+UserVar.DataFileWithInverseStartA="A-panAntarctic-m3-n3-Weertman-Nod3-Cga1-Cgs"+RegString+"-Aga1-Ags"+RegString+"-logC-logA-N111k-E218k-.mat";
+UserVar.DataFileWithInverseStartC="C-panAntarctic-m3-n3-Weertman-Nod3-Cga1-Cgs"+RegString+"-Aga1-Ags"+RegString+"-logC-logA-N111k-E218k-.mat";
+
+
+UserVar.DataFileWithInverseStartA="A-panAntarctic-m3-n3-Weertman-Nod3-Cga1-Cgs"+RegString+"-Aga1-Ags"+RegString+"-logC-logA-N1754k-E3494k-.mat";
+UserVar.DataFileWithInverseStartC="C-panAntarctic-m3-n3-Weertman-Nod3-Cga1-Cgs"+RegString+"-Aga1-Ags"+RegString+"-logC-logA-N1754k-E3494k-.mat";
+
+
+
+
+
+
 
 if ~isfield(UserVar,'m')
     UserVar.m=3;
@@ -69,15 +85,19 @@ end
 
 CtrlVar.Experiment=UserVar.RunType;
 
+
+CtrlVar.PlotsXaxisLabel='xps (km)' ;  CtrlVar.PlotsYaxisLabel='yps (km)' ; %
+
 switch UserVar.RunType
 
     case {'Inverse-MatOpt','Inverse-UaOpt','Inverse-TestAdjoint'}
 
-        CtrlVar.Inverse.AdjointGradientPreMultiplier='M'; % {'I','M'}
+       
         CtrlVar.InverseRun=1;
 
-        CtrlVar.Restart=1;
-        CtrlVar.Inverse.Iterations=5000;
+        CtrlVar.Restart=0;
+        
+        CtrlVar.Inverse.Iterations=1;
 
         if contains(UserVar.RunType,"MatOpt")
             CtrlVar.Inverse.MinimisationMethod="MatlabOptimization-HessianBased";
@@ -99,26 +119,25 @@ switch UserVar.RunType
 
         UserVar.ReadSlipperinessFromFile=0;
         UserVar.ReadAGlenEstFromFile=0;
-        CtrlVar.ReadInitialMesh=1; CtrlVar.ReadInitialMeshFileName="AntarcticaMUAwith54kElements";               Nele=54596 ; Nnodes=28278;
-        CtrlVar.ReadInitialMesh=1; CtrlVar.ReadInitialMeshFileName="AntarcticaMUAwith218kElements111kNodes.mat"; Nele=218383 ; Nnodes=111151;
+        CtrlVar.ReadInitialMesh=1; CtrlVar.ReadInitialMeshFileName="AntarcticaMUAwith54kElements";                    Nele=54596 ; Nnodes=28278;
+        CtrlVar.ReadInitialMesh=1; CtrlVar.ReadInitialMeshFileName="AntarcticaMUAwith218kElements111kNodes.mat";      Nele=218383 ; Nnodes=111151;
+        CtrlVar.ReadInitialMesh=1; CtrlVar.ReadInitialMeshFileName="AntarcticaMUAwith873kElements440kNodes.mat";      Nele=873000 ; Nnodes=440000;
+        CtrlVar.ReadInitialMesh=1; CtrlVar.ReadInitialMeshFileName="AntarcticaMUAwith3494kElements1754kNodes.mat" ;   Nele=3494000 ; Nnodes=1754000;
+
+
         CtrlVar.AdaptMesh=0;       % CtrlVar.ReadInitialMeshFileName
 
 
 
         CtrlVar.Inverse.Regularize.Field=CtrlVar.Inverse.InvertFor;
 
-        CtrlVar.Inverse.Regularize.Multiplier=1;
-        CtrlVar.Inverse.DataMisfit.Multiplier=1;
+   
 
         CtrlVar.Inverse.Regularize.logC.ga=1;
-        CtrlVar.Inverse.Regularize.logC.gs=100e3 ;
+        CtrlVar.Inverse.Regularize.logC.gs=Reg ;
         CtrlVar.Inverse.Regularize.logAGlen.ga=1;
-        CtrlVar.Inverse.Regularize.logAGlen.gs=100e3 ;
+        CtrlVar.Inverse.Regularize.logAGlen.gs=Reg;
 
-        CtrlVar.Inverse.Regularize.C.ga=1;
-        CtrlVar.Inverse.Regularize.C.gs=1 ;
-        CtrlVar.Inverse.Regularize.AGlen.ga=1;
-        CtrlVar.Inverse.Regularize.AGlen.gs=1 ;
 
 
         if contains(UserVar.RunType,'TestAdjoint')
