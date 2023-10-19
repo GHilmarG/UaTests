@@ -90,14 +90,15 @@ CtrlVar.PlotsXaxisLabel='xps (km)' ;  CtrlVar.PlotsYaxisLabel='yps (km)' ; %
 
 switch UserVar.RunType
 
-    case {'Inverse-MatOpt','Inverse-UaOpt','Inverse-TestAdjoint'}
+    case {'Inverse-MatOpt','Inverse-UaOpt',['Inverse-TestAdjoin' ...
+            't']}
 
        
         CtrlVar.InverseRun=1;
 
-        CtrlVar.Restart=0;
-        
-        CtrlVar.Inverse.Iterations=1;
+        CtrlVar.Restart=1;
+
+        CtrlVar.Inverse.Iterations=10;
 
         if contains(UserVar.RunType,"MatOpt")
             CtrlVar.Inverse.MinimisationMethod="MatlabOptimization-HessianBased";
