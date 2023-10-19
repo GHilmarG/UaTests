@@ -1,35 +1,17 @@
 
 
-%%
-%
-% "inverts" for the ice thickness, h, by solving 
-%
-% $$ d (u h)/dx + d (v h)/dy - \nabla \cdot (\kappa \nabla h) = a$$
-%
-% for a, u and v given.
-%
-%
-%%
+
+
+function [UserVar,CtrlVar,MUA,F,BCs,Priors,Meas,htrue,kIso,kAlong,kCross,Method]=DefineDataForThicknessInversion(CtrlVar)
 
 
 
-Method="Fh +  <l , hMeas>";   % Here we solve directly for Fh(h)=0 subject to  h=hMeas, 
-                            % Thust both the model, Fh, and the measurments, hMeas, are hard constraints
+fprintf("Defining synthetic data based on the MismipPlus geometry, using previous run results...")
 
 
-Method="(h-hmeas) P (h-hmeas) / 2 +  <l , Fh>" ;
+Method="(h-hmeas) P (h-hmeas) / 2 + (h-hprior) Q (h-hprior) / 2 +  (K h - b) M (K h - b) / 2" ; 
 
-
-
-
-
-
-
-
-%% Synthetic data
-% load("ForwardResults10km.mat","CtrlVar","F","MUA","UserVar") ;
-%load("ForwardResults1km10yr.mat","CtrlVar","F","MUA","UserVar") ;
-load("ForwardResults1km100yr.mat","CtrlVar","F","MUA","UserVar") ;
+UserVar=[];
 
 
 [~,hostname]=system('hostname') ;
@@ -53,8 +35,8 @@ end
 P="Runs\MISMIPplus\";
 filename="RestartIce0-rCW-N0-Implicit-kH100-nod3.mat";
 
-%load("C:\Users\Hilmar Gudmundsson\OneDrive - Northumbria University - Production Azure AD\Runs\MISMIPplus\RestartIce0-rCW-N0-Implicit-kH100-nod3.mat","F","MUA","UserVarInRestartFile","BCs")
-load(OneDriveFolder+P+filename,"F","MUA","UserVarInRestartFile","BCs")
+
+load(OneDriveFolder+P+filename,"F","MUA")
 
 [MUA.Dxx,MUA.Dyy]=StiffnessMatrix2D1dof(MUA);
 
@@ -63,10 +45,11 @@ if isempty(F.x)  % if the result file is old...
     F.y=MUA.coordinates(:,2);
 end
 
-htrue=F.h ;
+htrue=F.h ; 
+
 
 Priors=PriorProbabilityDistribution ;
-Priors.h=F.h*0 ; 
+Priors.h=F.h*0 ;
 
 
 %% Define "soft" boundary conditions for the ice thickness h.
@@ -81,11 +64,9 @@ Meas.hCov=1e10+zeros(MUA.Nnodes,1);  % very high errors
 
 %% Define BCs for h-problem
 % only needed if measurements introduced as hard contraints
-% i.e. only if using  <l , hMeas> 
-% 
-if ~exist("BCs","var")
-    BCs=BoundaryConditions ;
-end
+% i.e. only if using  <l , hMeas>
+
+BCs=BoundaryConditions();
 
 % add min thickness constraints
 I=find(F.h<=CtrlVar.ThickMin); BCs.hFixedNode=I ;
@@ -140,88 +121,9 @@ kAlong=F.x*0+0.01*1e4;
 kCross=F.x*0+0.1*1e4;
 
 F.as=F.as-F.dhdt;
-[UserVar,hest,lambda]=hEquation(UserVar,CtrlVar,MUA,F,BCs,kIso,kAlong,kCross,Method,Priors,Meas);
 
 
 
+fprintf("done. \n")
 
-%% Results
-
-FigTitle=sprintf("kIso=%5.1f kAlong=%5.1f kAcross=%5.1f",mean(kIso),mean(kAlong),mean(kCross));
-
-
-
-UaPlots(CtrlVar,MUA,F,hest,FigureTitle="hest") ; 
-title("h estimated")
-axis tight
-
-%nexttile ; 
-% 
-UaPlots(CtrlVar,MUA,F,htrue,FigureTitle="h true") ; title(FigTitle)
-axis tight
-
-
-%nexttile ;
-% h1=histogram(hest-htrue); h1.Normalization="probability";
-
-FindOrCreateFigure("compare")
-yyaxis left
-plot(htrue,hest,'.')
-hold on
-plot(xlim,xlim);
-ylim(xlim)
-ylabel("h estimated")
-yyaxis right
-plot(htrue,hest-htrue,'.')
-ylabel("hest-htrue")
-
-lm=fitlm(hest,htrue);
-title(sprintf("R2=%f",lm.Rsquared.Ordinary));
-xlabel("h true")  ;
-
-%UaPlots(CtrlVar,MUA,F,"speed") ; % title("")
-%axis tight
-
-% nexttile ; 
-
-UaPlots(CtrlVar,MUA,F,hest-htrue,FigureTitle="hest-htrue") ;  title("hest-htrue")
-
-if ~isempty(Priors.h)
-    UaPlots(CtrlVar,MUA,F,Priors.h,FigureTitle="hprior") ;  title("h prior")
 end
-
-if ~isempty(Meas.h)
-    UaPlots(CtrlVar,MUA,F,Meas.h,FigureTitle="hmeas") ;  title("h measurements")
-end
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
