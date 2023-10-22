@@ -2,14 +2,14 @@
 
 
 
-function [UserVar,CtrlVar,MUA,F,BCs,Priors,Meas,htrue,kIso,kAlong,kCross,Method]=DefineDataForThicknessInversion(CtrlVar)
+function [UserVar,CtrlVar,MUA,F,BCs,Priors,Meas,htrue]=DefineDataForThicknessInversion(UserVar,CtrlVar)
 
 
 
 fprintf("Defining synthetic data based on the MismipPlus geometry, using previous run results...")
 
 
-Method="(h-hmeas) P (h-hmeas) / 2 + (h-hprior) Q (h-hprior) / 2 +  (K h - b) M (K h - b) / 2" ; 
+
 
 UserVar=[];
 
@@ -101,24 +101,7 @@ if isError  % add some error the surface mass balance
 end
 
 
-% constrain h over all floating areas
 
-%% Define parameters entering the precision matrices
-
-CtrlVar.hEq.gha=0;
-CtrlVar.hEq.ghs=0;
-CtrlVar.hEq.gFa=1;
-
-
-%%
-
-% Using cross diffusion is very effective as "smoothing" the solution and results insensitive to the exact diffusion coefficient value
-
-CtrlVar.SUPG.beta0=0;
-
-kIso=F.x*0+0*1e2;
-kAlong=F.x*0+0.01*1e4;
-kCross=F.x*0+0.1*1e4;
 
 F.as=F.as-F.dhdt;
 

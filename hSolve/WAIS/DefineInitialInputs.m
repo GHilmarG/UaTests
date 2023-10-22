@@ -8,16 +8,24 @@ function [UserVar,CtrlVar,MeshBoundaryCoordinates]=DefineInitialInputs(UserVar,C
 CtrlVar.hEq.Method="(h-hmeas) P (h-hmeas) / 2 + (h-hprior) Q (h-hprior) / 2 +  (K h - b) M (K h - b) / 2" ;
 
 
-%% MeshBoundary
+%% PIG upstream of grounding line
+xByB=[ -1750 -250 ; -1400 -250 ; -1400 0 ; -1750 0 ];
+MeshBoundaryCoordinates=1000*xByB;
+CtrlVar.MeshBoundaryCoordinates=MeshBoundaryCoordinates;
 
-MeshBoundaryCoordinates=[]; % I'm starting from a restart run here, so I don't need to define the mesh
+
+CtrlVar.MeshSize=10000;
+
+
+%%
+
 
 
 %% Define parameters entering the precision matrices
 
 CtrlVar.hEq.gha=0;
-CtrlVar.hEq.ghs=0;
-CtrlVar.hEq.gFa=1;
+CtrlVar.hEq.ghs=1e2;
+CtrlVar.hEq.gFa=0;
 
 
 %%
