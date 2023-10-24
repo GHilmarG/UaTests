@@ -15,9 +15,9 @@ MeshBoundaryCoordinates=[]; % I'm starting from a restart run here, so I don't n
 
 %% Define parameters entering the precision matrices
 
-CtrlVar.hEq.gha=0;
-CtrlVar.hEq.ghs=0;
-CtrlVar.hEq.gFa=1;
+CtrlVar.hEq.gha=0;   % Amplitude regularisation for ice thickness, h
+CtrlVar.hEq.ghs=0;   % Slope regularisation for ice thickness, h
+CtrlVar.hEq.gFa=1;   % Weighting for forward model. 0 implies forward model is not used
 
 
 %%
@@ -26,11 +26,16 @@ CtrlVar.hEq.gFa=1;
 
 CtrlVar.SUPG.beta0=1;
 
-CtrlVar.hEq.kIso=1e2;
-CtrlVar.hEq.kAlong=1e4;
-CtrlVar.hEq.kCross=1e4;
+CtrlVar.hEq.kIso=0*1e2;
+CtrlVar.hEq.kAlong=0*1e4;
+CtrlVar.hEq.kCross=0*1e4;
 
+%% Add Data Errors?
 
+UserVar.SurfaceMassBalanceErrorAmplitude=0 ; 
+UserVar.VelocityErrorAmplitude=1 ; 
+
+UserVar.VelocitySmoothingScale=1000;
 
 
 end

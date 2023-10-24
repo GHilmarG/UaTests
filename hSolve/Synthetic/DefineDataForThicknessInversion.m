@@ -10,10 +10,6 @@ fprintf("Defining synthetic data based on the MismipPlus geometry, using previou
 
 
 
-
-UserVar=[];
-
-
 [~,hostname]=system('hostname') ;
 if contains(hostname,"DESKTOP-G5TCRTD")
 
@@ -57,8 +53,10 @@ Priors.h=F.h*0 ;
 % The errors are uncorrelated and defined
 
 Meas=Measurements;
-Meas.h=zeros(MUA.Nnodes,1);
-Meas.hCov=1e10+zeros(MUA.Nnodes,1);  % very high errors
+Meas.h=F.h ;        % OK, here I am simply giving the nodal values as measurements, 
+Meas.hCov=1e10+zeros(MUA.Nnodes,1);  % generally very high errors
+
+I= F.x<10e3 ; Meas.hCov(I)=1e-5;        % but small errors around inflow boundary
 
 
 
@@ -92,14 +90,11 @@ end
 
 
 %% add error to surface mass balance
-isError=true;
 
-if isError  % add some error the surface mass balance
 
-    F.as=F.as+0.01*0.3*rand(numel(F.x),1);  % 1% error
-
-end
-
+F.as=F.as+UserVar.SurfaceMassBalanceErrorAmplitude*randn(MUA.Nnodes,1);
+F.ub=F.ub+UserVar.VelocityErrorAmplitude*randn(MUA.Nnodes,1);
+F.vb=F.vb+UserVar.VelocityErrorAmplitude*randn(MUA.Nnodes,1);
 
 
 
@@ -108,5 +103,32 @@ F.as=F.as-F.dhdt;
 
 
 fprintf("done. \n")
+
+
+%% Smooth data?
+
+if  ~isnan(UserVar.VelocitySmoothingScale)  && UserVar.VelocitySmoothingScale>0
+
+    fprintf("smoothing velocity field with the length scale %g \n",UserVar.VelocitySmoothingScale)
+    L=UserVar.VelocitySmoothingScale ;  % Smoothing length scale
+    [UserVar,F.ub]=HelmholtzEquation([],CtrlVar,MUA,1,L^2,F.ub,0);
+    [UserVar,F.vb]=HelmholtzEquation([],CtrlVar,MUA,1,L^2,F.vb,0);
+
+end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 end
