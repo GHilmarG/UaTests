@@ -494,7 +494,7 @@ CtrlVar.ATSdtMin=1e-5;
 CtrlVar.ATSTargetIterations=6;
 CtrlVar.ThicknessConstraintsItMax=0  ; % only update active-set, then move to next time step
 
-CtrlVar.NRitmax=150;       % maximum number of NR iteration
+CtrlVar.NRitmax=50;       % maximum number of NR iteration
 
 
 
@@ -506,7 +506,7 @@ else
     CtrlVar.time=0;
 end
 
-CtrlVar.TotalTime=100;
+CtrlVar.TotalTime=400;
 
 
 
@@ -687,9 +687,10 @@ end
 CtrlVar.WriteRestartFileInterval=20;
 
 %% Testing
-CtrlVar.DefineOutputsDt=10 ; CtrlVar.ATSdtMax=20; CtrlVar.ATSTargetIterations=10 ; CtrlVar.dt=0.001;   CtrlVar.ATSdtMin=0.001;  CtrlVar.NRitmax=50;   CtrlVar.TotalTime=1000;    % maximum number of NR iteration
-CtrlVar.ExplicitEstimationMethod="-no extrapolation-" ;
+% CtrlVar.DefineOutputsDt=10 ; CtrlVar.ATSdtMax=20; CtrlVar.ATSTargetIterations=10 ; CtrlVar.dt=0.001;   CtrlVar.ATSdtMin=0.001;  CtrlVar.NRitmax=50;   CtrlVar.TotalTime=1000;    % maximum number of NR iteration
+% CtrlVar.ExplicitEstimationMethod="-no extrapolation-" ;
 
+% CtrlVar.InfoLevelBackTrack=1000;  CtrlVar.InfoLevelNonLinIt=1000; 
 
 %%
 

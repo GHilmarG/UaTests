@@ -23,7 +23,7 @@ function tests = TestUa
 
      f={@testCrack,@testPIGdiagnostic,@testPIGtransient,@testMassBalanceFeedback,@test1dIceStream,@test1dIceShelf,@testGaussPeak,@testFreeSlipBCs} ;
     
-    f={@testCrack}                ;    % OK  11/05/2021 ,  09/09/2021 , 01/11/2021 ,   08/03/2023 , 24/06/2023 , 02/10/2013
+    
 
     
     tests = functiontests(f);
