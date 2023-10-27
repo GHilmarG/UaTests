@@ -23,7 +23,7 @@ function tests = TestUa
 
      f={@testCrack,@testPIGdiagnostic,@testPIGtransient,@testMassBalanceFeedback,@test1dIceStream,@test1dIceShelf,@testGaussPeak,@testFreeSlipBCs} ;
     
-    
+    f={@testPIGTWGrestart};
 
     
     tests = functiontests(f);
@@ -194,6 +194,18 @@ function testMassBalanceFeedback(testCase)
     actSolution= UserVar.Test.Norm.actValue ;
     expSolution = UserVar.Test.Norm.expValue ;
     verifyEqual(testCase,actSolution,expSolution,'AbsTol',1e-2)
+    
+end
+
+function testPIGTWGrestart(testCase)
+    
+    cd .\Calving\PIG-TWG\
+    UserVar.RunType="TestOne"; 
+    UserVar=Ua(UserVar) ;
+    cd ..\..
+    actSolution=UserVar.Test.Norm.actValue;
+    expSolution = UserVar.Test.Norm.expValue ;
+    verifyEqual(testCase,actSolution,expSolution,'RelTol',1e-3)
     
 end
 
