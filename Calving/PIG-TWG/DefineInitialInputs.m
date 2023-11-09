@@ -502,7 +502,7 @@ end
 
 %%
 CtrlVar.dt=1e-5;   
-CtrlVar.ATSdtMax=0.1;
+CtrlVar.ATSdtMax=0.25;
 CtrlVar.ATSdtMin=1e-5;  
 CtrlVar.ATSTargetIterations=6;
 CtrlVar.ThicknessConstraintsItMax=0  ; % only update active-set, then move to next time step
@@ -530,7 +530,8 @@ CtrlVar.PlotMesh=0;
 CtrlVar.PlotBCs=1 ;
 CtrlVar.PlotXYscale=1000;
 CtrlVar.doAdaptMeshPlots=5;
-
+CtrlVar.PlotsXaxisLabel="xps (km)";
+CtrlVar.PlotsYaxisLabel="yps (km)";
 %% Meshing
 
 if contains(UserVar.RunType,"-AM-")
