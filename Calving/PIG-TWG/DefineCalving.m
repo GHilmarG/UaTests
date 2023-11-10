@@ -57,7 +57,7 @@ if isempty(F.LSF)   % Do I need to initialize the level set function?
 
     end
 
-    [xc,yc,LSF]=CalvingFrontLevelSetGeometricalInitialisation(CtrlVar,MUA,Xc,Yc,LSF,plot=true);
+    [xc,yc,LSF]=CalvingFrontLevelSetGeometricalInitialisation(CtrlVar,MUA,Xc,Yc,LSF,plot=false);
 
 
 end

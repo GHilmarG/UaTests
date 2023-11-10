@@ -4,7 +4,8 @@
 %
 %  I keep complete copies of PIG-TWG results files on
 %
-%  C23000099 in C:\cygwin64\home\pcnj6\Ua\UaTests\Calving\PIG-TWG\ResultsFiles
+% DESKTOP-BU2IHIR in  D:\Runs\Calving\PIG-TWG\ResultsFiles
+%
 %
 % External drive "UaHomeWScopy" in F:\Runs\Calving\PIG-TWG\ResultsFiles
 %
@@ -32,7 +33,9 @@ Reg=["TWIS","TWISC0","TWISC2","PIGC0"] ;
 SL=["Cornford","Weertman"] ;
 MR=["MR0","MR4"];
 D=["-","-Duvh-"];
-
+Alim="-Alim-";
+Clim="-Clim-";
+%Clim="";              % There is an inconsistency, some files that should have -Clim- in their names, do not.
 
 Res=["5km","10km","20km"]; Reg=["TWIS"] ; SL=["Cornford","Weertman"] ; MR=["MR4"]; D=["-Duvh-"];
 
@@ -46,8 +49,9 @@ for L=1:numel(Res)
             for J=1:numel(MR)
                 for K=1:numel(SL)
 
-                    Name="00*P"+D(M)+Reg(I)+"-"+MR(J)+"-SM-TM001-"+SL(K)+"*"+Res(L)+"*.mat" ;
+                    Name="00*P"+D(M)+Reg(I)+"-"+MR(J)+"-SM-TM001-"+SL(K)+"*"+Res(L)+Alim+Clim+"*.mat" ;
 
+                    Name=replace(Name,"--","-");
 
                     Files=dir(Name);
 

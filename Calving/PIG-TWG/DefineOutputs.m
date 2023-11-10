@@ -75,7 +75,7 @@ if contains(plots,'-save-')
 end
 
 % only do plots at end of run
-% if ~strcmp(CtrlVar.DefineOutputsInfostring,'Last call') ; return ; end
+if ~strcmp(CtrlVar.DefineOutputsInfostring,'Last call') ; return ; end
 
 switch UserVar.MeshResolution
 

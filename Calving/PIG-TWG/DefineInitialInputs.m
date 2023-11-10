@@ -163,7 +163,7 @@ CtrlVar.MeshSizeMax=CtrlVar.MeshSize ;
 CtrlVar.LevelSetInitialisationInterval=100 ;
 
 
-CtrlVar.DefineOutputsDt=5;
+CtrlVar.DefineOutputsDt=1;
 CtrlVar.LevelSetMethodMassBalanceFeedbackCoeffLin=-10;  % This is the constant a1, it has units 1/time.
 CtrlVar.LevelSetMethodMassBalanceFeedbackCoeffCubic=0;
 
@@ -502,7 +502,7 @@ end
 
 %%
 CtrlVar.dt=1e-5;   
-CtrlVar.ATSdtMax=0.25;
+CtrlVar.ATSdtMax=0.1;
 CtrlVar.ATSdtMin=1e-5;  
 CtrlVar.ATSTargetIterations=6;
 CtrlVar.ThicknessConstraintsItMax=0  ; % only update active-set, then move to next time step
