@@ -37,7 +37,7 @@ Alim="-Alim-";
 Clim="-Clim-";
 %Clim="";              % There is an inconsistency, some files that should have -Clim- in their names, do not.
 
-Res=["5km","10km","20km"]; Reg=["TWIS"] ; SL=["Cornford","Weertman"] ; MR=["MR4"]; D=["-Duvh-"];
+Res=["5km","10km","20km"]; Reg=["TWIS"] ; SL=["Cornford","Weertman"] ; MR=["MR4"]; D=["","-Duvh-"];
 
 % Name="*P-TWIS-MR0-SM-TM001-Weertman*5km*.mat" ;
 % I=1 ; J=1; K=1; L=1;
@@ -49,7 +49,7 @@ for L=1:numel(Res)
             for J=1:numel(MR)
                 for K=1:numel(SL)
 
-                    Name="00*P"+D(M)+Reg(I)+"-"+MR(J)+"-SM-TM001-"+SL(K)+"*"+Res(L)+Alim+Clim+"*.mat" ;
+                    Name="00*P-"+D(M)+Reg(I)+"-"+MR(J)+"-SM-TM001-"+SL(K)+"*"+Res(L)+Alim+Clim+"*.mat" ;
 
                     Name=replace(Name,"--","-");
 
