@@ -180,7 +180,9 @@ Resolution="-5km-"   ;  CtrlVar.SlidingLaw="Cornford"; C="" ;     Duvh="Duvh" ; 
 Resolution="-2.5km-" ;  CtrlVar.SlidingLaw="Cornford"; C="" ;     Duvh="Duvh" ;  Melt="-MR4-" ;  IceShelf="Thwaites" ;  UserVar.InvMeshResolution=5000;    GLrange=""; 
 
 
+
 CtrlVar.InfoLevelNonLinIt=5;  CtrlVar.doplots=1;   % testing
+CtrlVar.LocateAndDeleteDetachedIslandsAndRegionsConnectedByOneNodeOnly=true;
 CtrlVar.ExplicitEstimationMethod="-no extrapolation-" ;
 
 % setting GLrange="-GLrange-"  implies further refinement around grounding-line 
