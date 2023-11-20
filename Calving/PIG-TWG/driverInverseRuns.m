@@ -58,7 +58,10 @@ UserVar.RunType='Inverse-MatOpt-Alim-Clim-Cornford-uvGroup-';  UserVar.MeshResol
 UserVar.RunType='Inverse-MatOpt-Alim-Clim-Cornford-uvGroup-';  UserVar.MeshResolution=5e3; IRange=5:5 ; JRange=5:5 ;  
 UserVar.RunType='Inverse-MatOpt-Alim-Clim-Cornford-uvGroup-';  UserVar.MeshResolution=2.5e3; IRange=5:5 ; JRange=5:5 ;  
 
-CtrlVar.Inverse.Iterations=2;
+UserVar.RunType='Inverse-MatOpt-Alim-Clim-Weertman-';  UserVar.MeshResolution=5e3; IRange=5:5 ; JRange=5:5 ;  %
+
+
+CtrlVar.Inverse.Iterations=2000;
 
 if SubmitBathJobs
 

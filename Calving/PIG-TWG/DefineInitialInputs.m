@@ -111,8 +111,12 @@ CtrlVar.LimitRangeInUpdateFtimeDerivatives=true ;
 [~,hostname]=system('hostname') ;
 if contains(hostname,"DESKTOP-G5TCRTD")
     UserVar.ResultsFileDirectory="F:\Runs\Calving\PIG-TWG\ResultsFiles\";
-elseif contains(hostname,"DESKTOP-BU2IHIR")
+elseif contains(hostname,"DESKTOP-BU2IHIR")   % home 
     UserVar.ResultsFileDirectory="D:\Runs\Calving\PIG-TWG\ResultsFiles\";
+    UserVar.InverseRestartFileDirectory="D:\Runs\Calving\PIG-TWG\InverseRestartFiles\"; 
+    UserVar.InversionFileDirectory="D:\Runs\Calving\PIG-TWG\InversionFiles\";
+    UserVar.MeshFileDirectory="D:\Runs\Calving\PIG-TWG\MeshFiles\";
+    UserVar.ForwardRestartFileDirectory="D:\Runs\Calving\PIG-TWG\RestartFiles";
 else
     UserVar.ResultsFileDirectory=pwd+"\ResultsFiles\";
 end
@@ -394,10 +398,10 @@ if contains(UserVar.RunType,"Inverse")
 
 
     
-    CtrlVar.NameOfFileForSavingSlipperinessEstimate="InvC-"+InvFile;
-    CtrlVar.NameOfFileForSavingAGlenEstimate="InvA-"+InvFile;
+    CtrlVar.NameOfFileForSavingSlipperinessEstimate= UserVar.InversionFileDirectory+"InvC-"+InvFile;
+    CtrlVar.NameOfFileForSavingAGlenEstimate= UserVar.InversionFileDirectory+"InvA-"+InvFile;
 
-    CtrlVar.Inverse.NameOfRestartOutputFile="InverseRestartFile-"+InvFile;
+    CtrlVar.Inverse.NameOfRestartOutputFile=UserVar.InverseRestartFileDirectory+"InverseRestartFile-"+InvFile;
 
 
     % [----------- Testing adjoint gradents
@@ -541,7 +545,8 @@ if contains(UserVar.RunType,"-AM-")
 else
 
     CtrlVar.ReadInitialMeshFileName=...
-        "MeshFile"...
+        UserVar.MeshFileDirectory...
+        +"MeshFile"...
         +num2str(UserVar.MeshResolution/1000) ...
         +"km-"...  ; %%            +CtrlVar.MeshGenerator ...
         +UserVar.Region ;
@@ -654,7 +659,7 @@ UserVar.CFile=replace(UserVar.CFile,".","k");
 UserVar.AFile=replace(UserVar.AFile,".","k");
 
 
-CtrlVar.NameOfRestartFiletoWrite="Restart-"+UserVar.RunType+".mat";
+CtrlVar.NameOfRestartFiletoWrite=UserVar.ForwardRestartFileDirectory+"Restart-"+UserVar.RunType+".mat";
 CtrlVar.NameOfRestartFiletoWrite=replace(CtrlVar.NameOfRestartFiletoWrite,"--","-");
 CtrlVar.NameOfRestartFiletoRead=CtrlVar.NameOfRestartFiletoWrite;
 
