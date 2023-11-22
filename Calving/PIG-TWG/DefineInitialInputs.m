@@ -375,7 +375,7 @@ if contains(UserVar.RunType,"Inverse")
     CtrlVar.Restart=0;
     CtrlVar.Inverse.InfoLevel=1;
     CtrlVar.InfoLevelNonLinIt=0;  CtrlVar.InfoLevel=0;
-    CtrlVar.InfoLevelNonLinIt=1;  CtrlVar.InfoLevel=1;
+   
 
     UserVar.Slipperiness.ReadFromFile=0;
     UserVar.AGlen.ReadFromFile=0;

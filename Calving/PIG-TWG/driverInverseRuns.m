@@ -61,7 +61,7 @@ UserVar.RunType='Inverse-MatOpt-Alim-Clim-Cornford-uvGroup-';  UserVar.MeshResol
 UserVar.RunType='Inverse-MatOpt-Alim-Clim-Weertman-';  UserVar.MeshResolution=5e3; IRange=5:5 ; JRange=5:5 ;  %
 
 
-CtrlVar.Inverse.Iterations=2000;
+CtrlVar.Inverse.Iterations=10;
 
 if SubmitBathJobs
 
@@ -158,15 +158,18 @@ if SubmitBathJobs
 else
 
     %% Test Run
-   
-    
+
+
     CtrlVar.Inverse.Regularize.logC.ga=1;
     CtrlVar.Inverse.Regularize.logC.gs=100000  ; % 100000000  ; % 10000000 (c); %   5000000 (c) ; %     1000000 (c) ;
 
     CtrlVar.Inverse.Regularize.logAGlen.ga=1;
     CtrlVar.Inverse.Regularize.logAGlen.gs=100000;
 
-    Ua(UserVar,CtrlVar) ;
+    for KK=1:100
+        close all
+        Ua(UserVar,CtrlVar) ;
+    end
     %%
 end
 
