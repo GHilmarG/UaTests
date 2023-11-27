@@ -7,15 +7,16 @@ UserVar.Outputsdirectory='ResultsFiles'; % This I use in UaOutputs
 UserVar.MassBalanceCase='ice0';
 %%
 
-CtrlVar.SlidingLaw="W" ;  % options:  "W","W-N0","minCW-N0","C","rpCW-N0", and "rCW-N0"  
+CtrlVar.SlidingLaw="Weertman" ;  % options:  "W","W-N0","minCW-N0","C","rpCW-N0", and "rCW-N0"  
+% CtrlVar.SlidingLaw="Joughin" ;          
 CtrlVar.Experiment=['MismipPlus-',UserVar.MisExperiment];   
 %% Types of run
 %
-CtrlVar.TimeDependentRun=0; 
+CtrlVar.TimeDependentRun=1; 
 CtrlVar.TotalNumberOfForwardRunSteps=10;
 CtrlVar.TotalTime=100;
 CtrlVar.Restart=0;  
-CtrlVar.InfoLevelNonLinIt=1;  % try setting to 100 for more info and plots on non-linear convergence  
+CtrlVar.InfoLevelNonLinIt=1;  CtrlVar.InfoLevelBackTrack=0;
 CtrlVar.NRitmax=500;            % maximum number of NR iteration
 CtrlVar.dt=0.01;  
 
@@ -81,6 +82,7 @@ CtrlVar.MaxNumberOfElements=250e3;           % max number of elements. If #eleme
 
 CtrlVar.AdaptMesh=1;         
 CtrlVar.AdaptMeshMaxIterations=10;  % Number of adapt mesh iterations within each run-step.
+CtrlVar.AdaptMeshMaxIterations=2;  % Number of adapt mesh iterations within each run-step.
 CtrlVar.MeshRefinementMethod='explicit:local:newest vertex bisection';    % can have any of these values:
                                                    % 'explicit:global' 
                                                    % 'explicit:local'
