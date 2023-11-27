@@ -166,7 +166,8 @@ else
     CtrlVar.Inverse.Regularize.logAGlen.ga=1;
     CtrlVar.Inverse.Regularize.logAGlen.gs=100000;
 
-    for KK=1:100
+    for KK=1:1
+        
         close all
         Ua(UserVar,CtrlVar) ;
     end
