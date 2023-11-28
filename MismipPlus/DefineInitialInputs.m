@@ -8,7 +8,7 @@ UserVar.MassBalanceCase='ice0';
 %%
 
 CtrlVar.SlidingLaw="Weertman" ;  % options:  "W","W-N0","minCW-N0","C","rpCW-N0", and "rCW-N0"  
-% CtrlVar.SlidingLaw="Joughin" ;          
+CtrlVar.SlidingLaw="Joughin" ;          
 CtrlVar.Experiment=['MismipPlus-',UserVar.MisExperiment];   
 %% Types of run
 %
