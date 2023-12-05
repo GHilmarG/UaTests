@@ -33,7 +33,7 @@ FigureDirectory="C:\Users\Hilmar\OneDrive - Northumbria University - Production 
 xb=[-1520 -1445 -1100 -1100 -1350 -1590 -1520] ;yb=[-510  -547  -547 -180 -180   -390 -510];
 xyBoundary=[xb(:) yb(:)]*1000;
 
-TimeInterval=[0 400] ; 
+TimeInterval=[0 inf] ; 
 
 Experiment="AC-lim" ;
 Experiment="5km-New";
@@ -448,7 +448,7 @@ switch Experiment
             ];
 
 
-        TimeInterval=[0 400] ;  VAFStep=25; VideoStep=25;  CreateVideo=true; CalculateVAF=false; 
+        TimeInterval=[0 inf] ;  VAFStep=10; VideoStep=10;  CreateVideo=true; CalculateVAF=false; 
 
         xyBoundary=nan;  % since this is always with respect to a reference run, I think that limiting the region is not needed
 
@@ -495,7 +495,7 @@ if CreateVideo
         % ReadPlotSequenceOfResultFiles2(FileNameSubstring=SubString(I),PlotTimestep=Step,PlotType="-ubvb-B-") ;
         % ReadPlotSequenceOfResultFiles2(FileNameSubstring=SubString(I),PlotTimestep=Step,PlotType="-ubvb-VAF-",VAFBoundary=xyBoundary) ;
         % ReadPlotSequenceOfResultFiles2(FileNameSubstring=SubString(I),PlotTimestep=Step,PlotType="-ubvb-ds-",VAFBoundary=xyBoundary) ;
-        ReadPlotSequenceOfResultFiles2(FileNameSubstring=SubString(I),PlotTimestep=Step,PlotType="-ds-VAF-",VAFBoundary=xyBoundary,PlotTimeInterval=[0 400]) ;
+        ReadPlotSequenceOfResultFiles2(FileNameSubstring=SubString(I),PlotTimestep=Step,PlotType="-ds-VAF-",VAFBoundary=xyBoundary,PlotTimeInterval=TimeInterval) ;
     end
 end
 
