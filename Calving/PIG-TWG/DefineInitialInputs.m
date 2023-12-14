@@ -307,6 +307,9 @@ if contains(UserVar.RunType,"Cornford")
     CtrlVar.SlidingLaw="Cornford" ;
 elseif contains(UserVar.RunType,"Umbi")
     CtrlVar.SlidingLaw="Umbi" ;
+elseif contains(UserVar.RunType,"Joughin")
+    CtrlVar.SlidingLaw="Joughin" ;
+    UserVar.Sliding.V0=300;
 else
     CtrlVar.SlidingLaw="Weertman" ;
 end
@@ -368,6 +371,9 @@ if contains(UserVar.RunType,"Inverse")
         % Testing
         CtrlVar.Inverse.MinimisationMethod='UaOptimization-Hessian'; % {'MatlabOptimization','UaOptimization'}
     end
+
+   % CtrlVar.Inverse.MinimisationMethod="MatlabOptimization-GradientBased";     CtrlVar.Inverse.AdjointGradientPreMultiplier="I"; % {'I','M'}
+   % CtrlVar.Inverse.MinimisationMethod="MatlabOptimization-GradientBased";     CtrlVar.Inverse.AdjointGradientPreMultiplier="M"; % {'I','M'}
 
     UserVar.DefineOutputs="-"; %
     CtrlVar.InverseRun=1;

@@ -1,4 +1,4 @@
-function [UserVar,C,m,q,muk]=DefineSlipperyDistribution(UserVar,CtrlVar,MUA,F)
+function [UserVar,C,m,q,muk,V0]=DefineSlipperyDistribution(UserVar,CtrlVar,MUA,F)
 
 persistent FC
 
@@ -6,6 +6,8 @@ persistent FC
 q=3 ; 
 muk=0.5 ; 
 m=3; 
+V0=UserVar.Sliding.V0; 
+
 
 if ~UserVar.Slipperiness.ReadFromFile
     
@@ -21,6 +23,17 @@ if ~UserVar.Slipperiness.ReadFromFile
         C0=Speed./(tau.^m);
         C=C0;
         
+   case {"Joughin"}
+  
+       % C tau^m = (V/(V+V0))
+
+        tau=100 ; % units meters, year , kPa
+        Speed=100;
+        
+        C0=(Speed/(Speed+V0))    ./(tau.^m);
+        C=C0;
+
+
     case {"Budd","W-N0"}
         
         % u=C tau^m/N^q

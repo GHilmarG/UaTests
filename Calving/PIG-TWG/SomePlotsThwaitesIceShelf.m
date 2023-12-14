@@ -412,6 +412,10 @@ switch Experiment
         IRange=[1  3  4  6  7  8]; 
         IRange=[4  7 ]; 
         IRange=[9]; 
+       % IRange=[10]; 
+       % IRange=[11]; 
+
+
 
 
         % MR4
@@ -433,6 +437,8 @@ switch Experiment
         SubString(8)="-FT-P-TWISC0-MR4-SM-TM001-Cornford-20km-Alim-Ca1-Cs100000-Aa1-As100000-.mat";
 
         SubString(9)="-FT-P-Duvh-TWIS-MR4-SM-TM001-Cornford-2k5km-Alim-Clim-Ca1-Cs100000-Aa1-As100000-InvMR5.mat"; 
+        SubString(10)="-FT-P-Duvh-TWIS-MR4-SM-TM001-Cornford-5km-Alim-Clim-Ca1-Cs100000-Aa1-As100000-.mat"; 
+        SubString(11)="-FT-P-Duvh-TWIS-MR4-SM-TM001-Cornford-10km-Alim-Clim-Ca1-Cs100000-Aa1-As100000-.mat"; 
 
 
         LegendEntry=[...
@@ -445,6 +451,8 @@ switch Experiment
             "9.3km: Thwaites ice shelf kept (Alim, Cornford, MR4)",...
             "9.3km: Thwaites ice shelf removed (Alim, Cornford, MR4)",...
             "1.16km: MR4",...
+            "2.3km:  MR4",...
+            "4.6km:  MR4",...
             ];
 
 

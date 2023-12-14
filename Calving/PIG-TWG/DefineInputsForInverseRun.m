@@ -84,18 +84,28 @@ Priors.n=F.n;
 
 
 switch CtrlVar.SlidingLaw
-    
+
     case {"Weertman","Tsai","Cornford","Umbi"}
-        
+
         % u=C tau^m
-        
+
         tau=100 ; % units meters, year , kPa
-        MeasuredSpeed=sqrt(Meas.us.*Meas.us+Meas.vs.*Meas.vs);
+        MeasuredSpeed=sqrt(Meas.us.*Meas.us+Meas.vs.*Meas.vs)+1; % adding 1 to measured speed to avoid C0 being zero
         Priors.m=F.m;
-        C0=(MeasuredSpeed+1)./(tau.^Priors.m);
+        C0=(MeasuredSpeed)./(tau.^Priors.m);  
         Priors.C=C0;
-        
-        
+
+    case {"Joughin"}
+
+        % C tau^m = (V/(V+V0))
+        V0=UserVar.Sliding.V0; 
+        tau=100 ; % units meters, year , kPa
+        MeasuredSpeed=sqrt(Meas.us.*Meas.us+Meas.vs.*Meas.vs)+1; % adding 1 to measured speed to avoid C0 being zero
+
+        Priors.m=F.m;
+        C0=(MeasuredSpeed./(MeasuredSpeed+V0))./(tau.^Priors.m);
+        Priors.C=C0; 
+
     case {"Budd","W-N0"}
 
         % u=C tau^m / N^q
@@ -103,15 +113,15 @@ switch CtrlVar.SlidingLaw
         hf(hf<eps)=0;
         Dh=(F.s-F.b)-hf; Dh(Dh<eps)=0;
         N=F.rho.*F.g.*Dh;
-        
+
         MeasuredSpeed=sqrt(Meas.us.*Meas.us+Meas.vs.*Meas.vs);
-        tau=100+zeros(MUA.Nnodes,1) ; 
+        tau=100+zeros(MUA.Nnodes,1) ;
         C0=N.^F.q.*MeasuredSpeed./(tau.^F.m);
-        Priors.C=C0 ; 
-        Priors.m=F.m ; 
-        
+        Priors.C=C0 ;
+        Priors.m=F.m ;
+
     otherwise
-        
+
         error("Ua:DefineInputsForInverseRund:CaseNotFound","Sliding law prior for this sliding law not implemented")
 end
 
@@ -129,21 +139,40 @@ if contains(UserVar.RunType,"Clim")
 
     FCdata=scatteredInterpolant(F.x(~MissingData),F.y(~MissingData),CPrior(~MissingData)) ;
 
-    CPrior=FCdata(F.x,F.y) ;   
+    CPrior=FCdata(F.x,F.y) ;
     % This should be looked at, possibly extrapolation might cause negative C values. Here I simply limit the range afterwards
-    CPrior=kk_proj(CPrior,CtrlVar.Cmax,CtrlVar.Cmin) ; 
+    CPrior=kk_proj(CPrior,CtrlVar.Cmax,CtrlVar.Cmin) ;
 
-    
-    
-    
+
+
+
     % This is good at filling holes in the data, but less good over areas far away from vel data
     % For example, this is not good for the ocean floor.
-    NoDataAndAfloat=MissingData & F.GF.node<0.5 ;
-    CminAFloat=5e-3 ;
-    CPrior(NoDataAndAfloat)=CminAFloat ;
 
-    AfloatAndCtooLow=F.GF.node<0.5 & CPrior<CminAFloat ;
-    CPrior(AfloatAndCtooLow)=CminAFloat;
+
+
+    NoDataAndAfloat=MissingData & F.GF.node<0.5 ;
+
+    switch CtrlVar.SlidingLaw
+
+        case {"Weertman","Tsai","Cornford","Umbi"}
+
+            CminAFloat=5e-3 ;
+            AfloatAndCtooLow=F.GF.node<0.5 & CPrior<CminAFloat ;
+            CPrior(AfloatAndCtooLow)=CminAFloat;
+
+            CPrior(NoDataAndAfloat)=CminAFloat ;
+            Priors.C=C0;
+
+        case {"Joughin"}
+
+            CAFloat=5e-7;
+            CminAFloat=5e-7 ;
+            CPrior(NoDataAndAfloat)=CAFloat ;
+            CPrior(F.GF.node<0.5 & CPrior<CminAFloat)=CminAFloat ;
+
+    end
+
     Priors.C=CPrior;
 end
 %%
@@ -164,13 +193,14 @@ InvStartValues.q=F.q;
 InvStartValues.muk=F.muk ;
 InvStartValues.AGlen=Priors.AGlen;
 InvStartValues.n=F.n ;
+InvStartValues.V0=F.V0 ;
 
 % OK, here I'm allowing for the initial A and C to be read from a file, overwriting the previous values
 % The A and C estimates in these file could, for example, have been obtained from a previous inversion.
 %
 
 %%
-% temporary modification to get the uvdhdt inversion stared with the corresponding resutls from the uv-only inversion
+% temporary modification to get the uvdhdt inversion stared with the corresponding results from the uv-only inversion
 % 
 % UserVar.Slipperiness.ReadFromFile=true;
 % UserVar.AGlen.ReadFromFile=true;

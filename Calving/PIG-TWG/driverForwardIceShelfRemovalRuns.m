@@ -183,7 +183,7 @@ Resolution="-2.5km-" ;  CtrlVar.SlidingLaw="Cornford"; C="" ;     Duvh="Duvh" ; 
 Resolution="-20km-"  ;  CtrlVar.SlidingLaw="Weertman"; C="" ;     Duvh="Duvh" ;  Melt="-MR4-" ;  IceShelf="Thwaites" ;  UserVar.InvMeshResolution=[];      GLrange="";
 
 Resolution="-2.5km-" ;  CtrlVar.SlidingLaw="Cornford"; C="" ;     Duvh="Duvh" ;  Melt="-MR4-" ;  IceShelf="Thwaites" ;  UserVar.InvMeshResolution=[];    GLrange=""; 
-
+Resolution="-30km-"  ;  CtrlVar.SlidingLaw="Weertman"; C="" ;     Duvh="Duvh" ;  Melt="-MR4-" ;  IceShelf="Thwaites" ;  UserVar.InvMeshResolution=[];      GLrange="";
 
 
 CtrlVar.InfoLevelNonLinIt=5;  CtrlVar.doplots=1;   % testing
@@ -332,6 +332,34 @@ UserVar.CFile="FC-"+InvFile+".mat";
 
 AdataFile="InvA-"+InvFile+".mat";
 CdataFile="InvC-"+InvFile+".mat";
+
+
+%% Set output files directory
+[~,hostname]=system('hostname') ;
+if contains(hostname,"DESKTOP-G5TCRTD")
+    UserVar.ResultsFileDirectory="F:\Runs\Calving\PIG-TWG\ResultsFiles\";
+elseif contains(hostname,"DESKTOP-BU2IHIR")   % home 
+    UserVar.ResultsFileDirectory="D:\Runs\Calving\PIG-TWG\ResultsFiles\";
+    UserVar.InverseRestartFileDirectory="D:\Runs\Calving\PIG-TWG\InverseRestartFiles\"; 
+    UserVar.InversionFileDirectory="D:\Runs\Calving\PIG-TWG\InversionFiles\";
+    UserVar.MeshFileDirectory="D:\Runs\Calving\PIG-TWG\MeshFiles\";
+    UserVar.ForwardRestartFileDirectory="D:\Runs\Calving\PIG-TWG\RestartFiles\";
+else
+    UserVar.ResultsFileDirectory=pwd+"\ResultsFiles\";
+end
+
+AdataFile=UserVar.InversionFileDirectory+AdataFile;
+CdataFile=UserVar.InversionFileDirectory+CdataFile;
+
+
+UserVar.AFile=UserVar.InversionFileDirectory+UserVar.AFile;
+UserVar.CFile=UserVar.InversionFileDirectory+UserVar.CFile;
+
+%%
+
+
+
+
 
 
 if CreateAndSaveACInterpolants ||  (~isfile(UserVar.AFile)  || ~isfile(UserVar.CFile) )
