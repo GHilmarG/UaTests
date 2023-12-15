@@ -162,7 +162,7 @@ if contains(UserVar.RunType,"Clim")
             CPrior(AfloatAndCtooLow)=CminAFloat;
 
             CPrior(NoDataAndAfloat)=CminAFloat ;
-            Priors.C=C0;
+      
 
         case {"Joughin"}
 
