@@ -110,7 +110,13 @@ CtrlVar.LimitRangeInUpdateFtimeDerivatives=true ;
 %% Set output files directory
 [~,hostname]=system('hostname') ;
 if contains(hostname,"DESKTOP-G5TCRTD")
+
     UserVar.ResultsFileDirectory="F:\Runs\Calving\PIG-TWG\ResultsFiles\";
+     UserVar.InverseRestartFileDirectory="F:\Runs\Calving\PIG-TWG\InverseRestartFiles\"; 
+    UserVar.InversionFileDirectory="F:\Runs\Calving\PIG-TWG\InversionFiles\";
+    UserVar.MeshFileDirectory="F:\Runs\Calving\PIG-TWG\MeshFiles\";
+    UserVar.ForwardRestartFileDirectory="F:\Runs\Calving\PIG-TWG\RestartFiles";
+
 elseif contains(hostname,"DESKTOP-BU2IHIR")   % home 
     UserVar.ResultsFileDirectory="D:\Runs\Calving\PIG-TWG\ResultsFiles\";
     UserVar.InverseRestartFileDirectory="D:\Runs\Calving\PIG-TWG\InverseRestartFiles\"; 
@@ -302,6 +308,7 @@ CtrlVar.SaveInitialMeshFileName=[] ; % Do not create a new initial mesh file eac
 %%
 CtrlVar.SaveInitialMeshFileName='MeshFile';
 
+UserVar.Sliding.V0=300; % Only used in the Joughin sliding law
 
 if contains(UserVar.RunType,"Cornford")
     CtrlVar.SlidingLaw="Cornford" ;
@@ -309,7 +316,6 @@ elseif contains(UserVar.RunType,"Umbi")
     CtrlVar.SlidingLaw="Umbi" ;
 elseif contains(UserVar.RunType,"Joughin")
     CtrlVar.SlidingLaw="Joughin" ;
-    UserVar.Sliding.V0=300;
 else
     CtrlVar.SlidingLaw="Weertman" ;
 end
@@ -332,7 +338,7 @@ if ~isfield(UserVar,'AFile') ||  isempty(UserVar.AFile)
     if contains(UserVar.RunType,"-Alim-")
         InvFile=InvFile+"-Alim-";
     end
-    
+
     if contains(UserVar.RunType,"-Clim-")
         InvFile=InvFile+"-Clim-";
     end
@@ -341,8 +347,12 @@ if ~isfield(UserVar,'AFile') ||  isempty(UserVar.AFile)
         InvFile=InvFile+"-uvdhdt-";
     end
 
-     if contains(UserVar.RunType,"-uvGroup-")
+    if contains(UserVar.RunType,"-uvGroup-")
         InvFile=InvFile+"-uvGroup-";
+    end
+
+    if contains(UserVar.RunType,"-2024-")
+        InvFile=InvFile+"-2024-";
     end
 
     InvFile=replace(InvFile,".","k");

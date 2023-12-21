@@ -62,9 +62,6 @@ UserVar.RunType='Inverse-MatOpt-Alim-Clim-Weertman-';  UserVar.MeshResolution=5e
 
 
 UserVar.RunType='Inverse-MatOpt-Alim-Clim-Cornford-';  UserVar.MeshResolution=30e3; IRange=5:5 ; JRange=5:5 ;  %  presumably fine
-UserVar.RunType='Inverse-MatOpt-Alim-Clim-Weertman-';  UserVar.MeshResolution=30e3; IRange=5:5 ; JRange=5:5 ;  %  Needs to be continued
-
-
 
 
 UserVar.RunType='Inverse-MatOpt-Alim-Clim-Joughin-';  UserVar.MeshResolution=20e3; IRange=5:5 ; JRange=5:5 ;  %  11000 it
@@ -72,8 +69,19 @@ UserVar.RunType='Inverse-MatOpt-Alim-Clim-Joughin-';  UserVar.MeshResolution=30e
 UserVar.RunType='Inverse-MatOpt-Alim-Clim-Joughin-';  UserVar.MeshResolution=10e3; IRange=5:5 ; JRange=5:5 ;  %  28000 it
 UserVar.RunType='Inverse-MatOpt-Alim-Clim-Joughin-';  UserVar.MeshResolution=5e3;  IRange=5:5 ; JRange=5:5 ;  %  11,000 it, Needs to be continued
 
+UserVar.RunType='Inverse-MatOpt-Alim-Clim-Weertman-';  UserVar.MeshResolution=30e3; IRange=5:5 ; JRange=5:5 ;  %  Needs to be continued
+UserVar.RunType='Inverse-MatOpt-Alim-Clim-Weertman-';  UserVar.MeshResolution=10e3; IRange=5:5 ; JRange=5:5 ;  %  Needs to be continued
+UserVar.RunType='Inverse-MatOpt-Alim-Clim-Weertman-';  UserVar.MeshResolution=20e3; IRange=5:5 ; JRange=5:5 ;  %  Needs to be continued
+UserVar.RunType='Inverse-MatOpt-Alim-Clim-Weertman-';  UserVar.MeshResolution=5e3; IRange=5:5 ; JRange=5:5 ;  %  Needs to be continued
+
 
 CtrlVar.Inverse.Iterations=5;
+
+CtrlVar.Inverse.MinimisationMethod="MatlabOptimization-HessianBased";      % Hessian-based, Matlab toolbox
+% CtrlVar.Inverse.MinimisationMethod="MatlabOptimization-GradientBased";     % gradient-based, Matlab toolbox
+%                                  ="UaOptimization-GradientBased";         % gradient-based, Ua optimisation toolbox
+%                                  ="UaOptimization-HessianBased";          % Hessian-based, Ua optimisation toolbox
+
 
 if SubmitBathJobs
 
