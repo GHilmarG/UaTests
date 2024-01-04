@@ -110,3 +110,90 @@ hold on ; PlotMuaBoundary(CtrlVarInRestartFile,MUA) ;
 plot(F.x(I)/1000,F.y(I)/1000,'.r')
 
 
+%%
+
+UserVar.InvMeshResolution=[];
+uvh="" ;  % uvh="-uv-h-" implies semi-implicit
+UserVar.LevelSetDownstreamRheology="";
+UserVar.GroupAssembly="";
+UserVar.kH="" ;  % defaults to kH=10 
+
+Resolution="-30km-"  ;  CtrlVar.SlidingLaw="Weertman"; C="" ;     Duvh="Duvh" ;  Melt="-MR4-" ;  IceShelf="Thwaites" ;  UserVar.InvMeshResolution=[];      GLrange="";
+
+UserVar.RunType="-FT-P-"+Duvh+"-TWIS"+C+Melt+"SM-TM001-"+CtrlVar.SlidingLaw+Resolution+GLrange+uvh+ UserVar.LevelSetDownstreamRheology+UserVar.GroupAssembly+UserVar.kH+"Alim-Clim-Ca1-Cs100000-Aa1-As100000-";  
+
+pat="-"+digitsPattern+"km";
+MR=str2double(extract(extract(UserVar.RunType,pat),digitsPattern));
+
+if isempty(MR)
+
+    pat="-"+digitsPattern+"."+digitsPattern+"km";
+    MR=str2double(extractBetween(extract(UserVar.RunType,pat),"-","km")) ;
+
+end
+
+UserVar.MeshResolution=MR*1000;   % MESH RESOLUTION
+
+if round(UserVar.MeshResolution)~=round(UserVar.InvMeshResolution)
+    UserVar.RunType=UserVar.RunType+"InvMR"+num2str(UserVar.InvMeshResolution/1000);
+end
+
+
+if isempty(UserVar.InvMeshResolution)
+    UserVar.InvMeshResolution=UserVar.MeshResolution;
+end
+
+
+UserVar.RunType=replace(UserVar.RunType,"--","-");
+UserVar.RunType=replace(UserVar.RunType,".","k");
+
+
+CtrlVar.TotalTime=500;
+
+CtrlVar.Inverse.Regularize.logC.ga=str2double(extract(extract(UserVar.RunType,"-Ca"+digitsPattern+"-"),digitsPattern)) ;
+CtrlVar.Inverse.Regularize.logC.gs=str2double(extract(extract(UserVar.RunType,"-Cs"+digitsPattern+"-"),digitsPattern)) ;
+CtrlVar.Inverse.Regularize.logAGlen.ga=str2double(extract(extract(UserVar.RunType,"-Aa"+digitsPattern+"-"),digitsPattern)) ;
+CtrlVar.Inverse.Regularize.logAGlen.gs=str2double(extract(extract(UserVar.RunType,"-As"+digitsPattern+"-"),digitsPattern)) ;
+
+
+if contains(UserVar.RunType,"Cornford")
+    CtrlVar.SlidingLaw="Cornford";
+else
+    CtrlVar.SlidingLaw="Weertman";
+end
+
+
+% Now set UserVar
+
+InvFile=CtrlVar.SlidingLaw...
+    +"-Ca"+num2str(CtrlVar.Inverse.Regularize.logC.ga)...
+    +"-Cs"+num2str(CtrlVar.Inverse.Regularize.logC.gs)...
+    +"-Aa"+num2str(CtrlVar.Inverse.Regularize.logAGlen.ga)...
+    +"-As"+num2str(CtrlVar.Inverse.Regularize.logAGlen.gs)...
+    +"-"+num2str(UserVar.InvMeshResolution/1000)+"km";
+
+if contains(UserVar.RunType,"-Alim-")
+    InvFile=InvFile+"-Alim-";
+end
+
+if contains(UserVar.RunType,"-Clim-")
+    InvFile=InvFile+"-Clim-";
+end
+
+if contains(UserVar.RunType,"-uvdhdt-")
+    InvFile=InvFile+"-uvdhdt-";
+end
+
+if contains(UserVar.RunType,"Group-")
+    InvFile=InvFile+"-uvGroup-";
+end
+
+
+InvFile=replace(InvFile,".","k");
+InvFile=replace(InvFile,"--","-");
+
+UserVar.AFile="FA-"+InvFile+".mat";
+UserVar.CFile="FC-"+InvFile+".mat";
+
+AdataFile="InvA-"+InvFile+".mat";
+CdataFile="InvC-"+InvFile+".mat";
