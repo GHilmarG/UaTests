@@ -70,6 +70,11 @@ UserVar.RunType='Inverse-MatOpt-Alim-Clim-Joughin-';  UserVar.MeshResolution=30e
 UserVar.RunType='Inverse-MatOpt-Alim-Clim-Joughin-';  UserVar.MeshResolution=10e3; IRange=5:5 ; JRange=5:5 ;  %  28000 it
 UserVar.RunType='Inverse-MatOpt-Alim-Clim-Joughin-';  UserVar.MeshResolution=5e3;  IRange=5:5 ; JRange=5:5 ;  %  17,500 it, 
 
+
+UserVar.RunType='Inverse-MatOpt-Alim-Clim-Weertman-';  UserVar.MeshResolution=30e3; IRange=5:5 ; JRange=5:5 ;  %  10,000 it, presumably OK
+UserVar.RunType='Inverse-MatOpt-Alim-Clim-Weertman-';  UserVar.MeshResolution=10e3; IRange=5:5 ; JRange=5:5 ;  %  20,000 it, presumably OK
+UserVar.RunType='Inverse-MatOpt-Alim-Clim-Weertman-';  UserVar.MeshResolution=20e3; IRange=5:5 ; JRange=5:5 ;  %  15,000 it, presumably OK
+UserVar.RunType='Inverse-MatOpt-Alim-Clim-Weertman-';  UserVar.MeshResolution=5e3; IRange=5:5 ; JRange=5:5 ;   %  18,500 it, looking good
 UserVar.RunType='Inverse-MatOpt-Alim-Clim-Weertman-ITS120-';  UserVar.MeshResolution=5e3;  IRange=5:5 ; JRange=5:5 ;  % 2000 it, starting from ~ITS120
 
 
@@ -77,8 +82,9 @@ UserVar.RunType='Inverse-MatOpt-Alim-Clim-Weertman-ITS120-';  UserVar.MeshResolu
 % If this is left empty, ie [],  these are set to run appropriate values in DefineInitialInputs.
 % By defining this here, one can overwrite those values, good for restarting the inversion with interpolants from other
 % inversions. To create this A/C interpolants, one can use driverForwardIceShelfRemovalRun
-UserVar.AFile="FA-Weertman-Ca1-Cs100000-Aa1-As100000-5km-Alim-Clim-.mat"; 
-UserVar.CFile="FC-Weertman-Ca1-Cs100000-Aa1-As100000-5km-Alim-Clim-.mat"; 
+UserVar.AFile="FA-Weertman-Ca1-ITS120-Cs100000-Aa1-As100000-5km-Alim-Clim-.mat"; 
+UserVar.CFile="FC-Weertman-Ca1-ITS120-Cs100000-Aa1-As100000-5km-Alim-Clim-.mat"; 
+
 
 
 
@@ -93,6 +99,7 @@ if contains(UserVar.RunType,"-ITS120-")
 else
     UserVar.VelDataSet="";
 end
+
 
 
 CtrlVar.Inverse.Iterations=2;
