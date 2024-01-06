@@ -1,5 +1,5 @@
 %%
-Klear
+close all
 
 SubmitBathJobs=false;
 IRCase="AandC" ;
@@ -9,6 +9,7 @@ more off
  UserVar.kH="" ; 
  UserVar.GroupAssembly="";
 
+ 
 
 UserVar.RunType='Inverse-MatOpt';
 UserVar.RunType='Inverse-MatOpt-Alim-';
@@ -66,8 +67,18 @@ UserVar.RunType='Inverse-MatOpt-Alim-Clim-Cornford-';  UserVar.MeshResolution=30
 
 UserVar.RunType='Inverse-MatOpt-Alim-Clim-Joughin-';  UserVar.MeshResolution=20e3; IRange=5:5 ; JRange=5:5 ;  %  11000 it
 UserVar.RunType='Inverse-MatOpt-Alim-Clim-Joughin-';  UserVar.MeshResolution=30e3; IRange=5:5 ; JRange=5:5 ;  %  12000 it
-UserVar.RunType='Inverse-MatOpt-Alim-Clim-Joughin-';  UserVar.MeshResolution=5e3;  IRange=5:5 ; JRange=5:5 ;  %  Needs to be continued
-UserVar.RunType='Inverse-MatOpt-Alim-Clim-Joughin-';  UserVar.MeshResolution=10e3; IRange=5:5 ; JRange=5:5 ;  %  8000 it
+UserVar.RunType='Inverse-MatOpt-Alim-Clim-Joughin-';  UserVar.MeshResolution=10e3; IRange=5:5 ; JRange=5:5 ;  %  28000 it
+UserVar.RunType='Inverse-MatOpt-Alim-Clim-Joughin-';  UserVar.MeshResolution=5e3;  IRange=5:5 ; JRange=5:5 ;  %  15,500 it, Needs to be continued
+
+% UserVar.RunType='Inverse-MatOpt-Alim-Clim-Weertman-ITS120-';  UserVar.MeshResolution=5e3;  IRange=5:5 ; JRange=5:5 ;  % 2000 it, starting from ~ITS120
+
+
+% These are the A/C interpolants used to define start A/C fields in an inversion, and A/C fields in DefineSlipperiness
+% If this is left empty, ie [],  these are set to run appropriate values in DefineInitialInputs.
+% By defining this here, one can overwrite those values, good for restarting the inversion with interpolants from other
+% inversions. To create this A/C interpolants, one can use driverForwardIceShelfRemovalRun
+UserVar.AFile="FA-Weertman-Ca1-Cs100000-Aa1-As100000-5km-Alim-Clim-.mat"; 
+UserVar.CFile="FC-Weertman-Ca1-Cs100000-Aa1-As100000-5km-Alim-Clim-.mat"; 
 
 
 
@@ -80,11 +91,20 @@ UserVar.RunType='Inverse-MatOpt-Alim-Clim-Weertman-';  UserVar.MeshResolution=5e
 
 CtrlVar.Inverse.MinimisationMethod="MatlabOptimization-HessianBased";      % Hessian-based, Matlab toolbox
 % CtrlVar.Inverse.MinimisationMethod="MatlabOptimization-GradientBased";     % gradient-based, Matlab toolbox
-%                                  ="UaOptimization-GradientBased";         % gradient-based, Ua optimisation toolbox
-%                                  ="UaOptimization-HessianBased";          % Hessian-based, Ua optimisation toolbox
+% CtrlVar.Inverse.MinimisationMethod="UaOptimization-GradientBased";         % gradient-based, Ua optimisation toolbox
+% CtrlVar.Inverse.MinimisationMethod="UaOptimization-HessianBased";          % Hessian-based, Ua optimisation toolbox
+% CtrlVar.Inverse.AdjointGradientPreMultiplier="M"; % {'I','M'}
+
+if contains(UserVar.RunType,"-ITS120-")
+    UserVar.VelDataSet="-ITS120-";
+else
+    UserVar.VelDataSet="";
+end
 
 
-CtrlVar.Inverse.Iterations=2000;
+
+CtrlVar.Inverse.Iterations=1000;
+
 
 if SubmitBathJobs
 

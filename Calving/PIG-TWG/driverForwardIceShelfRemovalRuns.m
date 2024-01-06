@@ -85,6 +85,7 @@ uvh="" ;  % uvh="-uv-h-" implies semi-implicit
 UserVar.LevelSetDownstreamRheology="";
 UserVar.GroupAssembly="";
 UserVar.kH="" ;  % defaults to kH=10 
+UserVar.VelDataSet="";
 
 % Resolution="-5km-" ;  CtrlVar.SlidingLaw="Cornford"; C="" ;     Duvh="-Duvh-" ;  % missing
 Resolution="-5km-" ;  CtrlVar.SlidingLaw="Cornford"; C="" ;     Duvh="" ;  % submitted
@@ -183,7 +184,10 @@ Resolution="-2.5km-" ;  CtrlVar.SlidingLaw="Cornford"; C="" ;     Duvh="Duvh" ; 
 Resolution="-20km-"  ;  CtrlVar.SlidingLaw="Weertman"; C="" ;     Duvh="Duvh" ;  Melt="-MR4-" ;  IceShelf="Thwaites" ;  UserVar.InvMeshResolution=[];      GLrange="";
 
 Resolution="-2.5km-" ;  CtrlVar.SlidingLaw="Cornford"; C="" ;     Duvh="Duvh" ;  Melt="-MR4-" ;  IceShelf="Thwaites" ;  UserVar.InvMeshResolution=[];    GLrange=""; 
-Resolution="-30km-"  ;  CtrlVar.SlidingLaw="Weertman"; C="" ;     Duvh="Duvh" ;  Melt="-MR4-" ;  IceShelf="Thwaites" ;  UserVar.InvMeshResolution=[];      GLrange="";
+Resolution="-5km-"  ;  CtrlVar.SlidingLaw="Weertman"; C="" ;     Duvh="Duvh" ;  Melt="-MR4-" ;  IceShelf="Thwaites" ;  UserVar.InvMeshResolution=[];      GLrange="";
+
+Resolution="-5km-"  ;  CtrlVar.SlidingLaw="Joughin"; C="" ;     Duvh="Duvh" ;  Melt="-MR4-" ;  IceShelf="Thwaites" ;  UserVar.InvMeshResolution=[];      GLrange=""; UserVar.VelDataSet="-ITS120-";
+
 
 
 CtrlVar.InfoLevelNonLinIt=5;  CtrlVar.doplots=1;   % testing
@@ -234,7 +238,7 @@ BatchJob=false;
 
 
 
-UserVar.RunType="-FT-P-"+Duvh+"-TWIS"+C+Melt+"SM-TM001-"+CtrlVar.SlidingLaw+Resolution+GLrange+uvh+ UserVar.LevelSetDownstreamRheology+UserVar.GroupAssembly+UserVar.kH+"Alim-Clim-Ca1-Cs100000-Aa1-As100000-";  
+UserVar.RunType="-FT-P-"+Duvh+"-TWIS"+C+Melt+"SM-TM001-"+CtrlVar.SlidingLaw+Resolution+GLrange+uvh+ UserVar.LevelSetDownstreamRheology+UserVar.GroupAssembly+UserVar.kH+"Alim-Clim-Ca1-Cs100000-Aa1-As100000-"+UserVar.VelDataSet;  
 
 if CtrlVar.uvh.SUPG.tauMultiplier~=1  ||  CtrlVar.uvh.SUPG.tau~="taus"
     UserVar.RunType=UserVar.RunType+"-"+CtrlVar.uvh.SUPG.tau+"-SUPGm"+num2str(CtrlVar.uvh.SUPG.tauMultiplier) ;
@@ -337,13 +341,21 @@ CdataFile="InvC-"+InvFile+".mat";
 %% Set output files directory
 [~,hostname]=system('hostname') ;
 if contains(hostname,"DESKTOP-G5TCRTD")
+
     UserVar.ResultsFileDirectory="F:\Runs\Calving\PIG-TWG\ResultsFiles\";
-elseif contains(hostname,"DESKTOP-BU2IHIR")   % home 
+    UserVar.InverseRestartFileDirectory="F:\Runs\Calving\PIG-TWG\InverseRestartFiles\";
+    UserVar.InversionFileDirectory="F:\Runs\Calving\PIG-TWG\InversionFiles\";
+    UserVar.MeshFileDirectory="F:\Runs\Calving\PIG-TWG\MeshFiles\";
+    UserVar.ForwardRestartFileDirectory="F:\Runs\Calving\PIG-TWG\RestartFiles";
+
+elseif contains(hostname,"DESKTOP-BU2IHIR")   % home
+
     UserVar.ResultsFileDirectory="D:\Runs\Calving\PIG-TWG\ResultsFiles\";
-    UserVar.InverseRestartFileDirectory="D:\Runs\Calving\PIG-TWG\InverseRestartFiles\"; 
+    UserVar.InverseRestartFileDirectory="D:\Runs\Calving\PIG-TWG\InverseRestartFiles\";
     UserVar.InversionFileDirectory="D:\Runs\Calving\PIG-TWG\InversionFiles\";
     UserVar.MeshFileDirectory="D:\Runs\Calving\PIG-TWG\MeshFiles\";
     UserVar.ForwardRestartFileDirectory="D:\Runs\Calving\PIG-TWG\RestartFiles\";
+
 else
     UserVar.ResultsFileDirectory=pwd+"\ResultsFiles\";
 end

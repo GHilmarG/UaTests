@@ -456,7 +456,7 @@ switch Experiment
             ];
 
 
-        TimeInterval=[0 inf] ;  VAFStep=10; VideoStep=10;  CreateVideo=true; CalculateVAF=false; 
+        TimeInterval=[0 inf] ;  VAFStep=5; VideoStep=5;  CreateVideo=true; CalculateVAF=false; 
 
         xyBoundary=nan;  % since this is always with respect to a reference run, I think that limiting the region is not needed
 

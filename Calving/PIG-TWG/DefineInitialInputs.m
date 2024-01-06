@@ -102,7 +102,7 @@ else
 end
 
 CtrlVar.CalvingLaw.Evaluation="-int-"  ; % nodal or integration-point evaluation  ["-int-","-node-"]
-UserVar.DefineOutputs="-ubvb-LSF-h-dhdt-speed-save-AC-"; 
+UserVar.DefineOutputs="-ubvb-LSF-h-dhdt-speed-save-AC-";
 
 
 CtrlVar.LimitRangeInUpdateFtimeDerivatives=true ;
@@ -112,14 +112,14 @@ CtrlVar.LimitRangeInUpdateFtimeDerivatives=true ;
 if contains(hostname,"DESKTOP-G5TCRTD")
 
     UserVar.ResultsFileDirectory="F:\Runs\Calving\PIG-TWG\ResultsFiles\";
-     UserVar.InverseRestartFileDirectory="F:\Runs\Calving\PIG-TWG\InverseRestartFiles\"; 
+    UserVar.InverseRestartFileDirectory="F:\Runs\Calving\PIG-TWG\InverseRestartFiles\";
     UserVar.InversionFileDirectory="F:\Runs\Calving\PIG-TWG\InversionFiles\";
     UserVar.MeshFileDirectory="F:\Runs\Calving\PIG-TWG\MeshFiles\";
     UserVar.ForwardRestartFileDirectory="F:\Runs\Calving\PIG-TWG\RestartFiles";
 
-elseif contains(hostname,"DESKTOP-BU2IHIR")   % home 
+elseif contains(hostname,"DESKTOP-BU2IHIR")   % home
     UserVar.ResultsFileDirectory="D:\Runs\Calving\PIG-TWG\ResultsFiles\";
-    UserVar.InverseRestartFileDirectory="D:\Runs\Calving\PIG-TWG\InverseRestartFiles\"; 
+    UserVar.InverseRestartFileDirectory="D:\Runs\Calving\PIG-TWG\InverseRestartFiles\";
     UserVar.InversionFileDirectory="D:\Runs\Calving\PIG-TWG\InversionFiles\";
     UserVar.MeshFileDirectory="D:\Runs\Calving\PIG-TWG\MeshFiles\";
     UserVar.ForwardRestartFileDirectory="D:\Runs\Calving\PIG-TWG\RestartFiles";
@@ -141,7 +141,14 @@ end
 %
 %UserVar.GeometryInterpolant='../../Interpolants/Bedmap2GriddedInterpolantModifiedBathymetry.mat'; % this assumes you have downloaded the OneDrive folder `Interpolants'.
 UserVar.GeometryInterpolant='../../../Interpolants/BedMachineGriddedInterpolants.mat';
-UserVar.SurfaceVelocityInterpolant='../../../Interpolants/SurfVelMeasures990mInterpolants.mat';
+
+
+if contains(UserVar.RunType,"-ITS120-")
+    UserVar.SurfaceVelocityInterpolant='../../../Interpolants/ITS-LIVE-ANT-G0120-0000-VelocityGriddedInterpolants-nStride2.mat';
+else
+    UserVar.SurfaceVelocityInterpolant='../../../Interpolants/SurfVelMeasures990mInterpolants.mat';
+end
+
 UserVar.MeshBoundaryCoordinatesFile='../../../Interpolants/MeshBoundaryCoordinatesForAntarcticaBasedOnBedmachine';
 load(UserVar.MeshBoundaryCoordinatesFile,"Boundary") ; UserVar.BedMachineBoundary=Boundary;
 UserVar.DistanceBetweenPointsAlongBoundary=5e3 ;
@@ -325,10 +332,27 @@ end
     
 
 
-if ~isfield(UserVar,'AFile') ||  isempty(UserVar.AFile)
+if ~isfile(UserVar.GeometryInterpolant) || ~isfile(UserVar.SurfaceVelocityInterpolant)
 
+    fprintf('\n This run requires the additional input files: \n %s \n %s \n %s  \n \n',UserVar.GeometryInterpolant,UserVar.DensityInterpolant,UserVar.SurfaceVelocityInterpolant)
+    fprintf('You can download these file from : https://1drv.ms/f/s!Anaw0Iv-oEHTloRzWreBMDBFCJ0R4Q \n')
+
+end
+
+%% UserVar.RunType
+
+if contains(UserVar.RunType,"Inverse")
+
+    if contains(UserVar.RunType,"Inverse-UaOpt")
+        % Testing
+        CtrlVar.Inverse.MinimisationMethod='UaOptimization-Hessian'; % {'MatlabOptimization','UaOptimization'}
+    end
+
+    % CtrlVar.Inverse.MinimisationMethod="MatlabOptimization-GradientBased";     CtrlVar.Inverse.AdjointGradientPreMultiplier="I"; % {'I','M'}
+    % CtrlVar.Inverse.MinimisationMethod="MatlabOptimization-GradientBased";     CtrlVar.Inverse.AdjointGradientPreMultiplier="M"; % {'I','M'}
 
     InvFile=CtrlVar.SlidingLaw...
+        +UserVar.VelDataSet ...
         +"-Ca"+num2str(CtrlVar.Inverse.Regularize.logC.ga)...
         +"-Cs"+num2str(CtrlVar.Inverse.Regularize.logC.gs)...
         +"-Aa"+num2str(CtrlVar.Inverse.Regularize.logAGlen.ga)...
@@ -359,31 +383,16 @@ if ~isfield(UserVar,'AFile') ||  isempty(UserVar.AFile)
 
     InvFile=replace(InvFile,"--","-");
 
-    UserVar.AFile="FA-"+InvFile;
-    UserVar.CFile="FC-"+InvFile;
-
-
-
-end
-
-if ~isfile(UserVar.GeometryInterpolant) || ~isfile(UserVar.SurfaceVelocityInterpolant)
-
-    fprintf('\n This run requires the additional input files: \n %s \n %s \n %s  \n \n',UserVar.GeometryInterpolant,UserVar.DensityInterpolant,UserVar.SurfaceVelocityInterpolant)
-    fprintf('You can download these file from : https://1drv.ms/f/s!Anaw0Iv-oEHTloRzWreBMDBFCJ0R4Q \n')
-
-end
-
-%% UserVar.RunType
-
-if contains(UserVar.RunType,"Inverse")
-
-    if contains(UserVar.RunType,"Inverse-UaOpt")
-        % Testing
-        CtrlVar.Inverse.MinimisationMethod='UaOptimization-Hessian'; % {'MatlabOptimization','UaOptimization'}
+    % AFile and CFile contains A/C interpolants, ie these are not the data output files for A and C
+    if isempty(UserVar.AFile)
+        UserVar.AFile="FA-"+InvFile;
+    end
+    if isempty(UserVar.CFile)
+        UserVar.CFile="FC-"+InvFile;
     end
 
-   % CtrlVar.Inverse.MinimisationMethod="MatlabOptimization-GradientBased";     CtrlVar.Inverse.AdjointGradientPreMultiplier="I"; % {'I','M'}
-   % CtrlVar.Inverse.MinimisationMethod="MatlabOptimization-GradientBased";     CtrlVar.Inverse.AdjointGradientPreMultiplier="M"; % {'I','M'}
+
+
 
     UserVar.DefineOutputs="-"; %
     CtrlVar.InverseRun=1;
@@ -393,8 +402,8 @@ if contains(UserVar.RunType,"Inverse")
     CtrlVar.InfoLevelNonLinIt=0;  CtrlVar.InfoLevel=0;
    
 
-    UserVar.Slipperiness.ReadFromFile=0;
-    UserVar.AGlen.ReadFromFile=0;
+    UserVar.Slipperiness.ReadFromFile=1;
+    UserVar.AGlen.ReadFromFile=1;
 
     CtrlVar.ReadInitialMesh=1;
     CtrlVar.AdaptMesh=0;
@@ -673,6 +682,11 @@ UserVar.AFile=replace(UserVar.AFile,".mat","");
 
 UserVar.CFile=replace(UserVar.CFile,".","k");
 UserVar.AFile=replace(UserVar.AFile,".","k");
+
+
+UserVar.AFile=UserVar.InversionFileDirectory+UserVar.AFile;
+UserVar.CFile=UserVar.InversionFileDirectory+UserVar.CFile;
+
 
 
 CtrlVar.NameOfRestartFiletoWrite=UserVar.ForwardRestartFileDirectory+"Restart-"+UserVar.RunType+".mat";
