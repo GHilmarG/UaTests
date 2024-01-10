@@ -102,11 +102,13 @@ end
 
 
 
-CtrlVar.Inverse.Iterations=2;
+CtrlVar.Inverse.Iterations=5;
 
+%delete(gcp('nocreate')); p=parpool('Threads',8); 
+delete(gcp('nocreate')); p=parpool('Processes',8); 
 CtrlVar.Parallel.uvAssembly.spmd.isOn=true;
 CtrlVar.Parallel.uvAssembly.parfeval.isOn=false;
-CtrlVar.Parallel.isTest=false; 
+CtrlVar.Parallel.isTest=true; 
 
 if SubmitBathJobs
 
