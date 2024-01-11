@@ -100,10 +100,17 @@ else
     UserVar.VelDataSet="";
 end
 
+% 50 iterations:
+% with smpd: 2395.4089373 sec = 39.9 min
+% without smpd: 3088 sec = 51.5 min   -> 28% increase in speed
+%
+%    with spmd: 2265
+% without spmd: 2742.6209298 sec, 21% increase,
 
+CtrlVar.Inverse.Iterations=500;
 
-CtrlVar.Inverse.Iterations=2;
-
+%delete(gcp('nocreate')); p=parpool('Threads',8); 
+% delete(gcp('nocreate')); p=parpool('Processes',8); 
 CtrlVar.Parallel.uvAssembly.spmd.isOn=true;
 CtrlVar.Parallel.uvAssembly.parfeval.isOn=false;
 CtrlVar.Parallel.isTest=false; 
