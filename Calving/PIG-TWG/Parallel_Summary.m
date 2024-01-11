@@ -46,11 +46,12 @@ SPMD_BU2IH  =   [   1              1.3                 1.6         4.3       4.5
 SPMD_C2300  =   [   1              1.1                 1.2         4.7       4.7       5.2         4.6  ]'; 
 SPMD_DellOffice=[0.95              1.4                 1.6         4.8       4.9       5.2         3.5  ]';
 
-% C2300   :     32 Cores, 64 logical. 256 GH of memory, Xeon Gold 6226R,    2.90GHz
-% BU2IHIR :     16 cores, 32 logical. 256 GB of memory, Xeon Silver 4208R   2.10GHz
-% DellOffice:   24 cores, 48 logical, 128 GB of memory, Xeon E5-2670        2.30GHz
+% C2300   :     32 Cores, 64 logical. 256 GH of memory, Xeon Gold 6226R,    2.90GHz NVIDIA RTX A6000 with 48GB GPU memory
+% BU2IHIR :     16 cores, 32 logical. 256 GB of memory, Xeon Silver 4208R   2.10GHz NVIDIA Quadro RTX 4000
+% DellOffice:   24 cores, 48 logical, 128 GB of memory, Xeon E5-2670        2.30GHz NVIDIA Quadro K5200
 
 % Emily Hill's workstation is: HP Xeon E5-2699, 22 Cores, 44 logical, 128GB, 2.20 GHz
+
 
 
 T =table(threads,seq_BU2IH,seq_C2300,seq_DellOffice,SPMD_BU2IH,SPMD_C2300,SPMD_DellOffice);  
