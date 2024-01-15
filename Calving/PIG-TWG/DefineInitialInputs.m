@@ -3,6 +3,7 @@
 function [UserVar,CtrlVar,MeshBoundaryCoordinates]=DefineInitialInputs(UserVar,CtrlVar)
 
 
+
 %% Select the type of run by uncommenting one of the following options:
 %
 %
@@ -118,11 +119,21 @@ if contains(hostname,"DESKTOP-G5TCRTD")
     UserVar.ForwardRestartFileDirectory="F:\Runs\Calving\PIG-TWG\RestartFiles";
 
 elseif contains(hostname,"DESKTOP-BU2IHIR")   % home
+
     UserVar.ResultsFileDirectory="D:\Runs\Calving\PIG-TWG\ResultsFiles\";
     UserVar.InverseRestartFileDirectory="D:\Runs\Calving\PIG-TWG\InverseRestartFiles\";
     UserVar.InversionFileDirectory="D:\Runs\Calving\PIG-TWG\InversionFiles\";
     UserVar.MeshFileDirectory="D:\Runs\Calving\PIG-TWG\MeshFiles\";
     UserVar.ForwardRestartFileDirectory="D:\Runs\Calving\PIG-TWG\RestartFiles";
+
+elseif contains(hostname,"C23000099")   % home
+
+    UserVar.ResultsFileDirectory="E:\Runs\Calving\PIG-TWG\ResultsFiles\";
+    UserVar.InverseRestartFileDirectory="E:\Runs\Calving\PIG-TWG\InverseRestartFiles\";
+    UserVar.InversionFileDirectory="E:\Runs\Calving\PIG-TWG\InversionFiles\";
+    UserVar.MeshFileDirectory="E:\Runs\Calving\PIG-TWG\MeshFiles\";
+    UserVar.ForwardRestartFileDirectory="E:\Runs\Calving\PIG-TWG\RestartFiles";
+
 else
     UserVar.ResultsFileDirectory=pwd+"\ResultsFiles\";
 end

@@ -94,10 +94,18 @@ UserVar.AFile="FA-Joughin-Ca1-Cs100000-Aa1-As100000-5km-Alim-Clim-.mat";  UserVa
 UserVar.AFile=[] ; UserVar.CFile=[];
 
 
+
+UserVar.RunType='Inverse-MatOpt-Alim-Clim-Cornford-';  UserVar.MeshResolution=20e3; IRange=5:5 ; JRange=5:5 ;  %  15,000
+UserVar.RunType='Inverse-MatOpt-Alim-Clim-Cornford-';  UserVar.MeshResolution=10e3; IRange=5:5 ; JRange=5:5 ;  %  20,000 it, presumably OK
+UserVar.RunType='Inverse-MatOpt-Alim-Clim-Cornford-';  UserVar.MeshResolution=5e3; IRange=5:5 ; JRange=5:5 ;   %  11,000 it, looking good
+UserVar.RunType='Inverse-MatOpt-Alim-Clim-Cornford-';  UserVar.MeshResolution=30e3; IRange=5:5 ; JRange=5:5 ;  %  10,000 it, OK
+
+
 CtrlVar.Inverse.MinimisationMethod="MatlabOptimization-HessianBased";      % Hessian-based, Matlab toolbox
 % CtrlVar.Inverse.MinimisationMethod="MatlabOptimization-GradientBased";     % gradient-based, Matlab toolbox
 % CtrlVar.Inverse.MinimisationMethod="UaOptimization-GradientBased";         % gradient-based, Ua optimisation toolbox
 % CtrlVar.Inverse.MinimisationMethod="UaOptimization-HessianBased";          % Hessian-based, Ua optimisation toolbox
+
 % CtrlVar.Inverse.AdjointGradientPreMultiplier="M"; % {'I','M'}
 
 if contains(UserVar.RunType,"-ITS120-")
@@ -114,6 +122,9 @@ CtrlVar.Inverse.Iterations=5000;
 CtrlVar.Parallel.uvAssembly.spmd.isOn=true;
 CtrlVar.Parallel.uvAssembly.parfeval.isOn=false;
 CtrlVar.Parallel.isTest=false; 
+
+
+
 
 if SubmitBathJobs
 
