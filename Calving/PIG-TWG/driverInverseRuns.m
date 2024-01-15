@@ -65,10 +65,7 @@ UserVar.RunType='Inverse-MatOpt-Alim-Clim-Weertman-';  UserVar.MeshResolution=5e
 UserVar.RunType='Inverse-MatOpt-Alim-Clim-Cornford-';  UserVar.MeshResolution=30e3; IRange=5:5 ; JRange=5:5 ;  %  presumably fine
 
 
-UserVar.RunType='Inverse-MatOpt-Alim-Clim-Joughin-';  UserVar.MeshResolution=20e3; IRange=5:5 ; JRange=5:5 ;  %  11000 it
-UserVar.RunType='Inverse-MatOpt-Alim-Clim-Joughin-';  UserVar.MeshResolution=30e3; IRange=5:5 ; JRange=5:5 ;  %  12000 it
-UserVar.RunType='Inverse-MatOpt-Alim-Clim-Joughin-';  UserVar.MeshResolution=10e3; IRange=5:5 ; JRange=5:5 ;  %  28000 it
-UserVar.RunType='Inverse-MatOpt-Alim-Clim-Joughin-';  UserVar.MeshResolution=5e3;  IRange=5:5 ; JRange=5:5 ;  %  17,500 it, 
+
 
 
 UserVar.RunType='Inverse-MatOpt-Alim-Clim-Weertman-';  UserVar.MeshResolution=30e3; IRange=5:5 ; JRange=5:5 ;  %  10,000 it, presumably OK
@@ -77,15 +74,24 @@ UserVar.RunType='Inverse-MatOpt-Alim-Clim-Weertman-';  UserVar.MeshResolution=20
 UserVar.RunType='Inverse-MatOpt-Alim-Clim-Weertman-';  UserVar.MeshResolution=5e3; IRange=5:5 ; JRange=5:5 ;   %  18,500 it, looking good
 UserVar.RunType='Inverse-MatOpt-Alim-Clim-Weertman-ITS120-';  UserVar.MeshResolution=5e3;  IRange=5:5 ; JRange=5:5 ;  % 2000 it, starting from ~ITS120
 
+UserVar.RunType='Inverse-MatOpt-Alim-Clim-Joughin-';  UserVar.MeshResolution=20e3; IRange=5:5 ; JRange=5:5 ;  %  11000 it
+UserVar.RunType='Inverse-MatOpt-Alim-Clim-Joughin-';  UserVar.MeshResolution=30e3; IRange=5:5 ; JRange=5:5 ;  %  12000 it
+UserVar.RunType='Inverse-MatOpt-Alim-Clim-Joughin-';  UserVar.MeshResolution=10e3; IRange=5:5 ; JRange=5:5 ;  %  28000 it
+UserVar.RunType='Inverse-MatOpt-Alim-Clim-Joughin-';  UserVar.MeshResolution=5e3;  IRange=5:5 ; JRange=5:5 ;  %  17,500 it, 
+
+UserVar.RunType='Inverse-MatOpt-Alim-Clim-Joughin-ITS120-';  UserVar.MeshResolution=5e3;  IRange=5:5 ; JRange=5:5 ;  %
+UserVar.RunType='Inverse-MatOpt-Alim-Clim-Joughin-ITS120-';  UserVar.MeshResolution=10e3;  IRange=5:5 ; JRange=5:5 ;  %
+
+
 
 % These are the A/C interpolants used to define start A/C fields in an inversion, and A/C fields in DefineSlipperiness
 % If this is left empty, ie [],  these are set to run appropriate values in DefineInitialInputs.
 % By defining this here, one can overwrite those values, good for restarting the inversion with interpolants from other
-% inversions. To create this A/C interpolants, one can use driverForwardIceShelfRemovalRun
-UserVar.AFile="FA-Weertman-Ca1-ITS120-Cs100000-Aa1-As100000-5km-Alim-Clim-.mat"; 
-UserVar.CFile="FC-Weertman-Ca1-ITS120-Cs100000-Aa1-As100000-5km-Alim-Clim-.mat"; 
-
-
+% inversions. To create this A/C interpolants, one can use driverForwardIceShelfRemovalRun.m or
+% Create_AC_ScatteredInterpolants.m
+UserVar.AFile="FA-Weertman-Ca1-ITS120-Cs100000-Aa1-As100000-5km-Alim-Clim-.mat";  UserVar.CFile="FC-Weertman-Ca1-ITS120-Cs100000-Aa1-As100000-5km-Alim-Clim-.mat"; 
+UserVar.AFile="FA-Joughin-Ca1-Cs100000-Aa1-As100000-5km-Alim-Clim-.mat";  UserVar.CFile="FC-Joughin-Ca1-Cs100000-Aa1-As100000-5km-Alim-Clim-.mat"; 
+UserVar.AFile=[] ; UserVar.CFile=[];
 
 
 CtrlVar.Inverse.MinimisationMethod="MatlabOptimization-HessianBased";      % Hessian-based, Matlab toolbox
@@ -100,17 +106,11 @@ else
     UserVar.VelDataSet="";
 end
 
-% 50 iterations:
-% with smpd: 2395.4089373 sec = 39.9 min
-% without smpd: 3088 sec = 51.5 min   -> 28% increase in speed
-%
-%    with spmd: 2265
-% without spmd: 2742.6209298 sec, 21% increase,
 
-CtrlVar.Inverse.Iterations=500;
 
-%delete(gcp('nocreate')); p=parpool('Threads',8); 
-% delete(gcp('nocreate')); p=parpool('Processes',8); 
+CtrlVar.Inverse.Iterations=5000;
+
+%delete(gcp('nocreate')); parpool('Processes',8)
 CtrlVar.Parallel.uvAssembly.spmd.isOn=true;
 CtrlVar.Parallel.uvAssembly.parfeval.isOn=false;
 CtrlVar.Parallel.isTest=false; 

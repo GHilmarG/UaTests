@@ -7,6 +7,11 @@ Directory="D:\Runs\Calving\PIG-TWG\InversionFiles\";
 Afile="InvA-Weertman-ITS120-Ca1-Cs100000-Aa1-As100000-5km-Alim-Clim-.mat";
 Cfile="InvC-Weertman-ITS120-Ca1-Cs100000-Aa1-As100000-5km-Alim-Clim-.mat";
 
+Afile="InvA-Joughin-Ca1-Cs100000-Aa1-As100000-5km-Alim-Clim-.mat";
+Cfile="InvC-Joughin-Ca1-Cs100000-Aa1-As100000-5km-Alim-Clim-.mat";
+
+
+
 Afile=Directory+Afile;
 Cfile=Directory+Cfile;
 

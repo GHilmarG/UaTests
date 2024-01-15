@@ -12,7 +12,7 @@ V0=UserVar.Sliding.V0;
 if ~UserVar.Slipperiness.ReadFromFile
     
     switch CtrlVar.SlidingLaw
-      % Rough estimates for reasonable order of magnitue for C
+      % Rough estimates for reasonable order of magnitude for C
     
     case {"W","Weertman","Tsai","Cornford","Umbi"}
         
