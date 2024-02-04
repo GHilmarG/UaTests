@@ -4,13 +4,16 @@
 
 Directory="D:\Runs\Calving\PIG-TWG\InversionFiles\";
 
-Afile="InvA-Weertman-ITS120-Ca1-Cs100000-Aa1-As100000-5km-Alim-Clim-.mat";
-Cfile="InvC-Weertman-ITS120-Ca1-Cs100000-Aa1-As100000-5km-Alim-Clim-.mat";
+
 
 Afile="InvA-Joughin-Ca1-Cs100000-Aa1-As100000-5km-Alim-Clim-.mat";
 Cfile="InvC-Joughin-Ca1-Cs100000-Aa1-As100000-5km-Alim-Clim-.mat";
 
+Afile="InvA-Weertman-ITS120-Ca1-Cs100000-Aa1-As100000-5km-Alim-Clim-.mat";
+Cfile="InvC-Weertman-ITS120-Ca1-Cs100000-Aa1-As100000-5km-Alim-Clim-.mat";
 
+Afile="InvA-Cornford-ITS120-Ca1-Cs100000-Aa1-As100000-5km-Alim-Clim-.mat";
+Cfile="InvC-Cornford-ITS120-Ca1-Cs100000-Aa1-As100000-5km-Alim-Clim-.mat";
 
 Afile=Directory+Afile;
 Cfile=Directory+Cfile;
@@ -21,13 +24,16 @@ FAfile=replace(Afile,"InvA","FA") ;
 
 
 
-fprintf("loading %s \n",Cfile)
+fprintf("\n loading %s \n",Cfile)
 load(Cfile);
 FC=scatteredInterpolant(xC,yC,C);
 
 if isfile(FCfile)
-    fprintf("Overwrite %s? \n",FCfile)
-    txt=input("y/n :");
+
+    list=dir(FCfile) ;
+
+    fprintf("Overwrite %s from %s? \n",FCfile,list.date)
+    txt=input("y/n :","s");
     if txt=="y"
         fprintf("saving %s \n",FCfile)
         save(FCfile,"FC")
@@ -37,14 +43,15 @@ else
     save(FCfile,"FC")
 end
 
-fprintf("loading %s \n",Afile)
+fprintf("\n loading %s \n",Afile)
 load(Afile);
 FA=scatteredInterpolant(xA,yA,AGlen);
 
 
 if isfile(FAfile)
-    fprintf("Overwrite %s? \n",FAfile)
-    txt=input("y/n :");
+    list=dir(FAfile) ;
+    fprintf("Overwrite %s from %s? \n",FAfile,list.date)
+    txt=input("y/n :","s");
     if txt=="y"
         fprintf("saving %s \n",FAfile)
         save(FAfile,"FA")

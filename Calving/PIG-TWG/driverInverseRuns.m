@@ -80,9 +80,11 @@ UserVar.RunType='Inverse-MatOpt-Alim-Clim-Joughin-';  UserVar.MeshResolution=10e
 UserVar.RunType='Inverse-MatOpt-Alim-Clim-Joughin-';  UserVar.MeshResolution=5e3;  IRange=5:5 ; JRange=5:5 ;  %  17,500 it, 
 
 UserVar.RunType='Inverse-MatOpt-Alim-Clim-Joughin-ITS120-';  UserVar.MeshResolution=5e3;  IRange=5:5 ; JRange=5:5 ;  %
-UserVar.RunType='Inverse-MatOpt-Alim-Clim-Joughin-ITS120-';  UserVar.MeshResolution=10e3;  IRange=5:5 ; JRange=5:5 ;  %
+UserVar.RunType='Inverse-MatOpt-Alim-Clim-Joughin-ITS120-';  UserVar.MeshResolution=10e3;  IRange=5:5 ; JRange=5:5 ;  % 31,000 and still not OK
 
-
+UserVar.RunType='Inverse-MatOpt-Alim-Clim-Weertman-ITS120-';  UserVar.MeshResolution=2.5e3;  IRange=5:5 ; JRange=5:5 ;  % 2 it, starting from ~ITS120 5km
+UserVar.RunType='Inverse-MatOpt-Alim-Clim-Cornford-ITS120-';  UserVar.MeshResolution=2.5e3;  IRange=5:5 ; JRange=5:5 ;  % 2 it, starting from ~ITS120 5km
+UserVar.RunType='Inverse-MatOpt-Alim-Clim-Cornford-ITS120-';  UserVar.MeshResolution=2.5e3;  IRange=5:5 ; JRange=5:5 ;  % 2 it, starting from ~ITS120 5km
 
 % These are the A/C interpolants used to define start A/C fields in an inversion, and A/C fields in DefineSlipperiness
 % If this is left empty, ie [],  these are set to run appropriate values in DefineInitialInputs.
@@ -108,9 +110,9 @@ end
 
 
 
-CtrlVar.Inverse.Iterations=5000;
+CtrlVar.Inverse.Iterations=2;
 
-%delete(gcp('nocreate')); parpool('Processes',8)
+delete(gcp('nocreate')); parpool('Processes',8)
 CtrlVar.Parallel.uvAssembly.spmd.isOn=true;
 CtrlVar.Parallel.uvAssembly.parfeval.isOn=false;
 CtrlVar.Parallel.isTest=false; 
