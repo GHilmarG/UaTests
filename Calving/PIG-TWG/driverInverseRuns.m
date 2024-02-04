@@ -62,8 +62,6 @@ UserVar.RunType='Inverse-MatOpt-Alim-Clim-Cornford-uvGroup-';  UserVar.MeshResol
 UserVar.RunType='Inverse-MatOpt-Alim-Clim-Weertman-';  UserVar.MeshResolution=5e3; IRange=5:5 ; JRange=5:5 ;  %
 
 
-UserVar.RunType='Inverse-MatOpt-Alim-Clim-Cornford-';  UserVar.MeshResolution=30e3; IRange=5:5 ; JRange=5:5 ;  %  presumably fine
-
 
 
 
@@ -81,6 +79,8 @@ UserVar.RunType='Inverse-MatOpt-Alim-Clim-Joughin-';  UserVar.MeshResolution=5e3
 
 UserVar.RunType='Inverse-MatOpt-Alim-Clim-Joughin-ITS120-';  UserVar.MeshResolution=5e3;  IRange=5:5 ; JRange=5:5 ;  %
 UserVar.RunType='Inverse-MatOpt-Alim-Clim-Joughin-ITS120-';  UserVar.MeshResolution=10e3;  IRange=5:5 ; JRange=5:5 ;  %
+
+%
 
 
 
@@ -100,6 +100,13 @@ UserVar.RunType='Inverse-MatOpt-Alim-Clim-Cornford-';  UserVar.MeshResolution=10
 UserVar.RunType='Inverse-MatOpt-Alim-Clim-Cornford-';  UserVar.MeshResolution=5e3; IRange=5:5 ; JRange=5:5 ;   %  11,000 it, looking good
 UserVar.RunType='Inverse-MatOpt-Alim-Clim-Cornford-';  UserVar.MeshResolution=30e3; IRange=5:5 ; JRange=5:5 ;  %  10,000 it, OK
 
+% HP office
+UserVar.RunType='Inverse-MatOpt-Alim-Clim-Cornford-ITS120-';  UserVar.MeshResolution=10e3; IRange=5:5 ; JRange=5:5 ;  %  10,000
+UserVar.RunType='Inverse-MatOpt-Alim-Clim-Cornford-ITS120-';  UserVar.MeshResolution=5e3; IRange=5:5 ; JRange=5:5 ;   %  4,100  good
+UserVar.RunType='Inverse-MatOpt-Alim-Clim-Cornford-ITS120-';  UserVar.MeshResolution=20e3; IRange=5:5 ; JRange=5:5 ;  %  20,000 good
+UserVar.RunType='Inverse-MatOpt-Alim-Clim-Cornford-ITS120-';  UserVar.MeshResolution=30e3; IRange=5:5 ; JRange=5:5 ;  %  11,000 good
+UserVar.RunType='Inverse-MatOpt-Alim-Clim-Cornford-ITS120-';  UserVar.MeshResolution=2.5e3; IRange=5:5 ; JRange=5:5 ;  % 1000, good, started from 5km
+
 
 CtrlVar.Inverse.MinimisationMethod="MatlabOptimization-HessianBased";      % Hessian-based, Matlab toolbox
 % CtrlVar.Inverse.MinimisationMethod="MatlabOptimization-GradientBased";     % gradient-based, Matlab toolbox
@@ -116,9 +123,9 @@ end
 
 
 
-CtrlVar.Inverse.Iterations=5000;
+CtrlVar.Inverse.Iterations=200;
 
-%delete(gcp('nocreate')); parpool('Processes',8)
+delete(gcp('nocreate')); parpool('Processes',8)
 CtrlVar.Parallel.uvAssembly.spmd.isOn=true;
 CtrlVar.Parallel.uvAssembly.parfeval.isOn=false;
 CtrlVar.Parallel.isTest=false; 
