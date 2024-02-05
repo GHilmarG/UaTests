@@ -3,129 +3,41 @@
 function [UserVar,CtrlVar,MeshBoundaryCoordinates]=DefineInitialInputs(UserVar,CtrlVar)
 
 
-%% Select the type of run by uncommenting one of the following options:
-%
-%
-% close all ; job=batch("Ua;","Pool",1) ;
-%
+UserVar=FileDirectories(UserVar) ;
 
+FileNameFormat="new" ;
+UserVar.DefineOutputs="-ubvb-LSF-h-dhdt-speed-save-AC-";
+CtrlVar.LimitRangeInUpdateFtimeDerivatives=true ;
+%% Parse UserVar
 
-%   -SM-    Apparantly no longer used...                   
-%   -MR4-   Basal melt rate parameterisation #4
-%
-%
+%% Overall mesh resolution:
 
+pat="-"+digitsPattern+"km"; MR=str2double(extract(extract(UserVar.RunType,pat),digitsPattern));
+UserVar.MeshResolution=MR*1000;   % MESH RESOLUTION
+CtrlVar.MeshSize=UserVar.MeshResolution ;
+CtrlVar.MeshSizeMax=CtrlVar.MeshSize ; 
 
-
-
-if isempty(UserVar) || ~isfield(UserVar,'RunType')
-
-
-    % UserVar.RunType='Forward-Diagnostic' ;
-
-    UserVar.RunType='-FT-I-' ;  % 'Forward-Transient-Initialisation' ;
-    UserVar.RunType='-FT-C-I-' ;  % 'Forward-Transient-Calving-Initialisation' ;
-    UserVar.RunType="-FT-C-MR4-SM-" ;  % 'Forward-Transient-Calving with surface mass balance based on rachmo
-   
-    UserVar.RunType="-FT-C-RR-BMCF-MR4-SM-" ;  % 'Forward-Transient , Retreat-Rate prescribed , Initial calving fronts are Bedmachine grounding lines , ocean melt param #4
-    UserVar.RunType="-FT-C-AC-BMGL-MR4-SM-" ;  % 'Forward-Transient , Anna Crawford
-
- 
-    UserVar.RunType="-FT-P-TWISC0-MR4-SM-10km" ;  % -P-TWISC- is Thwaites Ice Shelf Calved off, 0km away
-    % the "-P-" stands for prescribed calving fronts
-    UserVar.RunType="-FT-P-TWIS-MR4-SM-10km" ;         % not calved off
-
-    UserVar.RunType="-FT-P-TWIS-MR4-SM-10km-Alim-" ;   % not calved off
-    UserVar.RunType="-FT-P-TWISC0-MR4-SM-10km-Alim" ;  % -P-TWISC- is Thwaites Ice Shelf Calved off, 0km away
-
-    UserVar.RunType="-FT-P-TWIS-MR4-SM-5km-Alim-" ;   % not calved off
-    UserVar.RunType="-FT-P-TWISC0-MR4-SM-5km-Alim" ;  % -P-TWISC- is Thwaites Ice Shelf Calved off, 0km away
-
-
-    UserVar.RunType="-GenerateMesh-20km-AM-P-BMGL-";
-    
-    % UserVar.RunType='GenerateMesh' ;
-    % UserVar.RunType='Inverse-MatOpt';
-
-
-
-end
-
-
-if UserVar.RunType=="TestOne"
-
-    load("DefineInitialInputsTestOne.mat","UserVar","CtrlVar")
-    MeshBoundaryCoordinates=CtrlVar.MeshBoundaryCoordinates;
-    return
-
-end
-
-
-
-FileNameFormat="new" ; 
-
-%% UserVar
-
-UserVar.Region="PIG-TWG" ; "PIG" ; % "PIG-TWG" ;
-
-if isempty(UserVar) || ~isfield(UserVar,'MeshResolution')
-
-    pat="-"+digitsPattern+"km";
-    MR=str2double(extract(extract(UserVar.RunType,pat),digitsPattern));
-
-    if ~isempty(MR)
-        UserVar.MeshResolution=MR*1000;   % MESH RESOLUTION
-    else
-        UserVar.MeshResolution=5e3;   % MESH RESOLUTION
-    end
-end
-
-
-% 30km = 14km
 % 20km = 9.3km
 % 10km = 4.6km
 %  5km = 2.3km
 % 2.5km = 1.16km
 
+%% Calving
 
-if contains(UserVar.RunType,"-TWISC")
-    % UserVar.CalvingFront0=extract(UserVar.RunType,"-TWISC"+digitsPattern+"-");
-    UserVar.CalvingFront0=extract(UserVar.RunType,"-TWISC"+alphanumericsPattern+"-");
-elseif contains(UserVar.RunType,"-PIGC")
-     UserVar.CalvingFront0=extract(UserVar.RunType,"-PIGC"+alphanumericsPattern+"-");
-elseif contains(UserVar.RunType,"-BMGL-")
-    UserVar.CalvingFront0="-BMGL-";
-elseif contains(UserVar.RunType,"-c0isGL0-")
-    UserVar.CalvingFront0="-c0isGL0-";
-else
+if contains(UserVar.RunType,"-P-")
+
+    CtrlVar.LevelSetEvolution="-Prescribed-"   ; % "-prescribed-",
+    CtrlVar.LevelSetMethod=1;
     UserVar.CalvingFront0="-BMCF-"; "-BedMachineCalvingFronts-"  ;  % "-GL0-" ; % "-BedMachineCalvingFronts-"  ;
-end
 
-CtrlVar.CalvingLaw.Evaluation="-int-"  ; % nodal or integration-point evaluation  ["-int-","-node-"]
-UserVar.DefineOutputs="-ubvb-LSF-h-dhdt-speed-save-AC-";
-
-
-CtrlVar.LimitRangeInUpdateFtimeDerivatives=true ;
-
-%% Set output files directory
-[~,hostname]=system('hostname') ;
-if contains(hostname,"DESKTOP-G5TCRTD")
-
-    UserVar.ResultsFileDirectory="F:\Runs\Calving\PIG-TWG\ResultsFiles\";
-    UserVar.InverseRestartFileDirectory="F:\Runs\Calving\PIG-TWG\InverseRestartFiles\";
-    UserVar.InversionFileDirectory="F:\Runs\Calving\PIG-TWG\InversionFiles\";
-    UserVar.MeshFileDirectory="F:\Runs\Calving\PIG-TWG\MeshFiles\";
-    UserVar.ForwardRestartFileDirectory="F:\Runs\Calving\PIG-TWG\RestartFiles";
-
-elseif contains(hostname,"DESKTOP-BU2IHIR")   % home
-    UserVar.ResultsFileDirectory="D:\Runs\Calving\PIG-TWG\ResultsFiles\";
-    UserVar.InverseRestartFileDirectory="D:\Runs\Calving\PIG-TWG\InverseRestartFiles\";
-    UserVar.InversionFileDirectory="D:\Runs\Calving\PIG-TWG\InversionFiles\";
-    UserVar.MeshFileDirectory="D:\Runs\Calving\PIG-TWG\MeshFiles\";
-    UserVar.ForwardRestartFileDirectory="D:\Runs\Calving\PIG-TWG\RestartFiles";
 else
-    UserVar.ResultsFileDirectory=pwd+"\ResultsFiles\";
+
+    error("not implemented")
+
 end
+
+%%
+
 
 
 %%
@@ -158,22 +70,14 @@ UserVar.FasFile="Fas_SMB_RACMO2k3_1979_2011.mat" ; %  surface mass balance
 
 
 
-%% uvh tau;
-CtrlVar.uvh.SUPG.tau="taus" ; % default,  issues with uvh convergence in the beginning
-% CtrlVar.uvh.SUPG.tau="tau1" ; % testing
+
 
 
 %%
 
 
-if UserVar.kH==""
-    CtrlVar.kH=10;
-else
-    CtrlVar.kH=str2double(extract(UserVar.kH,digitsPattern));
-end
 
-CtrlVar.MeshSize=UserVar.MeshResolution ;
-CtrlVar.MeshSizeMax=CtrlVar.MeshSize ; 
+
 %%  Level-set parameters
 
 
@@ -298,8 +202,7 @@ end
 
 CtrlVar.LevelSetInfoLevel=1 ;
 
-pat="-TM"+digitsPattern+"-";
-ThickMin=str2double(extract(extract(UserVar.RunType,pat),digitsPattern))/100;
+pat="-TM"+digitsPattern+"-"; ThickMin=str2double(extract(extract(UserVar.RunType,pat),digitsPattern))/100;
 
 
 if isempty(ThickMin)
@@ -401,8 +304,8 @@ if contains(UserVar.RunType,"Inverse")
     CtrlVar.InfoLevelNonLinIt=0;  CtrlVar.InfoLevel=0;
    
 
-    UserVar.Slipperiness.ReadFromFile=1;
-    UserVar.AGlen.ReadFromFile=1;
+    UserVar.Slipperiness.ReadFromFile=0;
+    UserVar.AGlen.ReadFromFile=0;
 
     CtrlVar.ReadInitialMesh=1;
     CtrlVar.AdaptMesh=0;
@@ -428,7 +331,7 @@ if contains(UserVar.RunType,"Inverse")
     CtrlVar.Inverse.NameOfRestartOutputFile=UserVar.InverseRestartFileDirectory+"InverseRestartFile-"+InvFile;
 
 
-    % [----------- Testing adjoint gradents
+    % [----------- Testing adjoint gradients
     CtrlVar.Inverse.TestAdjoint.isTrue=0; % If true then perform a brute force calculation
     % of the directional derivative of the objective function.
     CtrlVar.TestAdjointFiniteDifferenceType="central-second-order" ;

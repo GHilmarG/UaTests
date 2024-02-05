@@ -62,8 +62,6 @@ UserVar.RunType='Inverse-MatOpt-Alim-Clim-Cornford-uvGroup-';  UserVar.MeshResol
 UserVar.RunType='Inverse-MatOpt-Alim-Clim-Weertman-';  UserVar.MeshResolution=5e3; IRange=5:5 ; JRange=5:5 ;  %
 
 
-UserVar.RunType='Inverse-MatOpt-Alim-Clim-Cornford-';  UserVar.MeshResolution=30e3; IRange=5:5 ; JRange=5:5 ;  %  presumably fine
-
 
 
 
@@ -81,10 +79,25 @@ UserVar.RunType='Inverse-MatOpt-Alim-Clim-Joughin-';  UserVar.MeshResolution=5e3
 
 UserVar.RunType='Inverse-MatOpt-Alim-Clim-Joughin-ITS120-';  UserVar.MeshResolution=5e3;  IRange=5:5 ; JRange=5:5 ;  %
 UserVar.RunType='Inverse-MatOpt-Alim-Clim-Joughin-ITS120-';  UserVar.MeshResolution=10e3;  IRange=5:5 ; JRange=5:5 ;  % 31,000 and still not OK
+UserVar.RunType='Inverse-MatOpt-Alim-Clim-Joughin-ITS120-';  UserVar.MeshResolution=10e3;  IRange=5:5 ; JRange=5:5 ;  %
+
 
 UserVar.RunType='Inverse-MatOpt-Alim-Clim-Weertman-ITS120-';  UserVar.MeshResolution=2.5e3;  IRange=5:5 ; JRange=5:5 ;  % 2 it, starting from ~ITS120 5km
 UserVar.RunType='Inverse-MatOpt-Alim-Clim-Cornford-ITS120-';  UserVar.MeshResolution=2.5e3;  IRange=5:5 ; JRange=5:5 ;  % 2 it, starting from ~ITS120 5km
 UserVar.RunType='Inverse-MatOpt-Alim-Clim-Cornford-ITS120-';  UserVar.MeshResolution=2.5e3;  IRange=5:5 ; JRange=5:5 ;  % 2 it, starting from ~ITS120 5km
+
+UserVar.RunType='Inverse-MatOpt-Alim-Clim-Cornford-';  UserVar.MeshResolution=20e3; IRange=5:5 ; JRange=5:5 ;  %  15,000
+UserVar.RunType='Inverse-MatOpt-Alim-Clim-Cornford-';  UserVar.MeshResolution=10e3; IRange=5:5 ; JRange=5:5 ;  %  20,000 it, presumably OK
+UserVar.RunType='Inverse-MatOpt-Alim-Clim-Cornford-';  UserVar.MeshResolution=5e3; IRange=5:5 ; JRange=5:5 ;   %  11,000 it, looking good
+UserVar.RunType='Inverse-MatOpt-Alim-Clim-Cornford-';  UserVar.MeshResolution=30e3; IRange=5:5 ; JRange=5:5 ;  %  10,000 it, OK
+
+% HP office
+
+UserVar.RunType='Inverse-MatOpt-Alim-Clim-Cornford-ITS120-';  UserVar.MeshResolution=5e3; IRange=5:5 ; JRange=5:5 ;   %  4,100  good
+UserVar.RunType='Inverse-MatOpt-Alim-Clim-Cornford-ITS120-';  UserVar.MeshResolution=20e3; IRange=5:5 ; JRange=5:5 ;  %  20,000 good
+UserVar.RunType='Inverse-MatOpt-Alim-Clim-Cornford-ITS120-';  UserVar.MeshResolution=30e3; IRange=5:5 ; JRange=5:5 ;  %  11,000 good
+UserVar.RunType='Inverse-MatOpt-Alim-Clim-Cornford-ITS120-';  UserVar.MeshResolution=2.5e3; IRange=5:5 ; JRange=5:5 ;  % 1000, good, started from 5km
+UserVar.RunType='Inverse-MatOpt-Alim-Clim-Cornford-ITS120-';  UserVar.MeshResolution=10e3; IRange=5:5 ; JRange=5:5 ;  %  10,000
 
 % These are the A/C interpolants used to define start A/C fields in an inversion, and A/C fields in DefineSlipperiness
 % If this is left empty, ie [],  these are set to run appropriate values in DefineInitialInputs.
@@ -96,10 +109,14 @@ UserVar.AFile="FA-Joughin-Ca1-Cs100000-Aa1-As100000-5km-Alim-Clim-.mat";  UserVa
 UserVar.AFile=[] ; UserVar.CFile=[];
 
 
+
+
+
 CtrlVar.Inverse.MinimisationMethod="MatlabOptimization-HessianBased";      % Hessian-based, Matlab toolbox
 % CtrlVar.Inverse.MinimisationMethod="MatlabOptimization-GradientBased";     % gradient-based, Matlab toolbox
 % CtrlVar.Inverse.MinimisationMethod="UaOptimization-GradientBased";         % gradient-based, Ua optimisation toolbox
 % CtrlVar.Inverse.MinimisationMethod="UaOptimization-HessianBased";          % Hessian-based, Ua optimisation toolbox
+
 % CtrlVar.Inverse.AdjointGradientPreMultiplier="M"; % {'I','M'}
 
 if contains(UserVar.RunType,"-ITS120-")
@@ -109,13 +126,31 @@ else
 end
 
 
-
 CtrlVar.Inverse.Iterations=2;
+CtrlVar.Inverse.OptimalityTolerance=1;
 
-delete(gcp('nocreate')); parpool('Processes',8)
+NumWorkers=8 ;
+
+ParPool = gcp('nocreate') ;
+
+if isempty(ParPool)
+
+    parpool('Processes',NumWorkers)
+
+elseif (ParPool.NumWorkers~=NumWorkers)
+
+    delete(gcp('nocreate'))
+    parpool('Processes',NumWorkers)
+
+end
+
+
 CtrlVar.Parallel.uvAssembly.spmd.isOn=true;
 CtrlVar.Parallel.uvAssembly.parfeval.isOn=false;
 CtrlVar.Parallel.isTest=false; 
+CtrlVar.Distribute=true;
+
+
 
 if SubmitBathJobs
 
