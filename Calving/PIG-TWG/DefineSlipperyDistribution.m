@@ -64,12 +64,12 @@ else
     
     if isempty(FC)
         
-        if isfile(UserVar.CFile)  || isfile(UserVar.CFile+".mat")
-            fprintf('DefineSlipperyDistribution: loading file: %-s \n',UserVar.CFile)
-            load(UserVar.CFile,'FC')
+        if isfile(UserVar.FCFile)  || isfile(UserVar.FCFile+".mat")
+            fprintf('DefineSlipperyDistribution: loading file: %-s \n',UserVar.FCFile)
+            load(UserVar.FCFile,'FC')
             fprintf(' done \n')
         else
-            fprintf('DefineSlipperyDistribution: file not found, was expecting: %-s \n',UserVar.CFile)
+            fprintf('DefineSlipperyDistribution: file not found, was expecting: %-s \n',UserVar.FCFile)
             error("DefineSlipperyDistribution:FileNotFound","Required input file not found")
             % create a FC file
             %load('C-Estimate.mat','C','xC','yC')

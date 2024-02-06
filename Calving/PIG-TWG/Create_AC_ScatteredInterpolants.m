@@ -2,63 +2,58 @@
 
 %%
 
-Directory="D:\Runs\Calving\PIG-TWG\InversionFiles\";
+
+
+UserVar.RunType="-FT-from0to1-30km-Tri3-SlidCornford-Duvh-MR4-P-kH10000-ThickMin0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-ITS120-GeoBed2-" ;
 
 
 
-Afile="InvA-Joughin-Ca1-Cs100000-Aa1-As100000-5km-Alim-Clim-.mat";
-Cfile="InvC-Joughin-Ca1-Cs100000-Aa1-As100000-5km-Alim-Clim-.mat";
+%%
+UserVar=FileDirectories(UserVar) ;
+[CtrlVar,UserVar]=ParseRunTypeString(CtrlVar,UserVar) ; 
 
-Afile="InvA-Weertman-ITS120-Ca1-Cs100000-Aa1-As100000-5km-Alim-Clim-.mat";
-Cfile="InvC-Weertman-ITS120-Ca1-Cs100000-Aa1-As100000-5km-Alim-Clim-.mat";
+FCFile=UserVar.FCFile;
+FAFile=UserVar.FAFile;
 
-Afile="InvA-Cornford-ITS120-Ca1-Cs100000-Aa1-As100000-5km-Alim-Clim-.mat";
-Cfile="InvC-Cornford-ITS120-Ca1-Cs100000-Aa1-As100000-5km-Alim-Clim-.mat";
-
-Afile=Directory+Afile;
-Cfile=Directory+Cfile;
+CFile=UserVar.CFile;
+AFile=UserVar.AFile;
 
 
-FCfile=replace(Cfile,"InvC","FC") ;
-FAfile=replace(Afile,"InvA","FA") ;
-
-
-
-fprintf("\n loading %s \n",Cfile)
-load(Cfile);
+fprintf("\n loading %s \n",CFile)
+load(CFile);
 FC=scatteredInterpolant(xC,yC,C);
 
-if isfile(FCfile)
+if isfile(FCFile)
 
-    list=dir(FCfile) ;
+    list=dir(FCFile) ;
 
-    fprintf("Overwrite %s from %s? \n",FCfile,list.date)
+    fprintf("Overwrite %s from %s? \n",FCFile,list.date)
     txt=input("y/n :","s");
     if txt=="y"
-        fprintf("saving %s \n",FCfile)
-        save(FCfile,"FC")
+        fprintf("saving %s \n",FCFile)
+        save(FCFile,"FC")
     end
 else
-    fprintf("saving %s \n",FCfile)
-    save(FCfile,"FC")
+    fprintf("saving %s \n",FCFile)
+    save(FCFile,"FC")
 end
 
-fprintf("\n loading %s \n",Afile)
-load(Afile);
+fprintf("\n loading %s \n",AFile)
+load(AFile);
 FA=scatteredInterpolant(xA,yA,AGlen);
 
 
-if isfile(FAfile)
-    list=dir(FAfile) ;
-    fprintf("Overwrite %s from %s? \n",FAfile,list.date)
+if isfile(FAFile)
+    list=dir(FAFile) ;
+    fprintf("Overwrite %s from %s? \n",FAFile,list.date)
     txt=input("y/n :","s");
     if txt=="y"
-        fprintf("saving %s \n",FAfile)
-        save(FAfile,"FA")
+        fprintf("saving %s \n",FAFile)
+        save(FAFile,"FA")
     end
 else
-    fprintf("saving %s \n",FAfile)
-    save(FAfile,"FA")
+    fprintf("saving %s \n",FAFile)
+    save(FAFile,"FA")
 end
 
 
