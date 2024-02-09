@@ -215,5 +215,25 @@ UserVar.FAFile=UserVar.InversionFileDirectory+UserVar.FAFile;
 UserVar.FCFile=UserVar.InversionFileDirectory+UserVar.FCFile;
 
 
+SMB=extractBetween(UserVar.RunType,"-SMB_","-");
+if SMB=="RACHMO2k3_2km"
+
+    UserVar.FasFile="Fas_smb_rec.1979-2021.RACMO2.3p2_ANT27_ERA5-3h.AIS.2km.YY-GriddedInterpolant.mat";
+else
+    UserVar.FasFile="Fas_SMB_RACMO2k3_1979_2011.mat" ; %  surface mass balance
+
+end
+
+Geometry=extractBetween(UserVar.RunType,"-Geo","-");
+if isempty(Geometry) || Geometry=="Bed2"
+    UserVar.GeometryInterpolant='../../../Interpolants/BedMachineGriddedInterpolants.mat';
+else
+    % Here I can define different
+    % 
+    % start geometry, for example if I want to start with results from a previous run
+    error("not implemented")
+end
+
+
 
 end

@@ -1,15 +1,24 @@
 
 
+function Create_AC_ScatteredInterpolants(CtrlVar,UserVar)
+
 %%
 
+if nargin==0 || isempty(CtrlVar)
 
+    CtrlVar=Ua2D_DefaultParameters();
+end
 
-UserVar.RunType="-FT-from0to1-30km-Tri3-SlidCornford-Duvh-MR4-P-kH10000-ThickMin0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-ITS120-GeoBed2-" ;
+if nargin==1
 
+    UserVar.RunType="-FT-from0to1-30km-Tri3-SlidCornford-Duvh-MR4-P-kH10000-ThickMin0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-ITS120-GeoBed2-" ;
+    UserVar.RunType="-FT-from0to1-30km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-ThickMin0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-ITS120-GeoBed2-SMB_RACHMO2k3_2km-" ;
 
+end
 
 %%
 UserVar=FileDirectories(UserVar) ;
+
 [CtrlVar,UserVar]=ParseRunTypeString(CtrlVar,UserVar) ; 
 
 FCFile=UserVar.FCFile;

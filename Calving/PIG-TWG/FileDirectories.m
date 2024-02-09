@@ -28,6 +28,9 @@ elseif contains(hostname,"C23000099")   % home
     UserVar.InversionFileDirectory="E:\Runs\Calving\PIG-TWG\InversionFiles\";
     UserVar.MeshFileDirectory="E:\Runs\Calving\PIG-TWG\MeshFiles\";
     UserVar.ForwardRestartFileDirectory="E:\Runs\Calving\PIG-TWG\RestartFiles\";
+
+    % UserVar.Interpolants="C:\cygwin64\home\Hilmar\Ua\Interpolants" ; % this is in the path variable
+
 else
     UserVar.ResultsFileDirectory=pwd+"\ResultsFiles\";
 end

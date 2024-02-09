@@ -6,6 +6,9 @@ function [UserVar,CtrlVar,MeshBoundaryCoordinates]=DefineInitialInputs(UserVar,C
 %%
 
 UserVar.RunType="-IR-from0to1-30km-Tri3-SlidCornford-Duvh-MR4-P-kH10000-ThickMin0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-ITS120-GeoBed2-" ;
+UserVar.RunType="-FT-from0to1-30km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-ThickMin0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-ITS120-GeoBed2-SMB_RACHMO2k3_2km-" ;
+UserVar.RunType="-FT-from0to1-20km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-ThickMin0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-ITS120-GeoBed2-SMB_RACHMO2k3_2km-" ;
+UserVar.RunType="-IR-from0to1-20km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-ThickMin0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-ITS120-GeoBed2-SMB_RACHMO2k3_2km-" ;
 
 %%
 
@@ -30,30 +33,11 @@ CtrlVar.LimitRangeInUpdateFtimeDerivatives=true ;
 %
 % Put the OneDrive folder `Interpolants' into you directory so that it can be reached as ../Interpolants with respect to you rundirectory.
 %
-%
-%UserVar.GeometryInterpolant='../../Interpolants/Bedmap2GriddedInterpolantModifiedBathymetry.mat'; % this assumes you have downloaded the OneDrive folder `Interpolants'.
 
-Geometry=extractBetween(UserVar.RunType,"-Geo","-");
-if isempty(Geometry) || Geometry=="Bed2"
-    UserVar.GeometryInterpolant='../../../Interpolants/BedMachineGriddedInterpolants.mat';
-else
-    % Here I can define different
-    % 
-    % start geometry, for example if I want to start with results from a previous run
-    error("not implemented")
-end
-
-if contains(UserVar.RunType,"-ITS120-")
-    UserVar.SurfaceVelocityInterpolant='../../../Interpolants/ITS-LIVE-ANT-G0120-0000-VelocityGriddedInterpolants-nStride2.mat';
-else
-    UserVar.SurfaceVelocityInterpolant='../../../Interpolants/SurfVelMeasures990mInterpolants.mat';
-end
 
 UserVar.MeshBoundaryCoordinatesFile='../../../Interpolants/MeshBoundaryCoordinatesForAntarcticaBasedOnBedmachine';
 load(UserVar.MeshBoundaryCoordinatesFile,"Boundary") ; UserVar.BedMachineBoundary=Boundary;
 UserVar.DistanceBetweenPointsAlongBoundary=5e3 ;
-
-UserVar.FasFile="Fas_SMB_RACMO2k3_1979_2011.mat" ; %  surface mass balance
 
 if ~isfile(UserVar.GeometryInterpolant) || ~isfile(UserVar.SurfaceVelocityInterpolant)
 
@@ -71,12 +55,13 @@ end
 
 %% Times, time steps, output interval
 
+% time and TotalTime already extracted from UserVar.RunType
 CtrlVar.DefineOutputsDt=1;
 CtrlVar.dt=1e-5;   
 CtrlVar.ATSdtMax=0.1;
 CtrlVar.ATSdtMin=1e-5;  
 CtrlVar.ATSTargetIterations=6;
-% CtrlVar.TotalTime=400;  This is set in ParseRunTypeString
+
 
 
 %%  Level-set parameters
@@ -110,9 +95,6 @@ if CtrlVar.InverseRun
     % CtrlVar.Inverse.MinimisationMethod="MatlabOptimization-GradientBased";     CtrlVar.Inverse.AdjointGradientPreMultiplier="I"; % {'I','M'}
     % CtrlVar.Inverse.MinimisationMethod="MatlabOptimization-GradientBased";     CtrlVar.Inverse.AdjointGradientPreMultiplier="M"; % {'I','M'}
 
- 
-
-
     UserVar.DefineOutputs="-"; %
 
 
@@ -128,21 +110,16 @@ if CtrlVar.InverseRun
     CtrlVar.AdaptMesh=0;
    
 
-    CtrlVar.Inverse.Iterations=2;
+    CtrlVar.Inverse.Iterations=5000;
 
     CtrlVar.Inverse.InvertFor="-logA-logC-" ; % {'C','logC','AGlen','logAGlen'}
     CtrlVar.Inverse.Regularize.Field=CtrlVar.Inverse.InvertFor;
     CtrlVar.Inverse.DataMisfit.GradientCalculation="-adjoint-" ; % "-FixpointC-"; "adjoint";
-
-   
-
     
     CtrlVar.NameOfFileForSavingSlipperinessEstimate= UserVar.CFile;
     CtrlVar.NameOfFileForSavingAGlenEstimate= UserVar.AFile;
 
     CtrlVar.Inverse.NameOfRestartOutputFile=UserVar.InverseRestartFile;
-
-
 
 elseif  CtrlVar.TimeDependentRun
 
@@ -303,7 +280,7 @@ CtrlVar.NameOfRestartFiletoWrite=replace(CtrlVar.NameOfRestartFiletoWrite,"--","
 CtrlVar.NameOfRestartFiletoRead=CtrlVar.NameOfRestartFiletoWrite;
 
 
-%% Make this automatically an inverse run if corresponding inverse files already exists
+%% Make this automatically a restart run if corresponding restart files already exists
 
 if CtrlVar.InverseRun
     fprintf(" Inverse restart file: %s \n",CtrlVar.Inverse.NameOfRestartOutputFile)

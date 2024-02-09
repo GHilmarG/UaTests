@@ -16,7 +16,7 @@ else
 
         if isfile(UserVar.FAFile) || isfile(UserVar.FAFile+".mat")
 
-            fprintf('DefineSlipperyDistribution: loading file: %-s \n',UserVar.FAFile)
+            fprintf('DefineAGlenDistribution: loading file: %-s \n',UserVar.FAFile)
             load(UserVar.FAFile,'FA')
             fprintf(' done \n')
 

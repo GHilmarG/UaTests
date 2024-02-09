@@ -6,7 +6,7 @@ persistent FC
 q=3 ; 
 muk=0.5 ; 
 m=3; 
-V0=UserVar.Sliding.V0; 
+V0=300;
 
 
 if ~UserVar.Slipperiness.ReadFromFile
