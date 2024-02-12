@@ -5,16 +5,19 @@
 
 function [CtrlVar,UserVar]=ParseRunTypeString(CtrlVar,UserVar)
 
-
+%%
+%
 % extracts from:
 %
 %   UserVar.RunType
+% 
+% 
 %
 % various model options and set CrtlVar fields accordingly
 %
-
-
-
+%
+%
+%
 % Files with A and C nodal values obtained from inversion start with InvA and InvC followed by the CtrlVar.Experiment, but with "-FT-" or "-IR-" deleted
 %
 % Files with A and C interpolants start with FA and FC followed by the CtrlVar.Experiment, but with "-FT-" or "-IR-" deleted.
@@ -25,7 +28,27 @@ function [CtrlVar,UserVar]=ParseRunTypeString(CtrlVar,UserVar)
 %
 %
 %
-
+% For example when starting the initial forward run with:
+%
+%   UserVar.RunType="-FT-from0to1-ES20km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-ThickMin0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-ITS120-GeoBed2-SMB_RACHMO2k3_2km-" ;
+%
+% then
+% 
+%   UserVar.GeometryInterpolant="BedMachineGriddedInterpolants.mat";
+%   UserVar.FAFile="FA-ES20km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-ThickMin0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-ITS120-GeoBed2-SMB_RACHMO2k3_2km-"
+%   UserVar.SurfaceVelocityInterpolant="ITS-LIVE-ANT-G0120-0000-VelocityGriddedInterpolants-nStride2.mat";
+%
+% The UserVar.FAfile would be a result from a prevous inversion using ITS120 velocities, and Bedmachine2 bed geometry
+%
+% If, for example, the run is to continue from year 1 to year 2, using velocities and geometry from year 1 of a previous run, and 
+ %                  "-FT-from0to1-ES20km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-ThickMin0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-ITS120-GeoBed2-SMB_RACHMO2k3_2km-" ;
+%   UserVar.RunType="-FT-from0to1-ES20km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-ThickMin0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-ITS120-GeoBed2-SMB_RACHMO2k3_2km-Geo_0000100_Vel_0000100-"
+%
+% then
+%
+%   UserVar.GeometryInterpolant="Geo_0000100-from0to1-ES20km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-ThickMin0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-ITS120-GeoBed2-SMB_RACHMO2k3_2km-" ;
+%   UserVar.SurfaceVelocityInterpolant="Vel_0000100-from0to1-ES20km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-ThickMin0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-ITS120-GeoBed2-SMB_RACHMO2k3_2km-" ;
+%
 %% FT -> forward run
 
 if contains(UserVar.RunType,"-FT-")
