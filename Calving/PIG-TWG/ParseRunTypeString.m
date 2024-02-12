@@ -15,6 +15,17 @@ function [CtrlVar,UserVar]=ParseRunTypeString(CtrlVar,UserVar)
 
 
 
+% Files with A and C nodal values obtained from inversion start with InvA and InvC followed by the CtrlVar.Experiment, but with "-FT-" or "-IR-" deleted
+%
+% Files with A and C interpolants start with FA and FC followed by the CtrlVar.Experiment, but with "-FT-" or "-IR-" deleted.
+% These may have to be created/copied from previous runs ahead of first inversion.
+%
+% Geometry interpolants are either based on bedmachine or a previous run based on the value of "-fromT1toT2-". If T1=0 then
+% bedmachine, otherwise the interpolants are created from previous run results at t=T1;
+%
+%
+%
+
 %% FT -> forward run
 
 if contains(UserVar.RunType,"-FT-")
@@ -31,11 +42,12 @@ pat="-from"+digitsPattern+"to";    TimeStart=str2double(extract(extract(UserVar.
 pat="to"+digitsPattern+"-";      TimeEnd=str2double(extract(extract(UserVar.RunType,pat),digitsPattern)) ;
 
 CtrlVar.time=TimeStart ; CtrlVar.TotalTime=TimeEnd ;
-pat="-"+digitsPattern+"km-";  MR=str2double(extract(extract(UserVar.RunType,pat),digitsPattern));
+pat="-"+digitsPattern+"km-";   MR=str2double(extract(extract(UserVar.RunType,pat),digitsPattern));
 
 %% ??km : mesh resolution and input file with initial mesh
+UserVar.MeshResolution=1000*str2double(extractBetween(UserVar.RunType,"-ES","km-")); 
 
-UserVar.MeshResolution=MR*1000;   % MESH RESOLUTION
+UserVar.RunType=replace(UserVar.RunType,"-ES","-") ;
 CtrlVar.MeshSize=UserVar.MeshResolution ;
 CtrlVar.MeshSizeMax=CtrlVar.MeshSize ;
 
@@ -143,11 +155,24 @@ CtrlVar.Inverse.Regularize.logC.ga=str2double(extractBetween(UserVar.RunType,"Ca
 CtrlVar.Inverse.Regularize.logC.gs=str2double(extractBetween(UserVar.RunType,"Cs","-"));
 CtrlVar.Inverse.Regularize.logAGlen.ga=str2double(extractBetween(UserVar.RunType,"Aa","-"));
 CtrlVar.Inverse.Regularize.logAGlen.gs=str2double(extractBetween(UserVar.RunType,"As","-"));
+%%
+
+CtrlVar.Experiment=UserVar.RunType ;
+
+CtrlVar.Experiment=replace(CtrlVar.Experiment,"--","-");
+CtrlVar.Experiment=replace(CtrlVar.Experiment,".","k");
+CtrlVar.Experiment=replace(CtrlVar.Experiment,"+","p");
 
 %%
-if contains(UserVar.RunType,"-ITS120-")
+
+VelocityDataSet=extractBetween(UserVar.RunType,"-Vel","-") ; 
+
+
+if VelocityDataSet=="ITS120"
     UserVar.SurfaceVelocityInterpolant='../../../Interpolants/ITS-LIVE-ANT-G0120-0000-VelocityGriddedInterpolants-nStride2.mat';
     UserVar.VelDataSet="-ITS120-";
+elseif VelocityDataSet=="yr1"
+     UserVar.VelDataSet="-yr1-";
 else
     UserVar.SurfaceVelocityInterpolant='../../../Interpolants/SurfVelMeasures990mInterpolants.mat';
     UserVar.VelDataSet="";
@@ -198,13 +223,6 @@ UserVar.InverseRestartFile=UserVar.InverseRestartFileDirectory+"InverseRestartFi
 
 UserVar.AFile="InvA-"+InvFile;
 UserVar.CFile="InvC-"+InvFile;
-
-UserVar.CFile=replace(UserVar.CFile,".mat","");
-UserVar.AFile=replace(UserVar.AFile,".mat","");
-
-UserVar.CFile=replace(UserVar.CFile,".","k");
-UserVar.AFile=replace(UserVar.AFile,".","k");
-
 UserVar.FAFile="FA-"+InvFile;
 UserVar.FCFile="FC-"+InvFile;
 
@@ -213,6 +231,45 @@ UserVar.CFile=UserVar.InversionFileDirectory+UserVar.CFile;
 
 UserVar.FAFile=UserVar.InversionFileDirectory+UserVar.FAFile;
 UserVar.FCFile=UserVar.InversionFileDirectory+UserVar.FCFile;
+
+
+if contains(UserVar.RunType,"Velyr")  % this implies that the velocity "dataset" is from a previous run
+
+
+    time=str2double(extractBetween(UserVar.RunType,"-Velyr","-"));
+    VelocityDataFile=sprintf('%07i-%s.mat',round(100*time),CtrlVar.Experiment);
+    VelocityDataFile=replace(VelocityDataFile,"--","-");
+
+    if contains(UserVar.RunType,"from0")  % if the velocity "data" file is based on the first transient run, then "-vel?-" will not be a part of the file name
+        % so must get rid of that
+
+        Vstring=extractBetween(UserVar.RunType,"-Velyr","-",Boundaries="inclusive");
+        VelocityDataFile=replace(VelocityDataFile,Vstring,"-"); 
+
+    end
+
+    UserVar.AFile=VelocityDataFile;
+    UserVar.CFile=VelocityDataFile;
+    UserVar.FAFile="FA-"+VelocityDataFile;
+    UserVar.FCFile="FC-"+VelocityDataFile;
+
+    UserVar.AFile=UserVar.ResultsFileDirectory+UserVar.AFile;
+    UserVar.CFile=UserVar.ResultsFileDirectory+UserVar.CFile;
+
+    UserVar.FAFile=UserVar.ResultsFileDirectory+UserVar.FAFile;
+    UserVar.FCFile=UserVar.ResultsFileDirectory+UserVar.FCFile;
+
+end
+
+% 0000100-FT-from0to1-20km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-ThickMin0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-ITS120-GeoBed2-SMB_RACHMO2k3_2km-
+% 0000100-FT-from0to1-20km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-ThickMin0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-Velyr1-GeoBed2-SMB_RACHMO2k3_2km-
+
+
+UserVar.CFile=replace(UserVar.CFile,".mat","");
+UserVar.AFile=replace(UserVar.AFile,".mat","");
+
+UserVar.CFile=replace(UserVar.CFile,".","k");
+UserVar.AFile=replace(UserVar.AFile,".","k");
 
 
 SMB=extractBetween(UserVar.RunType,"-SMB_","-");
@@ -233,6 +290,7 @@ else
     % start geometry, for example if I want to start with results from a previous run
     error("not implemented")
 end
+
 
 
 

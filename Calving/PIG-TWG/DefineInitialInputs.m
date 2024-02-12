@@ -5,11 +5,16 @@ function [UserVar,CtrlVar,MeshBoundaryCoordinates]=DefineInitialInputs(UserVar,C
 
 %%
 
-UserVar.RunType="-IR-from0to1-30km-Tri3-SlidCornford-Duvh-MR4-P-kH10000-ThickMin0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-ITS120-GeoBed2-" ;
-UserVar.RunType="-FT-from0to1-30km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-ThickMin0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-ITS120-GeoBed2-SMB_RACHMO2k3_2km-" ;
-UserVar.RunType="-FT-from0to1-20km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-ThickMin0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-ITS120-GeoBed2-SMB_RACHMO2k3_2km-" ;
-UserVar.RunType="-IR-from0to1-20km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-ThickMin0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-ITS120-GeoBed2-SMB_RACHMO2k3_2km-" ;
+UserVar.RunType="-IR-from0to1-ES30km-Tri3-SlidCornford-Duvh-MR4-P-kH10000-ThickMin0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-ITS120-GeoBed2-" ;
 
+UserVar.RunType="-FT-from0to1-ES20km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-ThickMin0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-ITS120-GeoBed2-SMB_RACHMO2k3_2km-" ;
+UserVar.RunType="-FT-from0to1-ES10km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-ThickMin0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-ITS120-GeoBed2-SMB_RACHMO2k3_2km-" ;
+UserVar.RunType="-FT-from0to1-ES5km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-ThickMin0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-ITS120-GeoBed2-SMB_RACHMO2k3_2km-" ;
+UserVar.RunType="-FT-from0to1-ES2.5km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-ThickMin0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-ITS120-GeoBed2-SMB_RACHMO2k3_2km-" ;
+
+UserVar.RunType="-FT-from0to1-ES30km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-ThickMin0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-Velyr1-GeoBed2-SMB_RACHMO2k3_2km-" ;
+
+% Create_AC_ScatteredInterpolants([],UserVar)
 %%
 
 UserVar=FileDirectories(UserVar) ;
@@ -21,8 +26,10 @@ CtrlVar.LimitRangeInUpdateFtimeDerivatives=true ;
 
 [CtrlVar,UserVar]=ParseRunTypeString(CtrlVar,UserVar) ; 
 
-
-
+%% Parallel options
+CtrlVar.Parallel.uvhAssembly.spmd.isOn=true; 
+CtrlVar.Distribute=true;
+CtrlVar.Parallel.isTest=false;
 %% Data input files
 % This run requires some additional input files. They are too big to be kept on Github so you
 % will have to get those separately.
@@ -62,7 +69,7 @@ CtrlVar.ATSdtMax=0.1;
 CtrlVar.ATSdtMin=1e-5;  
 CtrlVar.ATSTargetIterations=6;
 
-
+CtrlVar.ExplicitEstimationMethod="-no extrapolation-";
 
 %%  Level-set parameters
 
@@ -110,7 +117,9 @@ if CtrlVar.InverseRun
     CtrlVar.AdaptMesh=0;
    
 
-    CtrlVar.Inverse.Iterations=5000;
+    CtrlVar.Inverse.Iterations=5;
+    CtrlVar.Inverse.OptimalityTolerance=0.01; 
+    CtrlVar.Inverse.StepTolerance=0.001;
 
     CtrlVar.Inverse.InvertFor="-logA-logC-" ; % {'C','logC','AGlen','logAGlen'}
     CtrlVar.Inverse.Regularize.Field=CtrlVar.Inverse.InvertFor;
@@ -249,11 +258,7 @@ end
 CtrlVar.SaveInitialMeshFileName=[] ; % Do not create a new initial mesh file each time
 
 
-CtrlVar.Experiment=UserVar.RunType ;
 
-CtrlVar.Experiment=replace(CtrlVar.Experiment,"--","-");
-CtrlVar.Experiment=replace(CtrlVar.Experiment,".","k");
-CtrlVar.Experiment=replace(CtrlVar.Experiment,"+","p");
 
 if startsWith(CtrlVar.Experiment,"-")
     CtrlVar.Experiment=replaceBetween(CtrlVar.Experiment,1,1,"");
