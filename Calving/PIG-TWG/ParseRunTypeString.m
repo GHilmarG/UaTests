@@ -1,5 +1,4 @@
 
-
 %%
 
 
@@ -46,9 +45,14 @@ function [CtrlVar,UserVar]=ParseRunTypeString(CtrlVar,UserVar)
 %
 % then
 %
-%   UserVar.GeometryInterpolant="Geo_0000100-from0to1-ES20km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-ThickMin0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-ITS120-GeoBed2-SMB_RACHMO2k3_2km-" ;
-%   UserVar.SurfaceVelocityInterpolant="Vel_0000100-from0to1-ES20km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-ThickMin0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-ITS120-GeoBed2-SMB_RACHMO2k3_2km-" ;
-%
+%   UserVar.GeometryInterpolant=       "FsbB_0000100-FT-from0to1-ES20km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-ThickMin0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-ITS120-GeoBed2-SMB_RACHMO2k3_2km-" ;
+%   UserVar.SurfaceVelocityInterpolant= "Fuv_0000100-FT-from0to1-ES20km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-ThickMin0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-ITS120-GeoBed2-SMB_RACHMO2k3_2km-" ;
+%   UserVar.FAFile=                      "FA_0000100-IR-from0to1-ES20km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-ThickMin0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-ITS120-GeoBed2-SMB_RACHMO2k3_2km-" ;
+%   UserVar.FCFile=                      "FC_0000100-IR-from0to1-ES20km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-ThickMin0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-ITS120-GeoBed2-SMB_RACHMO2k3_2km-" ;
+
+% UserVar=FileDirectories();   [CtrlVar,UserVar]=ParseRunTypeString([],UserVar);
+UserVar.RunType="-FT-from0to1-ES20km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-ThickMin0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-GeoBed2-SMB_RACHMO2k3_2km-" ;
+
 %% FT -> forward run
 
 if contains(UserVar.RunType,"-FT-")
@@ -209,40 +213,45 @@ else
     CtrlVar.Inverse.Measurements="-uv-" ;  % {'-uv-,'-uv-dhdt-','-dhdt-'}
 end
 
+% 
+% % old naming convection 
+% InvFile=CtrlVar.SlidingLaw...
+%     +UserVar.VelDataSet ...
+%     +"-Ca"+num2str(CtrlVar.Inverse.Regularize.logC.ga)...
+%     +"-Cs"+num2str(CtrlVar.Inverse.Regularize.logC.gs)...
+%     +"-Aa"+num2str(CtrlVar.Inverse.Regularize.logAGlen.ga)...
+%     +"-As"+num2str(CtrlVar.Inverse.Regularize.logAGlen.gs)...
+%     +"-"+num2str(UserVar.MeshResolution/1000)+"km";
+% 
+% if contains(UserVar.RunType,"-Alim-")
+%     InvFile=InvFile+"-Alim-";
+% end
+% 
+% if contains(UserVar.RunType,"-Clim-")
+%     InvFile=InvFile+"-Clim-";
+% end
+% 
+% if contains(UserVar.RunType,"-uvdhdt-")
+%     InvFile=InvFile+"-uvdhdt-";
+% end
+% 
+% if contains(UserVar.RunType,"-uvGroup-")
+%     InvFile=InvFile+"-uvGroup-";
+% end
+% 
+% if contains(UserVar.RunType,"-2024-")
+%     InvFile=InvFile+"-2024-";
+% end
+% 
+% InvFile=replace(InvFile,".","k");
+% 
+% InvFile=replace(InvFile,"--","-");
+% 
+% UserVar.InverseRestartFile=UserVar.InverseRestartFileDirectory+"InverseRestartFile-"+InvFile;
 
-InvFile=CtrlVar.SlidingLaw...
-    +UserVar.VelDataSet ...
-    +"-Ca"+num2str(CtrlVar.Inverse.Regularize.logC.ga)...
-    +"-Cs"+num2str(CtrlVar.Inverse.Regularize.logC.gs)...
-    +"-Aa"+num2str(CtrlVar.Inverse.Regularize.logAGlen.ga)...
-    +"-As"+num2str(CtrlVar.Inverse.Regularize.logAGlen.gs)...
-    +"-"+num2str(UserVar.MeshResolution/1000)+"km";
 
-if contains(UserVar.RunType,"-Alim-")
-    InvFile=InvFile+"-Alim-";
-end
-
-if contains(UserVar.RunType,"-Clim-")
-    InvFile=InvFile+"-Clim-";
-end
-
-if contains(UserVar.RunType,"-uvdhdt-")
-    InvFile=InvFile+"-uvdhdt-";
-end
-
-if contains(UserVar.RunType,"-uvGroup-")
-    InvFile=InvFile+"-uvGroup-";
-end
-
-if contains(UserVar.RunType,"-2024-")
-    InvFile=InvFile+"-2024-";
-end
-
-InvFile=replace(InvFile,".","k");
-
-InvFile=replace(InvFile,"--","-");
-
-UserVar.InverseRestartFile=UserVar.InverseRestartFileDirectory+"InverseRestartFile-"+InvFile;
+ UserVar.InverseRestartFile=UserVar.InverseRestartFileDirectory+"IR-"+UserVar.RunType ;
+UserVar.InverseRestartFile=replace(UserVar.InverseRestartFile,"FR-","") ; 
 
 UserVar.AFile="InvA-"+InvFile;
 UserVar.CFile="InvC-"+InvFile;
@@ -313,6 +322,13 @@ else
     % start geometry, for example if I want to start with results from a previous run
     error("not implemented")
 end
+
+
+ UserVar.GeometryInterpolant
+ UserVar.SurfaceVelocityInterpolant
+ UserVar.FAFile
+ UserVar.FCFile
+
 
 
 
