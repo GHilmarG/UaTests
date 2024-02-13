@@ -29,36 +29,47 @@ function [CtrlVar,UserVar]=ParseRunTypeString(CtrlVar,UserVar)
 %
 % For example when starting the initial forward run with:
 %
-%   UserVar.RunType="-FT-from0to1-ES20km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-ThickMin0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-ITS120-GeoBed2-SMB_RACHMO2k3_2km-" ;
+%   UserVar.RunType="-FT-from0to1-ES20km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-ITS120-GeoBed2-SMB_RACHMO2k3_2km-" ;
 %
 % then
 % 
 %   UserVar.GeometryInterpolant="BedMachineGriddedInterpolants.mat";
-%   UserVar.FAFile="FA-ES20km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-ThickMin0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-ITS120-GeoBed2-SMB_RACHMO2k3_2km-"
+%   UserVar.FAFile="FA-ES20km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-ITS120-GeoBed2-SMB_RACHMO2k3_2km-"
 %   UserVar.SurfaceVelocityInterpolant="ITS-LIVE-ANT-G0120-0000-VelocityGriddedInterpolants-nStride2.mat";
 %
 % The UserVar.FAfile would be a result from a prevous inversion using ITS120 velocities, and Bedmachine2 bed geometry
 %
 % If, for example, the run is to continue from year 1 to year 2, using velocities and geometry from year 1 of a previous run, and 
- %                  "-FT-from0to1-ES20km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-ThickMin0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-ITS120-GeoBed2-SMB_RACHMO2k3_2km-" ;
-%   UserVar.RunType="-FT-from0to1-ES20km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-ThickMin0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-ITS120-GeoBed2-SMB_RACHMO2k3_2km-Geo_0000100_Vel_0000100-"
+%
+%   UserVar.RunType="-FT-from0to1-ES20km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-GeoBed2-SMB_RACHMO2k3_2km-Geo_0000100_Vel_0000100-"
 %
 % then
 %
-%   UserVar.GeometryInterpolant=       "FsbB_0000100-FT-from0to1-ES20km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-ThickMin0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-ITS120-GeoBed2-SMB_RACHMO2k3_2km-" ;
-%   UserVar.SurfaceVelocityInterpolant= "Fuv_0000100-FT-from0to1-ES20km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-ThickMin0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-ITS120-GeoBed2-SMB_RACHMO2k3_2km-" ;
-%   UserVar.FAFile=                      "FA_0000100-IR-from0to1-ES20km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-ThickMin0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-ITS120-GeoBed2-SMB_RACHMO2k3_2km-" ;
-%   UserVar.FCFile=                      "FC_0000100-IR-from0to1-ES20km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-ThickMin0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-ITS120-GeoBed2-SMB_RACHMO2k3_2km-" ;
+%   UserVar.GeometryInterpolant=       "Fsb_0000100-FT-from0to1-ES20km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-ITS120-GeoBed2-SMB_RACHMO2k3_2km-" ;
+%   UserVar.SurfaceVelocityInterpolant= "Fuv_0000100-FT-from0to1-ES20km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-ITS120-GeoBed2-SMB_RACHMO2k3_2km-" ;
+%   UserVar.FAFile=                      "FA_0000100-IR-from0to1-ES20km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-ITS120-GeoBed2-SMB_RACHMO2k3_2km-" ;
+%   UserVar.FCFile=                      "FC_0000100-IR-from0to1-ES20km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-ITS120-GeoBed2-SMB_RACHMO2k3_2km-" ;
 
-% UserVar=FileDirectories();   [CtrlVar,UserVar]=ParseRunTypeString([],UserVar);
-UserVar.RunType="-FT-from0to1-ES20km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-ThickMin0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-GeoBed2-SMB_RACHMO2k3_2km-" ;
+%%
+%
+% rename --no-act --verbose InverseRestartFile IR InverseR*.mat
+% rename --no-act --verbose R-Weertman R-SlidWeertman *.mat
+%
+%%
+
+if nargin==0
+    CtrlVar=Ua2D_DefaultParameters(); 
+    UserVar=FileDirectories();   
+    UserVar.RunType="FT-from0to1-ES20km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-GeoBed2-SMB_RACHMO2k3_2km-" ;
+    UserVar.RunType="-FT-from0to1-ES20km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-GeoBed2-SMB_RACHMO2k3_2km-sbB0000100-uv0000100-"
+end
 
 %% FT -> forward run
 
-if contains(UserVar.RunType,"-FT-")
+if contains(UserVar.RunType,"FT-")
     CtrlVar.InverseRun=0;
     CtrlVar.TimeDependentRun=1;
-elseif contains(UserVar.RunType,"-IR-")
+elseif contains(UserVar.RunType,"IR-")
     CtrlVar.TimeDependentRun=0;
     CtrlVar.InverseRun=1;
 end
@@ -173,7 +184,7 @@ end
 
 %% Minimum ice thickness, also used for level set min ice thickness downstream of calving fronts
 
-pat="-ThickMin"+digitsPattern+"k"+digitsPattern+"-" ; TM=str2double(extract(extract(UserVar.RunType,pat),digitsPattern)) ; CtrlVar.ThickMin=TM(1)+TM(2)/10 ;
+pat="-TM"+digitsPattern+"k"+digitsPattern+"-" ; TM=str2double(extract(extract(UserVar.RunType,pat),digitsPattern)) ; CtrlVar.ThickMin=TM(1)+TM(2)/10 ;
 CtrlVar.LevelSetMinIceThickness=CtrlVar.ThickMin;
 
 
@@ -249,9 +260,12 @@ end
 % 
 % UserVar.InverseRestartFile=UserVar.InverseRestartFileDirectory+"InverseRestartFile-"+InvFile;
 
+InvFile=UserVar.RunType; 
+InvFile=replace(InvFile,"FT-","IR-") ; 
+InvFile=replace(InvFile,"--","-") ; 
+InvFile=replace(InvFile,"--","-") ; 
+UserVar.InverseRestartFile=UserVar.InverseRestartFileDirectory+InvFile;
 
- UserVar.InverseRestartFile=UserVar.InverseRestartFileDirectory+"IR-"+UserVar.RunType ;
-UserVar.InverseRestartFile=replace(UserVar.InverseRestartFile,"FR-","") ; 
 
 UserVar.AFile="InvA-"+InvFile;
 UserVar.CFile="InvC-"+InvFile;
@@ -293,8 +307,8 @@ if contains(UserVar.RunType,"Velyr")  % this implies that the velocity "dataset"
 
 end
 
-% 0000100-FT-from0to1-20km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-ThickMin0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-ITS120-GeoBed2-SMB_RACHMO2k3_2km-
-% 0000100-FT-from0to1-20km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-ThickMin0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-Velyr1-GeoBed2-SMB_RACHMO2k3_2km-
+% 0000100-FT-from0to1-20km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-ITS120-GeoBed2-SMB_RACHMO2k3_2km-
+% 0000100-FT-from0to1-20km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-Velyr1-GeoBed2-SMB_RACHMO2k3_2km-
 
 
 UserVar.CFile=replace(UserVar.CFile,".mat","");
@@ -313,19 +327,20 @@ else
 
 end
 
-Geometry=extractBetween(UserVar.RunType,"-Geo","-");
-if isempty(Geometry) || Geometry=="Bed2"
-    UserVar.GeometryInterpolant='../../../Interpolants/BedMachineGriddedInterpolants.mat';
+
+if contains(UserVar.RunType,"-sb")
+
+    sbTime=extractBetween(UserVar.RunType,"-sb","-") ;
+    UserVar.GeometryInterpolant="FsbB"+sbTime+UserVar.RunType ;
 else
-    % Here I can define different
-    % 
-    % start geometry, for example if I want to start with results from a previous run
+    UserVar.GeometryInterpolant='BedMachineGriddedInterpolants.mat';
     error("not implemented")
 end
 
 
  UserVar.GeometryInterpolant
  UserVar.SurfaceVelocityInterpolant
+ UserVar.InverseRestartFile
  UserVar.FAFile
  UserVar.FCFile
 
