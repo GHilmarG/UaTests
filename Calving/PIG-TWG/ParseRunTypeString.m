@@ -50,6 +50,7 @@ function [CtrlVar,UserVar]=ParseRunTypeString(CtrlVar,UserVar)
 %   UserVar.FAFile=                      "FA_0000100-IR-from0to1-ES20km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-ITS120-GeoBed2-SMB_RACHMO2k3_2km-" ;
 %   UserVar.FCFile=                      "FC_0000100-IR-from0to1-ES20km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-ITS120-GeoBed2-SMB_RACHMO2k3_2km-" ;
 
+
 %%
 %
 % rename --no-act --verbose InverseRestartFile IR InverseR*.mat
@@ -61,7 +62,7 @@ if nargin==0
     CtrlVar=Ua2D_DefaultParameters(); 
     UserVar=FileDirectories();   
     UserVar.RunType="FT-from0to1-ES20km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-GeoBed2-SMB_RACHMO2k3_2km-" ;
-    UserVar.RunType="-FT-from0to1-ES20km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-GeoBed2-SMB_RACHMO2k3_2km-sbB0000100-uv0000100-"
+    UserVar.RunType="-FT-from0to1-ES20km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-GeoBed2-SMB_RACHMO2k3_2km-sbB0000100-uv0000100-";
 end
 
 %% FT -> forward run
