@@ -208,7 +208,7 @@ VelocityDataSet=extractBetween(UserVar.RunType,"-Vel","-") ;
 
 
 if VelocityDataSet=="ITS120"
-    UserVar.SurfaceVelocityInterpolant='../../../Interpolants/ITS-LIVE-ANT-G0120-0000-VelocityGriddedInterpolants-nStride2.mat';
+    UserVar.SurfaceVelocityInterpolant='ITS-LIVE-ANT-G0120-0000-VelocityGriddedInterpolants-nStride2.mat';
     UserVar.VelDataSet="-ITS120-";
 elseif VelocityDataSet=="yr1"
      UserVar.VelDataSet="-yr1-";
@@ -225,47 +225,53 @@ else
     CtrlVar.Inverse.Measurements="-uv-" ;  % {'-uv-,'-uv-dhdt-','-dhdt-'}
 end
 
-% 
-% % old naming convection 
-% InvFile=CtrlVar.SlidingLaw...
-%     +UserVar.VelDataSet ...
-%     +"-Ca"+num2str(CtrlVar.Inverse.Regularize.logC.ga)...
-%     +"-Cs"+num2str(CtrlVar.Inverse.Regularize.logC.gs)...
-%     +"-Aa"+num2str(CtrlVar.Inverse.Regularize.logAGlen.ga)...
-%     +"-As"+num2str(CtrlVar.Inverse.Regularize.logAGlen.gs)...
-%     +"-"+num2str(UserVar.MeshResolution/1000)+"km";
-% 
-% if contains(UserVar.RunType,"-Alim-")
-%     InvFile=InvFile+"-Alim-";
-% end
-% 
-% if contains(UserVar.RunType,"-Clim-")
-%     InvFile=InvFile+"-Clim-";
-% end
-% 
-% if contains(UserVar.RunType,"-uvdhdt-")
-%     InvFile=InvFile+"-uvdhdt-";
-% end
-% 
-% if contains(UserVar.RunType,"-uvGroup-")
-%     InvFile=InvFile+"-uvGroup-";
-% end
-% 
-% if contains(UserVar.RunType,"-2024-")
-%     InvFile=InvFile+"-2024-";
-% end
-% 
-% InvFile=replace(InvFile,".","k");
-% 
-% InvFile=replace(InvFile,"--","-");
-% 
-% UserVar.InverseRestartFile=UserVar.InverseRestartFileDirectory+"InverseRestartFile-"+InvFile;
+if ~contains(UserVar.RunType,"-from") || ~contains(UserVar.RunType,"-from0")
+    InvFile=UserVar.RunType;
+    InvFile=replace(InvFile,"FT-","IR-") ;
+    InvFile=replace(InvFile,"--","-") ;
+    InvFile=replace(InvFile,"--","-") ;
+    UserVar.InverseRestartFile=UserVar.InverseRestartFileDirectory+InvFile;
 
-InvFile=UserVar.RunType; 
-InvFile=replace(InvFile,"FT-","IR-") ; 
-InvFile=replace(InvFile,"--","-") ; 
-InvFile=replace(InvFile,"--","-") ; 
-UserVar.InverseRestartFile=UserVar.InverseRestartFileDirectory+InvFile;
+
+else
+    % old naming convection, fine for initial inverse run
+
+    InvFile=CtrlVar.SlidingLaw...
+        +UserVar.VelDataSet ...
+        +"-Ca"+num2str(CtrlVar.Inverse.Regularize.logC.ga)...
+        +"-Cs"+num2str(CtrlVar.Inverse.Regularize.logC.gs)...
+        +"-Aa"+num2str(CtrlVar.Inverse.Regularize.logAGlen.ga)...
+        +"-As"+num2str(CtrlVar.Inverse.Regularize.logAGlen.gs)...
+        +"-"+num2str(UserVar.MeshResolution/1000)+"km";
+
+    if contains(UserVar.RunType,"-Alim-")
+        InvFile=InvFile+"-Alim-";
+    end
+
+    if contains(UserVar.RunType,"-Clim-")
+        InvFile=InvFile+"-Clim-";
+    end
+
+    if contains(UserVar.RunType,"-uvdhdt-")
+        InvFile=InvFile+"-uvdhdt-";
+    end
+
+    if contains(UserVar.RunType,"-uvGroup-")
+        InvFile=InvFile+"-uvGroup-";
+    end
+
+    if contains(UserVar.RunType,"-2024-")
+        InvFile=InvFile+"-2024-";
+    end
+end
+
+InvFile=replace(InvFile,".","k");
+
+InvFile=replace(InvFile,"--","-");
+
+UserVar.InverseRestartFile=UserVar.InverseRestartFileDirectory+"InverseRestartFile-"+InvFile;
+
+
 
 
 UserVar.AFile="InvA-"+InvFile;
@@ -331,11 +337,14 @@ end
 
 if contains(UserVar.RunType,"-sb")
 
-    sbTime=extractBetween(UserVar.RunType,"-sb","-") ;
+    sbTime=extractBetween(UserVar.RunType,"-sbB","-") ;
     UserVar.GeometryInterpolant="FsbB"+sbTime+UserVar.RunType ;
+
+
+    
 else
     UserVar.GeometryInterpolant='BedMachineGriddedInterpolants.mat';
-    error("not implemented")
+    
 end
 
 
