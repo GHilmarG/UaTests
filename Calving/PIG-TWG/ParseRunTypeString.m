@@ -61,8 +61,19 @@ function [CtrlVar,UserVar]=ParseRunTypeString(CtrlVar,UserVar)
 if nargin==0
     CtrlVar=Ua2D_DefaultParameters(); 
     UserVar=FileDirectories();   
-    UserVar.RunType="FT-from0to1-ES20km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-GeoBed2-SMB_RACHMO2k3_2km-" ;
+    UserVar.RunType="-FT-from0to1-ES20km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-GeoBed2-SMB_RACHMO2k3_2km-" ;
     UserVar.RunType="-FT-from0to1-ES20km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-GeoBed2-SMB_RACHMO2k3_2km-sbB0000100-uv0000100-";
+
+    % inverse run using ITS120 velocities and Bedmachine2 geometry
+    UserVar.RunType="-IR-ES20km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-GeoBed2-" ;
+    
+    % inverse run using ITS120 velocities and geometry based on this forward run at time t=1 year
+    UserVar.RunType="-IR-from0to1-ES20km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-GeoBed2-SMB_RACHMO2k3_2km-";
+
+    % forward run, continuing from t=1 using inversion products FA and FC from  
+     UserVar.RunType="-FT-from1to2-ES20km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-GeoBed2-SMB_RACHMO2k3_2km-IR0to1-";
+
+
 end
 
 %% FT -> forward run
@@ -185,6 +196,9 @@ end
 
 %% Minimum ice thickness, also used for level set min ice thickness downstream of calving fronts
 
+
+
+
 pat="-TM"+digitsPattern+"k"+digitsPattern+"-" ; TM=str2double(extract(extract(UserVar.RunType,pat),digitsPattern)) ; CtrlVar.ThickMin=TM(1)+TM(2)/10 ;
 CtrlVar.LevelSetMinIceThickness=CtrlVar.ThickMin;
 
@@ -213,7 +227,7 @@ if VelocityDataSet=="ITS120"
 elseif VelocityDataSet=="yr1"
      UserVar.VelDataSet="-yr1-";
 else
-    UserVar.SurfaceVelocityInterpolant='../../../Interpolants/SurfVelMeasures990mInterpolants.mat';
+    UserVar.SurfaceVelocityInterpolant='Interpolants/SurfVelMeasures990mInterpolants.mat';
     UserVar.VelDataSet="";
 end
 
@@ -225,16 +239,15 @@ else
     CtrlVar.Inverse.Measurements="-uv-" ;  % {'-uv-,'-uv-dhdt-','-dhdt-'}
 end
 
-if ~contains(UserVar.RunType,"-from") || ~contains(UserVar.RunType,"-from0")
-    InvFile=UserVar.RunType;
-    InvFile=replace(InvFile,"FT-","IR-") ;
-    InvFile=replace(InvFile,"--","-") ;
-    InvFile=replace(InvFile,"--","-") ;
-    UserVar.InverseRestartFile=UserVar.InverseRestartFileDirectory+InvFile;
 
 
-else
+   
+
+if contains(UserVar.RunType,"-from0") || ~contains(UserVar.RunType,"-from")
+    
     % old naming convection, fine for initial inverse run
+    %  The new naming convention is simply to use the UserVar.RunType for the name of the inverse restart file
+
 
     InvFile=CtrlVar.SlidingLaw...
         +UserVar.VelDataSet ...
@@ -263,21 +276,46 @@ else
     if contains(UserVar.RunType,"-2024-")
         InvFile=InvFile+"-2024-";
     end
+
+    InvFile=replace(InvFile,"Vel","");
+    InvFile=replace(InvFile,"Slid","");
+
+    UserVar.AFile="InvA-"+InvFile;
+    UserVar.CFile="InvC-"+InvFile;
+    UserVar.FAFile="FA-"+InvFile;
+    UserVar.FCFile="FC-"+InvFile;
+
+    InvFile="InverseRestartFile-"+InvFile;
+
+
+
+else
+
+    InvFile=UserVar.RunType;
+    InvFile=replace(InvFile,"FT-","IR-") ;
+    InvFile=replace(InvFile,"--","-") ;
+    InvFile=replace(InvFile,"--","-") ;
+    UserVar.InverseRestartFile=UserVar.InverseRestartFileDirectory+InvFile;
+
+    UserVar.AFile="InvA-"+InvFile;
+    UserVar.CFile="InvC-"+InvFile;
+    UserVar.FAFile="FA-"+InvFile;
+    UserVar.FCFile="FC-"+InvFile;
+
 end
 
 InvFile=replace(InvFile,".","k");
-
 InvFile=replace(InvFile,"--","-");
-
-UserVar.InverseRestartFile=UserVar.InverseRestartFileDirectory+"InverseRestartFile-"+InvFile;
-
+InvFile=strip(InvFile,"left","-");
 
 
 
-UserVar.AFile="InvA-"+InvFile;
-UserVar.CFile="InvC-"+InvFile;
-UserVar.FAFile="FA-"+InvFile;
-UserVar.FCFile="FC-"+InvFile;
+UserVar.InverseRestartFile=UserVar.InverseRestartFileDirectory+InvFile;
+
+
+
+
+
 
 UserVar.AFile=UserVar.InversionFileDirectory+UserVar.AFile;
 UserVar.CFile=UserVar.InversionFileDirectory+UserVar.CFile;
@@ -341,21 +379,32 @@ if contains(UserVar.RunType,"-sb")
     UserVar.GeometryInterpolant="FsbB"+sbTime+UserVar.RunType ;
 
 
-    
+
 else
     UserVar.GeometryInterpolant='BedMachineGriddedInterpolants.mat';
-    
+
+end
+
+UserVar.GeometryInterpolant=replace( UserVar.GeometryInterpolant,"--","-") ;
+UserVar.SurfaceVelocityInterpolant=replace( UserVar.SurfaceVelocityInterpolant,"--","-") ;
+UserVar.InverseRestartFile=replace( UserVar.InverseRestartFile,"--","-") ;
+UserVar.FAFile=replace(UserVar.FAFile,"--","-");
+UserVar.FCFile=replace(UserVar.FCFile,"--","-");
+
+UserVar.GeometryInterpolant
+UserVar.SurfaceVelocityInterpolant
+UserVar.InverseRestartFile
+UserVar.FAFile
+UserVar.FCFile
+
+if ~nargout   % A trick to suppress any function output if no output requested. No need to suppress output using ;
+    clearvars CtrlVar
 end
 
 
- UserVar.GeometryInterpolant
- UserVar.SurfaceVelocityInterpolant
- UserVar.InverseRestartFile
- UserVar.FAFile
- UserVar.FCFile
-
-
-
-
+UserVar.InverseRestartFile
+isfile(UserVar.InverseRestartFile+".mat")
+isfile(UserVar.FAFile+".mat")
+isfile(UserVar.FCFile+".mat")
 
 end
