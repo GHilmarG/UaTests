@@ -5,6 +5,7 @@ function UserVar=FileDirectories(UserVar)
 
 
 [~,hostname]=system('hostname') ;
+
 if contains(hostname,"DESKTOP-G5TCRTD")  % office Dell
 
     UserVar.ResultsFileDirectory="F:\Runs\Calving\PIG-TWG\ResultsFiles\";
@@ -20,6 +21,8 @@ elseif contains(hostname,"DESKTOP-BU2IHIR")   % home
     UserVar.InversionFileDirectory="D:\Runs\Calving\PIG-TWG\InversionFiles\";
     UserVar.MeshFileDirectory="D:\Runs\Calving\PIG-TWG\MeshFiles\";
     UserVar.ForwardRestartFileDirectory="D:\Runs\Calving\PIG-TWG\RestartFiles\";
+    UserVar.Interpolants="C:\cygwin64\home\Hilmar\Ua\Interpolants\" ; 
+                      
 
 elseif contains(hostname,"C23000099")   % home
 
@@ -29,7 +32,7 @@ elseif contains(hostname,"C23000099")   % home
     UserVar.MeshFileDirectory="E:\Runs\Calving\PIG-TWG\MeshFiles\";
     UserVar.ForwardRestartFileDirectory="E:\Runs\Calving\PIG-TWG\RestartFiles\";
 
-    % UserVar.Interpolants="C:\cygwin64\home\Hilmar\Ua\Interpolants" ; % this is in the path variable
+    UserVar.Interpolants="C:\cygwin64\home\Hilmar\Ua\Interpolants\" ; 
 
 else
     UserVar.ResultsFileDirectory=pwd+"\ResultsFiles\";

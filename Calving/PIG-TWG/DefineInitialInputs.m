@@ -5,14 +5,22 @@ function [UserVar,CtrlVar,MeshBoundaryCoordinates]=DefineInitialInputs(UserVar,C
 
 %%
 
-UserVar.RunType="-IR-from0to1-ES30km-Tri3-SlidCornford-Duvh-MR4-P-kH10000-ThickMin0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-ITS120-GeoBed2-" ;
 
-UserVar.RunType="-FT-from0to1-ES20km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-ThickMin0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-ITS120-GeoBed2-SMB_RACHMO2k3_2km-" ;
-UserVar.RunType="-FT-from0to1-ES10km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-ThickMin0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-ITS120-GeoBed2-SMB_RACHMO2k3_2km-" ;
-UserVar.RunType="-FT-from0to1-ES5km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-ThickMin0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-ITS120-GeoBed2-SMB_RACHMO2k3_2km-" ;
-UserVar.RunType="-FT-from0to1-ES2.5km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-ThickMin0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-ITS120-GeoBed2-SMB_RACHMO2k3_2km-" ;
 
-UserVar.RunType="-FT-from0to1-ES30km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-ThickMin0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-Velyr1-GeoBed2-SMB_RACHMO2k3_2km-" ;
+
+% initial inverse run using ITS120 velocities and Bedmachine2 geometry.
+UserVar.RunType="-IR-ES20km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-GeoBed2-SMB_RACHMO2k3_2km-";
+
+% forward run from t=0 to t=1, using inversion products FA and FC from t=0, which implies using the initial inversion
+UserVar.RunType="-FR0to1-ES20km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-GeoBed2-SMB_RACHMO2k3_2km-";
+
+% inverse run using forward run results from t=1. This implies using the geometry from t=1 instead of Bedmachine2  geometry.
+UserVar.RunType="-IR0to1-ES20km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-GeoBed2-SMB_RACHMO2k3_2km-";
+
+% forward restart run continuing from t=1 and using inversion products from t=1, ie "-IRt1-".
+% UserVar.RunType="-FR1to2-ES20km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-GeoBed2-SMB_RACHMO2k3_2km-";
+
+
 
 % Create_AC_ScatteredInterpolants([],UserVar)
 %%
@@ -25,6 +33,10 @@ CtrlVar.LimitRangeInUpdateFtimeDerivatives=true ;
 %% Parse UserVar
 
 [CtrlVar,UserVar]=ParseRunTypeString(CtrlVar,UserVar) ; 
+
+%%
+
+[CtrlVar,UserVar]=FindAndCreateInterpolants(CtrlVar,UserVar) ; 
 
 %% Parallel options
 CtrlVar.Parallel.uvhAssembly.spmd.isOn=true; 
@@ -48,7 +60,7 @@ UserVar.DistanceBetweenPointsAlongBoundary=5e3 ;
 
 if ~isfile(UserVar.GeometryInterpolant) || ~isfile(UserVar.SurfaceVelocityInterpolant)
 
-    fprintf('\n This run requires the additional input files: \n %s \n %s \n %s  \n \n',UserVar.GeometryInterpolant,UserVar.DensityInterpolant,UserVar.SurfaceVelocityInterpolant)
+    fprintf('\n This run requires the additional input files: \n %s \n %s  \n \n',UserVar.GeometryInterpolant,UserVar.SurfaceVelocityInterpolant)
     fprintf('You can download these file from : https://livenorthumbriaac-my.sharepoint.com/:f:/g/personal/hilmar_gudmundsson_northumbria_ac_uk/EgrEImnkQuJNmf1GEB80VbwBF0SQnJdXtucDHKtPnv7G9Q?e=5aLX7T \n')
 end
 
@@ -260,17 +272,6 @@ CtrlVar.SaveInitialMeshFileName=[] ; % Do not create a new initial mesh file eac
 
 
 
-if startsWith(CtrlVar.Experiment,"-")
-    CtrlVar.Experiment=replaceBetween(CtrlVar.Experiment,1,1,"");
-end
-
-
-CtrlVar.Inverse.NameOfRestartOutputFile=replace(CtrlVar.Inverse.NameOfRestartOutputFile,"--","-");
-CtrlVar.Inverse.NameOfRestartOutputFile=replace(CtrlVar.Inverse.NameOfRestartOutputFile,".","k");
-CtrlVar.Inverse.NameOfRestartInputFile=CtrlVar.Inverse.NameOfRestartOutputFile;
-
-
-
 CtrlVar.ReadInitialMeshFileName=replace(CtrlVar.ReadInitialMeshFileName,".","k");
 if ~isempty(CtrlVar.SaveInitialMeshFileName)
     CtrlVar.SaveInitialMeshFileName=replace(CtrlVar.SaveInitialMeshFileName,".","k");
@@ -280,11 +281,6 @@ end
 
 
 
-CtrlVar.NameOfRestartFiletoWrite=UserVar.ForwardRestartFileDirectory+"Restart-"+UserVar.RunType+".mat";
-CtrlVar.NameOfRestartFiletoWrite=replace(CtrlVar.NameOfRestartFiletoWrite,"--","-");
-CtrlVar.NameOfRestartFiletoRead=CtrlVar.NameOfRestartFiletoWrite;
-
-
 %% Make this automatically a restart run if corresponding restart files already exists
 
 if CtrlVar.InverseRun
@@ -292,7 +288,7 @@ if CtrlVar.InverseRun
 end
 
 if CtrlVar.InverseRun
-    if isfile(CtrlVar.Inverse.NameOfRestartInputFile+".mat")
+    if isfile(CtrlVar.Inverse.NameOfRestartInputFile)
         CtrlVar.Restart=1;
     else
         CtrlVar.Restart=0;
