@@ -412,8 +412,8 @@ if contains(UserVar.RunType,"Inverse")
     CtrlVar.InfoLevelNonLinIt=0;  CtrlVar.InfoLevel=0;
    
 
-    UserVar.Slipperiness.ReadFromFile=1;
-    UserVar.AGlen.ReadFromFile=1;
+    UserVar.Slipperiness.ReadFromFile=0;
+    UserVar.AGlen.ReadFromFile=0;
 
     CtrlVar.ReadInitialMesh=1;
     CtrlVar.AdaptMesh=0;
