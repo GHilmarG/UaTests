@@ -33,7 +33,10 @@ ylabel("speedup",Interpreter="latex");
 title("Speedup using parallel spmd assembly over element partitions")
 subtitle("86,632 nodes and 166,223 elements",Interpreter="latex")
 ylim([1 6.5])
-%
+yy=ylim;
+plot(yy,yy,"--k",DisplayName="Ideal scaling")
+%%
+
 % parfeval                                                4.0/?            3.0/?
 
 
