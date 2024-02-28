@@ -70,7 +70,7 @@ UserVar.RunType='Inverse-MatOpt-Alim-Clim-Weertman-';  UserVar.MeshResolution=30
 UserVar.RunType='Inverse-MatOpt-Alim-Clim-Weertman-';  UserVar.MeshResolution=10e3; IRange=5:5 ; JRange=5:5 ;  %  20,000 it, presumably OK
 UserVar.RunType='Inverse-MatOpt-Alim-Clim-Weertman-';  UserVar.MeshResolution=20e3; IRange=5:5 ; JRange=5:5 ;  %  15,000 it, presumably OK
 UserVar.RunType='Inverse-MatOpt-Alim-Clim-Weertman-';  UserVar.MeshResolution=5e3; IRange=5:5 ; JRange=5:5 ;   %  18,500 it, looking good
-UserVar.RunType='Inverse-MatOpt-Alim-Clim-Weertman-ITS120-';  UserVar.MeshResolution=5e3;  IRange=5:5 ; JRange=5:5 ;  % 2000 it, starting from ~ITS120
+
 
 UserVar.RunType='Inverse-MatOpt-Alim-Clim-Joughin-';  UserVar.MeshResolution=20e3; IRange=5:5 ; JRange=5:5 ;  %  11000 it
 UserVar.RunType='Inverse-MatOpt-Alim-Clim-Joughin-';  UserVar.MeshResolution=30e3; IRange=5:5 ; JRange=5:5 ;  %  12000 it
@@ -81,6 +81,20 @@ UserVar.RunType='Inverse-MatOpt-Alim-Clim-Joughin-ITS120-';  UserVar.MeshResolut
 UserVar.RunType='Inverse-MatOpt-Alim-Clim-Joughin-ITS120-';  UserVar.MeshResolution=10e3;  IRange=5:5 ; JRange=5:5 ;  % 31,000 and still not OK
 UserVar.RunType='Inverse-MatOpt-Alim-Clim-Joughin-ITS120-';  UserVar.MeshResolution=10e3;  IRange=5:5 ; JRange=5:5 ;  %
 
+UserVar.RunType='Inverse-MatOpt-Alim-Clim-Cornford-';  UserVar.MeshResolution=20e3; IRange=5:5 ; JRange=5:5 ;  %  15,000
+UserVar.RunType='Inverse-MatOpt-Alim-Clim-Cornford-';  UserVar.MeshResolution=10e3; IRange=5:5 ; JRange=5:5 ;  %  20,000 it, presumably OK
+UserVar.RunType='Inverse-MatOpt-Alim-Clim-Cornford-';  UserVar.MeshResolution=5e3; IRange=5:5 ; JRange=5:5 ;   %  11,000 it, looking good
+UserVar.RunType='Inverse-MatOpt-Alim-Clim-Cornford-';  UserVar.MeshResolution=30e3; IRange=5:5 ; JRange=5:5 ;  %  10,000 it, OK
+
+
+UserVar.RunType='Inverse-MatOpt-Alim-Clim-Weertman-ITS120-';  UserVar.MeshResolution=20e3;  IRange=5:5 ; JRange=5:5 ;  % 12000 it, starting from ~ITS120
+UserVar.RunType='Inverse-MatOpt-Alim-Clim-Weertman-ITS120-';  UserVar.MeshResolution=10e3;  IRange=5:5 ; JRange=5:5 ;  % 17000 it, starting from ~ITS120
+UserVar.RunType='Inverse-MatOpt-Alim-Clim-Weertman-ITS120-';  UserVar.MeshResolution=30e3;  IRange=5:5 ; JRange=5:5 ;  % 9200 it, stagnated
+UserVar.RunType='Inverse-MatOpt-Alim-Clim-Weertman-ITS120-';  UserVar.MeshResolution=5e3;  IRange=5:5 ; JRange=5:5 ;   % 11,200 it, starting from ~ITS120, good
+UserVar.RunType='Inverse-MatOpt-Alim-Clim-Weertman-ITS120-';  UserVar.MeshResolution=2.5e3;  IRange=5:5 ; JRange=5:5 ;   % 2000 it, starting from ~ITS120 5km, good
+
+UserVar.RunType='Inverse-MatOpt-Alim-Clim-Joughin-ITS120-';  UserVar.MeshResolution=5e3;  IRange=5:5 ; JRange=5:5 ;  %
+UserVar.RunType='Inverse-MatOpt-Alim-Clim-Joughin-ITS120-';  UserVar.MeshResolution=10e3;  IRange=5:5 ; JRange=5:5 ;  % 31,000 and still not OK
 
 UserVar.RunType='Inverse-MatOpt-Alim-Clim-Weertman-ITS120-';  UserVar.MeshResolution=2.5e3;  IRange=5:5 ; JRange=5:5 ;  % 2 it, starting from ~ITS120 5km
 UserVar.RunType='Inverse-MatOpt-Alim-Clim-Cornford-ITS120-';  UserVar.MeshResolution=2.5e3;  IRange=5:5 ; JRange=5:5 ;  % 2 it, starting from ~ITS120 5km
@@ -107,7 +121,6 @@ UserVar.RunType='Inverse-MatOpt-Alim-Clim-Cornford-ITS120-';  UserVar.MeshResolu
 UserVar.AFile="FA-Weertman-Ca1-ITS120-Cs100000-Aa1-As100000-5km-Alim-Clim-.mat";  UserVar.CFile="FC-Weertman-Ca1-ITS120-Cs100000-Aa1-As100000-5km-Alim-Clim-.mat"; 
 UserVar.AFile="FA-Joughin-Ca1-Cs100000-Aa1-As100000-5km-Alim-Clim-.mat";  UserVar.CFile="FC-Joughin-Ca1-Cs100000-Aa1-As100000-5km-Alim-Clim-.mat"; 
 UserVar.AFile=[] ; UserVar.CFile=[];
-
 
 
 
