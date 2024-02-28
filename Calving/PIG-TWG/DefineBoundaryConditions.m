@@ -49,9 +49,6 @@ return
 
 
 
-
-
-
 %% Testing added fixed vel at boundary if grounded
 
 
