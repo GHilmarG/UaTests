@@ -1,17 +1,19 @@
 function  [UserVar,s,b,S,B,rho,rhow,g]=DefineGeometryAndDensities(UserVar,CtrlVar,MUA,F,FieldsToBeDefined)
 
 
-persistent FB Fs Fb Frho
+persistent FB Fs Fb Frho GeometryInterpolant
 
 
 fprintf('DefineGeometry %s \n',FieldsToBeDefined)
 
-if isempty(FB)
+if isempty(FB) || UserVar.GeometryInterpolant~=GeometryInterpolant
     
     fprintf('DefineGeometry: loading file: %-s ',UserVar.GeometryInterpolant)
     load(UserVar.GeometryInterpolant,'FB','Fb','Fs','Frho')
     fprintf(' done \n')
     
+    GeometryInterpolant=UserVar.GeometryInterpolant;
+
 end
 
 g=9.81/1000;

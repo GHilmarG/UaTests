@@ -35,9 +35,6 @@ if CtrlVar.InverseRun
         FileName=FileName+".mat" ;
 
 
-
-
-
         isInverseRestartFile=isfile(UserVar.InverseRestartFile);
 
         if isInverseRestartFile
@@ -56,24 +53,34 @@ if CtrlVar.InverseRun
 
             % If no corresponding inverse restart file exists, FA and FC interpolants are created from transient run at t=to
 
-            load(FileName,"CtrlVar","UserVar","F")
+            load(FileName,"F")
 
             FC=scatteredInterpolant(F.x,F.y,F.C);
             FA=scatteredInterpolant(F.x,F.y,F.AGlen);
 
+            fprintf("Saving FA interpolant in: %s \n",UserVar.FAFile)
+            fprintf("Saving FC interpolant in: %s \n",UserVar.FCFile)
+
             save(UserVar.FAFile,"FA")
             save(UserVar.FCFile,"FC")
 
-            FB=scatteredInterpolant(F.x,F.y,F.B);
-            Fs=scatteredInterpolant(F.x,F.y,F.s);
-            Fb=scatteredInterpolant(F.x,F.y,F.b);
-            Frho=scatteredInterpolant(F.x,F.y,F.rho);
+
 
             if isfile(UserVar.GeometryInterpolant)
 
+
+                fprintf("Geometrical interpolants based on a previous forward run, and to be used in this inverse run, are already found in:  \n")
+                fprintf(" %s \n",UserVar.GeometryInterpolant)
+
+
             else
 
-                fprintf("Saving geometrical interpolants in %s \n",UserVar.GeometryInterpolant)
+                fprintf("Creating new geometrical interpolants for this inverse run from %s \n",FileName)
+                FB=scatteredInterpolant(F.x,F.y,F.B);
+                Fs=scatteredInterpolant(F.x,F.y,F.s);
+                Fb=scatteredInterpolant(F.x,F.y,F.b);
+                Frho=scatteredInterpolant(F.x,F.y,F.rho);
+                fprintf("Saving new geometrical interpolants for this inverse run in %s \n",UserVar.GeometryInterpolant)
                 save(UserVar.GeometryInterpolant,'FB','Fb','Fs','Frho')
 
             end
@@ -92,35 +99,47 @@ elseif CtrlVar.TimeDependentRun
 
 
     % The FA and FC interpolants must be based on previous restart run
-    if  ~isfile(UserVar.FAFile)|| ~isfile(UserVar.FCFile)
+    FAdir=dir(UserVar.FAFile);
+    FCdir=dir(UserVar.FCFile);
+    IRdir=dir(UserVar.InverseRestartFile);
 
+    if  isempty(FAdir) || isempty(FCdir) || (datetime(IRdir.date) > datetime(FAdir.date)) || (datetime(IRdir.date) > datetime(FCdir.date))
+
+
+        fprintf("Loading inverse restart file: \n")
+        fprintf("%s \n",UserVar.InverseRestartFile)
         load(UserVar.InverseRestartFile,"F")
         FC=scatteredInterpolant(F.x,F.y,F.C);
         FA=scatteredInterpolant(F.x,F.y,F.AGlen);
 
+        fprintf("New FA and FC interpolants created and saved.\n")
+        fprintf("FA interpolant: %s \n",UserVar.FAFile)
+        fprintf("FC interpolant: %s \n",UserVar.FCFile)
+
         save(UserVar.FAFile,"FA")
         save(UserVar.FCFile,"FC")
+
+    else
+
+        fprintf("Existing files with A and C interpolants found:")
+        fprintf("FA: %s ",UserVar.FAFile)
+        fprintf("FC: %s ",UserVar.FCFile)
 
     end
 
 
     if UserVar.from ~= 0
 
-        % The previous forward run results file, containing the starting=point sbB information for this forward run
-        FileName=sprintf('%s%07i-%s.mat',...
-            UserVar.ResultsFileDirectory,...
-            round(100*to),CtrlVar.Experiment);
-        FileName=replace(FileName,"--","-");
-        FileName=replace(FileName,".","k");
+        % Since this is a forward run, following an inverse run, the geometrical interpolants should already exist.
 
-        load(FileName,"CtrlVar","UserVar","F")
+        if ~isfile(UserVar.GeometryInterpolant)
 
-        FB=scatteredInterpolant(F.x,F.y,F.B);
-        Fs=scatteredInterpolant(F.x,F.y,F.s);
-        Fb=scatteredInterpolant(F.x,F.y,F.b);
-        Frho=scatteredInterpolant(F.x,F.y,F.rho);
-        fprintf("Saving geometrical interpolants in %s \n",UserVar.GeometryInterpolant)
-        save(UserVar.GeometryInterpolant,'FB','Fb','Fs','Frho')
+           fprintf("Was expecing to find the geometry interpolant file: \n")
+           fprintf("%s \n",UserVar.GeometryInterpolant)
+           error("A required input file not found")
+
+        end
+     
 
 
     end

@@ -1,69 +1,34 @@
 
 
-%%
 
 
-[CtrlVar,UserVar]=ParseRunTypeString(CtrlVar,UserVar) ; 
-
-
-% extracts from:
-%
-%   UserVar.RunType
-%
-% various model options and set CrtlVar fields accordingly 
-%
-
-% UserVar.RunType="-FT-from0to1-30km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-ThickMin0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-" ;
-
-
-pat="-"+digitsPattern+"km-";  MR=str2double(extract(extract(UserVar.RunType,pat),digitsPattern));
-
-UserVar.MeshResolution=MR*1000;   % MESH RESOLUTION
-CtrlVar.MeshSize=UserVar.MeshResolution ;
-CtrlVar.MeshSizeMax=CtrlVar.MeshSize ;
+% This is the initial inversion at the start of the experiment, uses Bedmachine geometry
+RunString="ES30km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-GeoBed2-SMB_RACHMO2k3_2km-";
+RunString="ES10km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-GeoBed2-SMB_RACHMO2k3_2km-";
 
 
 
+UserVar.RunType="-IR-"+RunString ;    CtrlVar.Restart=1;
+Ua(UserVar,CtrlVar) ;
 
-if contains(UserVar.RunType,"-FT-")
-    CtrlVar.InverseRun=0;
-    CtrlVar.TimeDependentRun=1;
-elseif contains(UserVar.RunType,"-IR-")
-    CtrlVar.TimeDependentRun=0;
-    CtrlVar.InverseRun=1;
-end
+for itime=0:4
 
-pat="-from"+digitsPattern+"to";    TimeStart=str2double(extract(extract(UserVar.RunType,pat),digitsPattern)) ;
-pat="to"+digitsPattern+"-";      TimeEnd=str2double(extract(extract(UserVar.RunType,pat),digitsPattern)) ;
+    from=itime;
+    to=itime+1;
 
-CtrlVar.time=TimeStart ; CtrlVar.TotalTime=TimeEnd ;
+    % This is the first transient run, uses geometry from previous inverse run (this will be Bedmachine if from=0)
+    
+    UserVar.RunType=sprintf("-FR%ito%i-",from,to)+RunString ;
+    CtrlVar.Restart=0;  % Here I might not want to start a restart run, for example if the inversion has been done anew. 
+    Ua(UserVar) ;
 
-pat="-Tri"+digitsPattern+"-";    CtrlVar.TriNodes=str2double(extract(extract(UserVar.RunType,pat),digitsPattern)) ;
-
-
-CtrlVar.SlidingLaw=extractBetween(UserVar.RunType,"Slid","-");
-
-CtrlVar.kH=str2double(extractBetween(UserVar.RunType,"-kH","-"));
-
-if contains(UserVar.RunType,"-P-")
-
-    CtrlVar.LevelSetEvolution="-Prescribed-"   ; % "-prescribed-",
-    CtrlVar.LevelSetMethod=1;
-    UserVar.CalvingFront0="-BMCF-"; "-BedMachineCalvingFronts-"  ;  % "-GL0-" ; % "-BedMachineCalvingFronts-"  ;
-
-else
-
-    error("not implemented")
+    % This is an inversion using geometry based on forward run that ended at time=to, ie the previous forward run
+    UserVar.RunType=sprintf("-IR%ito%i-",from,to)+RunString ;
+    CtrlVar.Restart=1;  % Always try to start a restart run when conducting an inversion 
+    Ua(UserVar)
 
 end
 
-pat="-ThickMin"+digitsPattern+"k"+digitsPattern+"-" ; TM=str2double(extract(extract(UserVar.RunType,pat),digitsPattern)) ; CtrlVar.ThickMin=TM(1)+TM(2)/10 ; 
-CtrlVar.LevelSetMinIceThickness=CtrlVar.ThickMin;  
-
-CtrlVar.Inverse.Regularize.logC.ga=str2double(extractBetween(UserVar.RunType,"Ca","-"));
-CtrlVar.Inverse.Regularize.logC.gs=str2double(extractBetween(UserVar.RunType,"Cs","-"));
-CtrlVar.Inverse.Regularize.logAGlen.ga=str2double(extractBetween(UserVar.RunType,"Aa","-"));
-CtrlVar.Inverse.Regularize.logAGlen.gs=str2double(extractBetween(UserVar.RunType,"As","-"));
 
 
-CtrlVar
+

@@ -31,7 +31,27 @@ BCs.ubFixedValue=BCs.ubFixedNode*0;
 BCs.vbFixedValue=BCs.vbFixedNode*0;
 
 
-return 
+
+
+%% Adding fixed h constraints over PIG iceshelf
+
+
+Box=[-1642.6   -1546 -340.78 -236.91]*1000;
+
+In=IsInBox(Box,F.x,F.y) ; 
+isPIGIS=In & F.GF.node <0.5 ;
+
+BCs.hFixedNode=find(isPIGIS);
+BCs.hFixedValue=F.h(isPIGIS);
+
+return
+
+
+
+
+
+
+
 %% Testing added fixed vel at boundary if grounded
 
 

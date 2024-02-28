@@ -5,22 +5,42 @@ function [UserVar,CtrlVar,MeshBoundaryCoordinates]=DefineInitialInputs(UserVar,C
 
 %%
 
+if ~isfield(UserVar,"RunType") || isempty(UserVar.RunType)
 
 
+    % initial inverse run using ITS120 velocities and Bedmachine2 geometry.
+    UserVar.RunType="-IR-ES20km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-GeoBed2-SMB_RACHMO2k3_2km-";
 
-% initial inverse run using ITS120 velocities and Bedmachine2 geometry.
-UserVar.RunType="-IR-ES20km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-GeoBed2-SMB_RACHMO2k3_2km-";
+    % forward run from t=0 to t=1, using inversion products FA and FC from t=0, which implies using the initial inversion
+    UserVar.RunType="-FR0to1-ES20km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-GeoBed2-SMB_RACHMO2k3_2km-";
 
-% forward run from t=0 to t=1, using inversion products FA and FC from t=0, which implies using the initial inversion
-UserVar.RunType="-FR0to1-ES20km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-GeoBed2-SMB_RACHMO2k3_2km-";
+    % inverse run using forward run results from t=1. This implies using the geometry from t=1 instead of Bedmachine2  geometry.
+    UserVar.RunType="-IR0to1-ES20km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-GeoBed2-SMB_RACHMO2k3_2km-";
 
-% inverse run using forward run results from t=1. This implies using the geometry from t=1 instead of Bedmachine2  geometry.
-UserVar.RunType="-IR0to1-ES20km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-GeoBed2-SMB_RACHMO2k3_2km-";
+    % forward restart run continuing from t=1 and using inversion products from t=1,
+    UserVar.RunType="-FR1to2-ES20km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-GeoBed2-SMB_RACHMO2k3_2km-";
 
-% forward restart run continuing from t=1 and using inversion products from t=1, ie "-IRt1-".
-% UserVar.RunType="-FR1to2-ES20km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-GeoBed2-SMB_RACHMO2k3_2km-";
+    % inverse run using forward run results from t=2. This implies using the geometry from t=2 instead of Bedmachine2  geometry.
+    UserVar.RunType="-IR1to2-ES20km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-GeoBed2-SMB_RACHMO2k3_2km-";
 
+    % forward restart run continuing from t=2 and using inversion products from t=2,
+    UserVar.RunType="-FR2to3-ES20km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-GeoBed2-SMB_RACHMO2k3_2km-";
 
+    % inverse run using forward run results from t=3. This implies using the geometry from t=3 instead of Bedmachine2  geometry.
+    UserVar.RunType="-IR2to3-ES20km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-GeoBed2-SMB_RACHMO2k3_2km-";
+
+    % forward restart run continuing from t=3 and using inversion products from t=3,
+    UserVar.RunType="-FR3to4-ES20km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-GeoBed2-SMB_RACHMO2k3_2km-";
+
+    % inverse run using forward run results from t=4. This implies using the geometry from t=4 instead of Bedmachine2  geometry.
+    UserVar.RunType="-IR3to4-ES20km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-GeoBed2-SMB_RACHMO2k3_2km-";
+
+    % forward restart run continuing from t=4 and using inversion products from t=4,
+    UserVar.RunType="-FR4to5-ES20km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-GeoBed2-SMB_RACHMO2k3_2km-";
+
+    UserVar.RunType="-FR0to1-ES10km-Tri3-SlidWeertman-Duvh-MRZERO-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-GeoBed2-SMB_RACHMO2k3_2km-";
+
+end
 
 % Create_AC_ScatteredInterpolants([],UserVar)
 %%
@@ -40,7 +60,8 @@ CtrlVar.LimitRangeInUpdateFtimeDerivatives=true ;
 
 %% Parallel options
 CtrlVar.Parallel.uvhAssembly.spmd.isOn=true; 
-CtrlVar.Distribute=true;
+CtrlVar.Parallel.uvAssembly.spmd.isOn=true;
+CtrlVar.Distribute=false;
 CtrlVar.Parallel.isTest=false;
 %% Data input files
 % This run requires some additional input files. They are too big to be kept on Github so you
@@ -117,19 +138,19 @@ if CtrlVar.InverseRun
     UserVar.DefineOutputs="-"; %
 
 
-    CtrlVar.Restart=0;
+    
     CtrlVar.Inverse.InfoLevel=1;
     CtrlVar.InfoLevelNonLinIt=0;  CtrlVar.InfoLevel=0;
    
 
-    UserVar.Slipperiness.ReadFromFile=0;
-    UserVar.AGlen.ReadFromFile=0;
+    UserVar.Slipperiness.ReadFromFile=1;
+    UserVar.AGlen.ReadFromFile=1;
 
     CtrlVar.ReadInitialMesh=1;
     CtrlVar.AdaptMesh=0;
    
 
-    CtrlVar.Inverse.Iterations=5;
+    CtrlVar.Inverse.Iterations=500;
     CtrlVar.Inverse.OptimalityTolerance=0.01; 
     CtrlVar.Inverse.StepTolerance=0.001;
 
@@ -146,7 +167,7 @@ elseif  CtrlVar.TimeDependentRun
 
     CtrlVar.InverseRun=0;
     CtrlVar.TimeDependentRun=1;
-    CtrlVar.Restart=0;
+    
     CtrlVar.InfoLevelNonLinIt=1;
     UserVar.Slipperiness.ReadFromFile=1;
     UserVar.AGlen.ReadFromFile=1;
@@ -159,7 +180,7 @@ elseif contains(UserVar.RunType,"Forward-Diagnostic")
 
     CtrlVar.InverseRun=0;
     CtrlVar.TimeDependentRun=0;
-    CtrlVar.Restart=0;
+    
     CtrlVar.InfoLevelNonLinIt=1;
     UserVar.Slipperiness.ReadFromFile=1;
     UserVar.AGlen.ReadFromFile=1;
@@ -170,7 +191,7 @@ elseif contains(UserVar.RunType,"GenerateMesh")
 
     CtrlVar.TimeDependentRun=0;  % {0|1} if true (i.e. set to 1) then the run is a forward transient one, if not
     CtrlVar.InverseRun=0;
-    CtrlVar.Restart=0;
+    
     CtrlVar.ReadInitialMesh=0;
     CtrlVar.MeshGenerator="mesh2d" ; % "mesh2d" ; % 'mesh2d';
 
@@ -288,17 +309,18 @@ if CtrlVar.InverseRun
 end
 
 if CtrlVar.InverseRun
-    if isfile(CtrlVar.Inverse.NameOfRestartInputFile)
-        CtrlVar.Restart=1;
+    if isfile(CtrlVar.Inverse.NameOfRestartInputFile)  && CtrlVar.Restart
+        fprintf("Inverse restart file found. Starting a restart run. \n")
     else
         CtrlVar.Restart=0;
-        fprintf("No restart file found. Starting a new run. \n")
+        fprintf("Either no restart file found, or restart variable not true. Starting a new run. \n")
     end
 else
-    if isfile(CtrlVar.NameOfRestartFiletoRead)
-        CtrlVar.Restart=1;
+    if isfile(CtrlVar.NameOfRestartFiletoRead) && CtrlVar.Restart
+        fprintf("Forward restart file found. Starting a restart run. \n")
     else
         CtrlVar.Restart=0;
+        fprintf("Either no restart file found, or restart variable not true. Starting a new run. \n")
     end
 end
 

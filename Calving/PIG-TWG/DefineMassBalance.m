@@ -71,22 +71,19 @@ if contains(UserVar.RunType,"-I-")  % This is a 'dynamical' initialization, use 
 
 
     end
-
-elseif contains(UserVar.RunType,"-MR")
-
-    MRP=extractBetween(UserVar.RunType,"-MR","-");
-   % MRP="l"+MRP; 
-    [ab,dabdh]=DraftDependentMeltParameterisations(UserVar,CtrlVar,F,MRP) ;
-    
-  
-
-
 elseif contains(UserVar.RunType,"-MRZERO")
 
     as=zeros(MUA.Nnodes,1) ;
     ab=zeros(MUA.Nnodes,1) ;
     dasdh=zeros(MUA.Nnodes,1) ;
     dabdh=zeros(MUA.Nnodes,1) ;
+
+elseif contains(UserVar.RunType,"-MR")
+
+    MRP=extractBetween(UserVar.RunType,"-MR","-");
+   % MRP="l"+MRP; 
+    [ab,dabdh]=DraftDependentMeltParameterisations(UserVar,CtrlVar,F,MRP) ;
+
 
 
 elseif contains(UserVar.RunType,"-DMR")

@@ -217,8 +217,8 @@ InvStartValues.V0=F.V0 ;
 
 if UserVar.Slipperiness.ReadFromFile
     
-    fprintf('DefineInputsForInverseRun: loading start values for C from the file: %-s ',UserVar.CFile)
-    load(UserVar.CFile,'FC')
+    fprintf('DefineInputsForInverseRun: loading C interpolant from the file: %-s ',UserVar.FCFile)
+    load(UserVar.FCFile,'FC')
     fprintf(' done \n')
     InvStartValues.C=FC(F.x,F.y) ;
     % make sure that interpolation/extrapolation does not violate parameter value constraints
@@ -226,8 +226,8 @@ if UserVar.Slipperiness.ReadFromFile
 end
 
 if UserVar.AGlen.ReadFromFile
-    fprintf('DefineSlipperyDistribution: loading file: %-s ',UserVar.AFile)
-    load(UserVar.AFile,'FA')
+    fprintf('DefineSlipperyDistribution: loading A interpolant from file: %-s ',UserVar.FAFile)
+    load(UserVar.FAFile,'FA')
     fprintf(' done \n')
     InvStartValues.AGlen=FA(F.x,F.y);
     % make sure that interpolation/extrapolation does not violate parameter value constraints
