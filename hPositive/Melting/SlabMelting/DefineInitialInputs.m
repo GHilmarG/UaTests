@@ -17,8 +17,9 @@ CtrlVar.InfoLevelNonLinIt=1 ; CtrlVar.doplots=1;
 
 % CtrlVar.uvhCostFunction="Work Residuals" ; % ["Work Residuals","Force Residuals"] 
 
-UserVar.RunType="GaussMelting";
-UserVar.RunType="ThicknessConstrained";
+UserVar.RunType="-GaussMelt-";
+UserVar.RunType="-ThicknessConstrained-UniformMelt-";
+UserVar.RunType="-ThicknessConstrained-GaussMelt-";  % thickness constrained within a radius of 50k and Gauss shaped melt applied, h reactions recover the applied melt within the circle.
 UserVar.Plots="-R-"; % calculate and plot reactions
 
 

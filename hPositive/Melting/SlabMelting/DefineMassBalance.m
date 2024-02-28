@@ -10,7 +10,7 @@ dabdh=zeros(MUA.Nnodes,1);
 
 
 
-if contains(UserVar.RunType,"GaussMelting")
+if contains(UserVar.RunType,"GaussMelt")
 
     if F.time<150
         ampl=-1;
@@ -20,7 +20,7 @@ if contains(UserVar.RunType,"GaussMelting")
         as=zeros(MUA.Nnodes,1);
     end
 
-elseif contains(UserVar.RunType,"ThicknessConstrained")
+elseif contains(UserVar.RunType,"UniformMelt")
 
     as=-1; 
 
