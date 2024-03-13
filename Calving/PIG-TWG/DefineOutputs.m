@@ -73,7 +73,7 @@ if contains(plots,'-save-')
         FileName=replace(FileName,"--","-");
         FileName=replace(FileName,".","k");
         fprintf(' Saving data in %s \n',FileName)
-        save(FileName,"CtrlVar","UserVar","MUA","F")
+        save(FileName,"CtrlVar","UserVar","MUA","F","BCs","l")
 
     end
 end

@@ -62,7 +62,7 @@ CtrlVar.LimitRangeInUpdateFtimeDerivatives=true ;
 %% Parallel options
 CtrlVar.Parallel.uvhAssembly.spmd.isOn=true; 
 CtrlVar.Parallel.uvAssembly.spmd.isOn=true;
-CtrlVar.Distribute=false;
+CtrlVar.Parallel.Distribute=false;
 CtrlVar.Parallel.isTest=false;
 %% Data input files
 % This run requires some additional input files. They are too big to be kept on Github so you
@@ -97,7 +97,7 @@ end
 %% Times, time steps, output interval
 
 % time and TotalTime already extracted from UserVar.RunType
-CtrlVar.DefineOutputsDt=1;
+CtrlVar.DefineOutputsDt=0.1;
 CtrlVar.dt=1e-5;   
 CtrlVar.ATSdtMax=0.1;
 CtrlVar.ATSdtMin=1e-5;  
@@ -242,7 +242,7 @@ end
 %% Plotting
 CtrlVar.doplots=1;
 CtrlVar.PlotMesh=0;
-CtrlVar.PlotBCs=1 ;
+CtrlVar.PlotBCs=0 ;
 CtrlVar.PlotXYscale=1000;
 CtrlVar.doAdaptMeshPlots=5;
 CtrlVar.PlotsXaxisLabel="xps (km)";
@@ -304,7 +304,7 @@ end
 
 
 %% Make this automatically a restart run if corresponding restart files already exists
-
+CtrlVar.Restart=1;  % try restart if possible
 if CtrlVar.InverseRun
     fprintf(" Inverse restart file: %s \n",CtrlVar.Inverse.NameOfRestartOutputFile)
 end
@@ -348,5 +348,7 @@ end
 CtrlVar.WriteRestartFileInterval=20;
 
 
+CtrlVar.UpdateBoundaryConditionsAtEachTimeStep=true;    
 
-
+CtrlVar.ThicknessConstraintsInfoLevel=1;
+CtrlVar.MinNumberOfNewlyIntroducedActiveThicknessConstraints=0;

@@ -10,6 +10,7 @@ UserVar.RunType="-FR0to1-ES20km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-TM0k1-Alim-
 UserVar.RunType="-FR0to1-ES30km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-GeoBed2-SMB_RACHMO2k3_2km-";
 UserVar.RunType="-FR0to1-ES10km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-GeoBed2-SMB_RACHMO2k3_2km-";
 
+
 CtrlVar=Ua2D_DefaultParameters();
 
 
@@ -27,8 +28,8 @@ uVector=nan(10,100);
 vVector=nan(10,100);
 tVector=nan(10,100) ;
 TextVector=strings(10,1) ;
-Location(1,:)=[-1585e3 -240e3 ]  ; TextVector(1)="PIG 20 upstream of GL" ;
-Location(2,:)=[-1590e3 -270e3 ]  ; TextVector(2)="PIG 20 downstream of GL" ;
+Location(1,:)=[-1585e3 -240e3 ]  ; TextVector(1)="PIG 20km upstream of GL" ;
+Location(2,:)=[-1590e3 -270e3 ]  ; TextVector(2)="PIG 20km downstream of GL" ;
 
 nloc=size(Location,1) ;
 
@@ -67,6 +68,13 @@ for ifile=1:numel(ResultFiles)
         F0=F; % keep a copy of F from first solution
         xGL0=xGL ; yGL0=yGL  ;
         RunIDCompare=RunID; 
+
+        UaPlots(CtrlVar,MUA,F,F.s,FigureTitle="Inital Surface")
+        hold on 
+        axis([-1722.86513409962         -1479.58176245211          -410.98275862069         -149.399310344828])
+        plot(Location(:,1)/1000,Location(:,2)/1000,"or",MarkerFaceColor="r")
+      
+        PlotLatLonGrid();
     else
 
         CtrlVar.QuiverSameVelocityScalingsAsBefore=false;
