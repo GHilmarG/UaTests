@@ -1,9 +1,15 @@
 
-
-% (alpha)   26/06/2023 
-
-% results = runtests('TestUa.m') ; table(results)
+%%
+%
+% (alpha)   26/06/2023 , 16/03/2024
+%
+% To run the test do:
+%
+%  >> results = runtests('TestUa.m') ; table(results)  [RET]
 % 
+% from within the MATLAB command window.
+%
+%%
 
 function tests = TestUa
     
@@ -11,22 +17,23 @@ function tests = TestUa
     
     %f=localfunctions ;  % all tests
     
-     f={@testCrack}                ;    % OK  11/05/2021 ,  09/09/2021 , 01/11/2021 ,   08/03/2023 , 24/06/2023 , 02/10/2013
-     f={@testPIGdiagnostic}        ;    % OK  11/05/2021 ,  09/09/2021 , 01/11/2021 ,   08/03/2023 , 24/06/2023 , 02/10/2013
-     f={@testPIGtransient}         ;    %                                                            24/06/2023 , 02/10/2013
-     f={@testMassBalanceFeedback}  ;    % OK  11/05/2021 ,  09/09/2021 , 01/11/2021 ,   08/03/2023 , 24/06/2023 , 02/10/2013
-     f={@test1dIceStream}          ;    % OK  11/05/2021 ,  08/09/2021 , 01/11/2021 ,   08/03/2023 , 24/06/2023 , 02/10/2013
-     f={@test1dIceShelf}           ;    % OK  11/05/2021 ,  08/09/2021 , 01/11/2021 ,   08/03/2023 , 24/06/2023 , 02/10/2013
-     f={@testGaussPeak}            ;    % OK  11/05/2021 ,             , 01/11/2021 ,   08/03/2023 , 24/06/2023 , 02/10/2013
-     f={@testFreeSlipBCs}          ;    % OK  11/05/2021 ,  08/09/2021 , 01/11/2021 ,   03/08/2023 , 24/06/2023 , 02/10/2013
+     f={@testCrack}                     ;    % OK  11/05/2021 ,  09/09/2021 , 01/11/2021 ,   08/03/2023 , 24/06/2023 , 02/10/2023 , 16/03/2024
+     % f={@testPIGdiagnostic}           ;    % OK  11/05/2021 ,  09/09/2021 , 01/11/2021 ,   08/03/2023 , 24/06/2023 , 02/10/2023, 16/03/2024
+     % f={@testPIGtransient}            ;    %                                                            24/06/2023 , 02/10/2023 , 16/03/2024
+     % f={@testGaussPeak}               ;    % OK  11/05/2021 ,             , 01/11/2021 ,   08/03/2023 , 24/06/2023 , 02/10/2023 , 16/03/2024
+     % f={@testMassBalanceFeedback}     ;    % OK  11/05/2021 ,  09/09/2021 , 01/11/2021 ,   08/03/2023 , 24/06/2023 , 02/10/2023
+     % f={@test1dIceStream}             ;    % OK  11/05/2021 ,  08/09/2021 , 01/11/2021 ,   08/03/2023 , 24/06/2023 , 02/10/2023, 16/03/2024
+     % f={@test1dIceShelf}              ;    % OK  11/05/2021 ,  08/09/2021 , 01/11/2021 ,   08/03/2023 , 24/06/2023 , 02/10/2023 , 16/03/2024
+     % f={@testGaussPeak}               ;    % OK  11/05/2021 ,             , 01/11/2021 ,   08/03/2023 , 24/06/2023 , 02/10/2023 , 16/03/2024 
+     % f={@testFreeSlipBCs}             ;    % OK  11/05/2021 ,  08/09/2021 , 01/11/2021 ,   03/08/2023 , 24/06/2023 , 02/10/2023 , 16/03/2024
+     % f={@testMassConservationPeaks}   ;   % OK 16/03/2024
+      
+     f={@testCrack,@testPIGdiagnostic,@testPIGtransient,@testMassBalanceFeedback,@test1dIceStream,@test1dIceShelf,@testGaussPeak,@testFreeSlipBCs,@testMassConservationPeaks} ;
 
+     
 
-     f={@testCrack,@testPIGdiagnostic,@testPIGtransient,@testMassBalanceFeedback,@test1dIceStream,@test1dIceShelf,@testGaussPeak,@testFreeSlipBCs} ;
-    
-    f={@testPIGTWGrestart};
-
-    
     tests = functiontests(f);
+
 end
 
 function setupOnce(testCase)
@@ -76,6 +83,19 @@ function testPIGtransient(testCase)
     
 end
 
+function testMassConservationPeaks(testCase)
+    
+    cd .\MassConservationTests\Peaks\
+    UserVar.TestCase="sGaussPeak";
+    UserVar=Ua(UserVar) ;
+    cd ../..
+    actSolution= UserVar.Test.Norm.actValue ;
+
+    
+    expSolution = UserVar.Test.Norm.expValue ;
+    verifyEqual(testCase,actSolution,expSolution,'RelTol',1e-6)
+    
+end
 
 function testCrack(testCase)
     
@@ -197,17 +217,7 @@ function testMassBalanceFeedback(testCase)
     
 end
 
-function testPIGTWGrestart(testCase)
-    
-    cd .\Calving\PIG-TWG\
-    UserVar.RunType="TestOne"; 
-    UserVar=Ua(UserVar) ;
-    cd ..\..
-    actSolution=UserVar.Test.Norm.actValue;
-    expSolution = UserVar.Test.Norm.expValue ;
-    verifyEqual(testCase,actSolution,expSolution,'RelTol',1e-3)
-    
-end
+
 
 
 % cd Cone ;   clear  ; Ua ; cd ..

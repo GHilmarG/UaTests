@@ -18,8 +18,8 @@ CtrlVar.Restart=0;  CtrlVar.WriteRestartFile=1; CtrlVar.WriteRestartFileInterval
 xd=100e3; xu=-100e3 ; yl=100e3 ; yr=-100e3;
 MeshBoundaryCoordinates=[xu yr ; xd yr ; xd yl ; xu yl];
 
-CtrlVar.ThickMin=0;                      % minimum allowed thickness without (potentially) doing something about it
-CtrlVar.ResetThicknessToMinThickness=0;  % if true, thicknes values less than ThickMin will be set to ThickMin
+CtrlVar.ThickMin=0.001;                   % minimum allowed thickness without (potentially) doing something about it
+CtrlVar.ResetThicknessToMinThickness=0;  % if true, thickness values less than ThickMin will be set to ThickMin
 CtrlVar.ThicknessConstraints=1  ;        % if true, min thickness is enforced using active set method
 
 

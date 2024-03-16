@@ -1,4 +1,4 @@
-function UserVar=DefineOutputs(UserVar,CtrlVar,MUA,BCs,F,l,GF,InvStartValues,InvFinalValues,Priors,Meas,BCsAdjoint,RunInfo)
+function UserVar=DefineOutputs(UserVar,CtrlVar,MUA,BCs,F,l)
 
 persistent hFirst VolumeFirst tVector VolumeVector iCount
 
@@ -54,7 +54,7 @@ if CtrlVar.DefineOutputsInfostring=="Last call"
     ylabel("Change in volume (Gt)")
 
     xlabel("time (yr)")
-    legend("Volume","Volume change")
+    legend("Volume","Volume change",Location="best")
     
 
 end

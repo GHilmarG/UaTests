@@ -69,7 +69,7 @@ UserVar.MeshBoundaryCoordinatesFile='../../Interpolants/MeshBoundaryCoordinatesF
 UserVar.DistanceBetweenPointsAlongBoundary=5e3 ; 
 
 CtrlVar.SlidingLaw="Weertman" ; % "Umbi" ; % "Weertman" ; % "Tsai" ; % "Cornford" ;  "Umbi" ; "Cornford" ; % "Tsai" , "Budd" , "Joughin"
-CtrlVar.SlidingLaw="Joughin" ;
+
 
 
 if ~isfile(UserVar.GeometryInterpolant) || ~isfile(UserVar.SurfaceVelocityInterpolant)
@@ -327,7 +327,7 @@ CtrlVar.ThickMin=1;
 
 %%
 
-UserVar.Slipperiness.ReadFromFile=false ; % Just temporary for Joughin sliding law
+
 if UserVar.Slipperiness.ReadFromFile
     switch CtrlVar.SlidingLaw
 
@@ -388,5 +388,11 @@ CtrlVar.Inverse.NameOfRestartOutputFile=filename;
 CtrlVar.Inverse.NameOfRestartInputFile=CtrlVar.Inverse.NameOfRestartOutputFile;
 
 CtrlVar.NameOfRestartFiletoWrite="FR-"+filename ; 
+
+%%  parallel options 
+
+CtrlVar.Parallel.uvhAssembly.spmd.isOn=true; 
+CtrlVar.Parallel.uvAssembly.spmd.isOn=true; 
+CtrlVar.Parallel.Distribute=false;
 
 end

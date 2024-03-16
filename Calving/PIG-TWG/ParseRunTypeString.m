@@ -186,6 +186,7 @@ end
 
 
 
+
 pat="-TM"+digitsPattern+"k"+digitsPattern+"-" ; TM=str2double(extract(extract(UserVar.RunType,pat),digitsPattern)) ; CtrlVar.ThickMin=TM(1)+TM(2)/10 ;
 CtrlVar.LevelSetMinIceThickness=CtrlVar.ThickMin;
 

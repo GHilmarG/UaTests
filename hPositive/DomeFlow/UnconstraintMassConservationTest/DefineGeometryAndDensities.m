@@ -47,7 +47,7 @@ function  [UserVar,s,b,S,B,rho,rhow,g]=DefineGeometryAndDensities(UserVar,CtrlVa
 
 B=zeros(MUA.Nnodes,1) ;
 S=B*0-1e10;
-b=B;
+
 
 
 
@@ -55,12 +55,14 @@ switch  UserVar.TestCase
 
     case "sGaussPeak"
 
+        
         s0=100 ;
         ampl=1000; sigma_x=10000 ; sigma_y=10000;
         s=ampl*exp(-((F.x/sigma_x).^2+(F.y/sigma_y).^2))+s0;
 
     case "sDeltaPeak"
 
+        % Sharp upper surface (s) delta peak, but bed is flat.
         s0=100;
         W=10e3 ;
         A=1000;
@@ -69,13 +71,14 @@ switch  UserVar.TestCase
 
     case "BDeltaPeak"
 
+        % Here the B delta peak cuts through the ice surface, creating a nunatack
         s0=100;
         s=s0;
         W=10e3 ;
         A=1000;
         r=sqrt(F.x.*F.x+F.y.*F.y);
-        B=A*2*W*DiracDelta(1/W,r,0);
-        b=B;
+        B=A*2*W*DiracDelta(1/W,r,0);  % A delta peak of width W and amplitude A centered around x0=0;
+        
 
 
     otherwise
@@ -84,6 +87,7 @@ switch  UserVar.TestCase
 
 end
 
+b=B; 
 h=s-b;
 h(s0<CtrlVar.ThickMin)=CtrlVar.ThickMin;
 s=b+h;
