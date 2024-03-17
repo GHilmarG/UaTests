@@ -53,6 +53,7 @@ end
 
 if contains(FieldsToBeDefined,'rho')
     rho=Frho(F.x,F.y);
+    rho=910; 
     rhow=1030;
 else
     rho=NaN;

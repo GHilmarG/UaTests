@@ -51,20 +51,32 @@ else
     
     if isempty(FC)
         
-        if isfile(UserVar.CFile)
-            fprintf('DefineSlipperyDistribution: loading file: %-s ',UserVar.CFile)
+        if isfile(UserVar.CFile)  || isfile(UserVar.CFile+".mat")
+            fprintf('DefineSlipperyDistribution: loading file: %-s \n',UserVar.CFile)
             load(UserVar.CFile,'FC')
             fprintf(' done \n')
         else
+            fprintf('DefineSlipperyDistribution: file not found, was expecting: %-s \n',UserVar.CFile)
+            error("DefineSlipperyDistribution:FileNotFound","Required input file not found")
             % create a FC file
-            load('C-Estimate.mat','C','xC','yC')
-            FC=scatteredInterpolant(xC,yC,C); 
-            save(UserVar.CFile,'FC')
+            %load('C-Estimate.mat','C','xC','yC')
+            %FC=scatteredInterpolant(xC,yC,C); 
+           % save(UserVar.CFile,'FC')
         end
     end
     
     C=FC(MUA.coordinates(:,1),MUA.coordinates(:,2));
     m=3;
     
+   if contains(UserVar.RunType,"-Clim-")
+    
+       CminFloating=1e-2; 
+       I=F.GF.node<0.5 & C < CminFloating ; 
+
+       C(I)=CminFloating;
+        
+   end
+
+
     
 end

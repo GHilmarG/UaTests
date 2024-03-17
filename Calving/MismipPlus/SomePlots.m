@@ -1,59 +1,118 @@
-
-%%
-load 0025000-Nodes652-Ele1158-Tri3-kH1000-MismipPlus-FixedRate100-Keeper.mat
-
-
-FindOrCreateFigure("CalvingFrontMovement")
-
-plot(Ct,Cx/1000,'ob')
-ylabel("Calving Front Position (km)",Interpreter="latex")
-xlabel("time (yr)",Interpreter="latex")
-
-I=~isnan(Ct); Ct=Ct(I) ; Cx=Cx(I) ;  n=numel(Ct)  ; A=[ones(n,1) Ct] ; sol=A\Cx ; 
-title(sprintf("C=100 and rate=%f",-sol(2)))
-
-load("ResultsFiles/0010000-Nodes652-Ele1158-Tri3-kH1000-MismipPlus-FixedRate100-.mat")
-
-hold on  ; plot(Ct,Cx/1000,'*r')
-
-
-load("ResultsFiles/0010000-Nodes652-Ele1158-Tri3-kH1000-MismipPlus-IceThickness1-.mat")  % this was a run with c=h
-hold on  ; plot(Ct,Cx/1000,'+g')
-I=~isnan(Ct); Ct=Ct(I) ; Cx=Cx(I) ;  n=numel(Ct)  ; A=[ones(n,1) Ct] ; sol=A\Cx ; fprintf(" rate %f m/yr \n",-sol(2)) ; 
-
-load("ResultsFiles/0010000-Nodes652-Ele1158-Tri3-kH1000-MismipPlus-IceThickness10-.mat")
-hold on  ; plot(Ct,Cx/1000,'^m')
-I=~isnan(Ct); Ct=Ct(I) ; Cx=Cx(I) ;  n=numel(Ct)  ; A=[ones(n,1) Ct] ; sol=A\Cx ; fprintf(" rate %f m/yr \n",-sol(2)) ; 
-
 %%
 
-%load("ResultsFiles/0010000-Nodes1055-Ele1948-Tri3-kH1000-MismipPlus-FixedRate100-Keeper.mat")
-load("ResultsFiles/0010000-Nodes1195-Ele2230-Tri3-kH1000-MismipPlus-FixedRate1000-.mat") ;
-load("ResultsFiles/0010000-Nodes1423-Ele2678-Tri3-kH1000-MismipPlus-FixedRate1000-constant-muValue1-IniInf-PDist1.mat") ; 
-load("ResultsFiles/0010000-Nodes1177-Ele2192-Tri3-kH1000-MismipPlus-FixedRate1000-ucl-muValue1-IniInf-PDist1-Keeper.mat ") ;
+% rename GL0-.mat GL0-10km-.mat *GL0-.mat
 
-File(1)="ResultsFiles/0010000-Nodes1187-Ele2211-Tri3-kH1000-MismipPlus-FixedRate1000-ucl-muValue0k1-IniInf-PDist1.mat" ;
-File(2)="ResultsFiles/0010000-Nodes1177-Ele2192-Tri3-kH1000-MismipPlus-FixedRate1000-ucl-muValue1-IniInf-PDist1-Keeper.mat " ;
-File(3)="ResultsFiles/0010000-Nodes1174-Ele2184-Tri3-kH1000-MismipPlus-FixedRate1000-ucl-muValue10-IniInf-PDist1.mat" ; 
-File(4)="ResultsFiles/0010000-Nodes1172-Ele2178-Tri3-kH1000-MismipPlus-FixedRate1000-ucl-muValue100-IniInf-PDist1.mat" ; 
-
-File(5)="ResultsFiles/0010000-Nodes1293-Ele2418-Tri3-kH1000-MismipPlus-FixedRate1000-ucl-muValue0k001-IniInf-PDist1"; 
-File(6)="ResultsFiles/0010000-Nodes1177-Ele2189-Tri3-kH1000-MismipPlus-FixedRate1000-ucl-muValue10000-IniInf-PDist1";
-File(7)="ResultsFiles/0010000-Nodes1174-Ele2186-Tri3-kH1000-MismipPlus-FixedRate1000-ucl-muValue1000-IniInf-PDist1";
+isVideo=false;
+CurDir=pwd ;
+cd ResultsFiles\
 
 
+RunType(1)="-MismipPlus-C-Fq1Fk30Fmin80cmin0Fmax100cmax3000-Ini5-.mat";
 
-Sym=["ro","b+","c*","m^","k*","g*","r+"] ;
+
+RunType(1)="-MismipPlus-C-Fq1Fk3Fmin80cmin0Fmax100cmax300-Ini5-" ;
+
+RunType(1)="-MismipPlus-C-Fq1Fk30Fmin80cmin0Fmax100cmax3000-Ini5-c0isGL0-" ;
+
+RunType(1)="-MismipPlus-C-Fq1Fk30Fmin80cmin0Fmax100cmax3000-Ini5-c0isGL0-10km-";
+RunType(2)="-MismipPlus-C-Fq1Fk30Fmin80cmin0Fmax100cmax3000-Ini5-c0isGL0-5km-";
+RunType(3)="-MismipPlus-C-Fq1Fk30Fmin80cmin0Fmax100cmax3000-Ini5-c0isGL0-4km-";
+RunType(4)="-MismipPlus-C-Fq1Fk30Fmin80cmin0Fmax100cmax3000-Ini5-c0isGL0-3km-";
+RunType(5)="-MismipPlus-C-Fq1Fk30Fmin80cmin0Fmax100cmax3000-Ini5-c0isGL0-2km-";
 
 
-FindOrCreateFigure("compare")
-for I=6:7
-    load(File(I))
-    hold on  ; plot(Ct,Cx/1000,Sym(I))
-    I=~isnan(Ct); Ct=Ct(I) ; Cx=Cx(I) ;  n=numel(Ct)  ; A=[ones(n,1) Ct] ; sol=A\Cx ; fprintf(" rate %f m/yr \n",-sol(2)) ;
-    c=1000 ;
-    plot(Ct,(Cx(end)-(Ct-Ct(end))*c)/1000,'k')
+RunType(1)="-MismipPlus-C-DP-Ini5-c0isGL0-10km-" ;
+RunType(2)="-MismipPlus-C-DP-Ini5-c0isGL0-5km-" ;
+RunType(3)="-MismipPlus-C-DP-Ini5-c0isGL0-4km-" ;
+RunType(4)="-MismipPlus-C-DP-Ini5-c0isGL0-3km-" ;
+RunType(5)="-MismipPlus-C-DP-Ini5-c0isGL0-2km-" ;
+RunType(6)="-MismipPlus-C-DP-Ini5-c0isGL0-1km-" ;
+
+
+if isVideo
+
+    
+    I=1;  TimeStep=10;  % video
+
+    ReadPlotSequenceOfResultFiles(FileNameSubstring=RunType(I),...
+        PlotTimestep=TimeStep,...
+        PlotTimeInterval=[0 100],...
+        PlotType="-uv-lsf-c-f-mesh-") ;
+
+
+
+else
+
+    %% Data Collect
+
+    col=["r","b","c","m","g","k"];
+    DataCollect=cell(10);
+    Irange=1:6 ;  TimeStep=5 ;  
+
+    for I=Irange
+
+        DataCollect{I}=ReadPlotSequenceOfResultFiles(FileNameSubstring=RunType(I),...
+            PlotTimestep=TimeStep,...
+            isCenterlineProfile=true,...
+            PlotType="-collect-",...
+            PlotTimeInterval=[0 200]);
+
+    end
+
+    Figxc=FindOrCreateFigure("xc(t)") ; clf(Figxc);
+
+    for I=Irange
+
+        plot(DataCollect{I}.time,DataCollect{I}.xcMaxCenterLine/1000,'-o',Color=col(I))
+        hold on
+        plot(DataCollect{I}.time,DataCollect{I}.xcMinCenterLine/1000,'-+',Color=col(I))
+    end
+
+    xlabel("t (yr)",Interpreter="latex")
+    ylabel("$x_c(t)$ along centerline (km)",Interpreter="latex")
+    lgd=legend("10 km max","10km min","5 km max","5 km min","4 km max","4 km min","3 km max","3km min","2 km max","2km min","1km min","1km max",interpreter="latex") ; 
+    lgd.NumColumns=3;
+
+    Figxc=FindOrCreateFigure("Ice Volume") ; clf(Figxc);
+
+    for I=Irange
+        iTime=find(abs(DataCollect{I}.time-5)<0.01) ;  % use time=5 as the reference
+        dVolume=DataCollect{I}.IceVolume-DataCollect{I}.IceVolume(iTime);
+        plot(DataCollect{I}.time,dVolume/1e9,'-o',Color=col(I))
+
+        hold on
+    end
+
+    xlabel("t (yr)",Interpreter="latex")
+    ylabel("Ice Volume ($\mathrm{km}^3$)",Interpreter="latex")
+
+
+    legend("10 km","5 km","4 km","3 km","2 km","1 km",interpreter="latex")
+
+    %%
+    FigV=FindOrCreateFigure("Convergence") ; clf(FigV);
+    
+    for I=Irange
+
+        iTime5=find(abs(DataCollect{I}.time-5)<0.01) ;  % use time=5 as the reference
+        iTime50=find(abs(DataCollect{I}.time-50)<0.01) ;  % use time=5 as the reference
+        iTime50=iTime50(1); 
+        V(I)=DataCollect{I}.IceVolume(iTime50)-DataCollect{I}.IceVolume(iTime5); 
+    end
+
+    plot([10 5 4 3 2 1],V/1e9,"-o")
+    xlabel("Element Size (km)",Interpreter="latex")
+    ylabel("Ice Volume Change ($\mathrm{km}^3$)",Interpreter="latex")
+    %%
+
 end
 
 
 
+
+
+
+
+end
+
+cd(CurDir)

@@ -1,308 +1,701 @@
 
+
 function [UserVar,CtrlVar,MeshBoundaryCoordinates]=DefineInitialInputs(UserVar,CtrlVar)
 
 
 %% Select the type of run by uncommenting one of the following options:
 %
-%  
-% close all ; job=batch("Ua","Pool",1)
-% 
+%
+% close all ; job=batch("Ua;","Pool",1) ;
+%
+
+
+%   -SM-    Apparantly no longer used...                   
+%   -MR4-   Basal melt rate parameterisation #4
+%
+%
+
+
+
 if isempty(UserVar) || ~isfield(UserVar,'RunType')
+
+
+    % UserVar.RunType='Forward-Diagnostic' ;
+
+    UserVar.RunType='-FT-I-' ;  % 'Forward-Transient-Initialisation' ;
+    UserVar.RunType='-FT-C-I-' ;  % 'Forward-Transient-Calving-Initialisation' ;
+    UserVar.RunType="-FT-C-MR4-SM-" ;  % 'Forward-Transient-Calving with surface mass balance based on rachmo
+   
+    UserVar.RunType="-FT-C-RR-BMCF-MR4-SM-" ;  % 'Forward-Transient , Retreat-Rate prescribed , Initial calving fronts are Bedmachine grounding lines , ocean melt param #4
+    UserVar.RunType="-FT-C-AC-BMGL-MR4-SM-" ;  % 'Forward-Transient , Anna Crawford
+
+ 
+    UserVar.RunType="-FT-P-TWISC0-MR4-SM-10km" ;  % -P-TWISC- is Thwaites Ice Shelf Calved off, 0km away
+    % the "-P-" stands for prescribed calving fronts
+    UserVar.RunType="-FT-P-TWIS-MR4-SM-10km" ;         % not calved off
+
+    UserVar.RunType="-FT-P-TWIS-MR4-SM-10km-Alim-" ;   % not calved off
+    UserVar.RunType="-FT-P-TWISC0-MR4-SM-10km-Alim" ;  % -P-TWISC- is Thwaites Ice Shelf Calved off, 0km away
+
+    UserVar.RunType="-FT-P-TWIS-MR4-SM-5km-Alim-" ;   % not calved off
+    UserVar.RunType="-FT-P-TWISC0-MR4-SM-5km-Alim" ;  % -P-TWISC- is Thwaites Ice Shelf Calved off, 0km away
+
+
+    UserVar.RunType="-GenerateMesh-20km-AM-P-BMGL-";
     
+    % UserVar.RunType='GenerateMesh' ;
     % UserVar.RunType='Inverse-MatOpt';
-    UserVar.RunType='Forward-Diagnostic' ; 
-    UserVar.RunType='Forward-Transient' ;
-    % UserVar.RunType='Inverse-UaOpt';meshb    % UserVar.RunType='Forward-Transient';
-    % UserVar.RunType='TestingMeshOptions';
+
 end
 
 
-UserVar.CalvingLaw="-FixedRate1-"  ;
-UserVar.CalvingLaw="-ScalesWithSpeed2-"  ;
-% UserVar.CalvingLaw="-IceThickness10-"  ;
-UserVar.CalvingLaw="-CliffHeight-Crawford"  ;
-UserVar.MisExperiment=UserVar.CalvingLaw ; 
+FileNameFormat="new" ; 
+
+%% UserVar
+
+UserVar.Region="PIG-TWG" ; "PIG" ; % "PIG-TWG" ;
+
+if isempty(UserVar) || ~isfield(UserVar,'MeshResolution')
+
+    pat="-"+digitsPattern+"km";
+    MR=str2double(extract(extract(UserVar.RunType,pat),digitsPattern));
+
+    if ~isempty(MR)
+        UserVar.MeshResolution=MR*1000;   % MESH RESOLUTION
+    else
+        UserVar.MeshResolution=5e3;   % MESH RESOLUTION
+    end
+end
+
+
+% 30km = 14km
+% 20km = 9.3km
+% 10km = 4.6km
+%  5km = 2.3km
+% 2.5km = 1.16km
+
+
+if contains(UserVar.RunType,"-TWISC")
+    % UserVar.CalvingFront0=extract(UserVar.RunType,"-TWISC"+digitsPattern+"-");
+    UserVar.CalvingFront0=extract(UserVar.RunType,"-TWISC"+alphanumericsPattern+"-");
+elseif contains(UserVar.RunType,"-PIGC")
+     UserVar.CalvingFront0=extract(UserVar.RunType,"-PIGC"+alphanumericsPattern+"-");
+elseif contains(UserVar.RunType,"-BMGL-")
+    UserVar.CalvingFront0="-BMGL-";
+elseif contains(UserVar.RunType,"-c0isGL0-")
+    UserVar.CalvingFront0="-c0isGL0-";
+else
+    UserVar.CalvingFront0="-BMCF-"; "-BedMachineCalvingFronts-"  ;  % "-GL0-" ; % "-BedMachineCalvingFronts-"  ;
+end
+
+CtrlVar.CalvingLaw.Evaluation="-int-"  ; % nodal or integration-point evaluation  ["-int-","-node-"]
+UserVar.DefineOutputs="-ubvb-LSF-h-dhdt-speed-save-AC-"; 
+
+
+CtrlVar.LimitRangeInUpdateFtimeDerivatives=true ;
+
+%% Set output files directory
+[~,hostname]=system('hostname') ;
+if contains(hostname,"DESKTOP-G5TCRTD")
+    UserVar.ResultsFileDirectory="F:\Runs\Calving\PIG-TWG\ResultsFiles\";
+elseif contains(hostname,"DESKTOP-BU2IHIR")
+    UserVar.ResultsFileDirectory="D:\Runs\Calving\PIG-TWG\ResultsFiles\";
+else
+    UserVar.ResultsFileDirectory=pwd+"\ResultsFiles\";
+end
+
 
 %%
 % This run requires some additional input files. They are too big to be kept on Github so you
-% will have to get those separately. 
+% will have to get those separately.
 %
-% You can get these files on OneDrive using the link: 
+% You can get these files on OneDrive using the link:
 %
 %   https://livenorthumbriaac-my.sharepoint.com/:f:/g/personal/hilmar_gudmundsson_northumbria_ac_uk/EgrEImnkQuJNmf1GEB80VbwB1hgKNnRMscUitVpBrghjRg?e=yMZEOs
 %
-% Put the OneDrive folder `Interpolants' into you directory so that it can be reached as ../Interpolants with respect to you rundirectory. 
+% Put the OneDrive folder `Interpolants' into you directory so that it can be reached as ../Interpolants with respect to you rundirectory.
 %
 %
 %UserVar.GeometryInterpolant='../../Interpolants/Bedmap2GriddedInterpolantModifiedBathymetry.mat'; % this assumes you have downloaded the OneDrive folder `Interpolants'.
-UserVar.GeometryInterpolant='../../../Interpolants/BedMachineGriddedInterpolants.mat';                       
+UserVar.GeometryInterpolant='../../../Interpolants/BedMachineGriddedInterpolants.mat';
 UserVar.SurfaceVelocityInterpolant='../../../Interpolants/SurfVelMeasures990mInterpolants.mat';
-UserVar.MeshBoundaryCoordinatesFile='../../../Interpolants/MeshBoundaryCoordinatesForAntarcticaBasedOnBedmachine'; 
+UserVar.MeshBoundaryCoordinatesFile='../../../Interpolants/MeshBoundaryCoordinatesForAntarcticaBasedOnBedmachine';
 load(UserVar.MeshBoundaryCoordinatesFile,"Boundary") ; UserVar.BedMachineBoundary=Boundary;
-UserVar.DistanceBetweenPointsAlongBoundary=5e3 ; 
-UserVar.BasalMeltRate="MeltRate0" ;
+UserVar.DistanceBetweenPointsAlongBoundary=5e3 ;
+
+UserVar.FasFile="Fas_SMB_RACMO2k3_1979_2011.mat" ; %  surface mass balance
+
+
+
+
+%% uvh tau;
+CtrlVar.uvh.SUPG.tau="taus" ; % default,  issues with uvh convergence in the beginning
+% CtrlVar.uvh.SUPG.tau="tau1" ; % testing
 
 
 %%
 
-CtrlVar.LevelSetMethod=1;
-CtrlVar.LevelSetEvolution="-By solving the level set equation-"   ; % "-prescribed-", 
-CtrlVar.LevelSetInitialisationInterval=10 ; CtrlVar.LevelSetReinitializePDist=true ; 
-CtrlVar.DevelopmentVersion=true; 
-CtrlVar.LevelSetFABmu.Scale="-ucl-" ; % "-constant-"; 
-CtrlVar.LevelSetFABmu.Value=1;
-CtrlVar.LevelSetInfoLevel=1 ; 
-CtrlVar.MeshAdapt.CFrange=[20e3 5e3 ; 10e3 2e3] ; % This refines the mesh around the calving front, but must set
+
+if UserVar.kH==""
+    CtrlVar.kH=10;
+else
+    CtrlVar.kH=str2double(extract(UserVar.kH,digitsPattern));
+end
+
+CtrlVar.MeshSize=UserVar.MeshResolution ;
+CtrlVar.MeshSizeMax=CtrlVar.MeshSize ; 
+%%  Level-set parameters
 
 
-% The melt is decribed as a= a_1 (h-hmin)
-CtrlVar.LevelSetMethodMassBalanceFeedbackCoeffLin=-1;  % This is the constant a1, it has units 1/time.
-% Default value is -1
-
-CtrlVar.LevelSetMinIceThickness=CtrlVar.ThickMin+1;    % this is the hmin constant, i.e. the accepted min ice thickness
-% over the 'ice-free' areas.
-% Default value is CtrlVar.ThickMin+1
-
-CtrlVar.LevelSetEvolution="-By solving the level set equation-"  ; % "-prescribed-", 
+CtrlVar.LevelSetInitialisationInterval=100 ;
 
 
+CtrlVar.DefineOutputsDt=5;
+CtrlVar.LevelSetMethodMassBalanceFeedbackCoeffLin=-10;  % This is the constant a1, it has units 1/time.
+CtrlVar.LevelSetMethodMassBalanceFeedbackCoeffCubic=0;
 
-%%
+if contains(UserVar.RunType,"-P-")
 
-CtrlVar.SlidingLaw="Weertman" ; % "Umbi" ; % "Weertman" ; % "Tsai" ; % "Cornford" ;  "Umbi" ; "Cornford" ; % "Tsai" , "Budd"
+    CtrlVar.LevelSetEvolution="-Prescribed-"   ; % "-prescribed-",
+    CtrlVar.LevelSetMethod=1;
 
-switch CtrlVar.SlidingLaw
+elseif contains(UserVar.RunType,"-C-")
+
+
+    CtrlVar.LevelSetEvolution="-By solving the level set equation-"   ; % "-prescribed-",
+    CtrlVar.LevelSetMethod=1;
+
+    % specify calving law
+    if contains(UserVar.RunType,"-Fq")
+
+        UserVar.CalvingLaw.Type="-Fqk-"  ;
+        UserVar.CalvingLaw.Fqk.q=str2double(extract(extract(UserVar.RunType,"-Fq"+digitsPattern+"Fk"),digitsPattern));
+        UserVar.CalvingLaw.Fqk.k=str2double(extract(extract(UserVar.RunType,"Fk"+digitsPattern+"Fmin"),digitsPattern));
+        UserVar.CalvingLaw.Fqk.Fmin=str2double(extract(extract(UserVar.RunType,"Fmin"+digitsPattern+"cmin"),digitsPattern));
+        UserVar.CalvingLaw.Fqk.cmin=str2double(extract(extract(UserVar.RunType,"cmin"+digitsPattern+"Fmax"),digitsPattern));
+        UserVar.CalvingLaw.Fqk.Fmax=str2double(extract(extract(UserVar.RunType,"Fmax"+digitsPattern+"cmax"),digitsPattern));
+        UserVar.CalvingLaw.Fqk.cmax=str2double(extract(extract(UserVar.RunType,"cmax"+digitsPattern+"-"),digitsPattern));
+
+    elseif contains(UserVar.RunType,"-AC")  % Anna Crawford
+
+        if contains(UserVar.RunType,"-ACRR-")  
+
+            UserVar.CalvingLaw.Type="-ACRR-"  ; % Anna Crawford as retreat rate (?!)
+        else
+            UserVar.CalvingLaw.Type="-AC-"  ;
+        end
+        CtrlVar.LevelSetInitialisationInterval=1 ;
+        CtrlVar.DefineOutputsDt=0.01;
+        CtrlVar.LevelSetMethodMassBalanceFeedbackCoeffLin=-1000;  % This is the constant a1, it has units 1/time.
+        CtrlVar.LevelSetMethodMassBalanceFeedbackCoeffCubic=-1;
+
+    elseif contains(UserVar.RunType,"-NV-")
+
+        UserVar.CalvingLaw.Type="-NV-"  ;  % "-ScalesWithNormalVelocity+1.0-"  ;
+        UserVar.CalvingLaw.Factor=1.1;
+
+    elseif contains(UserVar.RunType,"-RR-")
+
+        UserVar.CalvingLaw.Type="-RR-"  ;  %  prescribed retreat rate
+        UserVar.CalvingLaw.Factor="";
+
+    elseif contains(UserVar.RunType,"-DP")
+
+        if contains(UserVar.RunType,"-DPRR-")
+            UserVar.CalvingLaw.Type="-DPRR-"  ;  % Robert DeConto and David Pollard as retreat rate (?!)
+        else
+            UserVar.CalvingLaw.Type="-DP-"  ;  % Robert DeConto and David Pollard
+        end
+
+    else
+        error("what calving law?")
+
+    end
+else
+    CtrlVar.LevelSetMethod=0;
+end
+
+CtrlVar.LevelSetInitialisationMethod="-geo-" ;
+CtrlVar.LevelSetReinitializePDist=true ;
+CtrlVar.LevelSetFixPointSolverApproach="-PTS-" ;   % pseudo forward stepping
+CtrlVar.LevelSetPseudoFixPointSolverTolerance=100;
+CtrlVar.LevelSetPseudoFixPointSolverMaxIterations=100;
+CtrlVar.DevelopmentVersion=false;
+CtrlVar.LevelSetFABmu.Scale="-u-cl-" ; % "-constant-";
+CtrlVar.LevelSetFABmu.Value=0.1;
+CtrlVar.CalvingLaw.Evaluation="-int-";
+CtrlVar.LevelSetMethodSolveOnAStrip=1; 
+
+if contains(UserVar.RunType,"-SW")
+    CtrlVar.LevelSetMethodStripWidth=str2double(extract(extract(UserVar.RunType,"-SW"+digitsPattern+"-"),digitsPattern));
+    CtrlVar.LevelSetMethodStripWidth=CtrlVar.LevelSetMethodStripWidth*1000;
+else
+    CtrlVar.LevelSetMethodStripWidth=50e3;
+end
+
+if contains(UserVar.RunType,"-Duvh")   % 'Forward-Transient-Calving-Initialisation' ;
+    CtrlVar.LevelSetMethodAutomaticallyDeactivateElements=1 ;
+else
+    CtrlVar.LevelSetMethodAutomaticallyDeactivateElements=0 ;
+end
+
+CtrlVar.TriNodes=3;
+
+if contains(UserVar.RunType,'-uv-h')
+    CtrlVar.Implicituvh=0;           % 0: prognostic run is semi-implicit (implicit with respect to h only)
+    CtrlVar.etaZero=100 ;
+    CtrlVar.LevelSetMethodStripWidth=20000;
+    CtrlVar.LevelSetMethodAutomaticallyDeactivateElements=1;                    %
+    CtrlVar.LevelSetMethodAutomaticallyDeactivateElementsRunStepInterval=20;    %
+    CtrlVar.TriNodes=3;
     
-    case "Weertman"
-        UserVar.CFile='FC-Weertman.mat'; UserVar.AFile='FA-Weertman.mat';
-    case "Umbi"
-        UserVar.CFile='FC-Umbi.mat'; UserVar.AFile='FA-Umbi.mat';
-    otherwise
-        error('A and C fields not available')
+end
+
+
+
+if  contains(UserVar.GroupAssembly,"-uvhGroup-")
+    CtrlVar.uvhGroupAssembly=true;
+else
+    CtrlVar.uvhGroupAssembly=false;
+end
+
+if  contains(UserVar.GroupAssembly,"-uvGroup-") || contains(UserVar.RunType,"-uvGroup-") 
+    CtrlVar.uvGroupAssembly=true;
+else
+    CtrlVar.uvGroupAssembly=false;
+end
+
+
+CtrlVar.LevelSetInfoLevel=1 ;
+
+pat="-TM"+digitsPattern+"-";
+ThickMin=str2double(extract(extract(UserVar.RunType,pat),digitsPattern))/100;
+
+
+if isempty(ThickMin)
+    CtrlVar.ThickMin=1;
+    CtrlVar.ThickMin=0.01;  % Default changed
+else
+    CtrlVar.ThickMin=ThickMin;
+end
+CtrlVar.LevelSetMinIceThickness=CtrlVar.ThickMin;    % this is the hmin constant, i.e. the accepted min ice thickness
+
+%%
+CtrlVar.SaveInitialMeshFileName=[] ; % Do not create a new initial mesh file each time
+%%
+CtrlVar.SaveInitialMeshFileName='MeshFile';
+
+
+if contains(UserVar.RunType,"Cornford")
+    CtrlVar.SlidingLaw="Cornford" ;
+elseif contains(UserVar.RunType,"Umbi")
+    CtrlVar.SlidingLaw="Umbi" ;
+else
+    CtrlVar.SlidingLaw="Weertman" ;
+end
+% "Umbi" ; % "Weertman" ; % "Tsai" ; % "Cornford" ;  "Umbi" ; "Cornford" ; % "Tsai" , "Budd"
+
+
+    
+
+
+if ~isfield(UserVar,'AFile') ||  isempty(UserVar.AFile)
+
+
+    InvFile=CtrlVar.SlidingLaw...
+        +"-Ca"+num2str(CtrlVar.Inverse.Regularize.logC.ga)...
+        +"-Cs"+num2str(CtrlVar.Inverse.Regularize.logC.gs)...
+        +"-Aa"+num2str(CtrlVar.Inverse.Regularize.logAGlen.ga)...
+        +"-As"+num2str(CtrlVar.Inverse.Regularize.logAGlen.gs)...
+        +"-"+num2str(UserVar.MeshResolution/1000)+"km";
+
+    if contains(UserVar.RunType,"-Alim-")
+        InvFile=InvFile+"-Alim-";
+    end
+    
+    if contains(UserVar.RunType,"-Clim-")
+        InvFile=InvFile+"-Clim-";
+    end
+
+    if contains(UserVar.RunType,"-uvdhdt-")
+        InvFile=InvFile+"-uvdhdt-";
+    end
+
+     if contains(UserVar.RunType,"-uvGroup-")
+        InvFile=InvFile+"-uvGroup-";
+    end
+
+    InvFile=replace(InvFile,".","k");
+
+    InvFile=replace(InvFile,"--","-");
+
+    UserVar.AFile="FA-"+InvFile;
+    UserVar.CFile="FC-"+InvFile;
+
+
+
 end
 
 if ~isfile(UserVar.GeometryInterpolant) || ~isfile(UserVar.SurfaceVelocityInterpolant)
-     
-     fprintf('\n This run requires the additional input files: \n %s \n %s \n %s  \n \n',UserVar.GeometryInterpolant,UserVar.DensityInterpolant,UserVar.SurfaceVelocityInterpolant)
-     fprintf('You can download these file from : https://1drv.ms/f/s!Anaw0Iv-oEHTloRzWreBMDBFCJ0R4Q \n')
-     
+
+    fprintf('\n This run requires the additional input files: \n %s \n %s \n %s  \n \n',UserVar.GeometryInterpolant,UserVar.DensityInterpolant,UserVar.SurfaceVelocityInterpolant)
+    fprintf('You can download these file from : https://1drv.ms/f/s!Anaw0Iv-oEHTloRzWreBMDBFCJ0R4Q \n')
+
 end
+
+%% UserVar.RunType
+
+if contains(UserVar.RunType,"Inverse")
+
+    if contains(UserVar.RunType,"Inverse-UaOpt")
+        % Testing
+        CtrlVar.Inverse.MinimisationMethod='UaOptimization-Hessian'; % {'MatlabOptimization','UaOptimization'}
+    end
+
+    UserVar.DefineOutputs="-"; %
+    CtrlVar.InverseRun=1;
+
+    CtrlVar.Restart=0;
+    CtrlVar.Inverse.InfoLevel=1;
+    CtrlVar.InfoLevelNonLinIt=0;  CtrlVar.InfoLevel=0;
+    CtrlVar.InfoLevelNonLinIt=1;  CtrlVar.InfoLevel=1;
+
+    UserVar.Slipperiness.ReadFromFile=0;
+    UserVar.AGlen.ReadFromFile=0;
+
+    CtrlVar.ReadInitialMesh=1;
+    CtrlVar.AdaptMesh=0;
+   
+
+    CtrlVar.Inverse.Iterations=2;
+
+    CtrlVar.Inverse.InvertFor="-logA-logC-" ; % {'C','logC','AGlen','logAGlen'}
+    CtrlVar.Inverse.Regularize.Field=CtrlVar.Inverse.InvertFor;
+    CtrlVar.Inverse.DataMisfit.GradientCalculation="-adjoint-" ; % "-FixpointC-"; "adjoint";
+
+    if contains(UserVar.RunType,"-uvdhdt-")
+        CtrlVar.Inverse.Measurements="-uv-dhdt-" ;  % {'-uv-,'-uv-dhdt-','-dhdt-'}
+    else
+        CtrlVar.Inverse.Measurements="-uv-" ;  % {'-uv-,'-uv-dhdt-','-dhdt-'}
+    end
+
+
+    
+    CtrlVar.NameOfFileForSavingSlipperinessEstimate="InvC-"+InvFile;
+    CtrlVar.NameOfFileForSavingAGlenEstimate="InvA-"+InvFile;
+
+    CtrlVar.Inverse.NameOfRestartOutputFile="InverseRestartFile-"+InvFile;
+
+
+    % [----------- Testing adjoint gradents
+    CtrlVar.Inverse.TestAdjoint.isTrue=0; % If true then perform a brute force calculation
+    % of the directional derivative of the objective function.
+    CtrlVar.TestAdjointFiniteDifferenceType="central-second-order" ;
+    CtrlVar.Inverse.TestAdjoint.FiniteDifferenceStepSize=0.01 ;
+    CtrlVar.Inverse.TestAdjoint.iRange=[100,121] ;  % range of nodes/elements over which brute force gradient is to be calculated.
+    % if left empty, values are calulated for every node/element within the mesh.
+    % If set to for example [1,10,45] values are calculated for these three
+    % nodes/elements.
+    % ----------------------- ]end, testing adjoint parameters.
+
+
+elseif contains(UserVar.RunType,"-FT-")
+
+    CtrlVar.InverseRun=0;
+    CtrlVar.TimeDependentRun=1;
+    CtrlVar.Restart=0;
+    CtrlVar.InfoLevelNonLinIt=1;
+    UserVar.Slipperiness.ReadFromFile=1;
+    UserVar.AGlen.ReadFromFile=1;
+  
+    CtrlVar.AdaptMesh=0;
+    CtrlVar.TotalNumberOfForwardRunSteps=inf;
+    %CtrlVar.LevelSetMethod=0;
+
+elseif contains(UserVar.RunType,"Forward-Diagnostic")
+
+    CtrlVar.InverseRun=0;
+    CtrlVar.TimeDependentRun=0;
+    CtrlVar.Restart=0;
+    CtrlVar.InfoLevelNonLinIt=1;
+    UserVar.Slipperiness.ReadFromFile=1;
+    UserVar.AGlen.ReadFromFile=1;
+    CtrlVar.ReadInitialMesh=1;
+    CtrlVar.AdaptMesh=0;
+
+elseif contains(UserVar.RunType,"GenerateMesh")
+
+    CtrlVar.TimeDependentRun=0;  % {0|1} if true (i.e. set to 1) then the run is a forward transient one, if not
+    CtrlVar.InverseRun=0;
+    CtrlVar.Restart=0;
+    CtrlVar.ReadInitialMesh=0;
+    CtrlVar.MeshGenerator="mesh2d" ; % "mesh2d" ; % 'mesh2d';
+
+    CtrlVar.OnlyMeshDomainAndThenStop=0;
+    CtrlVar.AdaptMeshAndThenStop=1; 
+
+    UserVar.Slipperiness.ReadFromFile=1;
+    UserVar.AGlen.ReadFromFile=1;
+    CtrlVar.TotalNumberOfForwardRunSteps=1;
+
+    if contains(UserVar.RunType,"-AM-")
+        CtrlVar.AdaptMesh=1;
+        CtrlVar.AdaptMeshMaxIterations=5;
+        CtrlVar.MeshRefinementMethod='explicit:global'; 
+    else
+        CtrlVar.AdaptMesh=0;
+    end
+
+
+
+
+%     CtrlVar.MeshAdapt.GLrange=[2*CtrlVar.MeshSize   CtrlVar.MeshSize/2 ; ...
+%                                  CtrlVar.MeshSize   CtrlVar.MeshSize/5 ; ...
+%                                  CtrlVar.MeshSize/2   CtrlVar.MeshSize/10 ];
+%   
+     CtrlVar.MeshAdapt.CFrange=[5*CtrlVar.MeshSize   CtrlVar.MeshSize/2 ; ...
+                                2*CtrlVar.MeshSize   CtrlVar.MeshSize/5 ; ...
+                                 CtrlVar.MeshSize   CtrlVar.MeshSize/10 ];
+  
+    
+
+    CtrlVar.AdaptMeshInitial=1  ;       % remesh in first iteration (Itime=1)  even if mod(Itime,CtrlVar.AdaptMeshRunStepInterval)~=0.
+    
+    
+    CtrlVar.InfoLevelAdaptiveMeshing=1;
+
+   UserVar.AFile="FA-Weertman-PIG-TWG-20km";
+   UserVar.CFile="FC-Weertman-PIG-TWG-20km";
+
+
+    CtrlVar.SaveInitialMeshFileName=...
+        "NewMeshFile"...
+        +num2str(CtrlVar.MeshSizeMax/1000) ...
+        +"km-"...  ; %%            +CtrlVar.MeshGenerator ...
+        +UserVar.Region ;
+
+else
+
+    error("case not found")
+
+
+end
+
+
+
+%% Time step, total run time, run steps
+
+
 
 %%
+CtrlVar.dt=1e-5;   
+CtrlVar.ATSdtMax=0.1;
+CtrlVar.ATSdtMin=1e-5;  
+CtrlVar.ATSTargetIterations=6;
+CtrlVar.ThicknessConstraintsItMax=0  ; % only update active-set, then move to next time step
+
+CtrlVar.NRitmax=150;       % maximum number of NR iteration
 
 
 
 
-
-
-switch UserVar.RunType
-    
-    case {'Inverse-MatOpt','Inverse-UaOpt'}
-        
-        CtrlVar.InverseRun=1;
-        
-        CtrlVar.Restart=0;
-        CtrlVar.Inverse.InfoLevel=1;
-        CtrlVar.InfoLevelNonLinIt=0;
-        CtrlVar.InfoLevel=0;
-        
-        UserVar.Slipperiness.ReadFromFile=0;
-        UserVar.AGlen.ReadFromFile=0;
-        
-        CtrlVar.ReadInitialMesh=1;
-        CtrlVar.AdaptMesh=0;
-        
-        CtrlVar.Inverse.Iterations=2;
-        
-        CtrlVar.Inverse.InvertFor="-logA-logC-" ; % {'C','logC','AGlen','logAGlen'}
-        CtrlVar.Inverse.Regularize.Field=CtrlVar.Inverse.InvertFor;
-        CtrlVar.Inverse.DataMisfit.GradientCalculation="-adjoint-" ; % "-FixpointC-"; "adjoint";
-        CtrlVar.Inverse.Measurements="-uv-" ;  % {'-uv-,'-uv-dhdt-','-dhdt-'}
-  
-        
-        CtrlVar.Inverse.Regularize.logC.ga=1;
-        CtrlVar.Inverse.Regularize.logC.gs=1e3 ;
-        CtrlVar.Inverse.Regularize.logAGlen.ga=1;
-        CtrlVar.Inverse.Regularize.logAGlen.gs=1e3 ;
-        
-        
-        if contains(UserVar.RunType,"UaOpt")
-            
-            
-            CtrlVar.Inverse.InvertFor="-logA-" ;
-            CtrlVar.Inverse.Iterations=5;
-            CtrlVar.Inverse.Regularize.Field=CtrlVar.Inverse.InvertFor;
-            CtrlVar.Inverse.MinimisationMethod='UaOptimization-Hessian'; % {'MatlabOptimization','UaOptimization'}
-            
-            
-            CtrlVar.Inverse.DataMisfit.Multiplier=1;
-            CtrlVar.Inverse.Regularize.Multiplier=1;
-        end
-        
-        % [----------- Testing adjoint gradents
-        CtrlVar.Inverse.TestAdjoint.isTrue=0; % If true then perform a brute force calculation
-        % of the directional derivative of the objective function.
-        CtrlVar.TestAdjointFiniteDifferenceType="central-second-order" ;
-        CtrlVar.Inverse.TestAdjoint.FiniteDifferenceStepSize=0.01 ;
-        CtrlVar.Inverse.TestAdjoint.iRange=[100,121] ;  % range of nodes/elements over which brute force gradient is to be calculated.
-        % if left empty, values are calulated for every node/element within the mesh.
-        % If set to for example [1,10,45] values are calculated for these three
-        % nodes/elements.
-        % ----------------------- ]end, testing adjoint parameters.
-        
-        
-    case 'Forward-Transient'
-        
-        CtrlVar.InverseRun=0;
-        CtrlVar.TimeDependentRun=1;
-        CtrlVar.Restart=0;
-        CtrlVar.InfoLevelNonLinIt=1;
-        UserVar.Slipperiness.ReadFromFile=1;
-        UserVar.AGlen.ReadFromFile=1;
-        CtrlVar.ReadInitialMesh=1;
-        CtrlVar.AdaptMesh=0;
-        CtrlVar.TotalNumberOfForwardRunSteps=inf; 
-        %CtrlVar.LevelSetMethod=0; 
-        
-    case 'Forward-Diagnostic'
-               
-        CtrlVar.InverseRun=0;
-        CtrlVar.TimeDependentRun=0;
-        CtrlVar.Restart=0;
-        CtrlVar.InfoLevelNonLinIt=1;
-        UserVar.Slipperiness.ReadFromFile=1;
-        UserVar.AGlen.ReadFromFile=1;
-        CtrlVar.ReadInitialMesh=1;
-        CtrlVar.AdaptMesh=0;
-        
-    case 'TestingMeshOptions'
-        
-        CtrlVar.TimeDependentRun=0;  % {0|1} if true (i.e. set to 1) then the run is a forward transient one, if not
-        CtrlVar.InverseRun=0;
-        CtrlVar.Restart=0;
-        CtrlVar.ReadInitialMesh=0;
-        
-        UserVar.Slipperiness.ReadFromFile=1;
-        UserVar.AGlen.ReadFromFile=1;
-        CtrlVar.TotalNumberOfForwardRunSteps=1; 
-        CtrlVar.AdaptMesh=0;
-        CtrlVar.AdaptMeshInitial=0  ;       % remesh in first iteration (Itime=1)  even if mod(Itime,CtrlVar.AdaptMeshRunStepInterval)~=0.
-        CtrlVar.AdaptMeshAndThenStop=1;    % if true, then mesh will be adapted but no further calculations performed
-        % useful, for example, when trying out different remeshing options (then use CtrlVar.doAdaptMeshPlots=1 to get plots)
-        CtrlVar.InfoLevelAdaptiveMeshing=10;
+if contains(UserVar.RunType,"-I-")
+    CtrlVar.time=-0.1;  % If I'm using a mass-balance initialisation set start time to a slighly neg value
+    % In DefineMassBaloance, the initialisation is done for negative times.
+else
+    CtrlVar.time=0;
 end
 
+CtrlVar.TotalTime=100;
 
-CtrlVar.dt=0.01;   CtrlVar.DefineOutputsDt=0;
-CtrlVar.time=0;
 
-CtrlVar.TotalTime=10;
-
-% Element type
-CtrlVar.TriNodes=3 ;
 
 
 %%
 CtrlVar.doplots=1;
-CtrlVar.PlotMesh=0;  
+CtrlVar.PlotMesh=0;
 CtrlVar.PlotBCs=1 ;
 CtrlVar.PlotXYscale=1000;
-CtrlVar.doAdaptMeshPlots=5; 
+CtrlVar.doAdaptMeshPlots=5;
 
-%% Meshing 
+%% Meshing
 
-CtrlVar.ReadInitialMeshFileName='PIG-TWG-Mesh';
-CtrlVar.ReadInitialMeshFileName='MeshFile10km';
-CtrlVar.SaveInitialMeshFileName='MeshFile';
-CtrlVar.MaxNumberOfElements=70e3;
+if contains(UserVar.RunType,"-AM-")
 
-CtrlVar.MeshRefinementMethod='explicit:local:newest vertex bisection';   
-% CtrlVar.MeshRefinementMethod='explicit:local:red-green';
-CtrlVar.MeshRefinementMethod='explicit:global';   
+    CtrlVar.ReadInitialMeshFileName="MeshFileAdapt20km36kEle";
 
+else
 
-CtrlVar.MeshGenerator='mesh2d' ; % 'mesh2d';
+    CtrlVar.ReadInitialMeshFileName=...
+        "MeshFile"...
+        +num2str(UserVar.MeshResolution/1000) ...
+        +"km-"...  ; %%            +CtrlVar.MeshGenerator ...
+        +UserVar.Region ;
+end
 
-
-CtrlVar.MeshSizeMax=10e3;
-CtrlVar.MeshSize=CtrlVar.MeshSizeMax/2;
-CtrlVar.MeshSizeMin=CtrlVar.MeshSizeMax/20;
-
-UserVar.MeshSizeIceShelves=CtrlVar.MeshSizeMax/5;
-
+CtrlVar.ReadInitialMeshFileName=replace(CtrlVar.ReadInitialMeshFileName,".","k");
 MeshBoundaryCoordinates=CreateMeshBoundaryCoordinatesForPIGandTWG(UserVar,CtrlVar);
-                                         
-CtrlVar.AdaptMeshInitial=0  ;       % remesh in first iteration (Itime=1)  even if mod(Itime,CtrlVar.AdaptMeshRunStepInterval)~=0.
-CtrlVar.AdaptMeshAndThenStop=1;    % if true, then mesh will be adapted but no further calculations performed
-                                   % useful, for example, when trying out different remeshing options (then use CtrlVar.doAdaptMeshPlots=1 to get plots)
-CtrlVar.AdaptMeshMaxIterations=5;
-CtrlVar.SaveAdaptMeshFileName='MeshFileAdapt';    %  file name for saving adapt mesh. If left empty, no file is written
-CtrlVar.AdaptMeshRunStepInterval=1 ; % remesh whenever mod(Itime,CtrlVar.AdaptMeshRunStepInterval)==0
+
+%% Adapting mesh
+
+% useful, for example, when trying out different remeshing options (then use CtrlVar.doAdaptMeshPlots=1 to get plots)
+
+CtrlVar.SaveAdaptMeshFileName="";    %  file name for saving adapt mesh. If left empty, no file is written
+CtrlVar.AdaptMeshRunStepInterval=100 ; % remesh whenever mod(Itime,CtrlVar.AdaptMeshRunStepInterval)==0
 
 
+if contains(UserVar.RunType,"-GLrange-")
 
-I=1;
-CtrlVar.ExplicitMeshRefinementCriteria(I).Name='effective strain rates';
-CtrlVar.ExplicitMeshRefinementCriteria(I).Scale=0.001;
-CtrlVar.ExplicitMeshRefinementCriteria(I).EleMin=[];
-CtrlVar.ExplicitMeshRefinementCriteria(I).EleMax=[];
-CtrlVar.ExplicitMeshRefinementCriteria(I).p=[];
-CtrlVar.ExplicitMeshRefinementCriteria(I).InfoLevel=1;
-CtrlVar.ExplicitMeshRefinementCriteria(I).Use=true;
+    % testing if this speeds things up
+   
+    CtrlVar.inUpdateFtimeDerivatives.SetTimeDerivativesAtMinIceThickToZero=true;
+    CtrlVar.inUpdateFtimeDerivatives.SetTimeDerivativesDowstreamOfCalvingFrontsToZero=true;
+    CtrlVar.InfoLevelAdaptiveMeshing=1;
 
-
-I=I+1;
-CtrlVar.ExplicitMeshRefinementCriteria(I).Name='flotation';
-CtrlVar.ExplicitMeshRefinementCriteria(I).Scale=0.0001;
-CtrlVar.ExplicitMeshRefinementCriteria(I).EleMin=[];
-CtrlVar.ExplicitMeshRefinementCriteria(I).EleMax=[];
-CtrlVar.ExplicitMeshRefinementCriteria(I).p=[];
-CtrlVar.ExplicitMeshRefinementCriteria(I).InfoLevel=1;
-CtrlVar.ExplicitMeshRefinementCriteria(I).Use=false;
-
-I=I+1;
-CtrlVar.ExplicitMeshRefinementCriteria(I).Name='thickness gradient';
-CtrlVar.ExplicitMeshRefinementCriteria(I).Scale=0.01;
-CtrlVar.ExplicitMeshRefinementCriteria(I).EleMin=[];
-CtrlVar.ExplicitMeshRefinementCriteria(I).EleMax=[];
-CtrlVar.ExplicitMeshRefinementCriteria(I).p=[];
-CtrlVar.ExplicitMeshRefinementCriteria(I).InfoLevel=1;
-CtrlVar.ExplicitMeshRefinementCriteria(I).Use=false;
+    CtrlVar.AdaptMesh=1;
+    CtrlVar.MeshRefinementMethod="explicit:local:newest vertex bisection" ;
+    CtrlVar.AdaptMeshRunStepInterval=10 ;
 
 
-I=I+1;
-CtrlVar.ExplicitMeshRefinementCriteria(I).Name='upper surface gradient';
-CtrlVar.ExplicitMeshRefinementCriteria(I).Scale=0.01;
-CtrlVar.ExplicitMeshRefinementCriteria(I).EleMin=[];
-CtrlVar.ExplicitMeshRefinementCriteria(I).EleMax=[];
-CtrlVar.ExplicitMeshRefinementCriteria(I).p=[];
-CtrlVar.ExplicitMeshRefinementCriteria(I).InfoLevel=1;
-CtrlVar.ExplicitMeshRefinementCriteria(I).Use=false;
+    CtrlVar.doplots=true; CtrlVar.doAdaptMeshPlots=true; CtrlVar.InfoLevelAdaptiveMeshing=1;
 
+    CtrlVar.MeshAdapt.GLrange=...
+        [2*CtrlVar.MeshSize   CtrlVar.MeshSize/2 ; ...
+        CtrlVar.MeshSize   CtrlVar.MeshSize/5 ; ...
+        CtrlVar.MeshSize/2   CtrlVar.MeshSize/10 ];
+        
+end
 
 
 %%
-UserVar.AddDataErrors=0;
+CtrlVar.ThicknessConstraints=1;
+CtrlVar.ResetThicknessToMinThickness=0;
 
-
-
+%% A C constraints
+if contains(UserVar.RunType,"-Alim-")
+    CtrlVar.AGlenmin=AGlenVersusTemp(-20) ;
+end
 %%
-CtrlVar.ThicknessConstraints=0;
-CtrlVar.ResetThicknessToMinThickness=1;  % change this later on
-CtrlVar.ThickMin=50;
+if batchStartupOptionUsed
+    CtrlVar.doplots=0;   % disable plotting if running as batch
+    fprintf("disabling plotting as this is a batch job\n")
+    if contains(UserVar.DefineOutputs,"save")
+        UserVar.DefineOutputs="-save-";  % disable plotting in DefineOutputs as well
+    end
+end
 
 %%
 
 
-CtrlVar.NameOfRestartFiletoWrite=CtrlVar.Experiment+"-ForwardRestartFile.mat";
-CtrlVar.NameOfRestartFiletoRead=CtrlVar.NameOfRestartFiletoWrite;
-
-CtrlVar.Inverse.NameOfRestartOutputFile=CtrlVar.Experiment+"-InverseRestartFile.mat";
-CtrlVar.Inverse.NameOfRestartInputFile=CtrlVar.Inverse.NameOfRestartOutputFile; 
-
-CtrlVar.Experiment=CtrlVar.Experiment+CtrlVar.LevelSetFABmu.Scale+"-muValue"+num2str(CtrlVar.LevelSetFABmu.Value)...
-    +"-Ini"+num2str(CtrlVar.LevelSetInitialisationInterval)+"-PDist"+num2str(CtrlVar.LevelSetReinitializePDist);
-CtrlVar.Experiment=replace(CtrlVar.Experiment,"--","-"); 
-CtrlVar.Experiment=replace(CtrlVar.Experiment,".","k"); 
+if FileNameFormat=="new"
+    CtrlVar.Experiment=UserVar.RunType ;
+else
+    CtrlVar.Experiment= ...
+        UserVar.RunType...
+        +CtrlVar.LevelSetFABmu.Scale....
+        +"-mu"+num2str(CtrlVar.LevelSetFABmu.Value)...
+        +"-Ini"+CtrlVar.LevelSetInitialisationMethod+num2str(CtrlVar.LevelSetInitialisationInterval)...
+        +"-Strip"+num2str(CtrlVar.LevelSetMethodSolveOnAStrip)...
+        +"-SW="+num2str(CtrlVar.LevelSetMethodStripWidth/1000)+"km"...
+        +"-AD="+num2str(CtrlVar.LevelSetMethodAutomaticallyDeactivateElements)...
+        +UserVar.CalvingLaw.String...
+        +"-kH="+num2str(CtrlVar.kH)...
+        +"-asRacmo"...
+        +"-dhdtLim"+num2str(CtrlVar.LimitRangeInUpdateFtimeDerivatives)...
+        +"-"+UserVar.Region...
+        +"-"+CtrlVar.ReadInitialMeshFileName;
 
 end
+CtrlVar.Experiment=replace(CtrlVar.Experiment,"--","-");
+CtrlVar.Experiment=replace(CtrlVar.Experiment,".","k");
+CtrlVar.Experiment=replace(CtrlVar.Experiment,"+","p");
+
+if startsWith(CtrlVar.Experiment,"-")
+    CtrlVar.Experiment=replaceBetween(CtrlVar.Experiment,1,1,"");
+end
+
+
+
+
+
+CtrlVar.Inverse.NameOfRestartOutputFile=replace(CtrlVar.Inverse.NameOfRestartOutputFile,"--","-");
+CtrlVar.Inverse.NameOfRestartOutputFile=replace(CtrlVar.Inverse.NameOfRestartOutputFile,".","k");
+CtrlVar.Inverse.NameOfRestartInputFile=CtrlVar.Inverse.NameOfRestartOutputFile;
+
+
+
+CtrlVar.ReadInitialMeshFileName=replace(CtrlVar.ReadInitialMeshFileName,".","k");
+CtrlVar.SaveInitialMeshFileName=replace(CtrlVar.SaveInitialMeshFileName,".","k");
+
+
+UserVar.CFile=replace(UserVar.CFile,".mat","");
+UserVar.AFile=replace(UserVar.AFile,".mat","");
+
+UserVar.CFile=replace(UserVar.CFile,".","k");
+UserVar.AFile=replace(UserVar.AFile,".","k");
+
+
+CtrlVar.NameOfRestartFiletoWrite="Restart-"+UserVar.RunType+".mat";
+CtrlVar.NameOfRestartFiletoWrite=replace(CtrlVar.NameOfRestartFiletoWrite,"--","-");
+CtrlVar.NameOfRestartFiletoRead=CtrlVar.NameOfRestartFiletoWrite;
+
+
+if CtrlVar.InverseRun
+    fprintf(" Inverse restart file: %s \n",CtrlVar.Inverse.NameOfRestartOutputFile)
+end
+
+if CtrlVar.InverseRun
+    if isfile(CtrlVar.Inverse.NameOfRestartInputFile+".mat")
+        CtrlVar.Restart=1;
+    else
+        CtrlVar.Restart=0;
+        fprintf("No restart file found. Starting a new run. \n")
+    end
+else
+    if isfile(CtrlVar.NameOfRestartFiletoRead)
+        CtrlVar.Restart=1;
+    else
+        CtrlVar.Restart=0;
+    end
+end
+
+if ~CtrlVar.InverseRun
+    if contains(UserVar.LevelSetDownstreamRheology,"-LSDRlin-")
+
+        CtrlVar.LevelSetDownstream_nGlen=1;
+        eta= 1e12  / (1000*365.25*24*60*60);
+        CtrlVar.LevelSetDownstreamAGlen=1/(2*eta);
+
+    end
+end
+
+if contains(UserVar.RunType,"GenerateMesh")
+    CtrlVar.Restart=0;
+    CtrlVar.ReadInitialMesh=0;
+elseif CtrlVar.Restart
+    CtrlVar.ReadInitialMesh=0;
+else
+    CtrlVar.ReadInitialMesh=1;
+end
+
+
+CtrlVar.WriteRestartFileInterval=20;
+
+%% Testing
+CtrlVar.DefineOutputsDt=10 ; CtrlVar.ATSdtMax=20; CtrlVar.ATSTargetIterations=10 ; CtrlVar.dt=0.001;   CtrlVar.ATSdtMin=0.001;  CtrlVar.NRitmax=50;   CtrlVar.TotalTime=1000;    % maximum number of NR iteration
+CtrlVar.ExplicitEstimationMethod="-no extrapolation-" ;
+
+
+%%
+
+% if CtrlVar.InverseRun && CtrlVar.Restart
+% 
+%     [UserVar]=DefineModificationsToInverseRestartRunData(UserVar,CtrlVar) ;
+% 
+% end
+
+% ModifyInverseRestartFile
+
+
+
+
