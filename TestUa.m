@@ -1,14 +1,26 @@
 
-% (beta)   26/06/2023 
+
+% beta: 17/03/2023
 
 
+
+% (beta)  02/10/2023
+>>>>>>> f4a254693623c812cf6cbb6128be8a18cd3c6dcd
 % results = runtests('TestUa.m') ; table(results)
 %
 
 function tests = TestUa
 
     
+<<<<<<< HEAD
   
+=======
+    
+    % f={@setupOnce,@testCalvingManuallyDeactivateElements,@teardownOnce};      % outdated, not expected to work
+    % f={@setupOnce,@testCalvingThroughMassBalanceFeedback,@teardownOnce};  % outdated, not expected to work
+    %f={@testPIGmeshing};
+
+>>>>>>> f4a254693623c812cf6cbb6128be8a18cd3c6dcd
     
     %f=localfunctions ;  % all tests
     
@@ -61,7 +73,11 @@ function testPIGdiagnostic(testCase)
     % expSolution = 95982.7181182457;  % this was with the old bedmap2 data
     % expSolution = 9757675340.83092 ;   % this is with the new Bedmachine data, 10/09/2021
     % expSolution = 202912           ;     % this is with the new Bedmachine data and a new boundary, 01/11/2021
+<<<<<<< HEAD
     expSolution = UserVar.Test.Norm.expValue ;
+=======
+    expSolution= 201932.019377657  ; %  Z840   
+>>>>>>> f4a254693623c812cf6cbb6128be8a18cd3c6dcd
     verifyEqual(testCase,actSolution,expSolution,'RelTol',1e-4)
     
 end
