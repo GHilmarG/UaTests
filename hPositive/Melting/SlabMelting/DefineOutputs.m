@@ -4,12 +4,16 @@ function UserVar=DefineOutputs(UserVar,CtrlVar,MUA,BCs,F,l,GF,InvStartValues,Inv
 
 %save TestSaveDefineOutputs
 
+if isempty(UserVar.Plots)
 
-switch lower(CtrlVar.FlowApproximation)
-    case 'sstream'
-        plots='-save-';
-    case'ssheet'
-        plots='-sbB-udvd-BCs-R-as-';
+    switch lower(CtrlVar.FlowApproximation)
+        case 'sstream'
+            plots='-save-';
+        case'ssheet'
+            plots='-sbB-udvd-BCs-R-as-';
+    end
+else
+    plots=UserVar.Plots; 
 end
 
 TRI=[];
@@ -18,11 +22,14 @@ I=F.h<=CtrlVar.ThickMin;
 
 
 if contains(plots,'-save-')
-          
-        FileName=sprintf("Results/%07i-%s.mat",round(100*CtrlVar.time),CtrlVar.Experiment);
-        fprintf(' Saving data in %s \n',FileName)
-        save(FileName,'CtrlVar','MUA','F','BCs','l')
-  
+
+    if exist("Results","file")~=7
+        [status,msg,msgID] = mkdir("Results");
+    end
+    FileName=sprintf("Results/%07i-%s.mat",round(100*CtrlVar.time),CtrlVar.Experiment);
+    fprintf(' Saving data in %s \n',FileName)
+    save(FileName,'CtrlVar','MUA','F','BCs','l')
+
 end
 
 
@@ -43,22 +50,13 @@ if contains(plots,'-R-')
     
     
     Reactions=CalculateReactions(CtrlVar,MUA,BCs,l);
-    figReactions=FindOrCreateFigure('Reactions') ; % ,Position); 
-    clf(figReactions) 
-    
-    
-    figReactions=PlotReactions(CtrlVar,MUA,Reactions,figReactions);
-    
-    
-    if ~isempty(Reactions.h)
-        %M=MassMatrix2D1dof(MUA);
-       
-        figReactions2=FindOrCreateFigure('Reactions2') ;%  ,Position); 
-        [~,cbar]=PlotMeshScalarVariable(CtrlVar,MUA,Reactions.h./F.rho);
-        title(cbar,'(m/yr)')
-        title(sprintf("%s","Reactions.h/rho")) ; xlabel('x (km)') ; ylabel('y (km)') 
-    end
-    
+    figReactions=FindOrCreateFigure('Reactions') ; % ,Position);
+    clf(figReactions)
+
+
+    PlotReactions(CtrlVar,MUA,F,Reactions);
+   
+
 end
 
 

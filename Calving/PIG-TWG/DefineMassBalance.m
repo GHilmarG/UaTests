@@ -11,17 +11,27 @@ dabdh=zeros(MUA.Nnodes,1) ;
 %% Surface mass balance
 
 if isempty(Fdh2000to2018)
-    load("FdhdtMeasuredRatesOfElevationChanges2000to2018.mat","Fdh2000to2018")
+
+    FdhdtDataFile="FdhdtMeasuredRatesOfElevationChanges2000to2018.mat";
+    fprintf("Loading data on rate of thickness changes: %s \n",FdhdtDataFile)
+    load(FdhdtDataFile,"Fdh2000to2018")
     dhdtMeasured=Fdh2000to2018(F.x,F.y) ;  % I can do this here because in this run the mesh does not change
     CurrentRunStepNumber=0 ;
 end
 
+
 if isempty(Fas)
+    fprintf("Loading surface mass balance interpolant: %s ",UserVar.FasFile)
     load(UserVar.FasFile,"Fas")
+    fprintf("...done.\n")
 end
 
-as=Fas(F.x,F.y);
+year=2000+zeros(MUA.Nnodes,1); 
+as=Fas(F.x,F.y,year);  % units kg/m^2/yr
 
+as=as./F.rho ; % units kg/m^2/yr  
+
+% UaPlots(CtrlVar,MUA,F,as,GetRidOfValuesDownStreamOfCalvingFronts=false)
 
 % Most of the melt-rate parameterisations below are based on that old Favier 2014 paper:
 % Favier, L., Durand, G., Cornford, S. L., Gudmundsson, G. H., Gagliardini, O.,
@@ -39,7 +49,7 @@ as=Fas(F.x,F.y);
 % or:
 % dab/dh = dab/db  db/dh = dab/db (-F.rho/F.rhow)= -(F.rho/F.rhow) dab/db
 
-if contains(UserVar.RunType,"-I-")  % This is a 'dynamical' initialisation, use with care!
+if contains(UserVar.RunType,"-I-")  % This is a 'dynamical' initialization, use with care!
 
     if isempty(F.dhdt)
         as=zeros(MUA.Nnodes,1) ;
@@ -61,22 +71,19 @@ if contains(UserVar.RunType,"-I-")  % This is a 'dynamical' initialisation, use 
 
 
     end
+elseif contains(UserVar.RunType,"-MRZERO")
+
+    
+    ab=zeros(MUA.Nnodes,1) ;
+    dasdh=zeros(MUA.Nnodes,1) ;
+    dabdh=zeros(MUA.Nnodes,1) ;
 
 elseif contains(UserVar.RunType,"-MR")
 
     MRP=extractBetween(UserVar.RunType,"-MR","-");
    % MRP="l"+MRP; 
     [ab,dabdh]=DraftDependentMeltParameterisations(UserVar,CtrlVar,F,MRP) ;
-    
-  
 
-
-elseif contains(UserVar.RunType,"-MRZERO")
-
-    as=zeros(MUA.Nnodes,1) ;
-    ab=zeros(MUA.Nnodes,1) ;
-    dasdh=zeros(MUA.Nnodes,1) ;
-    dabdh=zeros(MUA.Nnodes,1) ;
 
 
 elseif contains(UserVar.RunType,"-DMR")

@@ -1,6 +1,22 @@
 
 
 %%
+
+
+UserVar=FileDirectories;
+
+
+IRfile=UserVar.InverseRestartFileDirectory+"InverseRestartFile-Weertman-ITS120-Ca1-Cs100000-Aa1-As100000-2k5km-Alim-Clim-.mat"; 
+
+
+
+
+PlotResultsFromInversion(IRfile);
+
+
+
+
+%%
 clearvars File
 File(1)="PIG-TWG-Inverse-PIG-TWG-Meshk-logA-logC-MatlabOptimization-GradientBased-I-adjoint-RHA=E-RHC=E-IHC=FP-IHA=FP-Weertman-1-InverseRestartFile.mat";
 File(2)="PIG-TWG-Inverse-PIG-TWG-Meshk-logA-logC-MatlabOptimization-GradientBased-M-adjoint-RHA=E-RHC=E-IHC=FP-IHA=FP-Weertman-1-InverseRestartFile.mat";

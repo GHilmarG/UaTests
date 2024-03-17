@@ -157,7 +157,7 @@ CtrlVar.Experiment=replace(CtrlVar.Experiment,"--","-");
 %
 CtrlVar.TimeDependentRun=1;
 CtrlVar.TotalNumberOfForwardRunSteps=inf;
-CtrlVar.TotalTime=200;
+CtrlVar.TotalTime=201;
 
 
 %% time, time-step, output interval

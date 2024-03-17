@@ -60,22 +60,26 @@ if contains(plots,'-save-')
                 round(100*CtrlVar.time),MUA.Nnodes,MUA.Nele,MUA.nod,1000*CtrlVar.kH,CtrlVar.Experiment);
         else
 
-            FileName=sprintf('%s%07i-Nodes%i-Ele%i-Tri%i-kH%i-ThickMin%3.2f-%s.mat',...
+            % FileName=sprintf('%s%07i-Nodes%i-Ele%i-Tri%i-kH%i-ThickMin%3.2f-%s.mat',...
+            %     UserVar.ResultsFileDirectory,...
+            %     round(100*CtrlVar.time),MUA.Nnodes,MUA.Nele,MUA.nod,1000*CtrlVar.kH,CtrlVar.ThickMin,CtrlVar.Experiment);
+    
+            FileName=sprintf('%s%07i-%s.mat',...
                 UserVar.ResultsFileDirectory,...
-                round(100*CtrlVar.time),MUA.Nnodes,MUA.Nele,MUA.nod,1000*CtrlVar.kH,CtrlVar.ThickMin,CtrlVar.Experiment);
+                round(100*CtrlVar.time),CtrlVar.Experiment);  
 
         end
         FileName=replace(FileName,".mat","");
         FileName=replace(FileName,"--","-");
         FileName=replace(FileName,".","k");
         fprintf(' Saving data in %s \n',FileName)
-        save(FileName,"CtrlVar","MUA","F")
+        save(FileName,"CtrlVar","UserVar","MUA","F","BCs","l")
 
     end
 end
 
 % only do plots at end of run
-% if ~strcmp(CtrlVar.DefineOutputsInfostring,'Last call') ; return ; end
+if ~strcmp(CtrlVar.DefineOutputsInfostring,'Last call') ; return ; end
 
 switch UserVar.MeshResolution
 

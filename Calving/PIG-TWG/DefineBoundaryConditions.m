@@ -1,25 +1,15 @@
 function  [UserVar,BCs]=DefineBoundaryConditions(UserVar,CtrlVar,MUA,F,BCs)
 
 
+persistent MeshBoundaryCoordinates
+
+
+% Since the mesh does not change in this run, I only need to define the boundary conditions once.
+
+
 
 MeshBoundaryCoordinates=CreateMeshBoundaryCoordinatesForPIGandTWG(UserVar,CtrlVar);
 [I,AlongDist,NormDist] = DistanceToLineSegment([F.x(MUA.Boundary.Nodes) F.y(MUA.Boundary.Nodes)],MeshBoundaryCoordinates,[],1000);
-
-% switch UserVar.Region
-% 
-% 
-%     case "PIG"
-% 
-%         I=F.x(MUA.Boundary.Nodes) >-1650e3 & F.x(MUA.Boundary.Nodes) <-1580e3 & F.y(MUA.Boundary.Nodes) < -300e3 ;
-% 
-%     case "PIG-TWG"
-% 
-%         I=F.x(MUA.Boundary.Nodes) <-1605e3 ...
-%             & F.y(MUA.Boundary.Nodes) < -400e3 ;
-%        [I,AlongDist,NormDist] = DistanceToLineSegment([x(Boundary.Nodes) y(Boundary.Nodes)],[xx(:) yy(:)],[],tolerance);
-% 
-% 
-% end
 
 
 BCs.vbFixedNode=MUA.Boundary.Nodes(I);
@@ -31,7 +21,32 @@ BCs.ubFixedValue=BCs.ubFixedNode*0;
 BCs.vbFixedValue=BCs.vbFixedNode*0;
 
 
-return 
+
+if F.time>0.5
+
+    %% Adding fixed h constraints over PIG iceshelf
+
+
+    Box=[-1642.6   -1546 -340.78 -236.91]*1000;
+
+    In=IsInBox(Box,F.x,F.y) ;
+    isPIGIS=In & F.GF.node <0.5 ;
+
+    BCs.hFixedNode=find(isPIGIS);
+    BCs.hFixedValue=F.h(isPIGIS);
+
+else
+    BCs.hFixedNode=[];
+    BCs.hFixedValue=[];
+
+end
+
+
+return
+
+
+
+
 %% Testing added fixed vel at boundary if grounded
 
 
@@ -54,11 +69,11 @@ end
 
 %% Testing
 % Box=[-1735  -1690 -405. -375.]*1000;
-% 
+%
 % In=find(IsInBox(Box,F.x,F.y)) ;
-% 
-% 
-% 
+%
+%
+%
 % BCs.vbFixedNode=[BCs.ubFixedNode ; In];
 % BCs.ubFixedNode=[BCs.vbFixedNode ; In];
 % BCs.ubFixedValue=BCs.ubFixedNode*0;

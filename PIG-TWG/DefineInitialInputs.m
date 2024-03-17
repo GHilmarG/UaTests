@@ -8,7 +8,7 @@ function [UserVar,CtrlVar,MeshBoundaryCoordinates]=DefineInitialInputs(UserVar,C
 
 if isempty(UserVar) || ~isfield(UserVar,'RunType')
     
-    UserVar.RunType='Inverse-MatOpt';
+    
     % UserVar.RunType='Inverse-ConjGrad';
     % UserVar.RunType='Inverse-SteepestDesent';
     % UserVar.RunType='Inverse-ConjGrad-FixPoint';
@@ -19,6 +19,7 @@ if isempty(UserVar) || ~isfield(UserVar,'RunType')
     UserVar.RunType='Forward-Transient-group-dt0.1-';
     UserVar.RunType='Forward-Transient-dt0.1-';
     UserVar.RunType='Forward-Transient-uv-h-group-';
+    UserVar.RunType='Inverse-MatOpt';
     
     % UserVar.RunType='TestingMeshOptions';
 end
@@ -67,17 +68,8 @@ UserVar.SurfaceVelocityInterpolant='../../Interpolants/SurfVelMeasures990mInterp
 UserVar.MeshBoundaryCoordinatesFile='../../Interpolants/MeshBoundaryCoordinatesForAntarcticaBasedOnBedmachine'; 
 UserVar.DistanceBetweenPointsAlongBoundary=5e3 ; 
 
-CtrlVar.SlidingLaw="Weertman" ; % "Umbi" ; % "Weertman" ; % "Tsai" ; % "Cornford" ;  "Umbi" ; "Cornford" ; % "Tsai" , "Budd"
+CtrlVar.SlidingLaw="Weertman" ; % "Umbi" ; % "Weertman" ; % "Tsai" ; % "Cornford" ;  "Umbi" ; "Cornford" ; % "Tsai" , "Budd" , "Joughin"
 
-switch CtrlVar.SlidingLaw
-    
-    case "Weertman"
-        UserVar.CFile='FC-Weertman.mat'; UserVar.AFile='FA-Weertman.mat';
-    case "Umbi"
-        UserVar.CFile='FC-Umbi.mat'; UserVar.AFile='FA-Umbi.mat';
-    otherwise
-        error('A and C fields not available')
-end
 
 
 if ~isfile(UserVar.GeometryInterpolant) || ~isfile(UserVar.SurfaceVelocityInterpolant)
@@ -176,7 +168,6 @@ elseif contains(UserVar.RunType,'TestingMeshOptions')  %case 'TestingMeshOptions
     CtrlVar.Restart=0;
     CtrlVar.ReadInitialMesh=0;
     CtrlVar.AdaptMesh=1;
-    UserVar.Slipperiness.ReadFromFile=1;
     UserVar.Slipperiness.ReadFromFile=1;
     UserVar.AGlen.ReadFromFile=1;
     CtrlVar.AdaptMesh=1;
@@ -334,6 +325,22 @@ CtrlVar.ThicknessConstraints=0;
 CtrlVar.ResetThicknessToMinThickness=1;  % change this later on
 CtrlVar.ThickMin=1;
 
+%%
+
+
+if UserVar.Slipperiness.ReadFromFile
+    switch CtrlVar.SlidingLaw
+
+        case "Weertman"
+            UserVar.CFile='FC-Weertman.mat'; UserVar.AFile='FA-Weertman.mat';
+        case "Umbi"
+            UserVar.CFile='FC-Umbi.mat'; UserVar.AFile='FA-Umbi.mat';
+        otherwise
+            error('A and C fields not available')
+    end
+end
+
+
 %% Filenames
 
 CtrlVar.NameOfFileForSavingSlipperinessEstimate="C-Estimate"+CtrlVar.SlidingLaw+".mat";
@@ -381,5 +388,11 @@ CtrlVar.Inverse.NameOfRestartOutputFile=filename;
 CtrlVar.Inverse.NameOfRestartInputFile=CtrlVar.Inverse.NameOfRestartOutputFile;
 
 CtrlVar.NameOfRestartFiletoWrite="FR-"+filename ; 
+
+%%  parallel options 
+
+CtrlVar.Parallel.uvhAssembly.spmd.isOn=true; 
+CtrlVar.Parallel.uvAssembly.spmd.isOn=true; 
+CtrlVar.Parallel.Distribute=false;
 
 end

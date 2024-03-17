@@ -1,6 +1,14 @@
 
 
-
+%%
+%
+%  I keep complete copies of PIG-TWG results files on
+%
+% DESKTOP-BU2IHIR in  D:\Runs\Calving\PIG-TWG\ResultsFiles
+%
+%
+% External drive "UaHomeWScopy" in F:\Runs\Calving\PIG-TWG\ResultsFiles
+%
 %%
 CurDir=pwd;
 
@@ -20,24 +28,30 @@ end
 
 
 
-Res=["5km","10km","20km"];
+Res=["2k5km","5km","10km","20km"];
 Reg=["TWIS","TWISC0","TWISC2","PIGC0"] ;
 SL=["Cornford","Weertman"] ;
 MR=["MR0","MR4"];
 D=["-","-Duvh-"];
+Alim="-Alim-";
+Clim="-Clim-";
+%Clim="";              % There is an inconsistency, some files that should have -Clim- in their names, do not.
+
+Res=["2k5km","5km","10km","20km"]; Reg=["TWIS"] ; SL=["Cornford","Weertman"] ; MR=["MR4"]; D=["-Duvh-"];
 
 % Name="*P-TWIS-MR0-SM-TM001-Weertman*5km*.mat" ;
 % I=1 ; J=1; K=1; L=1;
 
-for L=1:3
-    for M=1:2
+for L=1:numel(Res)
+    for M=1:numel(D)
 
-        for I=1:3
-            for J=1:2
-                for K=1:2
+        for I=1:numel(Reg)
+            for J=1:numel(MR)
+                for K=1:numel(SL)
 
-                    Name="00*P"+D(M)+Reg(I)+"-"+MR(J)+"-SM-TM001-"+SL(K)+"*"+Res(L)+"*.mat" ;
+                    Name="00*P"+D(M)+Reg(I)+"-"+MR(J)+"-SM-TM001-"+SL(K)+"*"+Res(L)+Alim+Clim+"*.mat" ;
 
+                    Name=replace(Name,"--","-");
 
                     Files=dir(Name);
 

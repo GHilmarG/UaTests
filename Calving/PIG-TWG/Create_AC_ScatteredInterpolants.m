@@ -1,112 +1,79 @@
-%% Create scattered A and C interpolants
 
 
-load('C-EstimateWeertman.mat');
-FC=scatteredInterpolant(xC,yC,C); 
-save('FC-Weertman.mat','FC')
-
-load('AGlen-Estimate.mat')
-FA=scatteredInterpolant(xA,yA,AGlen); 
-save('FA-Weertman.mat','FA')
+function Create_AC_ScatteredInterpolants(CtrlVar,UserVar)
 
 %%
 
-load('C-Estimate.mat')
-FC=scatteredInterpolant(xC,yC,C); 
-save('FC-Umbi.mat','FC')
+if nargin==0 || isempty(CtrlVar)
 
-load('AGlen-Estimate.mat')
-FA=scatteredInterpolant(xA,yA,AGlen); 
-save('FA-Umbi.mat','FA')
+    CtrlVar=Ua2D_DefaultParameters();
+end
 
-%%
-clearvars
+if nargin<2
 
+    UserVar.RunType="-FT-from0to1-30km-Tri3-SlidCornford-Duvh-MR4-P-kH10000-ThickMin0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-ITS120-GeoBed2-" ;
+    UserVar.RunType="-FT-from0to1-30km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-ThickMin0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-ITS120-GeoBed2-SMB_RACHMO2k3_2km-" ;
+    UserVar.RunType="-FT-from0to1-ES20km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-ThickMin0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-ITS120-Velyr1-GeoBed2-SMB_RACHMO2k3_2km-" ;
 
-load('InvEstimate-CWeertman-PIG-TWG10km.mat')
-FC=scatteredInterpolant(xC,yC,C); 
-save('FC-Weertman-PIG-TWG-10km.mat','FC')
-
-load('InvEstimate-AWeertman-PIG-TWG10km.mat')
-FA=scatteredInterpolant(xA,yA,AGlen); 
-save('FA-Weertman-PIG-TWG-10km.mat','FA')
-
-      
-load('InvEstimate-CWeertman-PIG-TWG20km.mat')
-FC=scatteredInterpolant(xC,yC,C); 
-save('FC-Weertman-PIG-TWG-20km.mat','FC')
-
-load('InvEstimate-AWeertman-PIG-TWG20km.mat')
-FA=scatteredInterpolant(xA,yA,AGlen); 
-save('FA-Weertman-PIG-TWG-20km.mat','FA')
-
-
-load('InvEstimate-CWeertman-PIG-TWG30km.mat')
-FC=scatteredInterpolant(xC,yC,C); 
-save('FC-Weertman-PIG-TWG-30km.mat','FC')
-
-load('InvEstimate-AWeertman-PIG-TWG30km.mat')
-FA=scatteredInterpolant(xA,yA,AGlen); 
-save('FA-Weertman-PIG-TWG-30km.mat','FA')
-
-load('InvEstimate-CWeertman-PIG-TWG5km.mat')
-FC=scatteredInterpolant(xC,yC,C); 
-save('FC-Weertman-PIG-TWG-5km.mat','FC')
-
-load('InvEstimate-AWeertman-PIG-TWG5km.mat')
-FA=scatteredInterpolant(xA,yA,AGlen); 
-save('FA-Weertman-PIG-TWG-5km.mat','FA')
-%%
-
-
-
-load("InvA-Weertman-Ca1-Cs100000-Aa1-As100000-10km") ;
-FA=scatteredInterpolant(xA,yA,AGlen);  
-save("FA-Weertman-Ca1-Cs100000-Aa1-As100000-10km.mat") ;
-
-
-
-load("InvC-Weertman-Ca1-Cs100000-Aa1-As100000-10km") ;
-FC=scatteredInterpolant(xC,yC,C);  
-save("FC-Weertman-Ca1-Cs100000-Aa1-As100000-10km.mat") ;
+end
 
 %%
+UserVar=FileDirectories(UserVar) ;
+
+[CtrlVar,UserVar]=ParseRunTypeString(CtrlVar,UserVar) ; 
+
+FCFile=UserVar.FCFile;
+FAFile=UserVar.FAFile;
+
+CFile=UserVar.CFile;
+AFile=UserVar.AFile;
 
 
+fprintf("\n loading %s \n",CFile)
+
+%if contains(CFile,"InvC")  % this implies that the file was generated through an inverse run
+    load(CFile,"xC","yC","C");
+% catch
+%     load(CFile,"F");
+%     xC=F.x;
+%     yC=F.y;
+%     C=F.C;
+% end
+
+FC=scatteredInterpolant(xC,yC,C);
+
+if isfile(FCFile+".mat")
+
+    list=dir(FCFile) ;
+
+    fprintf("Overwrite %s from %s? \n",FCFile,list.date)
+    txt=input("y/n :","s");
+    if txt=="y"
+        fprintf("saving %s \n",FCFile)
+        save(FCFile,"FC")
+    end
+else
+    fprintf("saving %s \n",FCFile)
+    save(FCFile,"FC")
+end
+
+fprintf("\n loading %s \n",AFile)
+load(AFile,"xA","yA","AGlen");
+FA=scatteredInterpolant(xA,yA,AGlen);
 
 
-DataFile="InvA-Weertman-Ca1-Cs100000-Aa1-As100000-10km" ;
-DataFile="InvA-Weertman-Ca1-Cs100000-Aa1-As100000-5km-Apwd" + ...
-    "lim-";
-%DataFile="InvA-Weertman-Ca10-Cs100000-Aa10-As100000-10km" ;
-
-load(DataFile) ;
-
-
-
-FindOrCreateFigure("A"+DataFile) ;
-
-PlotMeshScalarVariable(CtrlVarInRestartFile,MUA,log10(AGlen));
-hold on ; PlotGroundingLines(CtrlVarInRestartFile,"Bedmachine",[],[],[],[],"r");
-hold on ; PlotMuaBoundary(CtrlVarInRestartFile,MUA) ;
-hold on ; PlotMuaBoundary(CtrlVarInRestartFile,MUA) ;
+if isfile(FAFile+".mat")
+    list=dir(FAFile) ;
+    fprintf("Overwrite %s from %s? \n",FAFile,list.date)
+    txt=input("y/n :","s");
+    if txt=="y"
+        fprintf("saving %s \n",FAFile)
+        save(FAFile,"FA")
+    end
+else
+    fprintf("saving %s \n",FAFile)
+    save(FAFile,"FA")
+end
 
 
-
-Box=[ -1616.3      -1491.8      -530.00      -395.07]*1000;
-F.x=MUA.coordinates(:,1); F.y=MUA.coordinates(:,2);
-
-In=IsInBox(Box,F.x,F.y) ;
-AminTWIS=AGlenVersusTemp(-30) ;
-I= AGlen < AminTWIS & In ;
-AGlen(I)=AminTWIS;
-FindOrCreateFigure("A lim"+DataFile) ;
-
-
-PlotMeshScalarVariable(CtrlVarInRestartFile,MUA,log10(AGlen));
-hold on ; PlotGroundingLines(CtrlVarInRestartFile,"Bedmachine",[],[],[],[],"r");
-hold on ; PlotMuaBoundary(CtrlVarInRestartFile,MUA) ;
-hold on ; PlotMuaBoundary(CtrlVarInRestartFile,MUA) ;
-plot(F.x(I)/1000,F.y(I)/1000,'.r')
-
-
+%%
