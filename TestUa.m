@@ -1,11 +1,7 @@
 
-
+%
 % beta: 17/03/2023
-
-
-
-% (beta)  02/10/2023
->>>>>>> f4a254693623c812cf6cbb6128be8a18cd3c6dcd
+%
 % results = runtests('TestUa.m') ; table(results)
 %
 
