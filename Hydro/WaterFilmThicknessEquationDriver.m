@@ -10,7 +10,7 @@ isRestart=0;  ResetTime=0;
 %
 % Solving for:
 %
-%  "-phi-"  : Traditional goundwater theory
+%  "-phi-"  : Traditional groundwater theory
 %
 % $$\frac{S_w}{\rho_w g} \partial_t \phi - \nabla \cdot ( \nabla \phi ) = a_w $$
 %
@@ -19,7 +19,7 @@ isRestart=0;  ResetTime=0;
 %
 % $$\partial_t h_w  + \nabla \cdot ( k h_w \nabla \Phi) - \nabla ( \kappa h_w \nabla h_w) = a_w $$
 %
-% "-hw-D-Phi-" : Solving for $h_w$ for a give potental $\Phi$ as a pure diffusion problem
+% "-hw-D-Phi-" : Solving for $h_w$ for a give potential $\Phi$ as a pure diffusion problem
 %
 % $$\partial_t h_w  - \nabla \cdot ( h_w k \nabla \Phi + \kappa h_w \nabla h_w) = a_w $$
 %
@@ -33,12 +33,13 @@ CtrlVar=Ua2D_DefaultParameters();
 FluxGate=[]; xGL=[] ; yGL=[] ;
 RestartFileName="RestartWaterFilmThicknessEquationDriver.mat" ; 
 
-UserVar.Example="-Dome-Phi-" ;
-UserVar.Example="-Dome-hw-" ;
+
 UserVar.Example="-Island-hw-" ;
 UserVar.Example="-Island-Retrograde-hw-" ;
 UserVar.Example="-Island-Retrograde-Peaks-hw-" ;
-UserVar.Example="-Antarctica-" ;   UserVar.HelmholtzSmoothingLengthScale=nan;  RestartFileName="Antarctica-aw1-.mat";
+UserVar.Example="-Island-Retrograde-Peaks-" ;   % as far as I can see "-hw-" is not used here where we solve the WaterFilmThicknessEquaitown, only used in GroundWaterEquation.m 
+UserVar.Example="-Island-" ;   % This is supposed to be a simple test for a simple geometry.
+% UserVar.Example="-Antarctica-" ;   UserVar.HelmholtzSmoothingLengthScale=nan;  RestartFileName="Antarctica-aw1-.mat";
 UserVar.VelocityFieldPrescribed=false;
 
 %%
@@ -46,8 +47,8 @@ nTimeSteps=10000;
 nRestartSaveIntervale=1000;
 maxTime=1e8;
 CtrlVar.dt=100;
-qwxintLast=[];
-qwyintLast=[];
+qwxLast=[];
+qwyLast=[];
 
 
 CtrlVar.InfoLevelBackTrack=0;  CtrlVar.InfoLevelNonLinIt=10 ;  CtrlVar.doplots=1 ;
@@ -65,14 +66,15 @@ CtrlVar.WaterFilm.Barrier=0 ;
 CtrlVar.WaterFilm.Penalty=0 ;
 
 
-
+CtrlVar.WaterFilm.AdvectionFlag=1;
+CtrlVar.WaterFilm.DiffusionFlag=1;
 
 
 ActiveSet=[]; lambda=[];
 
 PlotWaterFilmFlux=false;
 
-nPlotStep=1;
+nPlotStep=10;
 
 if ReadData  &&~isRestart
 
@@ -123,7 +125,7 @@ if ReadData  &&~isRestart
         UserVar.WaterFilmThicknessEqution="-v-" ;
 
         if UserVar.WaterFilmThicknessEqution=="-v-"
-            % just use the prescibed velocity alone
+            % just use the prescribed velocity alone
             CtrlVar.WaterFilm.AdvectionFlag=1;
             CtrlVar.WaterFilm.DiffusionFlag=0;
             eta=eta*0+1e5 ; 
@@ -131,7 +133,7 @@ if ReadData  &&~isRestart
 
         end
 
-        maxTime=5000;
+        maxTime=10000;
         
 
         FluxGate=[-1550 -388 ; -1500 -543]*1000; Npoints=300 ; FluxGate=interparc(Npoints,FluxGate(:,1),FluxGate(:,2),'linear');
@@ -167,18 +169,27 @@ if ReadData  &&~isRestart
         dl=7100 ;
         dl=4500 ;
         dl=15000 ;
-        dl=2500 ;
-        dl=5000 ;
+        dl=10000;
+        dl=7500;
+        dl=5000;
+        dl=2500;
         dl=1000;
-
+        dl=12500;
+        dl=1500;
+        dl=6000;
+        dl=3000;
+        
         CtrlVar.MeshSize=dl;
+        CtrlVar.TriNodes=3;  
+
 
         CtrlVar.MeshSizeMin=CtrlVar.MeshSize/2 ;
         CtrlVar.MeshSizeMax=CtrlVar.MeshSize*2 ;
         MeshBoundaryCoordinates=[-l -l ; l -l ; l l ; -l l ];
         CtrlVar.MeshBoundaryCoordinates=MeshBoundaryCoordinates;
         [UserVar,MUA]=genmesh2d(UserVar,CtrlVar);
-        CtrlVar.TriNodes=3;  MUA=UpdateMUA(CtrlVar,MUA);
+        
+        MUA=UpdateMUA(CtrlVar,MUA);
         FindOrCreateFigure("Mesh") ; PlotMuaMesh(CtrlVar,MUA); drawnow
 
         F=UaFields  ; F.x=MUA.coordinates(:,1) ; F.y=MUA.coordinates(:,2) ;
@@ -211,7 +222,7 @@ if ReadData  &&~isRestart
 
 
         k=zeros(MUA.Nnodes,1)+1e2;     % works fine in all cases with A/D/AD
-        k=zeros(MUA.Nnodes,1)+1e10;    % For "-A-" had to reduce min thick from 0.001 to 1e-5. Then a very good agreement was found
+        % k=zeros(MUA.Nnodes,1)+1e10;    % For "-A-" had to reduce min thick from 0.001 to 1e-5. Then a very good agreement was found
         % Further reduction in CtrlVar.WaterFilm.ThickMin had no effect and was not needed.
         % "-D-" ran into numerical issues
         % "-AD-" works as "-A-",
@@ -222,11 +233,27 @@ if ReadData  &&~isRestart
         eta=10*k; 
         eta(~F.GF.NodesUpstreamOfGroundingLines)=eta(1)*1000;
 
+        % checking the impact of eta
+        eta=eta*0;  RestartFileName="RestartWaterFilmThicknessEquationDriverEtaZero.mat" ; 
+         
         CtrlVar.WaterFilm.Assembly="-A-" ;     % excellent 
         CtrlVar.WaterFilm.Assembly="-AD-" ;    % excellent
         %  CtrlVar.WaterFilm.Assembly="-D-" ;  % excellent
 
+        % Default SUPG parameters:
         CtrlVar.Tracer.SUPG.Use=1;
+        CtrlVar.Tracer.SUPG.tau="tau2" ;
+        CtrlVar.SUPG.beta0=1 ;
+        % tau1 : often recommended in textbooks for linear diffusion equations with
+        %        spatially constant non-zero advection velocity
+        % taut : dt/2,  'temporal' definition, independent of velocity
+        % taus : l/(2u) 'spatial definition', independent of time step
+        % tau2 : 1./(1./taut+1./taus), an 'inverse' average of taus and taut
+      
+        % my local modifications to the SUPG parameters
+        CtrlVar.Tracer.SUPG.Use=1; CtrlVar.Tracer.SUPG.tau="taus" ; CtrlVar.SUPG.beta0=1 ; % hw looks good, qw not
+        CtrlVar.Tracer.SUPG.Use=1; CtrlVar.Tracer.SUPG.tau="tau2" ; CtrlVar.SUPG.beta0=1 ; %
+
         CtrlVar.WaterFilm.Barrier=0;
         CtrlVar.WaterFilm.Penalty=1 ;
         CtrlVar.WaterFilm.Potential="-bs-" ;
@@ -238,13 +265,14 @@ if ReadData  &&~isRestart
         CtrlVar.WaterFilm.ThickMin=10e3/k(1);
         F.hw=zeros(MUA.Nnodes,1)+10*CtrlVar.WaterFilm.ThickMin   ;
 
-        maxTime=5000;
+        maxTime=10000;
 
         [cbar,xGL,yGL]=UaPlots(CtrlVar,MUA,F,F.s) ;
         % Npoints=300 ; FluxGate=interparc(Npoints,FluxGate(:,1),FluxGate(:,2),'linear');
 
         % FluxGate=[xGL(:) yGL(:)];
-        angle=linspace(0,2*pi,500); angle=angle(:);
+        N=max(10*2*pi*UserVar.RadiusFluxGate/dl,500) ;
+        angle=linspace(0,2*pi,N); angle=angle(:);
 
         FluxGate=UserVar.RadiusFluxGate*[sin(-angle) cos(-angle) ];
 
@@ -265,7 +293,7 @@ end
 
 % CtrlVar.GWE.Variable="-phi-" ;
 % CtrlVar.GWE.Variable="-N-" ;
-CtrlVar.GWE.Variable="-hw-" ;
+% CtrlVar.GWE.Variable="-hw-" ;
 
 
 if CalcFluxes
@@ -323,7 +351,8 @@ if CalcFluxes
     [F0.uw,F0.vw]=WaterFilmVelocities(CtrlVar,UserVar,MUA,F0,k) ;
     [F1.uw,F1.vw]=WaterFilmVelocities(CtrlVar,UserVar,MUA,F1,k) ;
 
-        
+    RunInfo=UaRunInfo();
+    dtcritical=CalcCFLdt2D(UserVar,RunInfo,CtrlVar,MUA,F1,F1.uw,F1.vw) ;
     
 
 
@@ -348,8 +377,10 @@ if CalcFluxes
 
         xint=output.fun.xint ;  yint=output.fun.yint ;  qwxint=output.fun.qx1int ; qwyint=output.fun.qy1int ;
 
+        [qwx,qwy]=ProjectFintOntoNodes(MUA,qwxint,qwyint) ;
+
         xint=xint(:) ; yint=yint(:) ; qwxint=qwxint(:); qwyint=qwyint(:);
-        Nstride=10 ; xint=xint(1:Nstride:end) ;  yint=yint(1:Nstride:end) ;  qwxint=qwxint(1:Nstride:end) ; qwyint=qwyint(1:Nstride:end) ;
+        Nstride=1 ; xint=xint(1:Nstride:end) ;  yint=yint(1:Nstride:end) ;  qwxint=qwxint(1:Nstride:end) ; qwyint=qwyint(1:Nstride:end) ;
 
 
         F1.hw=hw1;
@@ -357,7 +388,7 @@ if CalcFluxes
         CtrlVar.time=F1.time ;
 
 
-
+       
 
         % [UserVar,qw1x,qw1y,qUpsilonx,qUpsilony,qPhix,qPhiy]=WaterFilmFlux(UserVar,CtrlVar,MUA,F0,F1,k);
 
@@ -425,7 +456,8 @@ if CalcFluxes
             CtrlVar.VelColorBarTitle="($\mathrm{km^2 \, yr^{-1}}$)" ;
 
           
-            QuiverColorGHG(xint,yint,qwxint/1e6,qwyint/1e6,CtrlVar) ;
+            QuiverColorGHG(F1.x,F1.y,qwx,qwy,CtrlVar);
+            %QuiverColorGHG(xint,yint,qwxint/1e6,qwyint/1e6,CtrlVar) ;
             hold on
             plot(xGL/CtrlVar.PlotXYscale,yGL/CtrlVar.PlotXYscale,'r')
             PlotMuaBoundary(CtrlVar,MUA) ;
@@ -438,9 +470,9 @@ if CalcFluxes
             hold off
 
 
-            if ~isempty(qwxintLast)
+            if ~isempty(qwxLast)
                 figqw=FindOrCreateFigure("Delta(qwx,qwy)") ; clf(figqw) ;
-                QuiverColorGHG(xint,yint,(qwxint-qwxintLast)/1e6,(qwyint-qwyintLast)/1e6,CtrlVar) ;
+                QuiverColorGHG(F1.x,F1.y,(qwx-qwxLast)/1e6,(qwy-qwyLast)/1e6,CtrlVar) ;
                 hold on
                 plot(xGL/CtrlVar.PlotXYscale,yGL/CtrlVar.PlotXYscale,'r')
                 PlotMuaBoundary(CtrlVar,MUA) ;
@@ -448,8 +480,8 @@ if CalcFluxes
                 hold off
             end
 
-            qwxintLast=qwxint ;
-            qwyintLast=qwyint ;
+            qwxLast=qwx ;
+            qwyLast=qwy ;
 
 
             BoundaryNodes=MUA.Boundary.EdgeCornerNodes ;

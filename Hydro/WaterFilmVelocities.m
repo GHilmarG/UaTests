@@ -12,7 +12,7 @@ if UserVar.Example=="-Antarctica-" &&  UserVar.VelocityFieldPrescribed
 
     if isempty(Fuw)
 
-        %% Antartica
+        %% Antarctica
         InverseRestartFile="../Antarctica/Antarctica-Inverse-AntarcticaMUAwith54kElements-logC-logA-MatlabOptimization-HessianBased-MAdjointRHA=E-RHC=E-IHC=FP-IHA=FP-Weertman-0-InverseRestartFile.mat";
         %PIG-TWG
         % InverseRestartFile="C:\Users\Hilmar\OneDrive - Northumbria University - Production Azure AD\Sandbox\InverseRestartFiles\InverseRestartFile-Cornford-Ca1-Cs100000-Aa1-As100000-5km-Alim-.mat";

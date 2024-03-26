@@ -108,6 +108,13 @@ elseif contains(UserVar.Example,"-Island-")
     aw(F.x<0) =0 ; UserVar.QnTheoretical=0.5*UserVar.QnTheoretical;
 
 
+    % trying to get rid of aw downstream of grounding line
+
+
+    Mask=double(~F.GF.NodesUpstreamOfGroundingLines) ;
+    aw=aw-0.5*Mask.*(F.hw-CtrlVar.WaterFilm.ThickMin)/CtrlVar.dt; 
+
+
 else
 
     error("case not found")

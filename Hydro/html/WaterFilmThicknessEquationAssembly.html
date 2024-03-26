@@ -1,12 +1,17 @@
-
-<!DOCTYPE html
-  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html><head>
-      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-   <!--
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<!--
 This HTML was auto-generated from MATLAB code.
 To make changes, update the MATLAB code and republish this document.
-      --><title>WaterFilmThicknessEquationAssembly</title><meta name="generator" content="MATLAB 9.14"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2023-09-07"><meta name="DC.source" content="WaterFilmThicknessEquationAssembly.m"><style type="text/css">
+      -->
+<title>WaterFilmThicknessEquationAssembly</title>
+<meta name="generator" content="MATLAB 24.1">
+<link rel="schema.DC" href="http://purl.org/dc/elements/1.1/">
+<meta name="DC.date" content="2024-03-25">
+<meta name="DC.source" content="WaterFilmThicknessEquationAssembly.m">
+<style type="text/css">
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
 
 html { min-height:100%; margin-bottom:1px; }
@@ -67,42 +72,57 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 
 
 
-  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#3">Water film thickness equation</a></li></ul></div><pre class="codeinput"><span class="keyword">function</span> [UserVar,RR,KK,qx1int,qy1int,x1int,y1int]=WaterFilmThicknessEquationAssembly(UserVar,CtrlVar,MUA,F0,F1,k,eta)
-</pre><pre class="codeinput">narginchk(7,7)
+  </style>
+</head>
+<body>
+<div class="content">
+<h2>Contents</h2>
+<div>
+<ul>
+<li>
+<a href="#3">Water film thickness equation</a>
+</li>
+</ul>
+</div>
+<pre class="codeinput">
+<span class="keyword">function</span> [UserVar,RR,KK,qx1int,qy1int,x1int,y1int]=WaterFilmThicknessEquationAssembly(UserVar,CtrlVar,MUA,F0,F1,k,eta)
+</pre>
+<pre class="codeinput">narginchk(7,7)
 nargoutchk(7,7)
-</pre><h2 id="3">Water film thickness equation</h2><p>Solves:</p><p><img src="WaterFilmThicknessEquationAssembly_eq12773947812594528112.png" alt="$$\partial_t h_w +  \alpha \, \nabla \cdot (  h_w \mathbf{v}_w )  - \beta \, \nabla \cdot (\kappa h_w \nabla h_w)  - \nabla \cdot (\eta  \nabla h_w ) = a_w + \gamma (1-\mathcal{G}) \, h_w + \delta  (1-\mathcal{H}) h_w$$" style="width:551px;height:15px;"></p><p>where</p><p><img src="WaterFilmThicknessEquationAssembly_eq16943028956533117885.png" alt="$$\mathcal{G} $$" style="width:9px;height:13px;"></p><p>is the floating/grounding mask, which is equal to 1 if grounded, 0 otherwise.</p><p>And</p><p><img src="WaterFilmThicknessEquationAssembly_eq03536781666904322491.png" alt="$$\mathcal{H}$$" style="width:12px;height:11px;"></p><p>is 1 if <img src="WaterFilmThicknessEquationAssembly_eq04821517063208713457.png" alt="$h_w&gt;0$" style="width:43px;height:13px;"> and zero otherwise.</p><p>The water velocity is provided as an input through the field (F.uw,F.vw)</p><p>We may think of the velocity as</p><p><img src="WaterFilmThicknessEquationAssembly_eq08217024569135884122.png" alt="$$ \mathbf{v}_w= - k \nabla \Phi$$" style="width:79px;height:13px;"></p><p>where, for example,</p><p><img src="WaterFilmThicknessEquationAssembly_eq00693791512563130797.png" alt="$$\Phi = (\rho_w-\rho) g \nabla B - \rho g \nabla s  $$" style="width:165px;height:15px;"></p><p>But here <img src="WaterFilmThicknessEquationAssembly_eq10472581913505198994.png" alt="$\mathbf{v}_w$" style="width:16px;height:9px;"> is simply an input field.</p><pre class="codeinput"><span class="comment">%</span>
-<span class="comment">% as a velocity, and write the equation as</span>
-<span class="comment">%</span>
-<span class="comment">%</span>
-<span class="comment">% $$\partial_t h_w +  \nabla \cdot (  h_w \mathbf{v}_w )  - \nabla \cdot (\kappa h_w \nabla h_w) = a_w $$</span>
-<span class="comment">%</span>
-<span class="comment">% It is also possible to add some further linear diffusion term, and to enable/disable the advection and the non-linear</span>
-<span class="comment">% diffusion term by selecting the parameters $\alpha$, $\beta$ , and $\eta$, accordingly</span>
-<span class="comment">%</span>
-<span class="comment">% $$\partial_t h_w +  \alpha \, \nabla \cdot (  h_w \mathbf{v}_w )  - \beta \, \nabla \cdot (\kappa h_w \nabla h_w)  - \nabla \cdot (\eta  \nabla h_w ) = a_w $$</span>
-<span class="comment">%</span>
-<span class="comment">% This can also be written as</span>
-<span class="comment">%</span>
-<span class="comment">% $$\partial_t h_w +  \alpha \, \nabla \cdot ( \mathbf{q} ) = a_w $$</span>
-<span class="comment">%</span>
-<span class="comment">% with</span>
-<span class="comment">%</span>
-<span class="comment">% $$\mathbf{q} = \alpha \,  h_w \mathbf{v}_w   - \beta \,  \kappa h_w \nabla h_w   -   \eta  \nabla h_w  $$</span>
-<span class="comment">%</span>
-<span class="comment">% However, in the FE formulation, the resulting  second-order two terms containing $\nabla h_w$ are integrated</span>
-<span class="comment">%</span>
-<span class="comment">%</span>
-<span class="comment">% The system to solve if K dx = -R</span>
-<span class="comment">%</span>
-<span class="comment">% Notice the sign on the right-hand side</span>
-<span class="comment">%</span>
-<span class="comment">%</span>
-</pre><pre class="codeinput">ndim=2; dof=1; neq=dof*MUA.Nnodes;
+</pre>
+<h2 id="3">Water film thickness equation</h2>
+<p>Solves:</p>
+<p>
+<img src="WaterFilmThicknessEquationAssembly_eq15434924979425960634.png" alt="$$ \partial_t h_w + A  \nabla \cdot (  h_w \mathbf{v}_w )  - D \nabla \cdot (\kappa h_w \nabla h_w) -\nabla \cdot (\eta \nabla h_w )= a_w $$" style="width:369px;height:15px;"></p>
+<p>where <img src="WaterFilmThicknessEquationAssembly_eq08772416954200330719.png" alt="$A$" style="width:11px;height:11px;"> and <img src="WaterFilmThicknessEquationAssembly_eq11414838477267473978.png" alt="$D$" style="width:12px;height:11px;"> are advection and diffusion flags.</p>
+<pre class="language-matlab">A=CtrlVar.WaterFilm.AdvectionFlag;
+</pre>
+<pre class="language-matlab">D=CtrlVar.WaterFilm.DiffusionFlag;
+</pre>
+<p>Further barrier and penalty terms can be added</p>
+<p>
+<img src="WaterFilmThicknessEquationAssembly_eq16171135959573751121.png" alt="$$ \partial_t h_w + A  \nabla \cdot (  h_w \mathbf{v}_w )  - D \nabla \cdot (\kappa h_w \nabla h_w) -\nabla \cdot (\eta \nabla h_w )= a_w + B (h_w>0) /h_w  + P (h_w<0) h_w $$" style="width:579px;height:15px;"></p>
+<p>where <img src="WaterFilmThicknessEquationAssembly_eq10348488793466917580.png" alt="$B$" style="width:11px;height:11px;"> is a barrier-flag, and <img src="WaterFilmThicknessEquationAssembly_eq14927246206938046595.png" alt="$P$" style="width:11px;height:11px;"> a penalty flag, and <img src="WaterFilmThicknessEquationAssembly_eq04821517063208713457.png" alt="$h_w>0$" style="width:43px;height:13px;"> and <img src="WaterFilmThicknessEquationAssembly_eq07205433702408314904.png" alt="$h_w<0$" style="width:43px;height:13px;"> are (logical) masks, and</p>
+<pre class="language-matlab">B=CtrlVar.WaterFilm.Barrier ;
+</pre>
+<pre class="language-matlab">P=CtrlVar.WaterFilm.Penalty ;
+</pre>
+<p>The water velocity is provided as an input through the field (F.uw,F.vw)</p>
+<p>We may think of the velocity as</p>
+<p>
+<img src="WaterFilmThicknessEquationAssembly_eq08217024569135884122.png" alt="$$ \mathbf{v}_w= - k \nabla \Phi$$" style="width:79px;height:13px;"></p>
+<p>where, for example,</p>
+<p>
+<img src="WaterFilmThicknessEquationAssembly_eq00693791512563130797.png" alt="$$\Phi = (\rho_w-\rho) g \nabla B - \rho g \nabla s  $$" style="width:165px;height:15px;"></p>
+<p>But here <img src="WaterFilmThicknessEquationAssembly_eq10472581913505198994.png" alt="$\mathbf{v}_w$" style="width:16px;height:9px;"> is simply an input field.</p>
+<p>The system to solve if K dx = -R</p>
+<p>Notice the sign on the right-hand side</p>
+<pre class="codeinput">ndim=2; dof=1; neq=dof*MUA.Nnodes;
 
 theta=CtrlVar.theta;
 dt=CtrlVar.dt ;
-alphaFlag=CtrlVar.WaterFilm.AdvectionFlag;
-betaFlag=CtrlVar.WaterFilm.DiffusionFlag;
+AdvectionFlag=CtrlVar.WaterFilm.AdvectionFlag;
+DiffusionFlag=CtrlVar.WaterFilm.DiffusionFlag;
 
 
 kappa=F1.g*(F1.rhow-F1.rho).*k ;
@@ -216,8 +236,8 @@ x1int=zeros(MUA.Nele,MUA.nip) ; y1int=zeros(MUA.Nele,MUA.nip) ;
 
     <span class="comment">%kappaint=0 ;</span>
 
-    alpha=CtrlVar.WaterFilm.Barrier ;
-    beta=CtrlVar.WaterFilm.Penalty ;
+    BarrierFlag=CtrlVar.WaterFilm.Barrier ;
+    PenaltyFlag=CtrlVar.WaterFilm.Penalty ;
     gamma=CtrlVar.WaterFilm.qwAfloatMultiplier ;
 
     <span class="keyword">for</span> Inod=1:MUA.nod
@@ -234,15 +254,15 @@ x1int=zeros(MUA.Nele,MUA.nip) ; y1int=zeros(MUA.Nele,MUA.nip) ;
 
             daFG=dt*FGint.*gamma.*fun(Jnod).*SUPGdetJw ;
 
-            dC1=alphaFlag*  dt*theta* (fun(Jnod).*du1dx+Deriv(:,1,Jnod).*u1int+fun(Jnod).*dv1dy+Deriv(:,2,Jnod).*v1int).*SUPGdetJw;
+            dC1=AdvectionFlag*  dt*theta* (fun(Jnod).*du1dx+Deriv(:,1,Jnod).*u1int+fun(Jnod).*dv1dy+Deriv(:,2,Jnod).*v1int).*SUPGdetJw;
 
-            dBarrier1=dt*(1-theta)*alpha* (h1int.^(-2).*fun(Jnod).*He1 - h1int.^(-1).*DiracDelta(100,h1int,0).*fun(Jnod))  .*SUPGdetJw ;
+            dBarrier1=dt*(1-theta)*BarrierFlag* (h1int.^(-2).*fun(Jnod).*He1 - h1int.^(-1).*DiracDelta(100,h1int,0).*fun(Jnod))  .*SUPGdetJw ;
 
 
-            dPenalty1=dt* theta *beta.* (fun(Jnod).*HeavisideApprox(100,-h1int,0)-h1int.*DiracDelta(100,h1int,0).*fun(Jnod)).*SUPGdetJw ;
+            dPenalty1=dt* theta *PenaltyFlag.* (fun(Jnod).*HeavisideApprox(100,-h1int,0)-h1int.*DiracDelta(100,h1int,0).*fun(Jnod)).*SUPGdetJw ;
 
             <span class="comment">% the non-linear diffusion term</span>
-            dD1=betaFlag*  dt*theta.*kappaint.* (   <span class="keyword">...</span>
+            dD1=DiffusionFlag*  dt*theta.*kappaint.* (   <span class="keyword">...</span>
                 h1int     .*   (Deriv(:,1,Jnod).*Deriv(:,1,Inod)+ Deriv(:,2,Jnod).*Deriv(:,2,Inod)) <span class="keyword">...</span>
                 + fun(Jnod) .*   (  dh1dx        .*Deriv(:,1,Inod)+    dh1dy        .*Deriv(:,2,Inod)))   .*detJw ;
 
@@ -267,22 +287,22 @@ x1int=zeros(MUA.Nele,MUA.nip) ; y1int=zeros(MUA.Nele,MUA.nip) ;
 
 
         <span class="comment">% This is the advection term:  \nabla (h v)</span>
-        C0=alphaFlag*  dt*(1-theta)*  (h0int.*du0dx+dh0dx.*u0int+h0int.*dv0dy+dh0dy.*v0int).*SUPGdetJw;
-        C1=alphaFlag*  dt*theta*      (h1int.*du1dx+dh1dx.*u1int+h1int.*dv1dy+dh1dy.*v1int).*SUPGdetJw;
+        C0=AdvectionFlag*  dt*(1-theta)*  (h0int.*du0dx+dh0dx.*u0int+h0int.*dv0dy+dh0dy.*v0int).*SUPGdetJw;
+        C1=AdvectionFlag*  dt*theta*      (h1int.*du1dx+dh1dx.*u1int+h1int.*dv1dy+dh1dy.*v1int).*SUPGdetJw;
 
         <span class="comment">% This is a non-linear diffusion term</span>
-        D0=betaFlag*  dt*(1-theta)* kappaint.*h0int.*   (dh0dx.*Deriv(:,1,Inod)+dh0dy.*Deriv(:,2,Inod)).*detJw;
-        D1=betaFlag*  dt*theta    * kappaint.*h1int.*   (dh1dx.*Deriv(:,1,Inod)+dh1dy.*Deriv(:,2,Inod)).*detJw;
+        D0=DiffusionFlag*  dt*(1-theta)* kappaint.*h0int.*   (dh0dx.*Deriv(:,1,Inod)+dh0dy.*Deriv(:,2,Inod)).*detJw;
+        D1=DiffusionFlag*  dt*theta    * kappaint.*h1int.*   (dh1dx.*Deriv(:,1,Inod)+dh1dy.*Deriv(:,2,Inod)).*detJw;
 
       <span class="comment">% This is a linear isotropic diffusion term</span>
         DLI0=dt*(1-theta)* etaint.*(dh0dx.*Deriv(:,1,Inod)+dh0dy.*Deriv(:,2,Inod)).*detJw;
         DLI1=dt*theta    * etaint.*(dh1dx.*Deriv(:,1,Inod)+dh1dy.*Deriv(:,2,Inod)).*detJw;
 
-        Barrier1=-dt*(1-theta)*alpha.*(h1int.^(-1)).*He1.*SUPGdetJw ;
-        Barrier0=-dt*   theta *alpha.*(h0int.^(-1)).*He0.*SUPGdetJw ;
+        Barrier1=-dt*(1-theta)*BarrierFlag.*(h1int.^(-1)).*He1.*SUPGdetJw ;
+        Barrier0=-dt*   theta *BarrierFlag.*(h0int.^(-1)).*He0.*SUPGdetJw ;
 
-        Penalty0=dt*(1-theta)*beta.*h0int.*(1-He0).*SUPGdetJw ;
-        Penalty1=dt*   theta *beta.*h1int.*(1-He1).*SUPGdetJw ;
+        Penalty0=dt*(1-theta)*PenaltyFlag.*h0int.*(1-He0).*SUPGdetJw ;
+        Penalty1=dt*   theta *PenaltyFlag.*h1int.*(1-He1).*SUPGdetJw ;
 
 
 
@@ -292,13 +312,13 @@ x1int=zeros(MUA.Nele,MUA.nip) ; y1int=zeros(MUA.Nele,MUA.nip) ;
 
     <span class="comment">% Flux at each integration point, and for all elements</span>
     qx1int(:,Iint)=qx1int(:,Iint) <span class="keyword">...</span>
-        + alphaFlag*h0int.*u1int <span class="keyword">...</span>
-        - kappaint.*h0int.*dh0dx <span class="keyword">...</span>
+        + AdvectionFlag*h0int.*u1int <span class="keyword">...</span>
+        - DiffusionFlag* kappaint.*h0int.*dh0dx <span class="keyword">...</span>
         - etaint.*dh0dx ;
 
     qy1int(:,Iint)=qy1int(:,Iint) <span class="keyword">...</span>
-        + alphaFlag*h0int.*v1int <span class="keyword">...</span>
-        - kappaint.*h0int.*dh0dy <span class="keyword">...</span>
+        + AdvectionFlag*h0int.*v1int <span class="keyword">...</span>
+        - DiffusionFlag*kappaint.*h0int.*dh0dy <span class="keyword">...</span>
         - etaint.*dh0dy ;
 
      x1int(:,Iint)=x1nod*fun;
@@ -327,7 +347,14 @@ istak=0;
 <span class="keyword">end</span>
 
 KK=sparseUA(Iind,Jind,Xval,neq,neq);
-</pre><p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2023a</a><br></p></div><!--
+</pre>
+<p class="footer">
+<br>
+<a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2024a</a>
+<br>
+</p>
+</div>
+<!--
 ##### SOURCE BEGIN #####
 
 
@@ -343,19 +370,24 @@ nargoutchk(7,7)
 %
 % Solves:
 %
-% $$\partial_t h_w +  \alpha \, \nabla \cdot (  h_w \mathbf{v}_w )  - \beta \, \nabla \cdot (\kappa h_w \nabla h_w)  - \nabla \cdot (\eta  \nabla h_w ) = a_w + \gamma (1-\mathcal{G}) \, h_w + \delta  (1-\mathcal{H}) h_w$$
+% $$ \partial_t h_w + A  \nabla \cdot (  h_w \mathbf{v}_w )  - D \nabla \cdot (\kappa h_w \nabla h_w) -\nabla \cdot (\eta \nabla h_w )= a_w $$
 %
-% where
+% where $A$ and $D$ are advection and diffusion flags.
 %
-% $$\mathcal{G} $$
+%   A=CtrlVar.WaterFilm.AdvectionFlag;
 %
-% is the floating/grounding mask, which is equal to 1 if grounded, 0 otherwise.
+%   D=CtrlVar.WaterFilm.DiffusionFlag;
 %
-% And
+% Further barrier and penalty terms can be added
 %
-% $$\mathcal{H}$$
+% $$ \partial_t h_w + A  \nabla \cdot (  h_w \mathbf{v}_w )  - D \nabla \cdot (\kappa h_w \nabla h_w) -\nabla \cdot (\eta \nabla h_w )= a_w + B (h_w>0) /h_w  + P (h_w<0) h_w $$
 %
-% is 1 if $h_w>0$ and zero otherwise.
+% where $B$ is a barrier-flag, and $P$ a penalty flag, and $h_w>0$  and $h_w<0$ are (logical) masks, and
+%
+%
+%   B=CtrlVar.WaterFilm.Barrier ;
+%
+%   P=CtrlVar.WaterFilm.Penalty ;
 %
 % The water velocity is provided as an input through the field (F.uw,F.vw)
 %
@@ -369,29 +401,6 @@ nargoutchk(7,7)
 %
 % But here $\mathbf{v}_w$ is simply an input field.
 %
-%%
-
-%
-% as a velocity, and write the equation as
-%
-%
-% $$\partial_t h_w +  \nabla \cdot (  h_w \mathbf{v}_w )  - \nabla \cdot (\kappa h_w \nabla h_w) = a_w $$
-%
-% It is also possible to add some further linear diffusion term, and to enable/disable the advection and the non-linear
-% diffusion term by selecting the parameters $\alpha$, $\beta$ , and $\eta$, accordingly
-%
-% $$\partial_t h_w +  \alpha \, \nabla \cdot (  h_w \mathbf{v}_w )  - \beta \, \nabla \cdot (\kappa h_w \nabla h_w)  - \nabla \cdot (\eta  \nabla h_w ) = a_w $$
-%
-% This can also be written as
-%
-% $$\partial_t h_w +  \alpha \, \nabla \cdot ( \mathbf{q} ) = a_w $$
-%
-% with
-%
-% $$\mathbf{q} = \alpha \,  h_w \mathbf{v}_w   - \beta \,  \kappa h_w \nabla h_w   -   \eta  \nabla h_w  $$
-%
-% However, in the FE formulation, the resulting  second-order two terms containing $\nabla h_w$ are integrated
-% 
 %
 % The system to solve if K dx = -R
 %
@@ -407,8 +416,8 @@ ndim=2; dof=1; neq=dof*MUA.Nnodes;
 
 theta=CtrlVar.theta;
 dt=CtrlVar.dt ;
-alphaFlag=CtrlVar.WaterFilm.AdvectionFlag;
-betaFlag=CtrlVar.WaterFilm.DiffusionFlag;
+AdvectionFlag=CtrlVar.WaterFilm.AdvectionFlag;
+DiffusionFlag=CtrlVar.WaterFilm.DiffusionFlag;
 
 
 kappa=F1.g*(F1.rhow-F1.rho).*k ;
@@ -522,8 +531,8 @@ for Iint=1:MUA.nip
 
     %kappaint=0 ;
 
-    alpha=CtrlVar.WaterFilm.Barrier ;
-    beta=CtrlVar.WaterFilm.Penalty ;
+    BarrierFlag=CtrlVar.WaterFilm.Barrier ;
+    PenaltyFlag=CtrlVar.WaterFilm.Penalty ;
     gamma=CtrlVar.WaterFilm.qwAfloatMultiplier ;
     
     for Inod=1:MUA.nod
@@ -540,15 +549,15 @@ for Iint=1:MUA.nip
 
             daFG=dt*FGint.*gamma.*fun(Jnod).*SUPGdetJw ;
 
-            dC1=alphaFlag*  dt*theta* (fun(Jnod).*du1dx+Deriv(:,1,Jnod).*u1int+fun(Jnod).*dv1dy+Deriv(:,2,Jnod).*v1int).*SUPGdetJw;
+            dC1=AdvectionFlag*  dt*theta* (fun(Jnod).*du1dx+Deriv(:,1,Jnod).*u1int+fun(Jnod).*dv1dy+Deriv(:,2,Jnod).*v1int).*SUPGdetJw;
 
-            dBarrier1=dt*(1-theta)*alpha* (h1int.^(-2).*fun(Jnod).*He1 - h1int.^(-1).*DiracDelta(100,h1int,0).*fun(Jnod))  .*SUPGdetJw ;
+            dBarrier1=dt*(1-theta)*BarrierFlag* (h1int.^(-2).*fun(Jnod).*He1 - h1int.^(-1).*DiracDelta(100,h1int,0).*fun(Jnod))  .*SUPGdetJw ;
 
 
-            dPenalty1=dt* theta *beta.* (fun(Jnod).*HeavisideApprox(100,-h1int,0)-h1int.*DiracDelta(100,h1int,0).*fun(Jnod)).*SUPGdetJw ;
+            dPenalty1=dt* theta *PenaltyFlag.* (fun(Jnod).*HeavisideApprox(100,-h1int,0)-h1int.*DiracDelta(100,h1int,0).*fun(Jnod)).*SUPGdetJw ;
 
             % the non-linear diffusion term
-            dD1=betaFlag*  dt*theta.*kappaint.* (   ...
+            dD1=DiffusionFlag*  dt*theta.*kappaint.* (   ...
                 h1int     .*   (Deriv(:,1,Jnod).*Deriv(:,1,Inod)+ Deriv(:,2,Jnod).*Deriv(:,2,Inod)) ...
                 + fun(Jnod) .*   (  dh1dx        .*Deriv(:,1,Inod)+    dh1dy        .*Deriv(:,2,Inod)))   .*detJw ;
 
@@ -573,22 +582,22 @@ for Iint=1:MUA.nip
 
 
         % This is the advection term:  \nabla (h v)
-        C0=alphaFlag*  dt*(1-theta)*  (h0int.*du0dx+dh0dx.*u0int+h0int.*dv0dy+dh0dy.*v0int).*SUPGdetJw;
-        C1=alphaFlag*  dt*theta*      (h1int.*du1dx+dh1dx.*u1int+h1int.*dv1dy+dh1dy.*v1int).*SUPGdetJw;
+        C0=AdvectionFlag*  dt*(1-theta)*  (h0int.*du0dx+dh0dx.*u0int+h0int.*dv0dy+dh0dy.*v0int).*SUPGdetJw;
+        C1=AdvectionFlag*  dt*theta*      (h1int.*du1dx+dh1dx.*u1int+h1int.*dv1dy+dh1dy.*v1int).*SUPGdetJw;
 
         % This is a non-linear diffusion term
-        D0=betaFlag*  dt*(1-theta)* kappaint.*h0int.*   (dh0dx.*Deriv(:,1,Inod)+dh0dy.*Deriv(:,2,Inod)).*detJw;
-        D1=betaFlag*  dt*theta    * kappaint.*h1int.*   (dh1dx.*Deriv(:,1,Inod)+dh1dy.*Deriv(:,2,Inod)).*detJw;
+        D0=DiffusionFlag*  dt*(1-theta)* kappaint.*h0int.*   (dh0dx.*Deriv(:,1,Inod)+dh0dy.*Deriv(:,2,Inod)).*detJw;
+        D1=DiffusionFlag*  dt*theta    * kappaint.*h1int.*   (dh1dx.*Deriv(:,1,Inod)+dh1dy.*Deriv(:,2,Inod)).*detJw;
 
       % This is a linear isotropic diffusion term
         DLI0=dt*(1-theta)* etaint.*(dh0dx.*Deriv(:,1,Inod)+dh0dy.*Deriv(:,2,Inod)).*detJw;
         DLI1=dt*theta    * etaint.*(dh1dx.*Deriv(:,1,Inod)+dh1dy.*Deriv(:,2,Inod)).*detJw;
 
-        Barrier1=-dt*(1-theta)*alpha.*(h1int.^(-1)).*He1.*SUPGdetJw ;
-        Barrier0=-dt*   theta *alpha.*(h0int.^(-1)).*He0.*SUPGdetJw ;
+        Barrier1=-dt*(1-theta)*BarrierFlag.*(h1int.^(-1)).*He1.*SUPGdetJw ;
+        Barrier0=-dt*   theta *BarrierFlag.*(h0int.^(-1)).*He0.*SUPGdetJw ;
 
-        Penalty0=dt*(1-theta)*beta.*h0int.*(1-He0).*SUPGdetJw ;
-        Penalty1=dt*   theta *beta.*h1int.*(1-He1).*SUPGdetJw ;
+        Penalty0=dt*(1-theta)*PenaltyFlag.*h0int.*(1-He0).*SUPGdetJw ;
+        Penalty1=dt*   theta *PenaltyFlag.*h1int.*(1-He1).*SUPGdetJw ;
 
     
 
@@ -598,13 +607,13 @@ for Iint=1:MUA.nip
 
     % Flux at each integration point, and for all elements
     qx1int(:,Iint)=qx1int(:,Iint) ...  
-        + alphaFlag*h0int.*u1int ...
-        - kappaint.*h0int.*dh0dx ...
+        + AdvectionFlag*h0int.*u1int ...
+        - DiffusionFlag* kappaint.*h0int.*dh0dx ...
         - etaint.*dh0dx ;
 
     qy1int(:,Iint)=qy1int(:,Iint) ...  
-        + alphaFlag*h0int.*v1int ...
-        - kappaint.*h0int.*dh0dy ...
+        + AdvectionFlag*h0int.*v1int ...
+        - DiffusionFlag*kappaint.*h0int.*dh0dy ...
         - etaint.*dh0dy ;
 
      x1int(:,Iint)=x1nod*fun;
@@ -641,4 +650,6 @@ KK=sparseUA(Iind,Jind,Xval,neq,neq);
 
 
 ##### SOURCE END #####
---></body></html>
+-->
+</body>
+</html>

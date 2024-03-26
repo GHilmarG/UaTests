@@ -62,7 +62,7 @@ if contains(UserVar.Example,"-Antarctica-")
     s=Fs(F.x,F.y);
     B=FB(F.x,F.y);
     % b=Fb(x,y);
-    rho=Frho(F.x,F.y); 
+    rho=Frho(F.x,F.y);
     rhow=1030;
     g=9.81/1000;
     S=s*0 ;
@@ -87,11 +87,6 @@ elseif contains(UserVar.Example,"-Island-")
         l=UserVar.l;
         r=vecnorm([F.x F.y],2,2)  ;
 
-        %%
-
-        % l=100e3 ; r=linspace(-l,l);
-        %  CtrlVar=Ua2D_DefaultParameters(); MUA=[];
-
         B0=-500 ; B=2000*  (3*(r/2/l).^2 - (r/l).^4) + B0  ;
         s0=1000 ;
         s=s0*exp(-(r/(l/3)).^2) ;
@@ -105,7 +100,7 @@ elseif contains(UserVar.Example,"-Island-")
         % now calculate h based on these B and s fields
         [b,h,GF]=Calc_bh_From_sBS(CtrlVar,MUA,s,B,S,rho,rhow);
 
-        % add a pertubation to B
+        % add a perturbation to B
         if contains(UserVar.Example,"-Peaks-")
 
             xc=25e3 ; yc=0e3 ;
@@ -115,23 +110,24 @@ elseif contains(UserVar.Example,"-Island-")
 
             xc=0e3 ; yc=20e3 ;
             r=vecnorm([(F.x-xc) (F.y-yc)],2,2)  ;
-            W=l/5 ; A=250; 
-            W=l/10 ; A=250; 
-            Peak = -A*2*W*DiracDelta(1/W,r,0) ; 
+            W=l/5 ; A=-250;
+            W=l/10 ; A=-250;
+            W=l/20 ; A=-500;
+            Peak = A*2*W*DiracDelta(1/W,r,0) ;
             B=B+Peak;
 
 
 
 
         end
-        %but keep the same ice thicknes, so now calculate s and b from h and B
+        %but keep the same ice thickness, so now calculate s and b from h and B
 
         [b,s,h,GF]=Calc_bs_From_hBS(CtrlVar,MUA,h,S,B,rho,rhow);
 
 
-       
+
         % figure(1); hold off; plot(r/1000,B) ; hold on ; plot(r/1000,s) ; plot(r/1000,b) ;plot(r/1000,S) ;
-        
+
         %%
 
 
@@ -139,19 +135,21 @@ elseif contains(UserVar.Example,"-Island-")
 
         l=UserVar.l;
         r=vecnorm([F.x F.y],2,2)  ;
-        B=-2000*(r/l).^2 ;
 
-        S=zeros(MUA.Nnodes,1);
+        B0=500 ; 
+        h=100+F.x*0; 
+        B= B0* (1 - 2*r/l) ;
+        S=F.x*0;
+        
         rho=920;
         rhow=1030;
         g=9.81/1000;
 
-        lmax=sqrt(2)*l ;
-        h0=1000;
-        hmin=100;
-        h=h0*(1-sqrt(r/lmax))+hmin ;
+        [b,s,h,F.GF]=Calc_bs_From_hBS(CtrlVar,MUA,h,S,B,rho,rhow);
+        
 
-     
+
+
 
     end
 
