@@ -2,7 +2,7 @@
 
 
 %%
-
+% this is based on the git commit on 20/03/20-24 at 9:50am
  %l        Qn                  Qint
 % 3-node
 T= [ ...
