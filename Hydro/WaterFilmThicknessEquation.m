@@ -14,8 +14,7 @@ nargoutchk(5,5)
 %
 % See:
 %
-%   WaterFilmThicknessEquationAssembly.m
-%
+%   WaterFilmThicknessEquationAssembly.m%
 % for detailed information.
 %
 % Solves:
@@ -67,7 +66,7 @@ nargoutchk(5,5)
 %
 %   k : hydraulic conductivity
 %
-% |ActiveSet| and |lambda| can be empty on initial call.
+% ActiveSet and lambda can be empty on initial call.
 %
 %%
 
@@ -147,7 +146,7 @@ for I=1:nActiveSetIterations
     
 
     x=F1.hw;
-    fun =@(x) lsqUaFunc(x,UserVar,CtrlVar,MUA,F0,F1,k,eta)  ;
+    fun =@(x) lsqUaFunc(x,UserVar,CtrlVar,MUA,F0,F1,k,eta)  ; % returns both the gradien and the Hessian (R and K)
 
     CtrlVar.lsqUa.CostMeasure="r2";
     CtrlVar.lsqUa.isLSQ=false ;

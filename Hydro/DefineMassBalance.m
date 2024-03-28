@@ -64,7 +64,7 @@ function [UserVar,as,aw]=DefineMassBalance(UserVar,CtrlVar,MUA,F)
 as=zeros(MUA.Nnodes,1);
 aw=zeros(MUA.Nnodes,1);
 
-if contains(UserVar.Example,"-Antarctica-")
+if contains(UserVar.Example,"-Antarctica-") ||  contains(UserVar.Example,"-WAIS-")
 
 
     if UserVar.awSource=="-BasalFriction-" 
@@ -94,6 +94,10 @@ if contains(UserVar.Example,"-Antarctica-")
     ID=FindAllNodesWithinGivenRangeFromGroundingLine([],MUA,xGL,yGL,ds) ;
     aw(ID)=0; 
 
+    % trying to get rid of aw downstream of grounding line
+    Mask=double(~F.GF.NodesUpstreamOfGroundingLines) ;
+    aw=aw-0.5*Mask.*(F.hw-CtrlVar.WaterFilm.ThickMin)/CtrlVar.dt; 
+
 elseif contains(UserVar.Example,"-Island-")
 
     aw=zeros(MUA.Nnodes,1)+UserVar.aw;  % defined in driver
@@ -108,9 +112,9 @@ elseif contains(UserVar.Example,"-Island-")
     aw(F.x<0) =0 ; UserVar.QnTheoretical=0.5*UserVar.QnTheoretical;
 
 
-    % trying to get rid of aw downstream of grounding line
+    
 
-
+% trying to get rid of aw downstream of grounding line
     Mask=double(~F.GF.NodesUpstreamOfGroundingLines) ;
     aw=aw-0.5*Mask.*(F.hw-CtrlVar.WaterFilm.ThickMin)/CtrlVar.dt; 
 

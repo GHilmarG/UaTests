@@ -220,7 +220,7 @@ for Iint=1:MUA.nip
         a0term=- dt*(1-theta)* a0int.*SUPGdetJw;
         a1term=-    dt*theta * a1int.*SUPGdetJw;
 
-        aFG=gamma*dt*FGint.*h1int.*SUPGdetJw ;
+        aFG=gamma*dt*FGint.*h1int.*SUPGdetJw ;  % optional (negative) mass balance over floating areas
 
 
         % This is the advection term:  \nabla (h v)

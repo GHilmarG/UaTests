@@ -4,7 +4,7 @@ function WaterFilmThicknessEquationDriver
 
 ReadData=1;
 CalcFluxes=1;
-isRestart=0;  ResetTime=0;
+isRestart=0;  ResetTime=0; maxTime=200000; nPlotStep=100;
 
 %%
 %
@@ -30,8 +30,7 @@ isRestart=0;  ResetTime=0;
 %%
 
 CtrlVar=Ua2D_DefaultParameters();
-FluxGate=[]; xGL=[] ; yGL=[] ;
-RestartFileName="RestartWaterFilmThicknessEquationDriver.mat" ; 
+
 
 
 UserVar.Example="-Island-hw-" ;
@@ -39,13 +38,13 @@ UserVar.Example="-Island-Retrograde-hw-" ;
 UserVar.Example="-Island-Retrograde-Peaks-hw-" ;
 UserVar.Example="-Island-Retrograde-Peaks-" ;   % as far as I can see "-hw-" is not used here where we solve the WaterFilmThicknessEquaitown, only used in GroundWaterEquation.m 
 UserVar.Example="-Island-" ;   % This is supposed to be a simple test for a simple geometry.
-% UserVar.Example="-Antarctica-" ;   UserVar.HelmholtzSmoothingLengthScale=nan;  RestartFileName="Antarctica-aw1-.mat";
+UserVar.Example="-Antarctica-" ;   UserVar.HelmholtzSmoothingLengthScale=nan;  CtrlVar.MeshSize=10e3 ;  RestartFileName="Antarctica";
+UserVar.Example="-WAIS-"       ;   UserVar.HelmholtzSmoothingLengthScale=nan;  CtrlVar.MeshSize=5e3 ;  RestartFileName="RF"+UserVar.Example+"MS"+num2str(CtrlVar.MeshSize/1000)+"km";
 UserVar.VelocityFieldPrescribed=false;
 
 %%
 nTimeSteps=10000;
-nRestartSaveIntervale=1000;
-maxTime=1e8;
+nRestartSaveInterval=1000;
 CtrlVar.dt=100;
 qwxLast=[];
 qwyLast=[];
@@ -70,19 +69,35 @@ CtrlVar.WaterFilm.AdvectionFlag=1;
 CtrlVar.WaterFilm.DiffusionFlag=1;
 
 
-ActiveSet=[]; lambda=[];
 
-PlotWaterFilmFlux=false;
 
-nPlotStep=10;
 
+
+%% Solver variables
+CtrlVar.lsqUa.Algorithm="LevenbergMarquardt";
+CtrlVar.lsqUa.Algorithm="DogLeg";
+CtrlVar.lsqUa.ItMax=5; 
+CtrlVar.lsqUa.gTol=1e-120;
+CtrlVar.lsqUa.dR2Tol=1e-3; 
+CtrlVar.lsqUa.dxTol=1e-120;
+CtrlVar.lsqUa.isLSQ=true; 
+CtrlVar.lsqUa.SaveIterate=false; 
+CtrlVar.lsqUa.CostMeasure="r2" ;
+%%
 if ReadData  &&~isRestart
 
-    if contains(UserVar.Example,"-Antarctica-")
+    if contains(UserVar.Example,"-Antarctica-") || contains(UserVar.Example,"-WAIS-")
 
         UserVar.QnTheoretical=nan;
-        UserVar.VelocityFieldPrescribed=true;
-        CtrlVar.MeshSize=10e3 ; 
+        UserVar.VelocityFieldPrescribed=false;
+        
+
+
+        CtrlVar.MeshSizeMin=CtrlVar.MeshSize/2;
+        CtrlVar.MeshSizeMax=2*CtrlVar.MeshSize;
+    
+
+        % CtrlVar.MeshSize=10e3 ; 
         [UserVar,MUA]=CreateMeshAndMua(UserVar,CtrlVar); 
 
         % load("..\Calving\PIG-TWG\MeshFile20km-PIG-TWG.mat","MUA")
@@ -103,37 +118,30 @@ if ReadData  &&~isRestart
         
 
         k=zeros(MUA.Nnodes,1)+1e10;
-        eta=k*10 ;
-        eta(~F.GF.NodesUpstreamOfGroundingLines)=eta(1)*1000;
+         k=zeros(MUA.Nnodes,1)+1e2;   
+        eta=k*0 ;
+        
         UserVar.awSource="-Box-" ; 
         UserVar.awSource="-BasalFriction-" ; 
 
         CtrlVar.WaterFilm.Assembly="-AD-" ;   
         CtrlVar.Tracer.SUPG.Use=1;
         CtrlVar.WaterFilm.Barrier=0;
-        CtrlVar.WaterFilm.Penalty=1 ;
+        CtrlVar.WaterFilm.Penalty=0 ;
         CtrlVar.WaterFilm.Potential="-bs-" ;
-        CtrlVar.WaterFilm.qwAfloatMultiplier=1000;
+        CtrlVar.WaterFilm.qwAfloatMultiplier=0; % optional (negative) mass balance over floating areas
         CtrlVar.lsqUa.gTol=1;
         CtrlVar.WaterFilm.MaxActiveSetIterations=2;
         
         CtrlVar.dt=10e3/k(1) ;
         CtrlVar.WaterFilm.ThickMin=10e3/k(1);
-        F.hw=zeros(MUA.Nnodes,1)+10*CtrlVar.WaterFilm.ThickMin   ;
+        F.hw=zeros(MUA.Nnodes,1)+2*CtrlVar.WaterFilm.ThickMin   ;
+        ActiveSet=[]; lambda=[];
 
+        
 
-        UserVar.WaterFilmThicknessEqution="-v-" ;
-
-        if UserVar.WaterFilmThicknessEqution=="-v-"
-            % just use the prescribed velocity alone
-            CtrlVar.WaterFilm.AdvectionFlag=1;
-            CtrlVar.WaterFilm.DiffusionFlag=0;
-            eta=eta*0+1e5 ; 
-            CtrlVar.dt=1; 
-
-        end
-
-        maxTime=10000;
+     
+        
         
 
         FluxGate=[-1550 -388 ; -1500 -543]*1000; Npoints=300 ; FluxGate=interparc(Npoints,FluxGate(:,1),FluxGate(:,2),'linear');
@@ -142,7 +150,7 @@ if ReadData  &&~isRestart
         hold on ;
         plot(FluxGate(:,1)/CtrlVar.PlotXYscale,FluxGate(:,2)/CtrlVar.PlotXYscale,"o-") ; axis equal
 
-        RestartFileName="Antarctica-"+"aw"+UserVar.awSource+"-.mat"; 
+     
 
     elseif contains(UserVar.Example,"-Island-")
 
@@ -177,7 +185,7 @@ if ReadData  &&~isRestart
         dl=12500;
         dl=1500;
         dl=6000;
-        dl=3000;
+        dl=10000;
         
         CtrlVar.MeshSize=dl;
         CtrlVar.TriNodes=3;  
@@ -257,11 +265,11 @@ if ReadData  &&~isRestart
         CtrlVar.WaterFilm.Barrier=0;
         CtrlVar.WaterFilm.Penalty=1 ;
         CtrlVar.WaterFilm.Potential="-bs-" ;
-        CtrlVar.WaterFilm.qwAfloatMultiplier=1000; 
+        CtrlVar.WaterFilm.qwAfloatMultiplier=0; % optional (negative) mass balance over floating areas
         CtrlVar.lsqUa.gTol=1;
         CtrlVar.WaterFilm.MaxActiveSetIterations=2;
 
-        CtrlVar.dt=10e3/k(1) ;
+        CtrlVar.dt=1e3/k(1) ;
         CtrlVar.WaterFilm.ThickMin=10e3/k(1);
         F.hw=zeros(MUA.Nnodes,1)+10*CtrlVar.WaterFilm.ThickMin   ;
 
@@ -303,7 +311,7 @@ if CalcFluxes
     if isRestart
 
         
-        
+        fprintf("loading restart file: %s \n",RestartFileName)
         load(RestartFileName,"UserVar","CtrlVar","MUA","F0","F1","k","eta","tVector","hwMaxVector","qwVector","hwMinVector","hwMaxGroundedVector","hwMaxAfloatVector","FluxGate","ActiveSet","lambda") ;
         
         %FluxGate=[-1550 -388 ; -1500 -543]*1000;   Npoints=300 ; FluxGate=interparc(Npoints,FluxGate(:,1),FluxGate(:,2),'linear');
@@ -415,10 +423,10 @@ if CalcFluxes
         tVector(icount)=F1.time;
 
         % Restart file
-        if mod(Isteps,nRestartSaveIntervale)==0
-            fprintf("Saving Restart File. \n")
+        if mod(Isteps,nRestartSaveInterval)==0
+            fprintf("Saving Restart File: %s \n",RestartFileName)
             
-            save("RestartWaterFilmThicknessEquationDriver","UserVar","CtrlVar","MUA","F0","F1","k","eta","tVector","hwMaxVector","qwVector","hwMinVector","hwMaxGroundedVector","hwMaxAfloatVector","FluxGate","ActiveSet","lambda") ;
+            save(RestartFileName,"UserVar","CtrlVar","MUA","F0","F1","k","eta","tVector","hwMaxVector","qwVector","hwMinVector","hwMaxGroundedVector","hwMaxAfloatVector","FluxGate","ActiveSet","lambda") ;
         end
 
         %% figures
@@ -440,8 +448,9 @@ if CalcFluxes
             plot(tVector,hwMinVector,"-*r")
             plot(tVector,hwMaxGroundedVector,"-*g")
             plot(tVector,hwMaxAfloatVector,"-*b")
-            yline(0,"--")
+            %yline(0,"--")
             title(sprintf("$h_w$"),Interpreter="latex")
+            legend("hw max","hw min","hw max grounded","hw max afloat",Location="best")
 
             figP=FindOrCreateFigure("(uw,vw)") ; clf(figP) ;
             CtrlVar.VelColorBarTitle="($\mathrm{m \, yr^{-1}}$)" ;
@@ -548,7 +557,8 @@ if CalcFluxes
     end
 
     
-    fprintf("Saving Restart File. \n")
+    fprintf("Saving Restart File: %s \n",RestartFileName)
+    MUA.dM=[];
     save(RestartFileName,"UserVar","CtrlVar","MUA","F0","F1","k","eta","tVector","hwMaxVector","qwVector","hwMinVector","hwMaxGroundedVector","hwMaxAfloatVector","FluxGate","ActiveSet","lambda") ;
 
 end

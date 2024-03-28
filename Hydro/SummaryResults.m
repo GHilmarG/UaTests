@@ -28,5 +28,14 @@ hold on
 yline(25.1327)   
 xlabel("Element size (km)")
 ylabel("Total flux through fluxgate")
-%%
+%% Antarctica
 
+
+
+%   l                Qn
+T=[ ...
+    10e3       1.70   ; ...   
+    25e3       1.118  ; ...
+    50e3       1.121  ; ...
+    100e3      0.310
+    ]   

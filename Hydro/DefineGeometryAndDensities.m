@@ -44,7 +44,7 @@ function  [UserVar,s,b,S,B,rho,rhow,g]=DefineGeometryAndDensities(UserVar,CtrlVa
 persistent Fs FB Frho
 
 
-if contains(UserVar.Example,"-Antarctica-")
+if contains(UserVar.Example,"-Antarctica-") ||  contains(UserVar.Example,"-WAIS-")
 
     if isempty(Fs)
 
