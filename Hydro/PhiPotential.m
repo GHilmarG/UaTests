@@ -1,3 +1,4 @@
+
 function Phi=PhiPotential(CtrlVar,MUA,F)
 
 
