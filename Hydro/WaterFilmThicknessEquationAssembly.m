@@ -47,7 +47,7 @@ nargoutchk(7,7)
 % The system to solve if K dx = -R
 %
 % Notice the sign on the right-hand side
-% 
+%
 %
 %%
 
@@ -91,8 +91,8 @@ Relements=zeros(MUA.Nele,MUA.nod);
 
 l=sqrt(2*MUA.EleAreas);
 
-qx1int=zeros(MUA.Nele,MUA.nip) ; qy1int=zeros(MUA.Nele,MUA.nip) ; 
-x1int=zeros(MUA.Nele,MUA.nip) ; y1int=zeros(MUA.Nele,MUA.nip) ; 
+qx1int=zeros(MUA.Nele,MUA.nip) ; qy1int=zeros(MUA.Nele,MUA.nip) ;
+x1int=zeros(MUA.Nele,MUA.nip) ; y1int=zeros(MUA.Nele,MUA.nip) ;
 
 % vector over all elements for each integration point
 for Iint=1:MUA.nip
@@ -117,7 +117,7 @@ for Iint=1:MUA.nip
     a0int=a0nod*fun;
     a1int=a1nod*fun;
 
-    FGint=FGnod*fun; 
+    FGint=FGnod*fun;
 
     kappaint=kappanod*fun;
     etaint=etanod*fun;
@@ -176,7 +176,7 @@ for Iint=1:MUA.nip
     BarrierFlag=CtrlVar.WaterFilm.Barrier ;
     PenaltyFlag=CtrlVar.WaterFilm.Penalty ;
     gamma=CtrlVar.WaterFilm.qwAfloatMultiplier ;
-    
+
     for Inod=1:MUA.nod
 
         SUPG=fun(Inod)+CtrlVar.Tracer.SUPG.Use*tauSUPGint.*(u0int.*Deriv(:,1,Inod)+v0int.*Deriv(:,2,Inod));
@@ -231,7 +231,7 @@ for Iint=1:MUA.nip
         D0=DiffusionFlag*  dt*(1-theta)* kappaint.*h0int.*   (dh0dx.*Deriv(:,1,Inod)+dh0dy.*Deriv(:,2,Inod)).*detJw;
         D1=DiffusionFlag*  dt*theta    * kappaint.*h1int.*   (dh1dx.*Deriv(:,1,Inod)+dh1dy.*Deriv(:,2,Inod)).*detJw;
 
-      % This is a linear isotropic diffusion term
+        % This is a linear isotropic diffusion term
         DLI0=dt*(1-theta)* etaint.*(dh0dx.*Deriv(:,1,Inod)+dh0dy.*Deriv(:,2,Inod)).*detJw;
         DLI1=dt*theta    * etaint.*(dh1dx.*Deriv(:,1,Inod)+dh1dy.*Deriv(:,2,Inod)).*detJw;
 
@@ -241,25 +241,27 @@ for Iint=1:MUA.nip
         Penalty0=dt*(1-theta)*PenaltyFlag.*h0int.*(1-He0).*SUPGdetJw ;
         Penalty1=dt*   theta *PenaltyFlag.*h1int.*(1-He1).*SUPGdetJw ;
 
-    
 
-        Relements(:,Inod)=Relements(:,Inod)+h0term+h1term+a0term+a1term+C0+C1+D0+D1+Barrier0+Barrier1+Penalty0+Penalty1+aFG+DLI0+DLI1; 
+
+        Relements(:,Inod)=Relements(:,Inod)+h0term+h1term+a0term+a1term+C0+C1+D0+D1+Barrier0+Barrier1+Penalty0+Penalty1+aFG+DLI0+DLI1;
 
     end
 
     % Flux at each integration point, and for all elements
-    qx1int(:,Iint)=qx1int(:,Iint) ...  
+    % I don't need to take the inner product with the from functions, so only evaluate this at integration points for every
+    % element. Not sure why qx1int is needed on the right-hand side..
+    qx1int(:,Iint)=qx1int(:,Iint) ...
         + AdvectionFlag*h0int.*u1int ...
         - DiffusionFlag* kappaint.*h0int.*dh0dx ...
         - etaint.*dh0dx ;
 
-    qy1int(:,Iint)=qy1int(:,Iint) ...  
+    qy1int(:,Iint)=qy1int(:,Iint) ...
         + AdvectionFlag*h0int.*v1int ...
         - DiffusionFlag*kappaint.*h0int.*dh0dy ...
         - etaint.*dh0dy ;
 
-     x1int(:,Iint)=x1nod*fun;
-     y1int(:,Iint)=y1nod*fun;
+    x1int(:,Iint)=x1nod*fun;
+    y1int(:,Iint)=y1nod*fun;
 
 
 end
@@ -287,6 +289,4 @@ KK=sparseUA(Iind,Jind,Xval,neq,neq);
 
 
 
-
-
-
+end

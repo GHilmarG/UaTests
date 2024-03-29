@@ -39,12 +39,21 @@ UserVar.Example="-Island-Retrograde-Peaks-hw-" ;
 UserVar.Example="-Island-Retrograde-Peaks-" ;   % as far as I can see "-hw-" is not used here where we solve the WaterFilmThicknessEquaitown, only used in GroundWaterEquation.m 
 UserVar.Example="-Island-" ;   % This is supposed to be a simple test for a simple geometry.
 UserVar.Example="-Antarctica-" ;   UserVar.HelmholtzSmoothingLengthScale=nan;  CtrlVar.MeshSize=10e3 ;  RestartFileName="Antarctica";
-UserVar.Example="-WAIS-"       ;   UserVar.HelmholtzSmoothingLengthScale=nan;  CtrlVar.MeshSize=5e3 ;  RestartFileName="RF"+UserVar.Example+"MS"+num2str(CtrlVar.MeshSize/1000)+"km";
+
+%CtrlVar.WaterFilm.Assembly=["-A-"|"-AD-"|"-D-"]
+ 
+
+
+UserVar.Example="-WAIS-";  UserVar.HelmholtzSmoothingLengthScale=nan;  CtrlVar.MeshSize=40e3 ; RestartFileName="RF"+UserVar.Example+"MS"+num2str(CtrlVar.MeshSize/1000)+"km";
+
+CtrlVar.WaterFilm.Assembly="-D-" ; 
+RestartFileName=RestartFileName+CtrlVar.WaterFilm.Assembly;
+
 UserVar.VelocityFieldPrescribed=false;
 
 %%
 nTimeSteps=10000;
-nRestartSaveInterval=1000;
+nRestartSaveInterval=100;
 CtrlVar.dt=100;
 qwxLast=[];
 qwyLast=[];
@@ -124,7 +133,7 @@ if ReadData  &&~isRestart
         UserVar.awSource="-Box-" ; 
         UserVar.awSource="-BasalFriction-" ; 
 
-        CtrlVar.WaterFilm.Assembly="-AD-" ;   
+        
         CtrlVar.Tracer.SUPG.Use=1;
         CtrlVar.WaterFilm.Barrier=0;
         CtrlVar.WaterFilm.Penalty=0 ;
@@ -244,10 +253,7 @@ if ReadData  &&~isRestart
         % checking the impact of eta
         eta=eta*0;  RestartFileName="RestartWaterFilmThicknessEquationDriverEtaZero.mat" ; 
          
-        CtrlVar.WaterFilm.Assembly="-A-" ;     % excellent 
-        CtrlVar.WaterFilm.Assembly="-AD-" ;    % excellent
-        %  CtrlVar.WaterFilm.Assembly="-D-" ;  % excellent
-
+  
         % Default SUPG parameters:
         CtrlVar.Tracer.SUPG.Use=1;
         CtrlVar.Tracer.SUPG.tau="tau2" ;

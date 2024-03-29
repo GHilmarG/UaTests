@@ -9,7 +9,7 @@ To make changes, update the MATLAB code and republish this document.
 <title>WaterFilmThicknessEquationAssembly</title>
 <meta name="generator" content="MATLAB 24.1">
 <link rel="schema.DC" href="http://purl.org/dc/elements/1.1/">
-<meta name="DC.date" content="2024-03-25">
+<meta name="DC.date" content="2024-03-29">
 <meta name="DC.source" content="WaterFilmThicknessEquationAssembly.m">
 <style type="text/css">
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
@@ -283,7 +283,7 @@ x1int=zeros(MUA.Nele,MUA.nip) ; y1int=zeros(MUA.Nele,MUA.nip) ;
         a0term=- dt*(1-theta)* a0int.*SUPGdetJw;
         a1term=-    dt*theta * a1int.*SUPGdetJw;
 
-        aFG=gamma*dt*FGint.*h1int.*SUPGdetJw ;
+        aFG=gamma*dt*FGint.*h1int.*SUPGdetJw ;  <span class="comment">% optional (negative) mass balance over floating areas</span>
 
 
         <span class="comment">% This is the advection term:  \nabla (h v)</span>
@@ -578,7 +578,7 @@ for Iint=1:MUA.nip
         a0term=- dt*(1-theta)* a0int.*SUPGdetJw;
         a1term=-    dt*theta * a1int.*SUPGdetJw;
 
-        aFG=gamma*dt*FGint.*h1int.*SUPGdetJw ;
+        aFG=gamma*dt*FGint.*h1int.*SUPGdetJw ;  % optional (negative) mass balance over floating areas
 
 
         % This is the advection term:  \nabla (h v)

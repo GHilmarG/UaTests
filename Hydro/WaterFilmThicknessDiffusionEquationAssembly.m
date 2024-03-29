@@ -6,7 +6,7 @@
 
 
 
-function [UserVar,RR,KK]=WaterFilmThicknessDiffusionEquationAssembly(UserVar,CtrlVar,MUA,F0,F1,k,eta)
+function [UserVar,RR,KK,qx1int,qy1int,x1int,y1int]=WaterFilmThicknessDiffusionEquationAssembly(UserVar,CtrlVar,MUA,F0,F1,k,eta)
 
 
 
@@ -70,6 +70,10 @@ kappa=F1.g*(F1.rhow-F1.rho).*k ;
 
 etanod=reshape(eta(MUA.connectivity,1),MUA.Nele,MUA.nod);
 
+x1nod=reshape(F1.x(MUA.connectivity,1),MUA.Nele,MUA.nod);
+y1nod=reshape(F1.y(MUA.connectivity,1),MUA.Nele,MUA.nod);
+
+
 h0nod=reshape(F0.hw(MUA.connectivity,1),MUA.Nele,MUA.nod);
 h1nod=reshape(F1.hw(MUA.connectivity,1),MUA.Nele,MUA.nod);
 
@@ -95,6 +99,10 @@ Kelements=zeros(MUA.Nele,MUA.nod,MUA.nod);
 Relements=zeros(MUA.Nele,MUA.nod);
 
 l=sqrt(2*MUA.EleAreas);
+
+
+qx1int=zeros(MUA.Nele,MUA.nip) ; qy1int=zeros(MUA.Nele,MUA.nip) ;
+x1int=zeros(MUA.Nele,MUA.nip) ; y1int=zeros(MUA.Nele,MUA.nip) ;
 
 % vector over all elements for each integration point
 for Iint=1:MUA.nip
@@ -187,8 +195,8 @@ for Iint=1:MUA.nip
 
     %kappaint=0 ;
 
-    alpha=CtrlVar.WaterFilm.Barrier ;
-    beta=CtrlVar.WaterFilm.Penalty ;
+    BarrierFlag=CtrlVar.WaterFilm.Barrier ;
+    PenaltyFlag=CtrlVar.WaterFilm.Penalty ;
     gamma=CtrlVar.WaterFilm.qwAfloatMultiplier ;
 
     for Inod=1:MUA.nod
@@ -207,10 +215,10 @@ for Iint=1:MUA.nip
 
             %    dC1=dt*theta* (fun(Jnod).*du1dx+Deriv(:,1,Jnod).*u1int+fun(Jnod).*dv1dy+Deriv(:,2,Jnod).*v1int).*SUPGdetJw;
 
-            dBarrier1=dt*(1-theta)*alpha* (h1int.^(-2).*fun(Jnod).*He1 - h1int.^(-1).*DiracDelta(100,h1int,0).*fun(Jnod))  .*SUPGdetJw ;
+            dBarrier1=dt*(1-theta)*BarrierFlag* (h1int.^(-2).*fun(Jnod).*He1 - h1int.^(-1).*DiracDelta(100,h1int,0).*fun(Jnod))  .*SUPGdetJw ;
 
 
-            dPenalty1=dt* theta *beta.* (fun(Jnod).*HeavisideApprox(100,-h1int,0)-h1int.*DiracDelta(100,h1int,0).*fun(Jnod)).*SUPGdetJw ;
+            dPenalty1=dt* theta *PenaltyFlag.* (fun(Jnod).*HeavisideApprox(100,-h1int,0)-h1int.*DiracDelta(100,h1int,0).*fun(Jnod)).*SUPGdetJw ;
 
             % the non-linear diffusion term
             dD1=+dt*theta.*kappaint.* (   ...
@@ -243,7 +251,7 @@ for Iint=1:MUA.nip
 
         %  C0=dt*(1-theta)*  (h0int.*du0dx+dh0dx.*u0int+h0int.*dv0dy+dh0dy.*v0int).*SUPGdetJw;
         %  C1=dt*theta*      (h1int.*du1dx+dh1dx.*u1int+h1int.*dv1dy+dh1dy.*v1int).*SUPGdetJw;
-
+       
 
         % This is a non-linear diffusion term
         D0=dt*(1-theta)* kappaint.*h0int.*   (dh0dx.*Deriv(:,1,Inod)+dh0dy.*Deriv(:,2,Inod)).*detJw;
@@ -257,17 +265,38 @@ for Iint=1:MUA.nip
         DLI0=dt*(1-theta)* etaint.*(dh0dx.*Deriv(:,1,Inod)+dh0dy.*Deriv(:,2,Inod)).*detJw;
         DLI1=dt*theta    * etaint.*(dh1dx.*Deriv(:,1,Inod)+dh1dy.*Deriv(:,2,Inod)).*detJw;
 
-        Barrier1=-dt*(1-theta)*alpha.*(h1int.^(-1)).*He1.*SUPGdetJw ;
-        Barrier0=-dt*   theta *alpha.*(h0int.^(-1)).*He0.*SUPGdetJw ;
+        Barrier1=-dt*(1-theta)*BarrierFlag.*(h1int.^(-1)).*He1.*SUPGdetJw ;
+        Barrier0=-dt*   theta *BarrierFlag.*(h0int.^(-1)).*He0.*SUPGdetJw ;
 
-        Penalty0=dt*(1-theta)*beta.*h0int.*(1-He0).*SUPGdetJw ;
-        Penalty1=dt*   theta *beta.*h1int.*(1-He1).*SUPGdetJw ;
+        Penalty0=dt*(1-theta)*PenaltyFlag.*h0int.*(1-He0).*SUPGdetJw ;
+        Penalty1=dt*   theta *PenaltyFlag.*h1int.*(1-He1).*SUPGdetJw ;
 
         % Relements(:,Inod)=Relements(:,Inod)+h0term+h1term+a0term+a1term+C0+C1+D0+D1+Barrier0+Barrier1+Penalty0+Penalty1+aFG;
         Relements(:,Inod)=Relements(:,Inod)+h0term+h1term+a0term+a1term+D0+D1+DLI0+DLI1+DPhi0+DPhi1+Barrier0+Barrier1+Penalty0+Penalty1+aFG;
 
     end
+
+    % all(qx1int(:,Iint)==0)
+    qx1int(:,Iint)=...
+        - kappaint.*h1int.*dh0dx ...
+        - kint.*h1int.*dPhi1dx ...
+        - etaint.*dh0dx ;
+
+    qy1int(:,Iint)=...
+        - kappaint.*h1int.*dh0dy ...
+        - kint.*h1int.*dPhi1dy ...
+        - etaint.*dh0dy ;
+
+    x1int(:,Iint)=x1nod*fun;
+    y1int(:,Iint)=y1nod*fun;
+
+
 end
+
+
+%  qw = - \nabla (hw (k \nabla Phi + \kappa \nabla hw)  
+
+
 
 % assemble right-hand side
 
@@ -291,7 +320,7 @@ end
 KK=sparseUA(Iind,Jind,Xval,neq,neq);
 
 
-
+end
 
 
 
