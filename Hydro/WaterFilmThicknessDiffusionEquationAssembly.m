@@ -80,11 +80,11 @@ h1nod=reshape(F1.hw(MUA.connectivity,1),MUA.Nele,MUA.nod);
 a0nod=reshape(F1.aw(MUA.connectivity,1),MUA.Nele,MUA.nod);
 a1nod=reshape(F0.aw(MUA.connectivity,1),MUA.Nele,MUA.nod);
 
-u0nod=reshape(F1.uw(MUA.connectivity,1),MUA.Nele,MUA.nod);
-u1nod=reshape(F1.uw(MUA.connectivity,1),MUA.Nele,MUA.nod);
+% u0nod=reshape(F1.uw(MUA.connectivity,1),MUA.Nele,MUA.nod);
+% u1nod=reshape(F1.uw(MUA.connectivity,1),MUA.Nele,MUA.nod);
 
-v0nod=reshape(F1.vw(MUA.connectivity,1),MUA.Nele,MUA.nod);
-v1nod=reshape(F0.vw(MUA.connectivity,1),MUA.Nele,MUA.nod);
+% v0nod=reshape(F1.vw(MUA.connectivity,1),MUA.Nele,MUA.nod);
+% v1nod=reshape(F0.vw(MUA.connectivity,1),MUA.Nele,MUA.nod);
 
 FG=1-F1.GF.node ;
 FGnod=reshape(FG(MUA.connectivity,1),MUA.Nele,MUA.nod);
@@ -121,8 +121,8 @@ for Iint=1:MUA.nip
     h0int=h0nod*fun;
     h1int=h1nod*fun;
 
-    u0int=u0nod*fun; u1int=u1nod*fun;
-    v0int=v0nod*fun; v1int=v1nod*fun;
+   % u0int=u0nod*fun;
+   % v0int=v0nod*fun;
 
     a0int=a0nod*fun;
     a1int=a1nod*fun;
@@ -179,9 +179,9 @@ for Iint=1:MUA.nip
     end
 
     detJw=detJ*MUA.weights(Iint);
-    speed0=sqrt(u0int.*u0int+v0int.*v0int+CtrlVar.SpeedZero^2);
-    tau=SUPGtau(CtrlVar,speed0,l,dt,CtrlVar.Tracer.SUPG.tau) ;
-    tauSUPGint=CtrlVar.SUPG.beta0*tau;
+    % speed0=sqrt(u0int.*u0int+v0int.*v0int+CtrlVar.SpeedZero^2);
+    % tau=SUPGtau(CtrlVar,speed0,l,dt,CtrlVar.Tracer.SUPG.tau) ;
+    % tauSUPGint=CtrlVar.SUPG.beta0*tau;
 
     % Sign convention:
     % Generally we solve   dR/dh \dh = - R
@@ -201,7 +201,7 @@ for Iint=1:MUA.nip
 
     for Inod=1:MUA.nod
 
-        SUPG=fun(Inod)+CtrlVar.Tracer.SUPG.Use*tauSUPGint.*(u0int.*Deriv(:,1,Inod)+v0int.*Deriv(:,2,Inod));
+        SUPG=fun(Inod); %+CtrlVar.Tracer.SUPG.Use*tauSUPGint.*(u0int.*Deriv(:,1,Inod)+v0int.*Deriv(:,2,Inod));
         SUPGdetJw=SUPG.*detJw;
         He0=HeavisideApprox(100,h0int,0);
         He1=HeavisideApprox(100,h1int,0);

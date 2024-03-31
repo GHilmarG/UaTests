@@ -1,5 +1,40 @@
 
+% Island convergence test, no peaks
+QAnalytical=14.1372  ; 
+T=[20e3     19.856     18.929 ; ...
+  15e3      17.2335    14.0225; ...
+  10e3      12.956    12.80 ; ...
+   7e3      14.1735    14.1156 ; ...
+   5e3      13.9296    13.8969 ; ...
+   3e3      13.7583    13.7368  ; ...
+  2.5e3     14.0719    14.0712 ;  ...
+  2e3       14.3021    14.302 ; 
+  1e3       14.1412    14.1394 ; ...
+  0.5e3     14.1386    14.1389 ; ...
+  ] ; 
 
+figI=FindOrCreateFigure("Island Convergence Test") ; clf(figI)
+
+
+plot(T(:,1)/1000,T(:,2),"-or")
+hold on
+plot(T(:,1)/1000,T(:,3),"-*k")
+yline(14.137,"--","Analytical",Interpreter="latex")
+ylabel("Flux (Gt/yr)",Interpreter="latex")
+xlabel("Element size (km)",Interpreter="latex")
+legend("$Q_n$: Flux through flux gate","$Q_I$: Input upstream of flux gate",interpreter="latex",location="north")
+
+figRes=FindOrCreateFigure("Island Residual Convergence Test") ; clf(figRes)
+
+colororder({'b','r'})
+yyaxis left
+semilogy(T(:,1)/1000,abs(T(:,2)-T(:,3))./T(:,3),"-+")
+ylabel("$(Q_n-Q_I)/Q_I$",interpreter="latex")
+
+yyaxis right
+semilogy(T(:,1)/1000,abs(T(:,2)-QAnalytical)./QAnalytical,"-*")
+ylabel("$(Q_n-Q_\mathrm{analytical})/Q_{\mathrm{Analytical}}$",interpreter="latex")
+xlabel("Element size (km)",Interpreter="latex")
 
 %%
 % this is based on the git commit on 20/03/20-24 at 9:50am

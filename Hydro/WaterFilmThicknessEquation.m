@@ -79,6 +79,14 @@ nargoutchk(5,5)
 %     CtrlVar.WaterFilm.DiffusionFlag=1;
 % end
 
+if isscalar(eta)
+    eta=eta+zeros(MUA.Nnodes,1);
+end
+
+if isscalar(k)
+    k=k+zeros(MUA.Nnodes,1);
+end
+
 nlambda=numel(lambda);
 nActiveSet=numel(ActiveSet);
 nBCsUser=nlambda-nActiveSet; 

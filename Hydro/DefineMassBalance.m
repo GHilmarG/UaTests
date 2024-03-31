@@ -61,21 +61,23 @@ function [UserVar,as,aw]=DefineMassBalance(UserVar,CtrlVar,MUA,F)
 %
 %%
 
-as=zeros(MUA.Nnodes,1);
-aw=zeros(MUA.Nnodes,1);
+as=zeros(MUA.Nnodes,1); aw=zeros(MUA.Nnodes,1);
+
+
+
 
 if contains(UserVar.Example,"-Antarctica-") ||  contains(UserVar.Example,"-WAIS-")
 
 
-    if UserVar.awSource=="-BasalFriction-" 
+    if UserVar.awSource=="-BasalFriction-"
 
-     [UserVar,aw]=BasalWaterProduction(UserVar,CtrlVar,MUA,F) ;
+        [UserVar,aw]=BasalWaterProduction(UserVar,CtrlVar,MUA,F) ;
 
-      % Sometimes these values are a bit bonkers
-      awmax=100;
-      aw(aw>awmax)=awmax ; 
+        % Sometimes these values are a bit bonkers
+        awmax=100;
+        aw(aw>awmax)=awmax ;
 
-    elseif UserVar.awSource=="-Box-" 
+    elseif UserVar.awSource=="-Box-"
 
         aw=zeros(MUA.Nnodes,1);
         % Box=[-1600 -1500 -200 -100]*1000;
@@ -86,37 +88,40 @@ if contains(UserVar.Example,"-Antarctica-") ||  contains(UserVar.Example,"-WAIS-
 
     end
 
+    if contains(UserVar.Example,"-aw0-")
+        as=zeros(MUA.Nnodes,1); aw=zeros(MUA.Nnodes,1);
+
+    end
+
     aw(~F.GF.NodesUpstreamOfGroundingLines)=0 ; % Set water production downstream and across grounding lines to zero
 
-    ds=100e3; 
+    ds=100e3;
     CtrlVar.PlotGLs=0;
     [xGL,yGL]=PlotGroundingLines(CtrlVar,MUA,F.GF,[],[],[],'LineWidth',2);
     ID=FindAllNodesWithinGivenRangeFromGroundingLine([],MUA,xGL,yGL,ds) ;
-    aw(ID)=0; 
+    aw(ID)=0;
 
-    % trying to get rid of aw downstream of grounding line
+    % trying to get rid of hw downstream of grounding line
     Mask=double(~F.GF.NodesUpstreamOfGroundingLines) ;
-    aw=aw-0.5*Mask.*(F.hw-CtrlVar.WaterFilm.ThickMin)/CtrlVar.dt; 
+    aw=aw-0.5*Mask.*(F.hw-CtrlVar.WaterFilm.ThickMin)/CtrlVar.dt;
 
 elseif contains(UserVar.Example,"-Island-")
 
     aw=zeros(MUA.Nnodes,1)+UserVar.aw;  % defined in driver
 
-    if ~isnan(UserVar.RadiusWaterAdded)
-        r=vecnorm([F.x F.y],2,2)  ;
-        aw(r>UserVar.RadiusWaterAdded)=0;
-        UserVar.QnTheoretical=pi*UserVar.RadiusFluxGate^2*UserVar.aw ;
-    end
-    UserVar.QnTheoretical=pi*UserVar.RadiusFluxGate^2*UserVar.aw ;
+    r=vecnorm([F.x F.y],2,2)  ;
+    aw(r>UserVar.RadiusWaterAdded)=0;
+    UserVar.QnTheoretical=pi*UserVar.RadiusWaterAdded^2*UserVar.aw ;
+
 
     aw(F.x<0) =0 ; UserVar.QnTheoretical=0.5*UserVar.QnTheoretical;
 
 
-    
 
-% trying to get rid of aw downstream of grounding line
+
+    % trying to get rid of hw downstream of grounding line
     Mask=double(~F.GF.NodesUpstreamOfGroundingLines) ;
-    aw=aw-0.5*Mask.*(F.hw-CtrlVar.WaterFilm.ThickMin)/CtrlVar.dt; 
+    aw=aw-0.5*Mask.*(F.hw-CtrlVar.WaterFilm.ThickMin)/CtrlVar.dt;
 
 
 else
