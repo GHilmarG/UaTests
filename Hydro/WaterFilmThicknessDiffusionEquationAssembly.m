@@ -6,7 +6,7 @@
 
 
 
-function [UserVar,RR,KK,qx1int,qy1int,x1int,y1int]=WaterFilmThicknessDiffusionEquationAssembly(UserVar,CtrlVar,MUA,F0,F1,k,eta)
+function [UserVar,RR,KK,Outs]=WaterFilmThicknessDiffusionEquationAssembly(UserVar,CtrlVar,MUA,F0,F1,k,eta)
 
 
 
@@ -102,6 +102,8 @@ l=sqrt(2*MUA.EleAreas);
 
 
 qx1int=zeros(MUA.Nele,MUA.nip) ; qy1int=zeros(MUA.Nele,MUA.nip) ;
+qx1Phiint=zeros(MUA.Nele,MUA.nip) ; qy1Phiint=zeros(MUA.Nele,MUA.nip) ;
+qx1Yint=zeros(MUA.Nele,MUA.nip) ; qy1Yint=zeros(MUA.Nele,MUA.nip) ;
 x1int=zeros(MUA.Nele,MUA.nip) ; y1int=zeros(MUA.Nele,MUA.nip) ;
 
 % vector over all elements for each integration point
@@ -265,7 +267,7 @@ for Iint=1:MUA.nip
         DLI0=dt*(1-theta)* etaint.*(dh0dx.*Deriv(:,1,Inod)+dh0dy.*Deriv(:,2,Inod)).*detJw;
         DLI1=dt*theta    * etaint.*(dh1dx.*Deriv(:,1,Inod)+dh1dy.*Deriv(:,2,Inod)).*detJw;
 
-        Barrier1=-dt*(1-theta)*BarrierFlag.*(h1int.^(-1)).*He1.*SUPGdetJw ;
+        Barrier1=-dt*(1-theta)*BarrierFlag.*(h1int.^(-1)).*He1.*SUPGdetJw ;  % this is incomplete, assumes that the min value is zero
         Barrier0=-dt*   theta *BarrierFlag.*(h0int.^(-1)).*He0.*SUPGdetJw ;
 
         Penalty0=dt*(1-theta)*PenaltyFlag.*h0int.*(1-He0).*SUPGdetJw ;
@@ -276,16 +278,24 @@ for Iint=1:MUA.nip
 
     end
 
-    % all(qx1int(:,Iint)==0)
+    qx1Phiint(:,Iint)=-kint.*h1int.*dPhi1dx ;
+    qy1Phiint(:,Iint)=-kint.*h1int.*dPhi1dy ;
+
+    qx1Yint(:,Iint)=-kappaint.*h1int.*dh0dx;
+    qy1Yint(:,Iint)=-kappaint.*h1int.*dh0dy;
+
+
     qx1int(:,Iint)=...
         - kappaint.*h1int.*dh0dx ...
         - kint.*h1int.*dPhi1dx ...
-        - etaint.*dh0dx ;
+        - etaint.*dh0dy ;
 
     qy1int(:,Iint)=...
         - kappaint.*h1int.*dh0dy ...
         - kint.*h1int.*dPhi1dy ...
         - etaint.*dh0dy ;
+
+
 
     x1int(:,Iint)=x1nod*fun;
     y1int(:,Iint)=y1nod*fun;
@@ -318,6 +328,12 @@ for Inod=1:MUA.nod
 end
 
 KK=sparseUA(Iind,Jind,Xval,neq,neq);
+
+Outs.qx1int=qx1int ; Outs.qy1int=qy1int ;  
+Outs.qx1Phiint=qx1Phiint ; Outs.qy1Phiint=qy1Phiint;
+Outs.qx1Yint=qx1Yint ; Outs.qy1Yint=qy1Yint;
+
+Outs.xint=x1int ; Outs.yint=y1int ;
 
 
 end

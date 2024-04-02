@@ -101,9 +101,6 @@ if contains(UserVar.Example,"-Antarctica-") ||  contains(UserVar.Example,"-WAIS-
     ID=FindAllNodesWithinGivenRangeFromGroundingLine([],MUA,xGL,yGL,ds) ;
     aw(ID)=0;
 
-    % trying to get rid of hw downstream of grounding line
-    Mask=double(~F.GF.NodesUpstreamOfGroundingLines) ;
-    aw=aw-0.5*Mask.*(F.hw-CtrlVar.WaterFilm.ThickMin)/CtrlVar.dt;
 
 elseif contains(UserVar.Example,"-Island-")
 
@@ -117,18 +114,31 @@ elseif contains(UserVar.Example,"-Island-")
     aw(F.x<0) =0 ; UserVar.QnTheoretical=0.5*UserVar.QnTheoretical;
 
 
+elseif contains(UserVar.Example,"-Plane-")
 
+    aw=zeros(MUA.Nnodes,1)+UserVar.aw;  % defined in driver
 
-    % trying to get rid of hw downstream of grounding line
-    Mask=double(~F.GF.NodesUpstreamOfGroundingLines) ;
-    aw=aw-0.5*Mask.*(F.hw-CtrlVar.WaterFilm.ThickMin)/CtrlVar.dt;
+    % r=vecnorm([F.x F.y],2,2)  ;
+    % aw(r>UserVar.RadiusWaterAdded)=0;
+    % UserVar.QnTheoretical=2*pi*UserVar.RadiusWaterAdded^2*UserVar.aw ;
 
+   UserVar.QnTheoretical=nan ;
 
 else
 
     error("case not found")
 
 end
+
+
+if contains(UserVar.Example,"-aw0-")
+    as=zeros(MUA.Nnodes,1); aw=zeros(MUA.Nnodes,1);
+
+end
+
+% trying to get rid of hw downstream of grounding line
+Mask=double(~F.GF.NodesUpstreamOfGroundingLines) ;
+aw=aw-0.5*Mask.*(F.hw-CtrlVar.WaterFilm.ThickMin)/CtrlVar.dt;
 
 
 

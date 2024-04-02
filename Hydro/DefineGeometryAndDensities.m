@@ -103,11 +103,21 @@ elseif contains(UserVar.Example,"-Island-")
         % add a perturbation to B
         if contains(UserVar.Example,"-Peaks-")
 
+            % positive peak, ie mountain
             xc=25e3 ; yc=0e3 ;
             r=vecnorm([(F.x-xc) (F.y-yc)],2,2)  ;
             Peak = 100*l*DiracDelta(1/(5000),r,0) ;
             B=B+Peak;
 
+
+            % positive peak, ie mountain
+            xc=-25e3 ; yc=0e3 ;
+            r=vecnorm([(F.x-xc) (F.y-yc)],2,2)  ;
+            Peak = 100*l*DiracDelta(1/(5000),r,0) ;
+            B=B+Peak;
+
+
+            % Negative peak, ie trough
             xc=0e3 ; yc=20e3 ;
             r=vecnorm([(F.x-xc) (F.y-yc)],2,2)  ;
             W=l/5 ; A=-250;
@@ -130,31 +140,48 @@ elseif contains(UserVar.Example,"-Island-")
 
         %%
 
-
     else
 
         l=UserVar.l;
         r=vecnorm([F.x F.y],2,2)  ;
 
-        B0=500 ; 
-        h=100+F.x*0; 
+        B0=500 ;
+        h=100+F.x*0;
         B= B0* (1 - 2*r/l) ;
         S=F.x*0;
-        
+
         rho=920;
         rhow=1030;
         g=9.81/1000;
 
         [b,s,h,F.GF]=Calc_bs_From_hBS(CtrlVar,MUA,h,S,B,rho,rhow);
-        
-
-
 
 
     end
 
+elseif contains(UserVar.Example,"-Plane-")
+
+    S=zeros(MUA.Nnodes,1)-1e10;
+    B=zeros(MUA.Nnodes,1);
+
+    h=zeros(MUA.Nnodes,1)+1000;
+
+    l=UserVar.l;
+    r=vecnorm([F.x F.y],2,2)  ;
+
+    %  W=100 ; A=5; x0=0 ; x=linspace(-10*W,10*W,1000) ; Peak = A*2*W*DiracDelta(1/W,x,x0) ; figure ; plot(x,Peak)
+
+    w=20e3; 
+    A=100; 
+    dh = A*2*w*DiracDelta(1/w,r,0) ;
+    h=h+dh ;
+        
+    rho=920;
+    rhow=1030;
+    g=9.81/1000;
 
 
+    [b,s,h,F.GF]=Calc_bs_From_hBS(CtrlVar,MUA,h,S,B,rho,rhow);
 
 
 else

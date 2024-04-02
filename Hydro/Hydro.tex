@@ -180,7 +180,7 @@ Equation (\ref{eq:hwEv}) then reads
 \end{equation}
 or
 \begin{equation}
-  \partial_t h_w   - \nabla \cdot\left (  \kappa h_w \nabla h_w +  k h_w \nabla \Phi ) \right )  = a_w 
+  \partial_t h_w   - \nabla \cdot\left (  k h_w \nabla (\Upsilon + \Phi ) \right )  = a_w 
 \label{eq:hwD}
 \end{equation}
 where as before
@@ -189,9 +189,9 @@ where as before
   \Upsilon&:= g (\rho_w-\rho_i)  h_w  \\
   \kappa&:= k g (\rho_w-\rho_i)
 \end{align*}
-and now
+and we are using the approximation, $N=0$, in which cawse 
 \[
-\phi=\Upsilon +\Phi
+\phi = \Upsilon +\Phi
 \]
 The water flux is
 \begin{align*}
@@ -199,6 +199,24 @@ The water flux is
            & = -k h_w \nabla (\Upsilon + \Phi)\\
 \end{align*}
 
+Equation (\ref{eq:hwD}) is a non-linear diffusion equation and the finite-element system is
+\[
+\braket{(h_w^1 - h_w^0)}{\psi}    = \Delta t \,\braket{a_w}{\psi} - \Delta t \, \braket{k h_w \nabla (\Upsilon + \Phi )}{\psi} + \text{BT}
+\]
+The terms on the right-hand side are evaluated at $t=t_0$ and $t=t_1$
+using the $\Theta$ method. Setting the boundary term, $\text{BT}=0$,
+correspondes to a no-flux Neumann type boundary condition. In addition
+$h_w$ can also be prescribed directly along the boundary, or at any
+location within the computatinal domain (Dirichlet boundary
+condition). Dirichlet conditions are implemented using Lagrange
+multipliers. The positive thickness constraint
+\[
+h_w \ge 0
+\]
+is enforced using the active set method, and the resulting non-linear
+KKT system is solved using the Newton-Raphson method.
+
+\subsection{Remark on flotation}
 
 Because of the assumption $N=0$, Eq.~(\ref{eq:hwU}) the ice is at
 floatation. For $a_w=0$, the steady-state relationship between $s$ and

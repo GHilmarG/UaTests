@@ -50,18 +50,22 @@ if nargin==0
     UserVar.Example="-Island-hw-" ;
     UserVar.Example="-Island-Retrograde-hw-" ;
     UserVar.Example="-Island-Retrograde-Peaks-hw-" ;
-    UserVar.Example="-Island-Retrograde-Peaks-" ;   % as far as I can see "-hw-" is not used here where we solve the WaterFilmThicknessEquaitown, only used in GroundWaterEquation.m
+    UserVar.Example="-Island-Retrograde-Peaks-" ;  
     UserVar.Example="-Island-" ;   % This is supposed to be a simple test for a simple geometry.
     UserVar.Example="-WAIS-aw0-" ;  
+    UserVar.Example="-Plane-" ;    % used this to test volume conservation, which was found to be conserved to almost machine precision .
+
 end
 %CtrlVar.WaterFilm.Assembly=["-A-"|"-AD-"|"-D-"]
 
-if contains(UserVar.Example,"-Island-")
+if contains(UserVar.Example,"-Island-") || contains(UserVar.Example,"-Plane-")
 
 
     %% Island
 
-    CtrlVar.MeshSize=0.5e3 ;
+    CtrlVar.MeshSize=10e3 ;
+    CtrlVar.TriNodes=3 ; 
+    
 
 
 elseif contains(UserVar.Example,"-WAIS-")
@@ -76,7 +80,7 @@ end
 %%
 nTimeSteps=10000;
 nRestartSaveInterval=100;
-CtrlVar.dt=100; dtOutput=CtrlVar.dt*100;  tOutput=0; 
+CtrlVar.dt=10; dtOutput=CtrlVar.dt*100;  tOutput=0; 
 qwxLast=[];
 qwyLast=[];
 UserVar.HelmholtzSmoothingLengthScale=nan;  
@@ -86,12 +90,13 @@ CtrlVar.InfoLevelBackTrack=0;  CtrlVar.InfoLevelNonLinIt=1 ;  CtrlVar.doplots=1 
 
 
 %% Water-film equation parameters
-k=100;
+k=100; k0=k ; kmin=k0/1e10 ; kActiveSet=k ;
+CtrlVar.WaterFilm.ThickMin=1e-6; 
+
 eta=0; 
 CtrlVar.WaterFilm.Potential="-bs-" ;
 CtrlVar.WaterFilm.qwAfloatMultiplier=1;
 CtrlVar.WaterFilm.Assembly="-D-" ; 
-CtrlVar.WaterFilm.ThickMin=0.001 ; 
 UserVar.VelocityFieldPrescribed=false;
 CtrlVar.WaterFilm.Barrier=0 ;
 CtrlVar.WaterFilm.Penalty=0 ;
@@ -175,7 +180,7 @@ if ReadData  &&~isRestart
 
      
 
-    elseif contains(UserVar.Example,"-Island-")
+    elseif contains(UserVar.Example,"-Island-") || contains(UserVar.Example,"-Plane-")
 
 
         CtrlVar.PlotXYscale=1000;
@@ -250,9 +255,14 @@ if ReadData  &&~isRestart
         error("case not found")
     end
 
+    % Phi=PhiPotential(CtrlVar,MUA,F);
+    % hw=-Phi./(F.g.*(F.rhow-F.rho));
+    % hw=hw-min(hw) ;
+    % F.hw=hw; 
+    
 
     icount=0;
-
+  
 end
 
 
@@ -299,7 +309,7 @@ if CalcFluxes
     else
 
 
-        F.time=0;
+        F.time=0; F.dt=CtrlVar.dt ; 
         F0=F ; F1=F ;
         hwMaxGroundedVector=nan(nTimeSteps,1);
         hwMaxAfloatVector=nan(nTimeSteps,1);
@@ -307,8 +317,9 @@ if CalcFluxes
         hwMinVector=nan(nTimeSteps,1);
         qwVector=nan(nTimeSteps,1);
         tVector=nan(nTimeSteps,1);
-    end
+        hwVolumeVector=nan(nTimeSteps,1);
 
+    end
    
 
     %% Initialize (uw,vw)
@@ -347,17 +358,32 @@ if CalcFluxes
 
         [UserVar,hw1,ActiveSet,lambda,output]=WaterFilmThicknessEquation(UserVar,CtrlVar,MUA,F0,F1,k,eta,ActiveSet,lambda*0) ;
 
+
+        k=k0+zeros(MUA.Nnodes,1) ;
+        
+        % AG=MuaElementsContainingGivenNodes(CtrlVar,MUA,ActiveSet) & F1.GF.ElementsUpstreamOfGroundingLines ;
+        % NodesOfElementsContainingActiveNodes=unique(MUA.connectivity(AG,:)) ;
+        % k(NodesOfElementsContainingActiveNodes)=kmin;
+
+        kActiveSet=max(kActiveSet/2,kmin); 
+        k(ActiveSet)=kActiveSet; 
+
         xint=output.fun.xint ;  yint=output.fun.yint ;  qwxint=output.fun.qx1int ; qwyint=output.fun.qy1int ;
 
         [qwx,qwy]=ProjectFintOntoNodes(MUA,qwxint,qwyint) ;
+
+        [qwxPhi,qwyPhi]=ProjectFintOntoNodes(MUA,output.fun.qx1Phiint,output.fun.qy1Phiint);
+        [qwxY,qwyY]=ProjectFintOntoNodes(MUA,output.fun.qx1Yint,output.fun.qy1Yint);
 
         xint=xint(:) ; yint=yint(:) ; qwxint=qwxint(:); qwyint=qwyint(:);
         Nstride=1 ; xint=xint(1:Nstride:end) ;  yint=yint(1:Nstride:end) ;  qwxint=qwxint(1:Nstride:end) ; qwyint=qwyint(1:Nstride:end) ;
 
 
         F1.hw=hw1;
+        F1.dt=CtrlVar.dt; 
         F1.time=F1.time+CtrlVar.dt ;
         CtrlVar.time=F1.time ;
+
 
 
        
@@ -376,14 +402,25 @@ if CalcFluxes
             hwMaxAfloatVector=[hwMaxAfloatVector;hwMaxAfloatVector+nan];
             qwVector=[qwVector;qwVector+nan];
             tVector=[tVector;tVector+nan];
+            hwVolumeVector=[tVector;hwVolumeVector+nan];
 
         end
 
 
         hwMaxVector(icount)=max(F1.hw) ;
         hwMinVector(icount)=min(F1.hw) ;
-        hwMaxGroundedVector(icount)=max(F1.hw(F1.GF.node>0.5)) ;
-        hwMaxAfloatVector(icount)=max(F1.hw(F1.GF.node<0.5)) ;
+
+        temp=max(F1.hw(F1.GF.node>0.5)) ;
+        if ~isempty(temp)
+            hwMaxGroundedVector(icount)=temp;
+        end
+
+        temp=max(F1.hw(F1.GF.node<0.5)) ;
+        if~isempty(temp)
+            hwMaxAfloatVector(icount)=max(F1.hw(F1.GF.node<0.5)) ;
+        end
+
+        hwVolumeVector(icount)=sum(FEintegrate2D(CtrlVar,MUA,F1.hw));
         tVector(icount)=F1.time;
 
 
@@ -409,7 +446,8 @@ if CalcFluxes
         if mod(Isteps-1,nPlotStep)==0 || abs(CtrlVar.time-maxTime)<0.1
 
             [~,xGL,yGL]=UaPlots(CtrlVar,MUA,F1,F1.hw,FigureTitle="hw",CreateNewFigure=true) ;
-            % IhwNeg=F1.hw<0 ; hold on ; plot(F1.x(IhwNeg)/CtrlVar.PlotXYscale,F1.y(IhwNeg)/CtrlVar.PlotXYscale,'or')
+            ihmin=F1.hw <= CtrlVar.WaterFilm.ThickMin ;
+            hold on ; plot(F1.x(ihmin)/CtrlVar.PlotXYscale,F1.y(ihmin)/CtrlVar.PlotXYscale,'.k',MarkerSize=0.1)
             title(sprintf("$h_w$ time=%g",CtrlVar.time),Interpreter="latex")
 
             [~,xGL,yGL]=UaPlots(CtrlVar,MUA,F1,F1.hw-F0.hw,FigureTitle="Delta hw",CreateNewFigure=true) ;
@@ -438,13 +476,12 @@ if CalcFluxes
 
             figqw=FindOrCreateFigure("(qwx,qwy)") ; clf(figqw) ;
             CtrlVar.VelColorBarTitle="($\mathrm{km^2 \, yr^{-1}}$)" ;
-
-           
             QuiverColorGHG(F1.x,F1.y,qwx,qwy,CtrlVar);
-            %QuiverColorGHG(xint,yint,qwxint/1e6,qwyint/1e6,CtrlVar) ;
             hold on
             plot(xGL/CtrlVar.PlotXYscale,yGL/CtrlVar.PlotXYscale,'r')
             PlotMuaBoundary(CtrlVar,MUA) ;
+      
+            hold on ; plot(F1.x(ActiveSet)/CtrlVar.PlotXYscale,F1.y(ActiveSet)/CtrlVar.PlotXYscale,'*k',MarkerSize=3)
             if ~isempty(FluxGate)
                 plot(FluxGate(:,1)/CtrlVar.PlotXYscale,FluxGate(:,2)/CtrlVar.PlotXYscale,Color="k",LineWidth=2) ;
             end
@@ -452,7 +489,43 @@ if CalcFluxes
             ylabel("$y\,(\mathrm{km})$",interpreter="latex")
             title(sprintf("$\\mathbf{q}_w$ time=%g",CtrlVar.time),Interpreter="latex")
             hold off
-      
+
+            % Phi fluxes
+            figqPhi=FindOrCreateFigure("(qwxPhi,qwyPhi)") ; clf(figqPhi) ;
+            CtrlVar.VelColorBarTitle="($\mathrm{km^2 \, yr^{-1}}$)" ;
+            QuiverColorGHG(F1.x,F1.y,qwxPhi,qwyPhi,CtrlVar);
+            hold on
+            plot(xGL/CtrlVar.PlotXYscale,yGL/CtrlVar.PlotXYscale,'r')
+            PlotMuaBoundary(CtrlVar,MUA) ;
+            hold on ; plot(F1.x(ActiveSet)/CtrlVar.PlotXYscale,F1.y(ActiveSet)/CtrlVar.PlotXYscale,'*k',MarkerSize=3)
+            if ~isempty(FluxGate)
+                plot(FluxGate(:,1)/CtrlVar.PlotXYscale,FluxGate(:,2)/CtrlVar.PlotXYscale,Color="k",LineWidth=2) ;
+            end
+            xlabel("$x\,(\mathrm{km})$",interpreter="latex")
+            ylabel("$y\,(\mathrm{km})$",interpreter="latex")
+            title(sprintf("$\\Phi \\mathbf{q}_w$ time=%g",CtrlVar.time),Interpreter="latex")
+            hold off
+
+            % Y fluxes
+            figqY=FindOrCreateFigure("(qwxY,qwyY)") ; clf(figqY) ;
+            CtrlVar.VelColorBarTitle="($\mathrm{km^2 \, yr^{-1}}$)" ;
+            QuiverColorGHG(F1.x,F1.y,qwxY,qwyY,CtrlVar);
+            hold on
+            plot(xGL/CtrlVar.PlotXYscale,yGL/CtrlVar.PlotXYscale,'r')
+            PlotMuaBoundary(CtrlVar,MUA) ;
+            hold on ; plot(F1.x(ActiveSet)/CtrlVar.PlotXYscale,F1.y(ActiveSet)/CtrlVar.PlotXYscale,'*k',MarkerSize=3)
+            if ~isempty(FluxGate)
+                plot(FluxGate(:,1)/CtrlVar.PlotXYscale,FluxGate(:,2)/CtrlVar.PlotXYscale,Color="k",LineWidth=2) ;
+            end
+            xlabel("$x\,(\mathrm{km})$",interpreter="latex")
+            ylabel("$y\,(\mathrm{km})$",interpreter="latex")
+            title(sprintf("$\\Upsilon \\mathbf{q}_w$ time=%g",CtrlVar.time),Interpreter="latex")
+            hold off
+
+
+
+
+
 
             if ~isempty(qwxLast)
                 figqw=FindOrCreateFigure("Delta(qwx,qwy)") ; clf(figqw) ;
@@ -484,6 +557,24 @@ if CalcFluxes
             end
 
 
+            if contains(UserVar.Example,"-Plane-")
+
+                % testing volume and mass conservation
+                % Here I add constant aw with time, so the change in volume must be equL
+                % F1.aw/F1.dt
+
+                R=diff(hwVolumeVector)./sum(FEintegrate2D(CtrlVar,MUA,F1.aw))/CtrlVar.dt ;
+                % This ratio should be equal to unity if the gain in volume is alwasy equal to the added volume
+
+                FindOrCreateFigure("dVolume/(dMassBalance*dt)")
+    
+                plot(tVector(2:end),R,"or-")
+                xlabel("time")
+                ylabel("ratio")
+                title("ratio between change in volume and added mass balance")
+                subtitle("(should be close to unity if mass is conserved)")
+
+            end
 
             if ~isempty(FluxGate)
 
@@ -519,7 +610,8 @@ if CalcFluxes
                 hold off
 
                 figFGt=FindOrCreateFigure("Flux Gate(t)") ; clf(figFGt);
-                semilogy(tVector,qwVector/1e9,"ob")
+                %semilogy(tVector,qwVector/1e9,"ob")
+                plot(tVector,qwVector/1e9,"ob")
                 title(sprintf("$Q_n$=%g $(\\mathrm{km}^3/\\mathrm{yr})$ $Q_{\\mathrm{int}}$=%g $(\\mathrm{km}^3/\\mathrm{yr})$ $\\tilde{Q}_{\\mathrm{int}}$=%g $(\\mathrm{km}^3/\\mathrm{yr})$ $t$=%g $(\\mathrm{yr})$",...
                     Qn/1e9,UserVar.QnTheoretical/1e9,QIntNum/1e9,CtrlVar.time),Interpreter="latex")
                 yline(UserVar.QnTheoretical/1e9,"--")
