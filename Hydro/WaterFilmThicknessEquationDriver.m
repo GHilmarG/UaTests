@@ -4,7 +4,7 @@ function WaterFilmThicknessEquationDriver(UserVar)
 
 ReadData=1;
 CalcFluxes=1;
-isRestart=0;  ResetTime=0; maxTime=200000; nPlotStep=10;
+isRestart=1;  ResetTime=0; maxTime=200000; nPlotStep=10;
 
 %%
 %
@@ -71,7 +71,7 @@ if contains(UserVar.Example,"-Island-") || contains(UserVar.Example,"-Plane-")
 elseif contains(UserVar.Example,"-WAIS-")
     %% WAIS
 
-    CtrlVar.MeshSize=20e3 ;
+    CtrlVar.MeshSize=10e3 ;   clear CreateMeshAndMua.m
 
 end
 
@@ -279,8 +279,9 @@ if CalcFluxes
 
         
         fprintf("loading restart file: %s \n",RestartFileName)
-        load(RestartFileName,"UserVar","CtrlVar","MUA","F0","F1","k","eta","tVector","hwMaxVector","qwVector","hwMinVector","hwMaxGroundedVector","hwMaxAfloatVector","FluxGate","ActiveSet","lambda") ;
+        load(RestartFileName,"UserVar","CtrlVar","MUA","F0","F1","k","eta","tVector","hwMaxVector","qwVector","hwMinVector","hwMaxGroundedVector","hwMaxAfloatVector","hwVolumeVector","FluxGate","ActiveSet","lambda") ;
         
+        hwVolumeVector=nan(nTimeSteps,1);
         %FluxGate=[-1550 -388 ; -1500 -543]*1000;   Npoints=300 ; FluxGate=interparc(Npoints,FluxGate(:,1),FluxGate(:,2),'linear');
         %qwVector=tVector*0+nan;
 
@@ -385,8 +386,8 @@ if CalcFluxes
         CtrlVar.time=F1.time ;
 
 
-
-       
+        
+       fprintf("===================== \n      t=%g \t dt=%g \n ===================== \n",F1.time,F1.dt)
 
         % [UserVar,qw1x,qw1y,qUpsilonx,qUpsilony,qPhix,qPhiy]=WaterFilmFlux(UserVar,CtrlVar,MUA,F0,F1,k);
 
@@ -436,7 +437,7 @@ if CalcFluxes
         % Restart file
         if mod(Isteps,nRestartSaveInterval)==0
             fprintf("Saving Restart File: %s \n",RestartFileName)
-            save(RestartFileName,"UserVar","CtrlVar","MUA","F0","F1","k","eta","tVector","hwMaxVector","qwVector","hwMinVector","hwMaxGroundedVector","hwMaxAfloatVector","FluxGate","ActiveSet","lambda") ;
+            save(RestartFileName,"UserVar","CtrlVar","MUA","F0","F1","k","eta","tVector","hwMaxVector","qwVector","hwMinVector","hwMaxGroundedVector","hwMaxAfloatVector","hwVolumeVector","FluxGate","ActiveSet","lambda") ;
         end
 
         %% figures
@@ -635,7 +636,7 @@ if CalcFluxes
     
     fprintf("Saving Restart File: %s \n",RestartFileName)
     MUA.dM=[];
-    save(RestartFileName,"UserVar","CtrlVar","MUA","F0","F1","k","eta","tVector","hwMaxVector","qwVector","hwMinVector","hwMaxGroundedVector","hwMaxAfloatVector","FluxGate","ActiveSet","lambda") ;
+    save(RestartFileName,"UserVar","CtrlVar","MUA","F0","F1","k","eta","tVector","hwMaxVector","qwVector","hwMinVector","hwMaxGroundedVector","hwMaxAfloatVector","hwVolumeVector","FluxGate","ActiveSet","lambda") ;
 
 end
 
