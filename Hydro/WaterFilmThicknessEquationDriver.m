@@ -53,6 +53,7 @@ if nargin==0
     UserVar.Example="-Island-Retrograde-Peaks-" ;  
     UserVar.Example="-Island-" ;   % This is supposed to be a simple test for a simple geometry.
     UserVar.Example="-WAIS-aw0-" ;  
+    UserVar.Example="-WAIS-aw0-kmin-" ;  
     UserVar.Example="-Plane-" ;    % used this to test volume conservation, which was found to be conserved to almost machine precision .
 
 end
@@ -361,13 +362,22 @@ if CalcFluxes
 
 
         k=k0+zeros(MUA.Nnodes,1) ;
-        
-        % AG=MuaElementsContainingGivenNodes(CtrlVar,MUA,ActiveSet) & F1.GF.ElementsUpstreamOfGroundingLines ;
-        % NodesOfElementsContainingActiveNodes=unique(MUA.connectivity(AG,:)) ;
-        % k(NodesOfElementsContainingActiveNodes)=kmin;
 
-        kActiveSet=max(kActiveSet/2,kmin); 
-        k(ActiveSet)=kActiveSet; 
+        if contains(UserVar.Example,"-kmin-")
+
+             AG=MuaElementsContainingGivenNodes(CtrlVar,MUA,ActiveSet) & F1.GF.ElementsUpstreamOfGroundingLines ;
+             NodesOfElementsContainingActiveNodes=unique(MUA.connectivity(AG,:)) ;
+             k(NodesOfElementsContainingActiveNodes)=kmin;
+             UaPlots(CtrlVar,MUA,F1,k,FigureName=" kmin ");
+             hold on
+             plot(F1.x(ActiveSet)/1000,F1.y(ActiveSet)/1000,".k",MarkerSize=0.2)
+
+        else
+            kActiveSet=max(kActiveSet/2,kmin);
+            k(ActiveSet)=kActiveSet;
+        end
+
+
 
         xint=output.fun.xint ;  yint=output.fun.yint ;  qwxint=output.fun.qx1int ; qwyint=output.fun.qy1int ;
 
