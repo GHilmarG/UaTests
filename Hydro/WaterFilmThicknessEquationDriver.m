@@ -74,12 +74,13 @@ elseif contains(UserVar.Example,"-WAIS-")
 
     CtrlVar.MeshSize=10e3 ;   clear CreateMeshAndMua.m
 
+
 end
 
 
 
 %%
-nTimeSteps=10000;
+nTimeSteps=20000;
 nRestartSaveInterval=100;
 CtrlVar.dt=10; dtOutput=CtrlVar.dt*100;  tOutput=0; 
 qwxLast=[];

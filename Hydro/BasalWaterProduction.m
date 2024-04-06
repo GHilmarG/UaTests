@@ -5,7 +5,7 @@ function [UserVar,aw]=BasalWaterProduction(UserVar,CtrlVar,MUA,F)
 persistent Faw
 
 
-if UserVar.Example=="-Antarctica-" ||  UserVar.Example=="-WAIS-"
+if contains(UserVar.Example,"-Antarctica-") ||  contains(UserVar.Example,"-WAIS-")
 
 
     if isempty(Faw)
