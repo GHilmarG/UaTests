@@ -4,7 +4,7 @@ function WaterFilmThicknessEquationDriver(UserVar)
 
 ReadData=1;
 CalcFluxes=1;
-isRestart=0;  ResetTime=0; maxTime=200000; nPlotStep=10;
+isRestart=1;  ResetTime=0; maxTime=200000; nPlotStep=10;
 
 %%
 %
@@ -71,14 +71,15 @@ if contains(UserVar.Example,"-Island-") || contains(UserVar.Example,"-Plane-")
 elseif contains(UserVar.Example,"-WAIS-")
     %% WAIS
 
-    CtrlVar.MeshSize=20e3 ;
+    CtrlVar.MeshSize=10e3 ;
+    % CtrlVar.MeshGenerator="gmsh" ; % "mesh2d";  % this is the default option 
 
 end
 
 
 
 %%
-nTimeSteps=10000;
+nTimeSteps=20000;
 nRestartSaveInterval=100;
 CtrlVar.dt=10; dtOutput=CtrlVar.dt*100;  tOutput=0; 
 qwxLast=[];
