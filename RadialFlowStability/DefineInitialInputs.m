@@ -14,8 +14,10 @@ UserVar.RunType="-MR500-AM0-RG0k015-";
 
 UserVar.RunType="-MR250-AM0-RG0k015-n1-"; 
 UserVar.RunType="-MR250-AM0-RG0k015-n6-"; 
-UserVar.RunType="-MR250-AM0-RG0k015-TR6-n6-DE-"; 
-UserVar.RunType="-MR250-AM0-RG0k015-TR3-n6-DE-"; 
+UserVar.RunType="-MR250-AM0-RG0k015-TR6-n6-"; 
+% UserVar.RunType="-MR250-AM0-RG0k015-TR6-n6-DE-"; 
+UserVar.RunType="-MR250-AM0-RG0k015-TR3-n6-DE-h0Pert-"; 
+UserVar.RunType="-MR250-AM0-RG0k015-TR3-n6-DE-QD25-"; 
 
 UserVar.Geometry='circular_shelf';
 
@@ -88,6 +90,10 @@ switch UserVar.Geometry
              NaN NaN ;
              xrg(:) yrg(:)];
 end
+
+
+
+
 
 %% New numerics to try (after new Beta version)
 %CtrlVar.InfoLevel=10;
@@ -205,13 +211,12 @@ CtrlVar.DefineOutputsDt=1.0; %model time interval between calling DefineOutputs.
 %%
 
 
-CtrlVar.uvDesiredWorkAndForceTolerances=[1e-10 1e-15];
-CtrlVar.uvDesiredWorkOrForceTolerances=[1e-10 1e-15];
-CtrlVar.uvExitBackTrackingStepLength=1e-10;
-CtrlVar.uvAcceptableWorkAndForceTolerances=[1e-10 1e-15];
-CtrlVar.uvAcceptableWorkOrForceTolerances=[1e-10 1e-15];
 
-
+if contains(UserVar.RunType,"-QD")
+    CtrlVar.QuadratureRuleDegree=str2double(extractBetween(UserVar.RunType,"-QD","-"));
+else
+    CtrlVar.QuadratureRuleDegree=[];  % use default
+end
 
 
 end
