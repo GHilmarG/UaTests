@@ -1,6 +1,13 @@
-function  BCs=DefineBoundaryConditions(UserVar,CtrlVar,MUA,BCs,time,ubFixedValue,b,h,S,B,ub,vb,ud,vd,GF)
-%%
-% BCs=DefineBoundaryConditions(UserVar,CtrlVar,MUA,BCs,time,s,b,h,S,B,ub,vb,ud,vd,GF)
+
+
+
+
+
+%function  BCs=DefineBoundaryConditions(UserVar,CtrlVar,MUA,BCs,time,ubFixedValue,b,h,S,B,ub,vb,ud,vd,GF)
+
+function [UserVar,BCs]=DefineBoundaryConditions(UserVar,CtrlVar,MUA,F,BCs)
+
+
 
 %%
 % [rg,Domain_radius,shelf_width,h0,Bedrock,rho,rhow,g,thinice,ur,n,AGlen]=DefineMyParameters();
@@ -9,7 +16,7 @@ rg=UserVar.rg;
 h0=UserVar.h0; 
 ur=UserVar.ur; 
 
-x=MUA.coordinates(:,1); y=MUA.coordinates(:,2);
+
 
 %LS u=ur*x/sqrt(x^2+y^2) turn radial velocity to cartesean
 %LS v=ur*y/sqrt(x^2+y^2)
@@ -39,20 +46,24 @@ BCs.hFixedValue = (nodesinn./nodesinn)*h0;
 
 %% Inner boundary only - no shelf width
 dx=rg/20;
-mask=x(MUA.Boundary.Nodes).^2+y(MUA.Boundary.Nodes).^2 <= rg*rg+dx; %Make sure all inner nodes are included, not the outer nodes
+
+TareaMin=min(TriAreaFE(MUA.coordinates,MUA.connectivity));
+dx=sqrt(TareaMin)/5; 
+
+mask=F.x(MUA.Boundary.Nodes).^2+F.y(MUA.Boundary.Nodes).^2 <= (rg+dx)^2; %Make sure all inner nodes are included, not the outer nodes
 nodesIn=MUA.Boundary.Nodes(mask); %list of nodes IDs 
 
-normal=sqrt(x(nodesIn).^2+y(nodesIn).^2);
+normal=sqrt(F.x(nodesIn).^2+F.y(nodesIn).^2);
 
 % Set a constant radial veolicty ur on the inner boundary r=rg
-BCs.ubFixedNode=[nodesIn];
-BCs.ubFixedValue=ur.*x(nodesIn)./normal;
-BCs.vbFixedNode=[nodesIn];
-BCs.vbFixedValue=ur.*y(nodesIn)./normal;
+BCs.ubFixedNode=nodesIn;
+BCs.ubFixedValue=ur.*F.x(nodesIn)./normal;
+BCs.vbFixedNode=nodesIn;
+BCs.vbFixedValue=ur.*F.y(nodesIn)./normal;
 
 %Set a constant thickness h0 on that inner boundary r=rg
 BCs.hFixedNode = nodesIn ;
-BCs.hFixedValue = (nodesIn./nodesIn)*h0;
+BCs.hFixedValue = nodesIn*0 + h0;
 
 end
 
