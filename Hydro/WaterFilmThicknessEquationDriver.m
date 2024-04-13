@@ -287,13 +287,6 @@ if CalcFluxes
         %FluxGate=[-1550 -388 ; -1500 -543]*1000;   Npoints=300 ; FluxGate=interparc(Npoints,FluxGate(:,1),FluxGate(:,2),'linear');
         %qwVector=tVector*0+nan;
 
-        %% inspecting aw-Reactions
-       BCs=BoundaryConditions(); BCs.hFixedNode=ActiveSet; BCs.hFixedValue=ActiveSet*0+CtrlVar.WaterFilm.ThickMin; l.h=lambda ; l.ubvb=[]; l.udvd=[];
-       [Reactions,lStar]=CalculateReactions(CtrlVar,MUA,BCs,l);
-       hold off
-       PlotReactions(CtrlVar,MUA,F1,Reactions);
-
-
         if ResetTime
             CtrlVar.time=0 ;
             F1.time=0;
@@ -373,38 +366,12 @@ if CalcFluxes
 
         if contains(UserVar.Example,"-kmin-")
 
-            AG=MuaElementsContainingGivenNodes(CtrlVar,MUA,ActiveSet) & F1.GF.ElementsUpstreamOfGroundingLines ;
-            NodesOfElementsContainingActiveNodes=unique(MUA.connectivity(AG,:)) ;
-            k(NodesOfElementsContainingActiveNodes)=kmin;
-            UaPlots(CtrlVar,MUA,F1,k,FigureTitle=" kmin ");
-            hold on
-            plot(F1.x(ActiveSet)/1000,F1.y(ActiveSet)/1000,".k",MarkerSize=0.2)
-
-        elseif contains(UserVar.Example,"-PhiGrad-")
-
-            Phi=PhiPotential(CtrlVar,MUA,F1);
-            [dPhidxInt,dPhidyInt,xint,yint]=calcFEderivativesMUA(Phi,MUA) ;
-            [dPhidx,dPhidy]=ProjectFintOntoNodes(MUA,dPhidxInt,dPhidyInt) ;
-            PhiGradient=sqrt(dPhidx.*dPhidx+dPhidy.*dPhidy);
-
-            [dPhidxInt,dPhidyInt,xint,yint]=calcFEderivativesMUA(PhiGradient,MUA) ;
-            [dPhidx,dPhidy]=ProjectFintOntoNodes(MUA,dPhidxInt,dPhidyInt) ;
-            PhiLaplace=sqrt(dPhidx.*dPhidx+dPhidy.*dPhidy);
-
-            % UaPlots(CtrlVar,MUA,F1,PhiGradient,FigureTitle=" PhiGradient ") ;
-            % UaPlots(CtrlVar,MUA,F1,PhiLaplace,FigureTitle=" PhiLaplace ") ;
-
-            iPhiGradient=PhiGradient>1;
-            iPhiLaplace=PhiLaplace > 10;
-
-            ik=find(iPhiLaplace | iPhiGradient) ;
-
-            ike=MuaElementsContainingGivenNodes(CtrlVar,MUA,ik);
-            iken=unique(MUA.connectivity(ike,:)) ;
-            k(iken)=kmin;
-
-
-
+             AG=MuaElementsContainingGivenNodes(CtrlVar,MUA,ActiveSet) & F1.GF.ElementsUpstreamOfGroundingLines ;
+             NodesOfElementsContainingActiveNodes=unique(MUA.connectivity(AG,:)) ;
+             k(NodesOfElementsContainingActiveNodes)=kmin;
+             UaPlots(CtrlVar,MUA,F1,k,FigureTitle=" kmin ");
+             hold on
+             plot(F1.x(ActiveSet)/1000,F1.y(ActiveSet)/1000,".k",MarkerSize=0.2)
 
         else
             kActiveSet=max(kActiveSet/2,kmin);
@@ -494,11 +461,9 @@ if CalcFluxes
             ihmin=F1.hw <= CtrlVar.WaterFilm.ThickMin ;
             hold on ; plot(F1.x(ihmin)/CtrlVar.PlotXYscale,F1.y(ihmin)/CtrlVar.PlotXYscale,'.k',MarkerSize=0.1)
             title(sprintf("$h_w$ time=%g",CtrlVar.time),Interpreter="latex")
-            subtitle(UserVar.Example)
 
             [~,xGL,yGL]=UaPlots(CtrlVar,MUA,F1,F1.hw-F0.hw,FigureTitle="Delta hw",CreateNewFigure=true) ;
             title(sprintf("$\\Delta h_w$ time=%g",CtrlVar.time),Interpreter="latex")
-            subtitle(UserVar.Example)
 
             figNp=FindOrCreateFigure("max(hw)(t)")  ; clf(figNp) ;
             plot(tVector,hwMaxVector,"-ok")
@@ -508,7 +473,6 @@ if CalcFluxes
             plot(tVector,hwMaxAfloatVector,"-*b")
             %yline(0,"--")
             title(sprintf("$h_w$"),Interpreter="latex")
-            subtitle(UserVar.Example)
             legend("hw max","hw min","hw max grounded","hw max afloat",Location="best")
 
             if  CtrlVar.WaterFilm.Assembly~="-D-"
@@ -519,12 +483,11 @@ if CalcFluxes
                 plot(xGL/CtrlVar.PlotXYscale,yGL/CtrlVar.PlotXYscale,'r')
                 PlotMuaBoundary(CtrlVar,MUA) ;
                 title(sprintf("$\\mathbf{v}_w$ time=%g",CtrlVar.time),Interpreter="latex")
-                subtitle(UserVar.Example)
                 hold off
             end
 
             figqw=FindOrCreateFigure("(qwx,qwy)") ; clf(figqw) ;
-            CtrlVar.VelColorBarTitle="($\mathrm{km^2 \, yr^{-1}}$)" ;
+            CtrlVar.VelColorBarTitle="($\mathrm{m^2 \, yr^{-1}}$)" ;
             QuiverColorGHG(F1.x,F1.y,qwx,qwy,CtrlVar);
             hold on
             plot(xGL/CtrlVar.PlotXYscale,yGL/CtrlVar.PlotXYscale,'r')
@@ -537,7 +500,6 @@ if CalcFluxes
             xlabel("$x\,(\mathrm{km})$",interpreter="latex")
             ylabel("$y\,(\mathrm{km})$",interpreter="latex")
             title(sprintf("$\\mathbf{q}_w$ time=%g",CtrlVar.time),Interpreter="latex")
-            subtitle(UserVar.Example)
             hold off
 
             % Phi fluxes
@@ -554,12 +516,11 @@ if CalcFluxes
             xlabel("$x\,(\mathrm{km})$",interpreter="latex")
             ylabel("$y\,(\mathrm{km})$",interpreter="latex")
             title(sprintf("$\\Phi \\mathbf{q}_w$ time=%g",CtrlVar.time),Interpreter="latex")
-            subtitle(UserVar.Example)
             hold off
 
             % Y fluxes
             figqY=FindOrCreateFigure("(qwxY,qwyY)") ; clf(figqY) ;
-            CtrlVar.VelColorBarTitle="($\mathrm{km^2 \, yr^{-1}}$)" ;
+            CtrlVar.VelColorBarTitle="($\mathrm{m^2 \, yr^{-1}}$)" ;
             QuiverColorGHG(F1.x,F1.y,qwxY,qwyY,CtrlVar);
             hold on
             plot(xGL/CtrlVar.PlotXYscale,yGL/CtrlVar.PlotXYscale,'r')
@@ -571,7 +532,6 @@ if CalcFluxes
             xlabel("$x\,(\mathrm{km})$",interpreter="latex")
             ylabel("$y\,(\mathrm{km})$",interpreter="latex")
             title(sprintf("$\\Upsilon \\mathbf{q}_w$ time=%g",CtrlVar.time),Interpreter="latex")
-            subtitle(UserVar.Example)
             hold off
 
 
@@ -586,7 +546,6 @@ if CalcFluxes
                 plot(xGL/CtrlVar.PlotXYscale,yGL/CtrlVar.PlotXYscale,'r')
                 PlotMuaBoundary(CtrlVar,MUA) ;
                 title(sprintf("$\\Delta \\mathbf{q}_w$ time=%g",CtrlVar.time),Interpreter="latex")
-                subtitle(UserVar.Example)
                 hold off
             end
 
@@ -660,7 +619,6 @@ if CalcFluxes
 
                 PlotMuaBoundary(CtrlVar,MUA) ;
                 title(sprintf("$Q_n$=%g $Q_{\\mathrm{int}}$=%g  $\\tilde{Q}_{\\mathrm{int}}$=%g $t$=%g",Qn/1e9,UserVar.QnTheoretical/1e9,QIntNum/1e9,CtrlVar.time),Interpreter="latex")
-                subtitle(UserVar.Example)
                 hold off
 
                 figFGt=FindOrCreateFigure("Flux Gate(t)") ; clf(figFGt);
@@ -668,7 +626,6 @@ if CalcFluxes
                 plot(tVector,qwVector/1e9,"ob")
                 title(sprintf("$Q_n$=%g $(\\mathrm{km}^3/\\mathrm{yr})$ $Q_{\\mathrm{int}}$=%g $(\\mathrm{km}^3/\\mathrm{yr})$ $\\tilde{Q}_{\\mathrm{int}}$=%g $(\\mathrm{km}^3/\\mathrm{yr})$ $t$=%g $(\\mathrm{yr})$",...
                     Qn/1e9,UserVar.QnTheoretical/1e9,QIntNum/1e9,CtrlVar.time),Interpreter="latex")
-                subtitle(UserVar.Example)
                 yline(UserVar.QnTheoretical/1e9,"--")
                 xlabel("time, $t$ $(\mathrm{yr})$",Interpreter="latex")
                 ylabel("Water flux, $Q$ $(\mathrm{km}^3/\mathrm{yr})$",Interpreter="latex")
