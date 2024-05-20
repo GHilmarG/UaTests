@@ -1,10 +1,13 @@
 
+
+
+
 function [UserVar,CtrlVar,MeshBoundaryCoordinates]=DefineInitialInputs(UserVar,CtrlVar)
 %% This is the initial input file for my circular SSH tryout
 
 %%UNITS here are taken as meters and seconds
 
-%   MR : mesh resoluion
+%   MR : mesh resolution factor, the larger this is, the finer the mesh
 %   AM : automated mesh adaptation
 %   RG : inner radius
 %   DE : Deactive elements (using DefineElementsToDeactivate)
@@ -17,11 +20,25 @@ UserVar.RunType="-MR250-AM0-RG0k015-n6-";
 UserVar.RunType="-MR250-AM0-RG0k015-TR6-n6-"; 
 % UserVar.RunType="-MR250-AM0-RG0k015-TR6-n6-DE-"; 
 UserVar.RunType="-MR250-AM0-RG0k015-TR3-n6-DE-h0Pert-"; 
-UserVar.RunType="-MR250-AM0-RG0k015-TR3-n6-DE-QD25-"; 
+UserVar.RunType="-MR250-AM0-RG0k015-TR3-n6-DE-QD25-h0Pert-"; 
+UserVar.RunType="-MR250-AM0-RG0k015-TR3-n1-DE-QD25-"; 
+UserVar.RunType="-MR250-AM0-RG0k015-TR3-n1-DE-QD25-h0Pert-"; 
+
+UserVar.RunType="-MR500-AM0-RG0k015-TR3-n1-DE-QD25-h0Pert-"; 
+UserVar.RunType="-MR500-AM0-RG0k015-TR3-n1-DE-QD25-"; 
+
+UserVar.RunType="-MR500-AM0-RG0k015-TR3-n6-DE-QD25-"; 
+UserVar.RunType="-MR500-AM0-RG0k015-TR3-n6-DE-QD25-h0Pert-"; 
+% UserVar.RunType="-MR750-AM0-RG0k015-TR3-n6-DE-QD25-h0Pert-"; 
+% UserVar.RunType="-MR750-AM0-RG0k015-TR3-n6-DE-QD25-"; 
+% UserVar.RunType="-MR750-AM0-RG0k015-TR3-n1-DE-QD25-h0Pert-"; 
 
 UserVar.Geometry='circular_shelf';
 
-CtrlVar.SaveInitialMeshFileName="MeshFile-M250-RG0k015-.mat"; % remember to update this
+CtrlVar.SaveInitialMeshFileName="MeshFile-"+extractBetween(UserVar.RunType,"MR","-",Boundaries="inclusive")+extractBetween(UserVar.RunType,"RG","-",Boundaries="inclusive")+".mat";
+
+
+
 %%
 
 UserVar.n=double(str2double(extractBetween(UserVar.RunType,"-n","-"))); 
@@ -108,9 +125,9 @@ CtrlVar.ATSdtMax=0.5; % when ADT is increased, do not exceed 3sec
 %CtrlVar.InfoLevelNonLinIt=5; 
 
 %%
-CtrlVar.Parallel.uvhAssembly.spmd.isOn=false; % spmd results in considerable speedup, ranging from 6 to 20 times depending on size and memory
-CtrlVar.Parallel.uvAssembly.spmd.isOn=false; 
-CtrlVar.Distribute=true ;                    % only speeds things up somewhat if matrix large, for 262485 x 262485  speedup=1.7, 341265 x 341265 speedup=2.18
+CtrlVar.Parallel.uvhAssembly.spmd.isOn=true; % spmd results in considerable speedup, ranging from 6 to 20 times depending on size and memory
+CtrlVar.Parallel.uvAssembly.spmd.isOn=true; 
+CtrlVar.Distribute=false ;                    % only speeds things up somewhat if matrix large, for 262485 x 262485  speedup=1.7, 341265 x 341265 speedup=2.18
 CtrlVar.Parallel.isTest=false;  
 %% Types of runs
 CtrlVar.TimeDependentRun=1 ;
@@ -178,11 +195,17 @@ CtrlVar.MeshRefinementMethod='explicit:local:newest vertex bisection';          
 CtrlVar.CurrentRunStepNumber=1 ;  % This is a counter that is increased by one at each run step.
 
 %% Restart
-CtrlVar.Restart=0;  
+
 CtrlVar.WriteRestartFile=1;
 CtrlVar.NameOfRestartFiletoRead="Restartfile"+UserVar.RunType ;
 CtrlVar.NameOfRestartFiletoWrite=CtrlVar.NameOfRestartFiletoRead ; 
 
+% OK, this is potentialy a bit dangerous, but if a restart file is found, defined this as a restart run
+if isfile(CtrlVar.NameOfRestartFiletoRead+".mat")
+    CtrlVar.Restart=1;  
+else
+    CtrlVar.Restart=0;  
+end
 
 %% Meshfiles
 
@@ -217,6 +240,17 @@ if contains(UserVar.RunType,"-QD")
 else
     CtrlVar.QuadratureRuleDegree=[];  % use default
 end
+
+
+
+
+%%
+
+% CtrlVar.doplots=1; 
+% CtrlVar.doAdaptMeshPlots=1; 
+% CtrlVar.InfoLevelAdaptiveMeshing=100; 
+% 
+%%
 
 
 end
