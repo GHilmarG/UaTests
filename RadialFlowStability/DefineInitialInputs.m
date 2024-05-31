@@ -29,7 +29,7 @@ UserVar.RunType="-MR500-AM0-RG0k015-TR3-n1-DE-QD25-";
 
 UserVar.RunType="-MR500-AM0-RG0k015-TR3-n6-DE-QD25-"; 
 UserVar.RunType="-MR500-AM0-RG0k015-TR3-n6-DE-QD25-h0Pert-"; 
-% UserVar.RunType="-MR750-AM0-RG0k015-TR3-n6-DE-QD25-h0Pert-"; 
+UserVar.RunType="-MR750-AM0-RG0k015-TR3-n6-DE-QD25-h0Pert-"; 
 % UserVar.RunType="-MR750-AM0-RG0k015-TR3-n6-DE-QD25-"; 
 % UserVar.RunType="-MR750-AM0-RG0k015-TR3-n1-DE-QD25-h0Pert-"; 
 
