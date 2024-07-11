@@ -30,6 +30,8 @@ for itime=0:4
     Ua(UserVar) ;       % This FORWARD run will go t=from to t=to, 
 
     %% This is an INVERSE using geometry based on the previous forward run that ended at time=to, ie the previous forward run
+
+    
     UserVar.RunType=sprintf("-IR%ito%i-",from,to)+RunString ;
     CtrlVar.Restart=1;  % Always try to start a restart run when conducting an inversion 
     Ua(UserVar)
