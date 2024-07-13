@@ -26,13 +26,15 @@ elseif contains(hostname,"DESKTOP-BU2IHIR")   % home
 
 elseif contains(hostname,"C23000099")   % home
 
-    UserVar.ResultsFileDirectory="E:\Runs\Calving\PIG-TWG\ResultsFiles\";
-    UserVar.InverseRestartFileDirectory="E:\Runs\Calving\PIG-TWG\InverseRestartFiles\";
-    UserVar.InversionFileDirectory="E:\Runs\Calving\PIG-TWG\InversionFiles\";
-    UserVar.MeshFileDirectory="E:\Runs\Calving\PIG-TWG\MeshFiles\";
-    UserVar.ForwardRestartFileDirectory="E:\Runs\Calving\PIG-TWG\RestartFiles\";
+    % E drive is one of the local drives (Fast Store)
+    % F is the "external" NAS drive
+    UserVar.ResultsFileDirectory="F:\Runs\Calving\PIG-TWG\ResultsFiles\";
+    UserVar.InverseRestartFileDirectory="F:\Runs\Calving\PIG-TWG\InverseRestartFiles\";
+    UserVar.InversionFileDirectory="F:\Runs\Calving\PIG-TWG\InversionFiles\";
+    UserVar.MeshFileDirectory="F:\Runs\Calving\PIG-TWG\MeshFiles\";
+    UserVar.ForwardRestartFileDirectory="F:\Runs\Calving\PIG-TWG\RestartFiles\";
 
-    UserVar.Interpolants="C:\cygwin64\home\Hilmar\Ua\Interpolants\" ; 
+    UserVar.Interpolants="C:\cygwin64\home\pcnj6\Ua\Interpolants\";
 
 else
     UserVar.ResultsFileDirectory=pwd+"\ResultsFiles\";
