@@ -7,14 +7,16 @@
 UserVar.RunType="-IR-ES20km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-GeoBed2-SMB_RACHMO2k3_2km-";
 
 UserVar.RunType="-FR0to1-ES20km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-GeoBed2-SMB_RACHMO2k3_2km-";
-UserVar.RunType="-FR0to1-ES30km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-GeoBed2-SMB_RACHMO2k3_2km-";
 UserVar.RunType="-FR0to1-ES10km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-GeoBed2-SMB_RACHMO2k3_2km-";
+UserVar.RunType="-FR0to1-ES30km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-GeoBed2-SMB_RACHMO2k3_2km-";
+
 
 
 CtrlVar=Ua2D_DefaultParameters();
 
 
 UserVar=FileDirectories(UserVar) ;
+UserVar.GeometryInterpolant="create the name of inverse restart file from User.RunType";
 
 [CtrlVar,UserVar]=ParseRunTypeString(CtrlVar,UserVar) ;
 
@@ -48,7 +50,7 @@ for ifile=1:numel(ResultFiles)
 
 
     for iloc=1:nloc
-
+         % always estimate changes at the same (x,y) location 
         hVector(iloc,ifile)=Fh(Location(iloc,1),Location(iloc,2)); %
         uVector(iloc,ifile)=Fu(Location(iloc,1),Location(iloc,2));
         vVector(iloc,ifile)=Fv(Location(iloc,1),Location(iloc,2));
@@ -62,13 +64,18 @@ for ifile=1:numel(ResultFiles)
         CtrlVar.QuiverSameVelocityScalingsAsBefore=true;
     end
 
-    [cbar,xGL,yGL,xCF,yCF,CtrlVar]=UaPlots(CtrlVar,MUA,F,"-uv-",FigureTitle=RunID) ;
+    
+    [cbar,xGL,yGL,xCF,yCF,CtrlVar]=UaPlots(CtrlVar,MUA,F,"-uv-",FigureTitle="velocity") ;
 
     if ifile==1
+
+        Fh0=Fh; Fu0=Fu ; Fv0=Fv;
         F0=F; % keep a copy of F from first solution
+        MUA0=MUA; 
         xGL0=xGL ; yGL0=yGL  ;
         RunIDCompare=RunID; 
 
+     
         UaPlots(CtrlVar,MUA,F,F.s,FigureTitle="Inital Surface")
         hold on 
         axis([-1722.86513409962         -1479.58176245211          -410.98275862069         -149.399310344828])
@@ -78,16 +85,28 @@ for ifile=1:numel(ResultFiles)
     else
 
         CtrlVar.QuiverSameVelocityScalingsAsBefore=false;
+
+        if numel(F.ub) ~= numel(F0.ub)
+            % map 0 onto the actual mesh. This is needed for plotting differences in  velocity and thickness fields
+            F0.ub=Fu0(F.x,F.y);
+            F0.vb=Fv0(F.x,F.y);
+            F0.h=Fh0(F.x,F.y);
+            
+            
+        end
+
         F.ub=F.ub-F0.ub ; F.vb=F.vb-F0.vb ;
+    
         FigTitle=sprintf("Velocity changes at %s compared to %s",RunID,RunIDCompare) ;
-        [cbar,xGL,yGL,xCF,yCF,CtrlVar]=UaPlots(CtrlVar,MUA,F,"-uv-",FigureTitle=FigTitle) ;
+        [cbar,xGL,yGL,xCF,yCF,CtrlVar]=UaPlots(CtrlVar,MUA,F,"-uv-",FigureTitle="VelChanges",GetRidOfValuesDownStreamOfCalvingFronts=true) ;
         hold on ; plot(xGL0/CtrlVar.PlotXYscale,yGL0/CtrlVar.PlotXYscale,"k",LineWidth=1.5)
         title(FigTitle)
-        subtitle(sprintf("t=%g",CtrlVar.time),interpreter="latex")
+        subtitle(sprintf("t=%3.1f",CtrlVar.time),interpreter="latex")
 
         F.h=F.h-F0.h ;
+        
         FigTitle=sprintf("thickness change at %s compared to  %s",RunID,RunIDCompare) ;
-        UaPlots(CtrlVar,MUA,F,F.h,FigureTitle=FigTitle) ;
+        UaPlots(CtrlVar,MUA,F,F.h,FigureTitle="thickness changes",GetRidOfValuesDownStreamOfCalvingFronts=true) ;
         hold on ; plot(xGL0/CtrlVar.PlotXYscale,yGL0/CtrlVar.PlotXYscale,"k",LineWidth=1.5)
         clim([-100 100])
         title(FigTitle)
@@ -104,7 +123,7 @@ end
 
 for iloc=1:nloc
 
-    FindOrCreateFigure("30 km h and v versus t "+TextVector(iloc))
+    FindOrCreateFigure("h and v versus t "+TextVector(iloc))
     hold off
     yyaxis left
     plot(tVector(iloc,:),hVector(iloc,:)-hVector(iloc,1),"ob-")

@@ -68,11 +68,13 @@ if CtrlVar.InverseRun
             fprintf("Creating new geometrical interpolants for this inverse run from %s \n",FileName)
             FB=scatteredInterpolant(F.x,F.y,F.B);
             Fh=scatteredInterpolant(F.x,F.y,F.h);
+            Fs=scatteredInterpolant(F.x,F.y,F.s);
+            Fb=scatteredInterpolant(F.x,F.y,F.b);
             
             Frho=scatteredInterpolant(F.x,F.y,F.rho);
             rhow=F.rhow;
             fprintf("Saving new geometrical interpolants for this inverse run in %s \n",UserVar.GeometryInterpolant)
-            save(UserVar.GeometryInterpolant,'FB','Fh','Frho','rhow')
+            save(UserVar.GeometryInterpolant,'FB','Fh','Frho','Fs','Fb','rhow')
 
 
 
