@@ -126,6 +126,35 @@ end
 ab(~OceanNodes)=0;
 dabdh(~OceanNodes)=0;
 
+
+
+%% Basal melting due to frictional heating
+
+
+[tbx,tby,tb] = CalcBasalTraction(CtrlVar,UserVar,MUA,F,CalcNodalValues=true,CalcIntegrationPointValues=false) ;
+
+
+% cbar=UaPlots(CtrlVar,MUA,F,tb,FigureTitle="taub");
+% title(cbar,"(kPa)",Interpreter="latex")
+% clim([0 1000])
+
+
+% Pa = J/m^3
+%
+%
+L=334e3 ; % J/kg
+rho=1000;
+
+if isempty(tbx)  % it is possible that velocities have yet to be calculated
+    aw=0;
+else
+    aw=1000*(F.ub.*tbx+F.vb.*tby)/(L*rho) ; % multiplying with 1000 to get Joules
+end
+
+ab=ab-aw ;
+
+
+
 return
 
 

@@ -14,6 +14,7 @@ UserVar.RunType="-FR0to1-ES20km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-TM0k1-Alim-
 
 UserVar.RunType="-FR4to5-30km-Tri3-SlidWeertman-Duvh-MRlASE1-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-GeoBed2-SMB_RACHMO2k3_2km-";
 UserVar.RunType="-FR4to5-10km-Tri3-SlidWeertman-Duvh-MRlASE1-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-GeoBed2-SMB_RACHMO2k3_2km-";
+UserVar.RunType="-FR4to5-5km-Tri3-SlidWeertman-Duvh-MRlASE1-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-GeoBed2-SMB_RACHMO2k3_2km-";
 
 CtrlVar=Ua2D_DefaultParameters();
 
@@ -35,7 +36,7 @@ vVector=nan(10,100);
 tVector=nan(10,100) ;
 TextVector=strings(10,1) ;
 Location(1,:)=[-1585e3 -240e3 ]  ; TextVector(1)="PIG 20km upstream of GL" ;
-Location(2,:)=[-1590e3 -270e3 ]  ; TextVector(2)="PIG 20km downstream of GL" ;
+Location(2,:)=[-1595e3 -271e3 ]  ; TextVector(2)="PIG about 20km downstream of GL" ;
 
 nloc=size(Location,1) ;
 
@@ -101,9 +102,11 @@ for ifile=1:numel(ResultFiles)
 
         F.ub=F.ub-F0.ub ; F.vb=F.vb-F0.vb ;
     
+        CtrlVar.QuiverColorSpeedLimits=[0 2000] ; CtrlVar.VelPlotIntervalSpacing="log10" ; CtrlVar.QuiverColorPowRange=3;
         FigTitle=sprintf("Velocity changes at %s compared to %s",RunID,RunIDCompare) ;
         [cbar,xGL,yGL,xCF,yCF,CtrlVar]=UaPlots(CtrlVar,MUA,F,"-uv-",FigureTitle="VelChanges",GetRidOfValuesDownStreamOfCalvingFronts=true) ;
-        hold on ; plot(xGL0/CtrlVar.PlotXYscale,yGL0/CtrlVar.PlotXYscale,"k",LineWidth=1.5)
+        hold on ; 
+        plot(xGL0/CtrlVar.PlotXYscale,yGL0/CtrlVar.PlotXYscale,"k",LineWidth=1.5)
         title(FigTitle)
         subtitle(sprintf("t=%3.1f",CtrlVar.time),interpreter="latex")
 
