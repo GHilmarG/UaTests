@@ -377,6 +377,14 @@ if UserVar.GeometryInterpolant=="create the name of inverse restart file from Us
 
         % Here the interpolants are based on data, ie Bedmachine, and those are located in a separate folder.
         UserVar.GeometryInterpolant=UserVar.Interpolants+"BedMachineGriddedInterpolants";
+        UserVar.MeshBoundaryCoordinatesFile='../../../Interpolants/MeshBoundaryCoordinatesForAntarcticaBasedOnBedmachine';
+
+        if contains(UserVar.RunType,"-BM3-")
+
+            UserVar.GeometryInterpolant=UserVar.Interpolants+"BedMachineAntarctica-v3-GriddedInterpolants";
+            UserVar.MeshBoundaryCoordinatesFile=UserVar.Interpolants+"BedMachineAntarctica-v3-MeshBoundaryCoordinates";
+
+        end
 
     end
 

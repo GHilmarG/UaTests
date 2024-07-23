@@ -340,7 +340,7 @@ if contains(UserVar.RunType,"GenerateMesh")
     CtrlVar.Restart=0;
     CtrlVar.ReadInitialMesh=0;
 elseif CtrlVar.Restart
-    CtrlVar.ReadInitialMesh=0;
+    CtrlVar.ReadInitialMesh=1;
 else
     CtrlVar.ReadInitialMesh=1;
 end

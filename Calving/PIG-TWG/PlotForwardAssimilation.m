@@ -16,6 +16,9 @@ UserVar.RunType="-FR4to5-30km-Tri3-SlidWeertman-Duvh-MRlASE1-P-kH10000-TM0k1-Ali
 UserVar.RunType="-FR4to5-10km-Tri3-SlidWeertman-Duvh-MRlASE1-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-GeoBed2-SMB_RACHMO2k3_2km-";
 UserVar.RunType="-FR4to5-5km-Tri3-SlidWeertman-Duvh-MRlASE1-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-GeoBed2-SMB_RACHMO2k3_2km-";
 
+
+UserVar.RunType="ES5km-Tri3-SlidWeertman-Duvh-MRlASE1-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-";
+
 CtrlVar=Ua2D_DefaultParameters();
 
 
@@ -27,6 +30,8 @@ UserVar.InverseRestartFile="create the name of inverse restart file from User.Ru
 
 
 SearchString=replaceBetween(UserVar.RunType,"-FR","-","*");
+% SearchString="*"+SearchString; 
+% SearchString=replace(SearchString,"**","*") ;
 ResultFiles=dir(UserVar.ResultsFileDirectory+"*"+SearchString+".mat"); 
 
 
@@ -40,18 +45,24 @@ Location(2,:)=[-1595e3 -271e3 ]  ; TextVector(2)="PIG about 20km downstream of G
 
 nloc=size(Location,1) ;
 
+Fh=[] ; Fu=[] ; Fv=[]; F=UaFields ;
 
 for ifile=1:numel(ResultFiles)
 
-
+    FhPrevious=Fh; timePrevious=F.time;
+    FuPrevious=Fu;
+    FvPrevious=Fv;
 
     fprintf("%s \n ",ResultFiles(ifile).name)
     load(ResultFiles(ifile).folder+"\"+ResultFiles(ifile).name,"CtrlVar","MUA","F")
+
+
 
     Fh=scatteredInterpolant(F.x,F.y,F.h)  ;
     Fu=scatteredInterpolant(F.x,F.y,F.ub)  ;
     Fv=scatteredInterpolant(F.x,F.y,F.vb)  ;
 
+    
 
 
     for iloc=1:nloc
@@ -66,41 +77,48 @@ for ifile=1:numel(ResultFiles)
     RunID=extractBefore(ResultFiles(ifile).name,"-Tri") ; 
 
     if ifile>1
-        CtrlVar.QuiverSameVelocityScalingsAsBefore=true;
+        CtrlVar.QuiverSameVelocityScalingsAsBefore=false;
     end
 
-    
+    CtrlVar.QuiverColorSpeedLimits=[0 5000] ; CtrlVar.VelPlotIntervalSpacing="log10" ; CtrlVar.QuiverColorPowRange=3;
     [cbar,xGL,yGL,xCF,yCF,CtrlVar]=UaPlots(CtrlVar,MUA,F,"-uv-",FigureTitle="velocity") ;
 
     if ifile==1
 
         Fh0=Fh; Fu0=Fu ; Fv0=Fv;
         F0=F; % keep a copy of F from first solution
-        MUA0=MUA; 
+        MUA0=MUA;
         xGL0=xGL ; yGL0=yGL  ;
-        RunIDCompare=RunID; 
+        RunIDCompare=RunID;
 
-     
+
         UaPlots(CtrlVar,MUA,F,F.s,FigureTitle="Inital Surface")
-        hold on 
+        hold on
         axis([-1722.86513409962         -1479.58176245211          -410.98275862069         -149.399310344828])
         plot(Location(:,1)/1000,Location(:,2)/1000,"or",MarkerFaceColor="r")
-      
+
         PlotLatLonGrid();
     else
 
         CtrlVar.QuiverSameVelocityScalingsAsBefore=false;
 
-        if numel(F.ub) ~= numel(F0.ub)
-            % map 0 onto the actual mesh. This is needed for plotting differences in  velocity and thickness fields
-            F0.ub=Fu0(F.x,F.y);
-            F0.vb=Fv0(F.x,F.y);
-            F0.h=Fh0(F.x,F.y);
-            
-            
-        end
 
-        F.ub=F.ub-F0.ub ; F.vb=F.vb-F0.vb ;
+
+        % Map initial thickness and velocity fields on current mesh
+        % map 0 onto the actual mesh. This is needed for plotting differences in  velocity and thickness fields
+        ub0=Fu0(F.x,F.y);
+        vb0=Fv0(F.x,F.y);
+        h0=Fh0(F.x,F.y);
+
+
+        % Map last velocity and thickness fields on current mesh.
+
+        ubPrevious=FuPrevious(F.x,F.y);
+        vbPrevious=FvPrevious(F.x,F.y);
+        hPrevious=FhPrevious(F.x,F.y);
+
+
+        F.ub=F.ub-ub0 ; F.vb=F.vb-vb0 ;
     
         CtrlVar.QuiverColorSpeedLimits=[0 2000] ; CtrlVar.VelPlotIntervalSpacing="log10" ; CtrlVar.QuiverColorPowRange=3;
         FigTitle=sprintf("Velocity changes at %s compared to %s",RunID,RunIDCompare) ;
@@ -110,14 +128,32 @@ for ifile=1:numel(ResultFiles)
         title(FigTitle)
         subtitle(sprintf("t=%3.1f",CtrlVar.time),interpreter="latex")
 
-        F.h=F.h-F0.h ;
+        dh0=F.h-h0 ;
         
         FigTitle=sprintf("thickness change at %s compared to  %s",RunID,RunIDCompare) ;
-        UaPlots(CtrlVar,MUA,F,F.h,FigureTitle="thickness changes",GetRidOfValuesDownStreamOfCalvingFronts=true) ;
+        UaPlots(CtrlVar,MUA,F,dh0,FigureTitle="thickness changes",GetRidOfValuesDownStreamOfCalvingFronts=true) ;
         hold on ; plot(xGL0/CtrlVar.PlotXYscale,yGL0/CtrlVar.PlotXYscale,"k",LineWidth=1.5)
         clim([-100 100])
         title(FigTitle)
         subtitle(sprintf("t=%g",CtrlVar.time),interpreter="latex")
+
+        dtPrevious=(F.time-timePrevious) ;
+        if dtPrevious> eps
+
+            dhdtPrevious=(F.h-hPrevious)./dtPrevious;
+
+            FigTitle=sprintf("Rate of thickness change from %4.2f to  %4.2f (yr)",timePrevious,F.time);
+            cbar=UaPlots(CtrlVar,MUA,F,dhdtPrevious,FigureTitle="rater of thickness change",GetRidOfValuesDownStreamOfCalvingFronts=true) ;
+            hold on ; plot(xGL0/CtrlVar.PlotXYscale,yGL0/CtrlVar.PlotXYscale,"k",LineWidth=1.5)
+            clim([-30 30])
+            title(FigTitle,Interpreter="latex")
+            title(cbar,["dh/dt","(m/yr)"],interpreter="latex")
+            %subtitle(sprintf("t=%g",CtrlVar.time),interpreter="latex")
+            colormap(othercolor("Mtemperaturemap",1028))
+            PlotLatLonGrid();
+
+        end
+
 
     end
 
@@ -149,4 +185,26 @@ end
 %%
 
 UaPlots(CtrlVar,MUA,F,F.ab,FigureTitle=" ab ")
+%colormap(othercolor("Mtemperaturemap",1028)) ; 
+ModifyColormap();
+
 UaPlots(CtrlVar,MUA,F,F.as,FigureTitle=" as ") ; title(" as " ) ; clim([0 2])
+
+
+%% Comparing dh/dt with measurements
+
+
+fprintf('Loading interpolants for dhdt data based on Schroeder 2019 and Susheel.\n')
+load("FdhdtMeasuredRatesOfElevationChanges2000to2018","Fdh2000to2018")
+
+dhMeasured=Fdh2000to2018(F.x,F.y);
+
+cbar=UaPlots(CtrlVar,MUA,F,dhMeasured,FigureTitle="dh/dt measured");
+colormap(othercolor("Mtemperaturemap",1028))
+title("Mean rate of thickness change between 2000 and 2010")
+subtitle("based on Schroder 2019 and Susheel")
+title(cbar,["dh/dt","(m/yr)"],interpreter="latex")
+clim([-5 5])
+PlotLatLonGrid() ; 
+
+%%
