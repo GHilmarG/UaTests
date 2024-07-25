@@ -30,6 +30,7 @@ UserVar.InverseRestartFile="create the name of inverse restart file from User.Ru
 
 
 SearchString=replaceBetween(UserVar.RunType,"-FR","-","*");
+SearchString=replace(SearchString,"ES","");  % for some reason the output files were named with ES missing
 % SearchString="*"+SearchString; 
 % SearchString=replace(SearchString,"**","*") ;
 ResultFiles=dir(UserVar.ResultsFileDirectory+"*"+SearchString+".mat"); 
@@ -45,7 +46,9 @@ Location(2,:)=[-1595e3 -271e3 ]  ; TextVector(2)="PIG about 20km downstream of G
 
 nloc=size(Location,1) ;
 
-Fh=[] ; Fu=[] ; Fv=[]; F=UaFields ;
+Fh=[] ; Fu=[] ; Fv=[]; F=UaFields ; tMax=inf;
+
+tMax=2; 
 
 for ifile=1:numel(ResultFiles)
 
@@ -143,7 +146,7 @@ for ifile=1:numel(ResultFiles)
             dhdtPrevious=(F.h-hPrevious)./dtPrevious;
 
             FigTitle=sprintf("Rate of thickness change from %4.2f to  %4.2f (yr)",timePrevious,F.time);
-            cbar=UaPlots(CtrlVar,MUA,F,dhdtPrevious,FigureTitle="rater of thickness change",GetRidOfValuesDownStreamOfCalvingFronts=true) ;
+            cbar=UaPlots(CtrlVar,MUA,F,dhdtPrevious,FigureTitle="rate of thickness change",GetRidOfValuesDownStreamOfCalvingFronts=true) ;
             hold on ; plot(xGL0/CtrlVar.PlotXYscale,yGL0/CtrlVar.PlotXYscale,"k",LineWidth=1.5)
             clim([-30 30])
             title(FigTitle,Interpreter="latex")
@@ -157,7 +160,9 @@ for ifile=1:numel(ResultFiles)
 
     end
 
-
+    if F.time >= tMax
+        break
+    end
 
 end
 
@@ -177,7 +182,7 @@ for iloc=1:nloc
     plot(tVector(iloc,:),uVector(iloc,:),"+r-")
     plot(tVector(iloc,:),vVector(iloc,:),"*r-")
     legend("$\Delta h$","$u$","$v$",interpreter="latex")
-    ylabel("$(y,v) (m)$",Interpreter="latex")
+    ylabel("$(u,v) (m)$",Interpreter="latex")
     title(TextVector(iloc))
     xlabel("time (yr)",Interpreter="latex")
 

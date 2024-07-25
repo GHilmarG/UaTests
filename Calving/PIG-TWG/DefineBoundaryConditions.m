@@ -9,7 +9,7 @@ persistent MeshBoundaryCoordinates
 
 
 MeshBoundaryCoordinates=CreateMeshBoundaryCoordinatesForPIGandTWG(UserVar,CtrlVar);
-[I,AlongDist,NormDist] = DistanceToLineSegment([F.x(MUA.Boundary.Nodes) F.y(MUA.Boundary.Nodes)],MeshBoundaryCoordinates,[],1000);
+I= DistanceToLineSegment([F.x(MUA.Boundary.Nodes) F.y(MUA.Boundary.Nodes)],MeshBoundaryCoordinates,[],1000);
 
 
 BCs.vbFixedNode=MUA.Boundary.Nodes(I);
@@ -22,24 +22,24 @@ BCs.vbFixedValue=BCs.vbFixedNode*0;
 
 
 
-if F.time>0.5
-
-    %% Adding fixed h constraints over PIG iceshelf
-
-
-    Box=[-1642.6   -1546 -340.78 -236.91]*1000;
-
-    In=IsInBox(Box,F.x,F.y) ;
-    isPIGIS=In & F.GF.node <0.5 ;
-
-    BCs.hFixedNode=find(isPIGIS);
-    BCs.hFixedValue=F.h(isPIGIS);
-
-else
-    BCs.hFixedNode=[];
-    BCs.hFixedValue=[];
-
-end
+% if F.time>0.5
+% 
+%     %% Adding fixed h constraints over PIG iceshelf
+% 
+% 
+%     Box=[-1642.6   -1546 -340.78 -236.91]*1000;
+% 
+%     In=IsInBox(Box,F.x,F.y) ;
+%     isPIGIS=In & F.GF.node <0.5 ;
+% 
+%     BCs.hFixedNode=find(isPIGIS);
+%     BCs.hFixedValue=F.h(isPIGIS);
+% 
+% else
+%     BCs.hFixedNode=[];
+%     BCs.hFixedValue=[];
+% 
+% end
 
 
 return
