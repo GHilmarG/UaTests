@@ -15,7 +15,7 @@ if contains(UserVar.Example,"-Antarctica-") ||  contains(UserVar.Example,"-WAIS-
         MUAinput=MUA;
         Finput=F;
 
-        %% Antartica
+        %% Antarctica
         InverseRestartFile="../Antarctica/Antarctica-Inverse-AntarcticaMUAwith54kElements-logC-logA-MatlabOptimization-HessianBased-MAdjointRHA=E-RHC=E-IHC=FP-IHA=FP-Weertman-0-InverseRestartFile.mat";
 
         %PIG-TWG

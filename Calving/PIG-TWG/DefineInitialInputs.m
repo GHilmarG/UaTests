@@ -152,7 +152,7 @@ if CtrlVar.InverseRun
     CtrlVar.AdaptMesh=0;
    
 
-    CtrlVar.Inverse.Iterations=500;
+    CtrlVar.Inverse.Iterations=50;
     CtrlVar.Inverse.OptimalityTolerance=0.01; 
     CtrlVar.Inverse.StepTolerance=0.001;
 
@@ -341,7 +341,7 @@ if contains(UserVar.RunType,"GenerateMesh")
     CtrlVar.Restart=0;
     CtrlVar.ReadInitialMesh=0;
 elseif CtrlVar.Restart
-    CtrlVar.ReadInitialMesh=0;
+    CtrlVar.ReadInitialMesh=1;
 else
     CtrlVar.ReadInitialMesh=1;
 end
