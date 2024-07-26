@@ -8,11 +8,19 @@ function UserVar=FileDirectories(UserVar)
 
 if contains(hostname,"DESKTOP-G5TCRTD")  % office Dell
 
-    UserVar.ResultsFileDirectory="F:\Runs\Calving\PIG-TWG\ResultsFiles\";
-    UserVar.InverseRestartFileDirectory="F:\Runs\Calving\PIG-TWG\InverseRestartFiles\";
-    UserVar.InversionFileDirectory="F:\Runs\Calving\PIG-TWG\InversionFiles\";
-    UserVar.MeshFileDirectory="F:\Runs\Calving\PIG-TWG\MeshFiles\";
-    UserVar.ForwardRestartFileDirectory="F:\Runs\Calving\PIG-TWG\RestartFiles\";
+    % UserVar.ResultsFileDirectory="F:\Runs\Calving\PIG-TWG\ResultsFiles\";
+    % UserVar.InverseRestartFileDirectory="F:\Runs\Calving\PIG-TWG\InverseRestartFiles\";
+    % UserVar.InversionFileDirectory="F:\Runs\Calving\PIG-TWG\InversionFiles\";
+    % UserVar.MeshFileDirectory="F:\Runs\Calving\PIG-TWG\MeshFiles\";
+    % UserVar.ForwardRestartFileDirectory="F:\Runs\Calving\PIG-TWG\RestartFiles\";
+
+    UserVar.ResultsFileDirectory="F:\GoogleDriveStreamingOfficeDell\My Drive\Runs\Calving\PIG-TWG\ResultsFiles\";
+    UserVar.InverseRestartFileDirectory="F:\GoogleDriveStreamingOfficeDell\My Drive\Runs\Calving\PIG-TWG\InverseRestartFiles\";
+    UserVar.InversionFileDirectory="F:\GoogleDriveStreamingOfficeDell\My Drive\Runs\Calving\PIG-TWG\InversionFiles\";
+    UserVar.MeshFileDirectory="F:\GoogleDriveStreamingOfficeDell\My Drive\Runs\Calving\PIG-TWG\MeshFiles\";
+    UserVar.ForwardRestartFileDirectory="F:\GoogleDriveStreamingOfficeDell\My Drive\Runs\Calving\PIG-TWG\RestartFiles\";
+
+    UserVar.Interpolants="F:\GoogleDriveStreamingOfficeDell\My Drive\Interpolants\";
 
 elseif contains(hostname,"DESKTOP-BU2IHIR")   % home
 
