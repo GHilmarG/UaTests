@@ -51,7 +51,8 @@ Fh=[] ; Fu=[] ; Fv=[]; F=UaFields ;
 
 tMax=inf;
 
-
+VideoDhDt=VideoWriter(UserVar.RunType+".avi");
+open(VideoDhDt)
 
 for ifile=1:numel(ResultFiles)
 
@@ -148,8 +149,13 @@ for ifile=1:numel(ResultFiles)
 
             dhdtPrevious=(F.h-hPrevious)./dtPrevious;
 
+
+            fFig=FindOrCreateFigure("rate of thickness change")  ; clf(fFig)  ;
+            fFig.Position=[30 380 950 920] ;
+
+
             FigTitle=sprintf("Rate of thickness change from %4.2f to  %4.2f (yr)",timePrevious,F.time);
-            [cbar,xGL,yGL]=UaPlots(CtrlVar,MUA,F,dhdtPrevious,FigureTitle="rate of thickness change",GetRidOfValuesDownStreamOfCalvingFronts=true) ;
+            [cbar,xGL,yGL]=UaPlots(CtrlVar,MUA,F,dhdtPrevious,GetRidOfValuesDownStreamOfCalvingFronts=true,CreateNewFigure=false) ;
             hold on ; plot(xGL/CtrlVar.PlotXYscale,yGL/CtrlVar.PlotXYscale,"k",LineWidth=1)
             hold on ; plot(xGL0/CtrlVar.PlotXYscale,yGL0/CtrlVar.PlotXYscale,"k",LineWidth=1.5)
             clim([-30 30])
@@ -158,6 +164,9 @@ for ifile=1:numel(ResultFiles)
             %subtitle(sprintf("t=%g",CtrlVar.time),interpreter="latex")
             colormap(othercolor("Mtemperaturemap",1028))
             PlotLatLonGrid();
+
+            frame=getframe(gcf) ;
+            writeVideo(VideoDhDt,frame);
 
         end
 
@@ -170,6 +179,7 @@ for ifile=1:numel(ResultFiles)
 
 end
 
+close(VideoDhDt)
 
 %%
 
