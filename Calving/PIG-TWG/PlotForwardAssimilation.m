@@ -18,6 +18,7 @@ UserVar.RunType="-FR4to5-5km-Tri3-SlidWeertman-Duvh-MRlASE1-P-kH10000-TM0k1-Alim
 
 
 UserVar.RunType="ES5km-Tri3-SlidWeertman-Duvh-MRlASE1-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-";
+UserVar.RunType="ES5km-Tri3-SlidWeertman-Duvh-MRlASE2-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-";
 
 CtrlVar=Ua2D_DefaultParameters();
 
@@ -46,9 +47,11 @@ Location(2,:)=[-1595e3 -271e3 ]  ; TextVector(2)="PIG about 20km downstream of G
 
 nloc=size(Location,1) ;
 
-Fh=[] ; Fu=[] ; Fv=[]; F=UaFields ; tMax=inf;
+Fh=[] ; Fu=[] ; Fv=[]; F=UaFields ; 
 
-tMax=2; 
+tMax=inf;
+
+
 
 for ifile=1:numel(ResultFiles)
 
@@ -146,7 +149,8 @@ for ifile=1:numel(ResultFiles)
             dhdtPrevious=(F.h-hPrevious)./dtPrevious;
 
             FigTitle=sprintf("Rate of thickness change from %4.2f to  %4.2f (yr)",timePrevious,F.time);
-            cbar=UaPlots(CtrlVar,MUA,F,dhdtPrevious,FigureTitle="rate of thickness change",GetRidOfValuesDownStreamOfCalvingFronts=true) ;
+            [cbar,xGL,yGL]=UaPlots(CtrlVar,MUA,F,dhdtPrevious,FigureTitle="rate of thickness change",GetRidOfValuesDownStreamOfCalvingFronts=true) ;
+            hold on ; plot(xGL/CtrlVar.PlotXYscale,yGL/CtrlVar.PlotXYscale,"k",LineWidth=1)
             hold on ; plot(xGL0/CtrlVar.PlotXYscale,yGL0/CtrlVar.PlotXYscale,"k",LineWidth=1.5)
             clim([-30 30])
             title(FigTitle,Interpreter="latex")
