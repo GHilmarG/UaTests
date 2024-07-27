@@ -36,10 +36,7 @@ elseif contains(hostname,"DESKTOP-BU2IHIR")   % home
     UserVar.MeshFileDirectory="D:\GoogleDriveStreamingHomeHP\My Drive\Runs\Calving\PIG-TWG\MeshFiles\";
     UserVar.ForwardRestartFileDirectory="D:\GoogleDriveStreamingHomeHP\My Drive\Runs\Calving\PIG-TWG\RestartFiles\";
 
-    
-    
-    UserVar.Interpolants="C:\cygwin64\home\Hilmar\Ua\Interpolants\" ; 
-                      
+    UserVar.Interpolants="D:\GoogleDriveStreamingHomeHP\My Drive\Interpolants\";
 
 elseif contains(hostname,"C23000099")   % home
 

@@ -150,8 +150,8 @@ for ifile=1:numel(ResultFiles)
             dhdtPrevious=(F.h-hPrevious)./dtPrevious;
 
 
-            fFig=FindOrCreateFigure("rate of thickness change")  ; clf(fFig)  ;
-            fFig.Position=[30 380 950 920] ;
+            fFig=FindOrCreateFigure("rate of thickness change",[50 100  1200 1200])  ; clf(fFig)  ;
+            fFig.Position=[50 100  1200 1200] ;
 
 
             FigTitle=sprintf("Rate of thickness change from %4.2f to  %4.2f (yr)",timePrevious,F.time);
