@@ -124,7 +124,7 @@ end
 
 %% During the "transient initialisation" phase, optionally, apply melt using the initial GF mask at t=0;
 
-if contains(UserVar.RunType,"-abMask0-")  && F.time <= 5 % the initialisation period is up to t=5
+if contains(UserVar.RunType,"-abMask0-")  && F.time <= UserVar.Assimilation.tEnd  % the initialisation period is up to t=5
 
     FileNameOceanNodes0="OceanNodes0"+extractBetween(UserVar.RunType,"-"+digitsPattern,"km-",Boundaries="inclusive")+".mat";
 
@@ -153,7 +153,7 @@ if contains(UserVar.RunType,"-abMask0-")  && F.time <= 5 % the initialisation pe
     [LakeNodes,OceanNodesCurrent] = LakeOrOcean3(CtrlVar,MUA,F.GF,[],"Strickt") ;
     OceanNodes=OceanNodesCurrent | OceanNodes0 ; % here "OceanNodes" are nodes that either
                                                   %  1) currently are ocean nodes based on the current GF mask 2) or were ocean nodes at the start of the run.
-                                                  % So melt will be applied over any ocean nodes, and also over all ocean nodes at the start of the run, even if that have by
+                                                  % So melt will be applied over any ocean nodes, and also over all ocean nodes at the start of the run, even if they have by
                                                   % now become grounded.
 
 

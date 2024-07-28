@@ -20,6 +20,11 @@ UserVar.RunType="-FR4to5-5km-Tri3-SlidWeertman-Duvh-MRlASE1-P-kH10000-TM0k1-Alim
 UserVar.RunType="ES5km-Tri3-SlidWeertman-Duvh-MRlASE1-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-";
 UserVar.RunType="ES5km-Tri3-SlidWeertman-Duvh-MRlASE2-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-";
 
+UserVar.RunType="ES5km-Tri3-SlidWeertman-Duvh-MRlASE1-abMask0-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-";
+UserVar.RunType="ES5km-Tri3-SlidWeertman-Duvh-MRlASE2-abMask0-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-";
+
+
+
 CtrlVar=Ua2D_DefaultParameters();
 
 
@@ -185,7 +190,7 @@ close(VideoDhDt)
 
 for iloc=1:nloc
 
-    FindOrCreateFigure("h and v versus t "+TextVector(iloc))
+    fhv=FindOrCreateFigure("h and v versus t "+TextVector(iloc)) ; clf(fhv) ;
     hold off
     yyaxis left
     plot(tVector(iloc,:),hVector(iloc,:)-hVector(iloc,1),"ob-")
@@ -204,7 +209,9 @@ end
 %%
 
 UaPlots(CtrlVar,MUA,F,F.ab,FigureTitle=" ab ")
-%colormap(othercolor("Mtemperaturemap",1028)) ; 
+hold on ; plot(xGL/CtrlVar.PlotXYscale,yGL/CtrlVar.PlotXYscale,"k",LineWidth=1)
+hold on ; plot(xGL0/CtrlVar.PlotXYscale,yGL0/CtrlVar.PlotXYscale,"k",LineWidth=1.5)
+%colormap(othercolor("Mtemperaturemap",1028)) ;
 ModifyColormap();
 
 UaPlots(CtrlVar,MUA,F,F.as,FigureTitle=" as ") ; title(" as " ) ; clim([0 2])

@@ -48,6 +48,10 @@ if nargin==0 | isempty(RunString)
 
 end
 
+UserVar.Assimilation.tStart=0 ; % 
+UserVar.Assimilation.tEnd=10   ; %  Actually the end is at tEnd+1 once the final forward transient run is done 
+
+
 %% First INVERSE run, 
 UserVar.RunType="-IR-"+RunString ;    
 CtrlVar.Restart=0;  % Here forcing this NOT to be an inverse run. I need this if I have changed data sets such as Bedmachine, 
@@ -57,7 +61,7 @@ CtrlVar.Restart=0;  % Here forcing this NOT to be an inverse run. I need this if
 
 
 %% Loop over repeated forward and then inverse runs, each forward run is for 1 year, and uses the previous inversion data for A and C
-for itime=0:4
+for itime=UserVar.Assimilation.tStart:UserVar.Assimilation.tEnd-1 
 
     from=itime;
     to=itime+1;
