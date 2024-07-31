@@ -150,13 +150,10 @@ if CtrlVar.InverseRun
 
     CtrlVar.ReadInitialMesh=1;
     CtrlVar.AdaptMesh=0;
-   
 
-<<<<<<< HEAD
-    CtrlVar.Inverse.Iterations=2;
-=======
+
     CtrlVar.Inverse.Iterations=100;
->>>>>>> 4ce0bd0 (HOHP)
+
     CtrlVar.Inverse.OptimalityTolerance=0.01; 
     CtrlVar.Inverse.StepTolerance=0.001;
 
