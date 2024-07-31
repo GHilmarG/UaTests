@@ -19,7 +19,7 @@ if contains(hostname,"DESKTOP-G5TCRTD")  % office Dell
     UserVar.InversionFileDirectory="F:\GoogleDriveStreamingOfficeDell\My Drive\Runs\Calving\PIG-TWG\InversionFiles\";
     UserVar.MeshFileDirectory="F:\GoogleDriveStreamingOfficeDell\My Drive\Runs\Calving\PIG-TWG\MeshFiles\";
     UserVar.ForwardRestartFileDirectory="F:\GoogleDriveStreamingOfficeDell\My Drive\Runs\Calving\PIG-TWG\RestartFiles\";
-
+    UserVar.VideoFileDirectory="F:\GoogleDriveStreamingOfficeDell\My Drive\Runs\Calving\PIG-TWG\Videos\";
     UserVar.Interpolants="F:\GoogleDriveStreamingOfficeDell\My Drive\Interpolants\";
 
 elseif contains(hostname,"DESKTOP-BU2IHIR")   % home
@@ -35,10 +35,10 @@ elseif contains(hostname,"DESKTOP-BU2IHIR")   % home
     UserVar.InversionFileDirectory="D:\GoogleDriveStreamingHomeHP\My Drive\Runs\Calving\PIG-TWG\InversionFiles\";
     UserVar.MeshFileDirectory="D:\GoogleDriveStreamingHomeHP\My Drive\Runs\Calving\PIG-TWG\MeshFiles\";
     UserVar.ForwardRestartFileDirectory="D:\GoogleDriveStreamingHomeHP\My Drive\Runs\Calving\PIG-TWG\RestartFiles\";
-
+    UserVar.VideoFileDirectory="D:\GoogleDriveStreamingHomeHP\My Drive\Runs\Calving\PIG-TWG\Videos\";
     UserVar.Interpolants="D:\GoogleDriveStreamingHomeHP\My Drive\Interpolants\";
 
-elseif contains(hostname,"C23000099")   % home
+elseif contains(hostname,"C23000099")   
 
     % E drive is one of the local drives (Fast Store)
     % F is the "external" NAS drive
@@ -55,6 +55,7 @@ elseif contains(hostname,"C23000099")   % home
     UserVar.InversionFileDirectory="E:\GoogleDriveStreamingOfficeHP\My Drive\Runs\Calving\PIG-TWG\InversionFiles\";
     UserVar.MeshFileDirectory="E:\GoogleDriveStreamingOfficeHP\My Drive\Runs\Calving\PIG-TWG\MeshFiles\";
     UserVar.ForwardRestartFileDirectory="E:\GoogleDriveStreamingOfficeHP\My Drive\Runs\Calving\PIG-TWG\RestartFiles\";
+    UserVar.VideoFileDirectory="E:\GoogleDriveStreamingOfficeHP\My Drive\Runs\Calving\PIG-TWG\Videos\";
 
    
 

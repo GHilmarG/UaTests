@@ -152,7 +152,7 @@ if CtrlVar.InverseRun
     CtrlVar.AdaptMesh=0;
    
 
-    CtrlVar.Inverse.Iterations=10;
+    CtrlVar.Inverse.Iterations=2;
     CtrlVar.Inverse.OptimalityTolerance=0.01; 
     CtrlVar.Inverse.StepTolerance=0.001;
 
