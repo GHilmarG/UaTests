@@ -1,0 +1,45 @@
+
+ 
+ **************************       Version: 30 Aug 2012  ********************** 
+   Run starts at 18-Sep-2012 09:12:20  
+   TestGaussPeak  
+ ***************************************************************************** 
+ 
+ initial bandwidth : 295 ,  final bandwidth : 295 
+
+ ===== Implicit uvh going from t=0 to t=0.1 with dt=0.1 	 done 0 % of time, and  0 % of steps 
+  initial diagnostic step at t=0 
+ NR:  1/0  g=1              , r/r0=0.0006976257   ,  r0=1              , r=0.0006976257   , du=Inf            , dl=Inf            
+ B: iarm=1 	 gammab=0.546143 	 gammac=1 	 r0=0.000697626 	 rb=0.00060473 	  rc=0.000579741 	 target=0.000697765 	 r/rtarget=0.830854 
+NR:  2/1  g=1              , r/r0=0.8310207      ,  r0=0.0006976257   , r=0.0005797414   , du=1346.957       , dl=0.002176684    
+ B: iarm=1 	 gammab=0.628222 	 gammac=1 	 r0=0.000579741 	 rb=0.000386472 	  rc=0.000343087 	 target=0.000579857 	 r/rtarget=0.591676 
+NR:  3/1  g=1              , r/r0=0.591794       ,  r0=0.0005797414   , r=0.0003430875   , du=948.499        , dl=0.000412412    
+ NR:  4/0  g=1              , r/r0=0.3210362      ,  r0=0.0003430875   , r=0.0001101435   , du=389.4888       , dl=0.0001322911   
+ NR:  5/0  g=1              , r/r0=0.1131041      ,  r0=0.0001101435   , r=1.245769e-005  , du=140.3089       , dl=2.667829e-005  
+ NR:  6/0  g=1              , r/r0=0.01662716     ,  r0=1.245769e-005  , r=2.07136e-007   , du=36.64645       , dl=6.653937e-006  
+ NR:  7/0  g=1              , r/r0=0.0003844386   ,  r0=2.07136e-007   , r=7.963106e-011  , du=4.0764         , dl=6.245733e-007  
+ NR:  8/0  g=1              , r/r0=2.278184e-007  ,  r0=7.963106e-011  , r=1.814142e-017  , du=0.06284883     , dl=1.35025e-008   
+ NR:  9/0  g=1              , r/r0=6.551343e-014  ,  r0=1.814142e-017  , r=1.188507e-030  , du=1.749658e-005  , dl=6.963557e-012  
+  SSTREAM2dNR converged to given tolerance of 1e-015 with r=1.18851e-030 in 9 iterations and in 12.7336  sec 
+ Number of active thickness constraints is 0 
+NRuvh:  1/0  g=1              , r/r0=7.029454e-006  ,  r0=3.059816e-006  , r=2.150883e-011  , ruv=2.15083e-011   , rh=1.506378e-012  , du=2.916484       , dh=0.001510498    , dl=3.885409e-007  
+ NRuvh:  2/0  g=1              , r/r0=3.33576e-008   ,  r0=2.150883e-011  , r=7.174831e-019  , ruv=7.174831e-019  , rh=1.03497e-023   , du=0.0344968      , dh=5.34294e-007   , dl=8.295314e-010  
+ NRuvh:  3/0  g=1              , r/r0=1.186425e-011  ,  r0=7.174831e-019  , r=8.512398e-030  , ruv=4.778352e-030  , rh=1.049281e-026  , du=5.029825e-006  , dh=9.640072e-011  , dl=7.980937e-014  
+  SSTREAMuvh2D converged to given tolerance of 1e-015 with r=8.5124e-030 in 3 iterations and in 10.8897  sec 
+ final error in satisfying Dirichlet BC              0  
+ max(h) 898.79 	 min(h) 800 	 max(dhdt) 0.451071 	 min(dhdt) -6.04994 	 mean(dhdt) 1.20806e-005 	 median(dhdt) 1.37376e-006 	 rms(h) 0.0657787 	 h(max(dhdt)) 806.308 h(min(dhdt)) 898.79
+ 
+ ===== Implicit uvh going from t=0.1 to t=0.2 with dt=0.1 	 done 0.1 % of time, and  50 % of steps 
+  Number of active thickness constraints is 0 
+NRuvh:  1/0  g=1              , r/r0=1.361921e-007  ,  r0=3.10985e-009   , r=4.235369e-016  , ruv=4.235346e-016  , rh=6.465413e-018  , du=0.1721424      , dh=6.759434e-005  , dl=3.717148e-007  
+ NRuvh:  2/0  g=1              , r/r0=6.712425e-013  ,  r0=4.235369e-016  , r=2.84296e-028   , ruv=2.801802e-028  , rh=1.156513e-026  , du=0.0001219489   , dh=2.646423e-009  , dl=2.480648e-012  
+  SSTREAMuvh2D converged to given tolerance of 1e-015 with r=2.84296e-028 in 2 iterations and in 6.75593  sec 
+ final error in satisfying Dirichlet BC              0  
+ max(h) 897.634 	 min(h) 800 	 max(dhdt) 0.888407 	 min(dhdt) -11.8293 	 mean(dhdt) 1.9757e-005 	 median(dhdt) 1.37054e-006 	 rms(h) 0.0647569 	 h(max(dhdt)) 806.395 h(min(dhdt)) 897.634
+  
+ ################## TestGaussPeak 18-Sep-2012 09:12:59 ################### 
+ Writing restart file SSS2dRestart.mat  at t=0.2 
+  Total time : 39.3691 sec 
+ Allt gott юб endirinn er allra bestur! 
+ Run finishes at 18-Sep-2012 09:12:59 
+ 

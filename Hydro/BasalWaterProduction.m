@@ -5,7 +5,7 @@ function [UserVar,aw]=BasalWaterProduction(UserVar,CtrlVar,MUA,F)
 persistent Faw
 
 
-if UserVar.Example=="-Antarctica-"
+if contains(UserVar.Example,"-Antarctica-") ||  contains(UserVar.Example,"-WAIS-")
 
 
     if isempty(Faw)
@@ -15,7 +15,7 @@ if UserVar.Example=="-Antarctica-"
         MUAinput=MUA;
         Finput=F;
 
-        %% Antartica
+        %% Antarctica
         InverseRestartFile="../Antarctica/Antarctica-Inverse-AntarcticaMUAwith54kElements-logC-logA-MatlabOptimization-HessianBased-MAdjointRHA=E-RHC=E-IHC=FP-IHA=FP-Weertman-0-InverseRestartFile.mat";
 
         %PIG-TWG
@@ -37,8 +37,9 @@ if UserVar.Example=="-Antarctica-"
 
         H=F.S-F.B;
 
+
         [taubx,tauby] = ...
-            BasalDrag(CtrlVar,MUA,He,delta,F.h,F.B,H,F.rho,F.rhow,F.ub,F.vb,F.C,F.m,F.uo,F.vo,F.Co,F.mo,F.ua,F.va,F.Ca,F.ma,F.q,F.g,F.muk);
+            BasalDrag(CtrlVar,MUA,He,delta,F.h,F.B,H,F.rho,F.rhow,F.ub,F.vb,F.C,F.m,F.uo,F.vo,F.Co,F.mo,F.ua,F.va,F.Ca,F.ma,F.q,F.g,F.muk,F.V0);
 
         tau=sqrt(taubx.*taubx+tauby.*tauby);
 
@@ -100,7 +101,8 @@ if UserVar.Example=="-Antarctica-"
     % aw(aw<0)=0 ; 
     % awlog=log10(aw) ; awlog(F.GF.node<0.5)=nan ;
     % UaPlots(CtrlVar,MUA,F,awlog,FigureTitle="aw on mesh") ; 
-
+else
+    error("case not found")
 end
 
 %%

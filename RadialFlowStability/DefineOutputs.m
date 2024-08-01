@@ -5,6 +5,7 @@ function  UserVar=DefineOutputs(UserVar,CtrlVar,MUA,BCs,F,l)
 
 
 plots='-save-';
+% plots='-plot-';
 
 %% plots plot
 
@@ -14,6 +15,11 @@ PlotBoundaryConditions(CtrlVar,MUA,BCs);
 
 UaPlots(CtrlVar,MUA,F,"-uv-")
 
+UaPlots(CtrlVar,MUA,F,F.h,FigureTitle=" h ",PlotUnderMesh=true)
+title(sprintf("time=%g dt=%g",F.time,F.dt),interpreter="latex")
+
+
+drawnow
 
 %% plots save
 if contains(plots,'-save-')

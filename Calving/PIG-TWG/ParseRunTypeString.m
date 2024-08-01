@@ -9,8 +9,8 @@ function [CtrlVar,UserVar]=ParseRunTypeString(CtrlVar,UserVar)
 % extracts from:
 %
 %   UserVar.RunType
-% 
-% 
+%
+%
 %
 % various model options and set CrtlVar fields accordingly
 %
@@ -27,22 +27,22 @@ function [CtrlVar,UserVar]=ParseRunTypeString(CtrlVar,UserVar)
 %%
 
 if nargin==0
-    CtrlVar=Ua2D_DefaultParameters(); 
-    UserVar=FileDirectories();   
-    
+    CtrlVar=Ua2D_DefaultParameters();
+    UserVar=FileDirectories();
+
     % initial inverse run using ITS120 velocities and Bedmachine2 geometry.
     UserVar.RunType="-IR-ES20km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-GeoBed2-SMB_RACHMO2k3_2km-";
 
-    % forward run from t=0 to t=1, using inversion products FA and FC from t=0, which implies using the initial inversion 
+    % forward run from t=0 to t=1, using inversion products FA and FC from t=0, which implies using the initial inversion
     % UserVar.RunType="-FR0to1-ES20km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-GeoBed2-SMB_RACHMO2k3_2km-";
 
-    % inverse run using forward run results from t=1. This implies using the geometry from t=1 instead of Bedmachine2  geometry.  
+    % inverse run using forward run results from t=1. This implies using the geometry from t=1 instead of Bedmachine2  geometry.
     UserVar.RunType="-IR1-ES20km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-GeoBed2-SMB_RACHMO2k3_2km-";
-  
+
     % forward restart run continuing from t=1 and using inversion products from t=1, ie "-IRt1-".
     % UserVar.RunType="-FR1to2-ES20km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-GeoBed2-SMB_RACHMO2k3_2km-";
-  
-  
+
+
 
 
 end
@@ -82,7 +82,7 @@ UserVar.from=from ; UserVar.to=to ;
 
 
 %% ??km : mesh resolution and input file with initial mesh
-UserVar.MeshResolution=1000*str2double(extractBetween(UserVar.RunType,"-ES","km-")); 
+UserVar.MeshResolution=1000*str2double(extractBetween(UserVar.RunType,"-ES","km-"));
 
 UserVar.RunType=replace(UserVar.RunType,"-ES","-") ;
 CtrlVar.MeshSize=UserVar.MeshResolution ;
@@ -118,11 +118,19 @@ CtrlVar.kH=str2double(extractBetween(UserVar.RunType,"-kH","-"))/1000;
 
 %% -P- / -C-  : Level set is prescribed as (P) opposed to evolved (C)
 
-if contains(UserVar.RunType,"-P-")
+if contains(UserVar.RunType,"-CF0is")
+
+    UserVar.CalvingFront0="-"+extractBetween(UserVar.RunType,"-CF0is","-")+"-";
+else
+    UserVar.CalvingFront0="-BMCF-"; % "-GL0-" ; % "-BedMachineCalvingFronts-"  ;
+
+end
+
+ if contains(UserVar.RunType,"-P-")
 
     CtrlVar.LevelSetEvolution="-Prescribed-"   ; % "-prescribed-",
     CtrlVar.LevelSetMethod=1;
-    UserVar.CalvingFront0="-BMCF-"; "-BedMachineCalvingFronts-"  ;  % "-GL0-" ; % "-BedMachineCalvingFronts-"  ;
+   
 
 elseif contains(UserVar.RunType,"-C-")
 
@@ -218,10 +226,10 @@ end
 
 
 
-   
+
 
 if contains(UserVar.RunType,"-IR-") || contains(UserVar.RunType,"-FR0to")
-    
+
     % old naming convection, fine for initial inverse run
     %  The new naming convention is simply to use the UserVar.RunType for the name of the inverse restart file
 
@@ -270,27 +278,39 @@ if contains(UserVar.RunType,"-IR-") || contains(UserVar.RunType,"-FR0to")
 else
 
 
-    InvRestartFile=UserVar.RunType;
+    if UserVar.InverseRestartFile=="create the name of inverse restart file from User.RunType"
+        InvRestartFile=UserVar.RunType;
 
-    % I need to create the name of the inverse restart file for both inverse and forward run.
-    % 
-    % In the case of a forward run this will be used to find the previously created inverse restart file from which to get the A
-    % and the C interpolants, as well as the geometry interpolants
+        % I need to create the name of the inverse restart file for both inverse and forward run.
+        %
+        % In the case of a forward run this will be used to find the previously created inverse restart file from which to get the A
+        % and the C interpolants, as well as the geometry interpolants
 
-    % get rid of the "IR<from>to<to>" or the "FR<from>to<to>" and replace with "-at<to>?"
-    if CtrlVar.InverseRun
-        % InvFile=replace(InvFile,num2str(from)+"to",  "-at");
-        InvRestartFile=replaceBetween(InvRestartFile,"IR","-","IR-at"+num2str(to)+"-",Boundaries="inclusive");
+        % get rid of the "IR<from>to<to>" or the "FR<from>to<to>" and replace with "-at<to>?"
+        if CtrlVar.InverseRun
+            % InvFile=replace(InvFile,num2str(from)+"to",  "-at");
+            InvRestartFile=replaceBetween(InvRestartFile,"IR","-","IR-at"+num2str(to)+"-",Boundaries="inclusive");
+        else
+            InvRestartFile=replaceBetween(InvRestartFile,"FR","-","IR-at"+num2str(from)+"-",Boundaries="inclusive");
+        end
+
+        InvRestartFile=replace(InvRestartFile,"--","-") ;
+        InvRestartFile=replace(InvRestartFile,"--","-") ;
+
+
     else
-        InvRestartFile=replaceBetween(InvRestartFile,"FR","-","IR-at"+num2str(from)+"-",Boundaries="inclusive");
+
+        InvRestartFile=UserVar.InverseRestartFile;
+
     end
 
-    InvRestartFile=replace(InvRestartFile,"--","-") ;
-    InvRestartFile=replace(InvRestartFile,"--","-") ;
     UserVar.InverseRestartFile=UserVar.InverseRestartFileDirectory+InvRestartFile;
 
-    ACFiles=replace(InvRestartFile,"-IR-","-");
-    ACFiles=replace(ACFiles,"-FR-","-");
+    ACFiles=replace(InvRestartFile,["-IR-","IR-"],"-");
+    ACFiles=replace(ACFiles,["-FR-","-FR-"],"-");
+   
+
+
     ACFiles=strip(ACFiles,"left","-");
     ACFiles=replace(ACFiles,".","k");
     UserVar.AFile="InvA-"+ACFiles;
@@ -307,8 +327,6 @@ InvRestartFile=strip(InvRestartFile,"left","-");
 
 
 UserVar.InverseRestartFile=UserVar.InverseRestartFileDirectory+InvRestartFile;
-
-
 
 
 UserVar.AFile=UserVar.InversionFileDirectory+UserVar.AFile;
@@ -338,26 +356,42 @@ else
 
 end
 
-if CtrlVar.InverseRun && to > 0
+if UserVar.GeometryInterpolant=="create the name of inverse restart file from User.RunType"
+    if CtrlVar.InverseRun && to > 0
 
-    CtrlVar.time=to;
-    % If this is a "transient" restart run, ie a restart run that uses geometry from a previous forward run, then read and save
-    % the interpolants in the UserVar.InversionFileDirectory
+        CtrlVar.time=to;
+        % If this is a "transient" restart run, ie a restart run that uses geometry from a previous forward run, then read and save
+        % the interpolants in the UserVar.InversionFileDirectory
+
+        UserVar.GeometryInterpolant=UserVar.InversionFileDirectory+"FsbB-at"+num2str(to)+UserVar.RunType ;
+
+        UserVar.GeometryInterpolant=replaceBetween(UserVar.GeometryInterpolant,"IR","-","-",Boundaries="inclusive") ;
+
+    elseif ~CtrlVar.InverseRun && from > 0
+
+        CtrlVar.time=from;
+        UserVar.GeometryInterpolant=UserVar.InversionFileDirectory+"FsbB-at"+num2str(from)+UserVar.RunType ;  % This should already exist, since I must have done a previous inverse run to get here.
+        UserVar.GeometryInterpolant=replaceBetween(UserVar.GeometryInterpolant,"FR","-","-",Boundaries="inclusive") ;
+
+    else
+
+        % Here the interpolants are based on data, ie Bedmachine, and those are located in a separate folder.
+        UserVar.GeometryInterpolant=UserVar.Interpolants+"BedMachineGriddedInterpolants";
+        UserVar.MeshBoundaryCoordinatesFile='../../../Interpolants/MeshBoundaryCoordinatesForAntarcticaBasedOnBedmachine';
+
+        if contains(UserVar.RunType,"-BM3-")
+
+            UserVar.GeometryInterpolant=UserVar.Interpolants+"BedMachineAntarctica-v3-GriddedInterpolants";
+            UserVar.MeshBoundaryCoordinatesFile=UserVar.Interpolants+"BedMachineAntarctica-v3-MeshBoundaryCoordinates";
+
+        end
+
+    end
+
     
-     UserVar.GeometryInterpolant=UserVar.InversionFileDirectory+"FsbB-at"+num2str(to)+UserVar.RunType ;
-
-     UserVar.GeometryInterpolant=replaceBetween(UserVar.GeometryInterpolant,"IR","-","-",Boundaries="inclusive") ;
-
-elseif ~CtrlVar.InverseRun && from > 0
-  
-    CtrlVar.time=from;
-    UserVar.GeometryInterpolant=UserVar.InversionFileDirectory+"FsbB-at"+num2str(from)+UserVar.RunType ;  % This should already exist, since I must have done a previous inverse run to get here.
-    UserVar.GeometryInterpolant=replaceBetween(UserVar.GeometryInterpolant,"FR","-","-",Boundaries="inclusive") ;
-
 else
-     
-    % Here the interpolants are based on data, ie Bedmachine, and those are located in a separate folder. 
-    UserVar.GeometryInterpolant=UserVar.Interpolants+"BedMachineGriddedInterpolants";
+
+    UserVar.GeometryInterpolant=UserVar.InversionFileDirectory+UserVar.GeometryInterpolant;
 
 end
 
@@ -376,8 +410,12 @@ CtrlVar.NameOfRestartFiletoWrite=UserVar.ForwardRestartFileDirectory+UserVar.Run
 CtrlVar.NameOfRestartFiletoWrite=replace(CtrlVar.NameOfRestartFiletoWrite,"--","-");
 CtrlVar.NameOfRestartFiletoWrite=replace(CtrlVar.NameOfRestartFiletoWrite,".","k");
 CtrlVar.NameOfRestartFiletoWrite=replace(CtrlVar.NameOfRestartFiletoWrite,"\-","\");
-CtrlVar.NameOfRestartFiletoRead=CtrlVar.NameOfRestartFiletoWrite;
 
+if ~isfield(UserVar,"NameOfRestartFiletoRead")
+    CtrlVar.NameOfRestartFiletoRead=CtrlVar.NameOfRestartFiletoWrite;
+else
+    CtrlVar.NameOfRestartFiletoRead=UserVar.NameOfRestartFiletoRead;
+end
 
 UserVar.GeometryInterpolant=replace( UserVar.GeometryInterpolant,"--","-") ;
 UserVar.SurfaceVelocityInterpolant=replace( UserVar.SurfaceVelocityInterpolant,"--","-") ;
@@ -385,20 +423,17 @@ UserVar.InverseRestartFile=replace( UserVar.InverseRestartFile,"--","-") ;
 UserVar.FAFile=replace(UserVar.FAFile,"--","-");
 UserVar.FCFile=replace(UserVar.FCFile,"--","-");
 
-if nargin==0
-    
-    fprintf(" UserVar.GeometryInterpolant:       \t %s \n ",UserVar.GeometryInterpolant)
-    fprintf("UserVar.SurfaceVelocityInterpolant: \t %s \n ",UserVar.SurfaceVelocityInterpolant)
-    fprintf("UserVar.InverseRestartFile:         \t %s \n ",UserVar.InverseRestartFile)
-    fprintf("UserVar.FAFile:                     \t %s \n ",UserVar.FAFile)
-    fprintf("UserVar.FCFile:                     \t %s \n ",UserVar.FCFile)
-    fprintf("CtrlVar.NameOfRestartFiletoWrite:   \t %s \n \n \n",CtrlVar.NameOfRestartFiletoWrite)
-    which(UserVar.GeometryInterpolant+".mat")
-    isfile(UserVar.InverseRestartFile+".mat")
-    isfile(UserVar.FAFile+".mat")
-    isfile(UserVar.FCFile+".mat")
 
-end
+
+fprintf(" UserVar.GeometryInterpolant:       \t %s \n ",UserVar.GeometryInterpolant)
+fprintf("UserVar.SurfaceVelocityInterpolant: \t %s \n ",UserVar.SurfaceVelocityInterpolant)
+fprintf("UserVar.InverseRestartFile:         \t %s \n ",UserVar.InverseRestartFile)
+fprintf("UserVar.FAFile:                     \t %s \n ",UserVar.FAFile)
+fprintf("UserVar.FCFile:                     \t %s \n ",UserVar.FCFile)
+fprintf("CtrlVar.NameOfRestartFiletoWrite:   \t %s \n \n \n",CtrlVar.NameOfRestartFiletoWrite)
+[ isfile(UserVar.GeometryInterpolant+".mat") , isfile(UserVar.InverseRestartFile+".mat") , isfile(UserVar.FAFile+".mat") , isfile(UserVar.FCFile+".mat")]
+
+
 
 if ~nargout   % A trick to suppress any function output if no output requested. No need to suppress output using ;
     clearvars CtrlVar
@@ -414,7 +449,7 @@ end
 [filepath,fname,fext]=fileparts(UserVar.FCFile) ; if fext=="" ;  UserVar.FCFile =UserVar.FCFile+".mat" ; end
 [filepath,fname,fext]=fileparts(UserVar.AFile) ; if fext=="" ;  UserVar.AFile =UserVar.AFile+".mat" ; end
 [filepath,fname,fext]=fileparts(UserVar.CFile) ; if fext=="" ;  UserVar.CFile =UserVar.CFile+".mat" ; end
-     
+
 UserVar.GeometryInterpolant=RemoveSomeUnwantedCharactersFromString(UserVar.GeometryInterpolant);
 UserVar.SurfaceVelocityInterpolant=RemoveSomeUnwantedCharactersFromString(UserVar.SurfaceVelocityInterpolant);
 UserVar.InverseRestartFile=RemoveSomeUnwantedCharactersFromString(UserVar.InverseRestartFile);
@@ -426,7 +461,7 @@ UserVar.CFile=RemoveSomeUnwantedCharactersFromString(UserVar.CFile);
 
 
 
-CtrlVar.Inverse.NameOfRestartInputFile=UserVar.InverseRestartFile; 
+CtrlVar.Inverse.NameOfRestartInputFile=UserVar.InverseRestartFile;
 
 
 end

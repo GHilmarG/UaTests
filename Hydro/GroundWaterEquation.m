@@ -114,7 +114,7 @@ switch CtrlVar.GWE.Variable
         if ~isempty(LL)
             BCsRes=LL*N1-cc ;
             if norm(BCsRes) >1e-6
-                N1=LL\cc;   % make feasable
+                N1=LL\cc;   % make feasible
             end
         end
 

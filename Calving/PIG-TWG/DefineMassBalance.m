@@ -1,6 +1,6 @@
 function [UserVar,as,ab,dasdh,dabdh]=DefineMassBalance(UserVar,CtrlVar,MUA,F)
 
-persistent Fdh2000to2018 dhdtMeasured CurrentRunStepNumber Fas
+persistent Fdh2000to2018 dhdtMeasured CurrentRunStepNumber Fas FOceanNodes0
 
 as=zeros(MUA.Nnodes,1) ;
 ab=zeros(MUA.Nnodes,1) ;
@@ -112,19 +112,92 @@ elseif contains(UserVar.RunType,"-DMR")
     end
 end
 
-if ~isfield(UserVar,"IceSheetIceShelves") || UserVar.IceSheetIceShelves
-    % only apply basal melt strictly below/outside of grounding lines
-    F.GF=IceSheetIceShelves(CtrlVar,MUA,F.GF);
-    ab(~F.GF.NodesDownstreamOfGroundingLines)=0;
-    dabdh(~F.GF.NodesDownstreamOfGroundingLines)=0;
-    % figure ; plot(F.b(F.GF.NodesDownstreamOfGroundingLines),F.ab(F.GF.NodesDownstreamOfGroundingLines),'.')
+% if ~isfield(UserVar,"IceSheetIceShelves") || UserVar.IceSheetIceShelves
+%     % only apply basal melt strictly below/outside of grounding lines
+%     F.GF=IceSheetIceShelves(CtrlVar,MUA,F.GF);
+%     ab(~F.GF.NodesDownstreamOfGroundingLines)=0;
+%     dabdh(~F.GF.NodesDownstreamOfGroundingLines)=0;
+%     % figure ; plot(F.b(F.GF.NodesDownstreamOfGroundingLines),F.ab(F.GF.NodesDownstreamOfGroundingLines),'.')
+% end
+
+
+
+%% During the "transient initialisation" phase, optionally, apply melt using the initial GF mask at t=0;
+
+if contains(UserVar.RunType,"-abMask0-")  && F.time <= UserVar.Assimilation.tEnd  % the initialisation period is up to t=5
+
+    FileNameOceanNodes0="OceanNodes0"+extractBetween(UserVar.RunType,"-"+digitsPattern,"km-",Boundaries="inclusive")+".mat";
+
+    if F.time==0
+
+        [LakeNodes0,OceanNodes0] = LakeOrOcean3(CtrlVar,MUA,F.GF,[],"Strickt") ;
+
+        % The OceanNodes0 mask is only dependent on the mesh and the initial GF at t=0.
+        FOceanNodes0=scatteredInterpolant(F.x,F.y,double(OceanNodes0));
+        save(FileNameOceanNodes0,"OceanNodes0","FOceanNodes0")
+
+    end
+
+    if isempty(FOceanNodes0)
+
+        % this in principle should hardly happen, but since the transient initialisation involves several forward runs, it is
+        % possible that the current forward run did not start at t=0. But even so, if the matlab session has not been interupted and
+        % the m-file not changed, the OceanNodes0 created at t=0 in a previous run, should still be available.
+      
+        load(FileNameOceanNodes0,"FOceanNodes0")
+
+    end
+
+    OceanNodes0Double=FOceanNodes0(F.x,F.y) ; % this is a double
+    OceanNodes0=OceanNodes0Double>0.5 ;       % presumably not needed, but interpolation might create values between 0 and 1
+    [LakeNodes,OceanNodesCurrent] = LakeOrOcean3(CtrlVar,MUA,F.GF,[],"Strickt") ;
+    OceanNodes=OceanNodesCurrent | OceanNodes0 ; % here "OceanNodes" are nodes that either
+                                                  %  1) currently are ocean nodes based on the current GF mask 2) or were ocean nodes at the start of the run.
+                                                  % So melt will be applied over any ocean nodes, and also over all ocean nodes at the start of the run, even if they have by
+                                                  % now become grounded.
+
+
+else
+
+    [LakeNodes,OceanNodes] = LakeOrOcean3(CtrlVar,MUA,F.GF,[],"Strickt") ;
+
 end
 
 
+
 % only apply basal melt strictly below/outside of grounding lines over nodes connected to the ocean
-[LakeNodes,OceanNodes] = LakeOrOcean3(CtrlVar,MUA,F.GF,[],"Strickt") ;
+
 ab(~OceanNodes)=0;
 dabdh(~OceanNodes)=0;
+
+
+
+%% Basal melting due to frictional heating
+
+
+[tbx,tby] = CalcBasalTraction(CtrlVar,UserVar,MUA,F,CalcNodalValues=true,CalcIntegrationPointValues=false) ;
+
+
+% cbar=UaPlots(CtrlVar,MUA,F,tb,FigureTitle="taub");
+% title(cbar,"(kPa)",Interpreter="latex")
+% clim([0 1000])
+
+
+% Pa = J/m^3
+%
+%
+L=334e3 ; % J/kg
+rho=1000;
+
+if isempty(tbx)  % it is possible that velocities have yet to be calculated
+    aw=0;
+else
+    aw=1000*(F.ub.*tbx+F.vb.*tby)/(L*rho) ; % multiplying with 1000 to get Joules
+end
+
+ab=ab-aw ;
+
+
 
 return
 

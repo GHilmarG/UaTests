@@ -1,4 +1,12 @@
-function [rg,Domain_radius,shelf_width,h0,Bedrock,rho,rhow,g,thinice,ur,n,AGlen]=DefineMyParameters()
+
+
+
+
+
+
+
+
+function [rg,Domain_radius,shelf_width,h0,Bedrock,rho,rhow,g,thinice,ur,n,AGlen]=DefineMyParameters(UserVar)
 %units are aimed to be (through the physical parameters) 
 %Length in meter;
 %time in sec;
@@ -23,8 +31,8 @@ Viscosity='nonNewtonian';
 Viscosity='Newtonian';
 Pegler2012='e';
 
-switch Viscosity
-    case 'Newtonian'
+switch UserVar.n
+    case  1
         n=1;
         AGlen=0.015; %About 0.1 for viscosity=10[Pa sec] or 0.01 for viscosity=100[Pa sec] ~ Golden Syrup
         rho=1400; %Density of Golden Syrup [kg/m^3]. Can also be scalar field +zeros(MUA.Nnodes,1);
@@ -52,7 +60,7 @@ switch Viscosity
                 [AGlen,rg,h0,Q]=deal(1/(2*mu),0.015,0.02,6.4*10^-06);
         end
         ur=Q/(2*pi*rg*h0); %[m/sec] radial velocity , instead of Pegler flux Q0
-    case 'nonNewtonian'
+    case 6
         n=6;
         AGlen=9.7e-09; % LS  softness for polymer in [Pa^-n Sec^-1]
         Q=6.4*10^-06; %[m3/sec] flux nters from inner boundary

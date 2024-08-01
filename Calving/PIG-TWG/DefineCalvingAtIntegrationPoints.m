@@ -57,7 +57,7 @@ switch UserVar.CalvingLaw.Type
 
         % Now set calving rate to zero for cliff less than 135meters
         c(CliffHeight<135)=0 ;
-        % and set maximum at at cliff height equalt to 450m
+        % and set maximum at at cliff height equal to 450m
         cMax=fI*450.^(7.2) ;
         c(c>cMax)=cMax ;
 
@@ -212,9 +212,9 @@ switch UserVar.CalvingLaw.Type
 
         CliffHeight=min((F.s-F.S),F.h).*F.rho./1000;  % OK, so it is a bit unclear what the "cliff height" should be
         % But presumably the idea is that the CliffHeight is a proxy
-        % for the stresses at the calving front, so it appears likley that it should
+        % for the stresses at the calving front, so it appears likely that it should
         % involve rho*g*CliffHeight
-        % For this to be comparable with values in the litterature
+        % For this to be comparable with values in the literature
         % this will most likely need to be adjusted to water equivalent height.
 
 

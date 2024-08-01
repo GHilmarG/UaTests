@@ -6,7 +6,7 @@
 
 
 
-function [UserVar,RR,KK]=WaterFilmThicknessDiffusionEquationAssembly(UserVar,CtrlVar,MUA,F0,F1,k,eta)
+function [UserVar,RR,KK,Outs]=WaterFilmThicknessDiffusionEquationAssembly(UserVar,CtrlVar,MUA,F0,F1,k,eta)
 
 
 
@@ -70,17 +70,21 @@ kappa=F1.g*(F1.rhow-F1.rho).*k ;
 
 etanod=reshape(eta(MUA.connectivity,1),MUA.Nele,MUA.nod);
 
+x1nod=reshape(F1.x(MUA.connectivity,1),MUA.Nele,MUA.nod);
+y1nod=reshape(F1.y(MUA.connectivity,1),MUA.Nele,MUA.nod);
+
+
 h0nod=reshape(F0.hw(MUA.connectivity,1),MUA.Nele,MUA.nod);
 h1nod=reshape(F1.hw(MUA.connectivity,1),MUA.Nele,MUA.nod);
 
 a0nod=reshape(F1.aw(MUA.connectivity,1),MUA.Nele,MUA.nod);
 a1nod=reshape(F0.aw(MUA.connectivity,1),MUA.Nele,MUA.nod);
 
-u0nod=reshape(F1.uw(MUA.connectivity,1),MUA.Nele,MUA.nod);
-u1nod=reshape(F1.uw(MUA.connectivity,1),MUA.Nele,MUA.nod);
+% u0nod=reshape(F1.uw(MUA.connectivity,1),MUA.Nele,MUA.nod);
+% u1nod=reshape(F1.uw(MUA.connectivity,1),MUA.Nele,MUA.nod);
 
-v0nod=reshape(F1.vw(MUA.connectivity,1),MUA.Nele,MUA.nod);
-v1nod=reshape(F0.vw(MUA.connectivity,1),MUA.Nele,MUA.nod);
+% v0nod=reshape(F1.vw(MUA.connectivity,1),MUA.Nele,MUA.nod);
+% v1nod=reshape(F0.vw(MUA.connectivity,1),MUA.Nele,MUA.nod);
 
 FG=1-F1.GF.node ;
 FGnod=reshape(FG(MUA.connectivity,1),MUA.Nele,MUA.nod);
@@ -95,6 +99,12 @@ Kelements=zeros(MUA.Nele,MUA.nod,MUA.nod);
 Relements=zeros(MUA.Nele,MUA.nod);
 
 l=sqrt(2*MUA.EleAreas);
+
+
+qx1int=zeros(MUA.Nele,MUA.nip) ; qy1int=zeros(MUA.Nele,MUA.nip) ;
+qx1Phiint=zeros(MUA.Nele,MUA.nip) ; qy1Phiint=zeros(MUA.Nele,MUA.nip) ;
+qx1Yint=zeros(MUA.Nele,MUA.nip) ; qy1Yint=zeros(MUA.Nele,MUA.nip) ;
+x1int=zeros(MUA.Nele,MUA.nip) ; y1int=zeros(MUA.Nele,MUA.nip) ;
 
 % vector over all elements for each integration point
 for Iint=1:MUA.nip
@@ -113,8 +123,8 @@ for Iint=1:MUA.nip
     h0int=h0nod*fun;
     h1int=h1nod*fun;
 
-    u0int=u0nod*fun; u1int=u1nod*fun;
-    v0int=v0nod*fun; v1int=v1nod*fun;
+   % u0int=u0nod*fun;
+   % v0int=v0nod*fun;
 
     a0int=a0nod*fun;
     a1int=a1nod*fun;
@@ -171,9 +181,9 @@ for Iint=1:MUA.nip
     end
 
     detJw=detJ*MUA.weights(Iint);
-    speed0=sqrt(u0int.*u0int+v0int.*v0int+CtrlVar.SpeedZero^2);
-    tau=SUPGtau(CtrlVar,speed0,l,dt,CtrlVar.Tracer.SUPG.tau) ;
-    tauSUPGint=CtrlVar.SUPG.beta0*tau;
+    % speed0=sqrt(u0int.*u0int+v0int.*v0int+CtrlVar.SpeedZero^2);
+    % tau=SUPGtau(CtrlVar,speed0,l,dt,CtrlVar.Tracer.SUPG.tau) ;
+    % tauSUPGint=CtrlVar.SUPG.beta0*tau;
 
     % Sign convention:
     % Generally we solve   dR/dh \dh = - R
@@ -187,13 +197,13 @@ for Iint=1:MUA.nip
 
     %kappaint=0 ;
 
-    alpha=CtrlVar.WaterFilm.Barrier ;
-    beta=CtrlVar.WaterFilm.Penalty ;
+    BarrierFlag=CtrlVar.WaterFilm.Barrier ;
+    PenaltyFlag=CtrlVar.WaterFilm.Penalty ;
     gamma=CtrlVar.WaterFilm.qwAfloatMultiplier ;
 
     for Inod=1:MUA.nod
 
-        SUPG=fun(Inod)+CtrlVar.Tracer.SUPG.Use*tauSUPGint.*(u0int.*Deriv(:,1,Inod)+v0int.*Deriv(:,2,Inod));
+        SUPG=fun(Inod); %+CtrlVar.Tracer.SUPG.Use*tauSUPGint.*(u0int.*Deriv(:,1,Inod)+v0int.*Deriv(:,2,Inod));
         SUPGdetJw=SUPG.*detJw;
         He0=HeavisideApprox(100,h0int,0);
         He1=HeavisideApprox(100,h1int,0);
@@ -207,10 +217,10 @@ for Iint=1:MUA.nip
 
             %    dC1=dt*theta* (fun(Jnod).*du1dx+Deriv(:,1,Jnod).*u1int+fun(Jnod).*dv1dy+Deriv(:,2,Jnod).*v1int).*SUPGdetJw;
 
-            dBarrier1=dt*(1-theta)*alpha* (h1int.^(-2).*fun(Jnod).*He1 - h1int.^(-1).*DiracDelta(100,h1int,0).*fun(Jnod))  .*SUPGdetJw ;
+            dBarrier1=dt*(1-theta)*BarrierFlag* (h1int.^(-2).*fun(Jnod).*He1 - h1int.^(-1).*DiracDelta(100,h1int,0).*fun(Jnod))  .*SUPGdetJw ;
 
 
-            dPenalty1=dt* theta *beta.* (fun(Jnod).*HeavisideApprox(100,-h1int,0)-h1int.*DiracDelta(100,h1int,0).*fun(Jnod)).*SUPGdetJw ;
+            dPenalty1=dt* theta *PenaltyFlag.* (fun(Jnod).*HeavisideApprox(100,-h1int,0)-h1int.*DiracDelta(100,h1int,0).*fun(Jnod)).*SUPGdetJw ;
 
             % the non-linear diffusion term
             dD1=+dt*theta.*kappaint.* (   ...
@@ -243,7 +253,7 @@ for Iint=1:MUA.nip
 
         %  C0=dt*(1-theta)*  (h0int.*du0dx+dh0dx.*u0int+h0int.*dv0dy+dh0dy.*v0int).*SUPGdetJw;
         %  C1=dt*theta*      (h1int.*du1dx+dh1dx.*u1int+h1int.*dv1dy+dh1dy.*v1int).*SUPGdetJw;
-
+       
 
         % This is a non-linear diffusion term
         D0=dt*(1-theta)* kappaint.*h0int.*   (dh0dx.*Deriv(:,1,Inod)+dh0dy.*Deriv(:,2,Inod)).*detJw;
@@ -257,17 +267,46 @@ for Iint=1:MUA.nip
         DLI0=dt*(1-theta)* etaint.*(dh0dx.*Deriv(:,1,Inod)+dh0dy.*Deriv(:,2,Inod)).*detJw;
         DLI1=dt*theta    * etaint.*(dh1dx.*Deriv(:,1,Inod)+dh1dy.*Deriv(:,2,Inod)).*detJw;
 
-        Barrier1=-dt*(1-theta)*alpha.*(h1int.^(-1)).*He1.*SUPGdetJw ;
-        Barrier0=-dt*   theta *alpha.*(h0int.^(-1)).*He0.*SUPGdetJw ;
+        Barrier1=-dt*(1-theta)*BarrierFlag.*(h1int.^(-1)).*He1.*SUPGdetJw ;  % this is incomplete, assumes that the min value is zero
+        Barrier0=-dt*   theta *BarrierFlag.*(h0int.^(-1)).*He0.*SUPGdetJw ;
 
-        Penalty0=dt*(1-theta)*beta.*h0int.*(1-He0).*SUPGdetJw ;
-        Penalty1=dt*   theta *beta.*h1int.*(1-He1).*SUPGdetJw ;
+        Penalty0=dt*(1-theta)*PenaltyFlag.*h0int.*(1-He0).*SUPGdetJw ;
+        Penalty1=dt*   theta *PenaltyFlag.*h1int.*(1-He1).*SUPGdetJw ;
 
         % Relements(:,Inod)=Relements(:,Inod)+h0term+h1term+a0term+a1term+C0+C1+D0+D1+Barrier0+Barrier1+Penalty0+Penalty1+aFG;
         Relements(:,Inod)=Relements(:,Inod)+h0term+h1term+a0term+a1term+D0+D1+DLI0+DLI1+DPhi0+DPhi1+Barrier0+Barrier1+Penalty0+Penalty1+aFG;
 
     end
+
+    qx1Phiint(:,Iint)=-kint.*h1int.*dPhi1dx ;
+    qy1Phiint(:,Iint)=-kint.*h1int.*dPhi1dy ;
+
+    qx1Yint(:,Iint)=-kappaint.*h1int.*dh0dx;
+    qy1Yint(:,Iint)=-kappaint.*h1int.*dh0dy;
+
+
+    qx1int(:,Iint)=...
+        - kappaint.*h1int.*dh0dx ...
+        - kint.*h1int.*dPhi1dx ...
+        - etaint.*dh0dy ;
+
+    qy1int(:,Iint)=...
+        - kappaint.*h1int.*dh0dy ...
+        - kint.*h1int.*dPhi1dy ...
+        - etaint.*dh0dy ;
+
+
+
+    x1int(:,Iint)=x1nod*fun;
+    y1int(:,Iint)=y1nod*fun;
+
+
 end
+
+
+%  qw = - \nabla (hw (k \nabla Phi + \kappa \nabla hw)  
+
+
 
 % assemble right-hand side
 
@@ -290,8 +329,14 @@ end
 
 KK=sparseUA(Iind,Jind,Xval,neq,neq);
 
+Outs.qx1int=qx1int ; Outs.qy1int=qy1int ;  
+Outs.qx1Phiint=qx1Phiint ; Outs.qy1Phiint=qy1Phiint;
+Outs.qx1Yint=qx1Yint ; Outs.qy1Yint=qy1Yint;
+
+Outs.xint=x1int ; Outs.yint=y1int ;
 
 
+end
 
 
 

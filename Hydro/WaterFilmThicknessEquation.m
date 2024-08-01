@@ -9,16 +9,64 @@ function [UserVar,hw1,ActiveSet,lambda,output]=WaterFilmThicknessEquation(UserVa
 narginchk(9,9)
 nargoutchk(5,5)
 
+
 %% Water film thickness equation
 %
+% See:
 %
-% $$\partial_t h_w -  \nabla \cdot ( k h_w \nabla \Phi )  - \nabla \cdot (\kappa h_w \nabla h_w) = a_w $$
+%   WaterFilmThicknessEquationAssembly.m%
+% for detailed information.
 %
-% where
+% Solves:
+%
+% $$ \partial_t h_w + A  \nabla \cdot (  h_w \mathbf{v}_w )  - D \nabla \cdot (\kappa h_w \nabla h_w) -\nabla \cdot (\eta \nabla h_w )= a_w $$
+%
+% where $A$ and $D$ are advection and diffusion flags.
+%
+% Further barrier and penalty terms can be added
+%
+% $$ \partial_t h_w + A  \nabla \cdot (  h_w \mathbf{v}_w )  - D \nabla \cdot (\kappa h_w \nabla h_w) -\nabla \cdot (\eta \nabla h_w )= a_w + B (h_w>0) /h_w  + P (h_w<0) h_w $$
+%
+% where $B$ is a barrier-flag, and $P$ a penalty flag, and $h_w>0$  and $h_w<0$ are (logical) masks.  
+%
+% The (static) water velocity (F.uw,F,vw) needs to be defined ahead of the call, and is here an input field.
+%
+% The (static) water velocity can, for example, be calculated as
+%
+% $$ \mathbf{v}_w= - k \nabla \Phi$$
+%
+% where, for example,
 %
 % $$\Phi = (\rho_w-\rho) g \nabla B - \rho g \nabla s  $$
 %
-% $$N=0 $$
+% using
+%
+%   [F0.uw,F0.vw]=WaterFilmVelocities(CtrlVar,UserVar,MUA,F0,k) ;
+%
+%
+% The code calls
+%
+%   DefineBoundaryConditions.m
+%
+% and uses the active-set method to enforce
+%
+%  $$h_w>$$ CtrlVar.WaterFilm.ThickMin
+%
+% Some further inputs variables are:
+%
+%   A=CtrlVar.WaterFilm.AdvectionFlag;
+%
+%   D=CtrlVar.WaterFilm.DiffusionFlag;
+%
+%   B=CtrlVar.WaterFilm.Barrier ;
+%
+%   P=CtrlVar.WaterFilm.Penalty ;
+%
+%   eta : linear viscosity (here just for numerical tests, generally set eta=0)
+%
+%   k : hydraulic conductivity
+%
+% ActiveSet and lambda can be empty on initial call.
 %
 %%
 
@@ -30,6 +78,14 @@ nargoutchk(5,5)
 %     CtrlVar.WaterFilm.AdvectionFlag=1;
 %     CtrlVar.WaterFilm.DiffusionFlag=1;
 % end
+
+if isscalar(eta)
+    eta=eta+zeros(MUA.Nnodes,1);
+end
+
+if isscalar(k)
+    k=k+zeros(MUA.Nnodes,1);
+end
 
 nlambda=numel(lambda);
 nActiveSet=numel(ActiveSet);
@@ -87,7 +143,7 @@ for I=1:nActiveSetIterations
         if norm(BCsRes) > 1e-6
             F1.hw(BCs.hFixedNode)= BCs.hFixedValue;
             F0.hw(BCs.hFixedNode)= BCs.hFixedValue;
-            %        F1.hw=LL\cc;   % make feasable
+            %        F1.hw=LL\cc;   % make feasible
         end
         if numel(lambda) ~= numel(BCs.hFixedNode)
             lambda=cc*0;
@@ -98,7 +154,7 @@ for I=1:nActiveSetIterations
     
 
     x=F1.hw;
-    fun =@(x) lsqUaFunc(x,UserVar,CtrlVar,MUA,F0,F1,k,eta)  ;
+    fun =@(x) lsqUaFunc(x,UserVar,CtrlVar,MUA,F0,F1,k,eta)  ; % returns both the gradien and the Hessian (R and K)
 
     CtrlVar.lsqUa.CostMeasure="r2";
     CtrlVar.lsqUa.isLSQ=false ;
@@ -110,8 +166,8 @@ for I=1:nActiveSetIterations
 
         if mod(I,2)==1 % add constraints
             %
-            % Constraints are always added based on violatons of the applied constraints. This addition does not require knowing the
-            % lagrange parameters.
+            % Constraints are always added based on violations of the applied constraints. This addition does not require knowing the
+            % Lagrange parameters.
             %
             ActiveSetAdditionsLogical=F1.hw<CtrlVar.WaterFilm.ThickMin ;
             ActiveSetAdditionsNodes=find(ActiveSetAdditionsLogical) ;
@@ -130,10 +186,10 @@ for I=1:nActiveSetIterations
 
             fprintf("Active Set iteration: #%i \t Added=%i  \n",I,nActiveSetAdditions)
 
-        else  % delete contraints
+        else  % delete constraints
 
-            % Constraints are deleted based on the sign of the lagrange parameters in the active set
-            % So I must have solved the system once in order to be able to select nodes for deltion from the active set. 
+            % Constraints are deleted based on the sign of the Lagrange parameters in the active set
+            % So I must have solved the system once in order to be able to select nodes for deletion from the active set. 
             %
             if ~isempty(lambda)
 

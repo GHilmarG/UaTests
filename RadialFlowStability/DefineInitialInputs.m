@@ -1,55 +1,65 @@
 
+
+
+
 function [UserVar,CtrlVar,MeshBoundaryCoordinates]=DefineInitialInputs(UserVar,CtrlVar)
 %% This is the initial input file for my circular SSH tryout
 
 %%UNITS here are taken as meters and seconds
 
+%   MR : mesh resolution factor, the larger this is, the finer the mesh
+%   AM : automated mesh adaptation
+%   RG : inner radius
+%   DE : Deactive elements (using DefineElementsToDeactivate)
 
 UserVar.RunType="-MR150-AM0-RG0k015-"; 
 UserVar.RunType="-MR500-AM0-RG0k015-"; 
 
 UserVar.RunType="-MR250-AM0-RG0k015-n1-"; 
+UserVar.RunType="-MR250-AM0-RG0k015-n6-"; 
+UserVar.RunType="-MR250-AM0-RG0k015-TR6-n6-"; 
+% UserVar.RunType="-MR250-AM0-RG0k015-TR6-n6-DE-"; 
+UserVar.RunType="-MR250-AM0-RG0k015-TR3-n6-DE-h0Pert-"; 
+UserVar.RunType="-MR250-AM0-RG0k015-TR3-n6-DE-QD25-h0Pert-"; 
+UserVar.RunType="-MR250-AM0-RG0k015-TR3-n1-DE-QD25-"; 
+UserVar.RunType="-MR250-AM0-RG0k015-TR3-n1-DE-QD25-h0Pert-"; 
+
+UserVar.RunType="-MR500-AM0-RG0k015-TR3-n1-DE-QD25-h0Pert-"; 
+UserVar.RunType="-MR500-AM0-RG0k015-TR3-n1-DE-QD25-"; 
+
+UserVar.RunType="-MR500-AM0-RG0k015-TR3-n6-DE-QD25-"; 
+UserVar.RunType="-MR500-AM0-RG0k015-TR3-n6-DE-QD25-h0Pert-"; 
+UserVar.RunType="-MR750-AM0-RG0k015-TR3-n6-DE-QD25-h0Pert-"; 
+% UserVar.RunType="-MR750-AM0-RG0k015-TR3-n6-DE-QD25-"; 
+% UserVar.RunType="-MR750-AM0-RG0k015-TR3-n1-DE-QD25-h0Pert-"; 
 
 UserVar.Geometry='circular_shelf';
 
-CtrlVar.SaveInitialMeshFileName="MeshFile-M250-RG0k015-.mat"; % remember to update this
+CtrlVar.SaveInitialMeshFileName="MeshFile-"+extractBetween(UserVar.RunType,"MR","-",Boundaries="inclusive")+extractBetween(UserVar.RunType,"RG","-",Boundaries="inclusive")+".mat";
+
+
+
 %%
 
-[rg,Domain_radius,shelf_width,h0,Bedrock,rho,rhow,g,thinice,ur,n,AGlen]=DefineMyParameters();
+UserVar.n=double(str2double(extractBetween(UserVar.RunType,"-n","-"))); 
+
+[UserVar.rg,UserVar.Domain_radius,UserVar.shelf_width,UserVar.h0,UserVar.Bedrock,UserVar.rho,UserVar.rhow,UserVar.g,UserVar.thinice,UserVar.ur,UserVar.n,UserVar.AGlen]=...
+    DefineMyParameters(UserVar);
 
 MeshResolutionFactor=str2double(extractBetween(UserVar.RunType,"-MR","-")) ;
 AdaptMeshFlag=logical(str2double(extractBetween(UserVar.RunType,"-AM","-"))); 
 rg=str2double(replace(extractBetween(UserVar.RunType,"-RG","-"),"k",".")) ;
-% n=double(str2double(extractBetween(UserVar.RunType,"-n","-"))); 
-
 CtrlVar.Experiment='CircularSSH';
+UserVar.rg=rg;  % inner radius
 
 
 
-UserVar.rg=rg;  % innter radius
 
-
-
-UserVar.Domain_radius=Domain_radius;
-
-UserVar.shelf_widht=shelf_width;
-UserVar.h0=h0;
-UserVar.Bedrock=Bedrock;
-UserVar.rho=rho;
-UserVar.rhow=rhow;
-UserVar.g=g;
-
-UserVar.thinice=thinice;
-UserVar.ur=ur;
-UserVar.n=n;
-UserVar.AGlen=AGlen;
-
-
-g_tag=g*(1-rho/rhow);
-nu=1/(2*AGlen*rho);
-Q0=ur*rg*h0*2*pi;
-L=sqrt(nu*Q0/(2*pi*g_tag*h0*h0)); %[m]
-T=nu/(g_tag*h0);
+g_tag=UserVar.g*(1-UserVar.rho/UserVar.rhow);
+nu=1/(2*UserVar.AGlen*UserVar.rho);
+Q0=UserVar.ur*UserVar.rg*UserVar.h0*2*pi;
+L=sqrt(nu*Q0/(2*pi*g_tag*UserVar.h0*UserVar.h0)); %[m]
+T=nu/(g_tag*UserVar.h0);
 CtrlVar.doplots=1; CtrlVar.doRemeshPlots=1;
 
 %%for the square domain only
@@ -68,7 +78,7 @@ resolution=Width/MeshResolutionFactor ;
 cfr=(2*pi*rg)/resolution;
 % cfr=100; %fix to match the high resolution around rg (Hilmar, why is this here?)
 % cfr=5*cfr;
-cfr2=(2*pi*Domain_radius)/resolution;
+cfr2=(2*pi*UserVar.Domain_radius)/resolution;
 x0=0; % centre coordinates
 y0=0;
 
@@ -79,8 +89,8 @@ t(end)=[];
 xrg=x0+rg*cos(t);
 yrg=y0+rg*sin(t);
 
-xrn=x0+(Domain_radius)*cos(t2);
-yrn=y0+(Domain_radius)*sin(t2);
+xrn=x0+(UserVar.Domain_radius)*cos(t2);
+yrn=y0+(UserVar.Domain_radius)*sin(t2);
 
 switch UserVar.Geometry
     
@@ -98,6 +108,10 @@ switch UserVar.Geometry
              xrg(:) yrg(:)];
 end
 
+
+
+
+
 %% New numerics to try (after new Beta version)
 %CtrlVar.InfoLevel=10;
 CtrlVar.MapOldToNew.method="scatteredInterpolant" ;
@@ -107,10 +121,13 @@ CtrlVar.etaZero=1e-09; %not needed probably
 CtrlVar.ExplicitEstimationMethod="-no extrapolation-"; % "-Adams-Bashforth-";
 CtrlVar.ATSTargetIterations=6; 
 CtrlVar.ATSdtMax=0.5; % when ADT is increased, do not exceed 3sec
+
 %CtrlVar.InfoLevelNonLinIt=5; 
+
+%%
 CtrlVar.Parallel.uvhAssembly.spmd.isOn=true; % spmd results in considerable speedup, ranging from 6 to 20 times depending on size and memory
 CtrlVar.Parallel.uvAssembly.spmd.isOn=true; 
-CtrlVar.Distribute=true ;                    % only speeds things up somewhat if matrix large, for 262485 x 262485  speedup=1.7, 341265 x 341265 speedup=2.18
+CtrlVar.Distribute=false ;                    % only speeds things up somewhat if matrix large, for 262485 x 262485  speedup=1.7, 341265 x 341265 speedup=2.18
 CtrlVar.Parallel.isTest=false;  
 %% Types of runs
 CtrlVar.TimeDependentRun=1 ;
@@ -137,12 +154,28 @@ CtrlVar.kH=100; %% implies a grounding line "width" of 1/kH [m] up and down from
 %% Mesh generation and remeshing parameters
 
 CtrlVar.meshgeneration=1; 
-CtrlVar.TriNodes=3 ;  % {3|6|10}  number of nodes per element
+
+
+
+TriNodes=str2double(extractBetween(UserVar.RunType,"-TR","-")) ;
+if isempty(TriNodes)
+    CtrlVar.TriNodes=3 ;  % {3|6|10}  number of nodes per element
+else
+    CtrlVar.TriNodes=TriNodes;
+end
+
 CtrlVar.MeshSize=resolution; %over-all desired element size
 CtrlVar.MeshSizeMin=0.0001*CtrlVar.MeshSize;
 CtrlVar.MeshSizeMax=CtrlVar.MeshSize;
 CtrlVar.MaxNumberOfElements=500000;
 CtrlVar.Mesh2d.opts.kind = 'DELFRONT'  ; %  {'DELFRONT','DELAUNAY'} LS default is DELFRONT. but I find deluny more stable near BC
+
+if contains(UserVar.RunType,"-DE-")
+    CtrlVar.ManuallyDeactivateElements=true;
+else
+    CtrlVar.ManuallyDeactivateElements=false;
+end
+
 %% Adaptive meshing
 
 CtrlVar.AdaptMesh=AdaptMeshFlag;
@@ -162,11 +195,17 @@ CtrlVar.MeshRefinementMethod='explicit:local:newest vertex bisection';          
 CtrlVar.CurrentRunStepNumber=1 ;  % This is a counter that is increased by one at each run step.
 
 %% Restart
-CtrlVar.Restart=0;  
+
 CtrlVar.WriteRestartFile=1;
 CtrlVar.NameOfRestartFiletoRead="Restartfile"+UserVar.RunType ;
 CtrlVar.NameOfRestartFiletoWrite=CtrlVar.NameOfRestartFiletoRead ; 
 
+% OK, this is potentialy a bit dangerous, but if a restart file is found, defined this as a restart run
+if isfile(CtrlVar.NameOfRestartFiletoRead+".mat")
+    CtrlVar.Restart=1;  
+else
+    CtrlVar.Restart=0;  
+end
 
 %% Meshfiles
 
@@ -190,5 +229,28 @@ CtrlVar.doplots=0;          % if true then plotting during runs by Ua are allowe
 
 %% Outputs
 CtrlVar.DefineOutputsDt=1.0; %model time interval between calling DefineOutputs.m
+
+
+%%
+
+
+
+if contains(UserVar.RunType,"-QD")
+    CtrlVar.QuadratureRuleDegree=str2double(extractBetween(UserVar.RunType,"-QD","-"));
+else
+    CtrlVar.QuadratureRuleDegree=[];  % use default
+end
+
+
+
+
+%%
+
+% CtrlVar.doplots=1; 
+% CtrlVar.doAdaptMeshPlots=1; 
+% CtrlVar.InfoLevelAdaptiveMeshing=100; 
+% 
+%%
+
 
 end

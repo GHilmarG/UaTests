@@ -109,8 +109,18 @@ hold off
 
 
 
-%%
+%%  Phi and gradients
 
+load("RF-WAIS-MS10km-D-hwmin1e-06.mat","F0","F1","CtrlVar","MUA","UserVar","lambda","ActiveSet")
+
+Phi=PhiPotential(CtrlVar,MUA,F1);
+[dPhidxInt,dPhidyInt,xint,yint]=calcFEderivativesMUA(Phi,MUA) ;
+[dPhidx,dPhidy]=ProjectFintOntoNodes(MUA,dPhidxInt,dPhidyInt) ;
+PhiGradient=sqrt(dPhidx.*dPhidx+dPhidy.*dPhidy);
+FindOrCreateFigure("Phi gradient")
+UaPlots(CtrlVar,MUA,F1,PhiGradient) ;
+
+%%
 
 
 
