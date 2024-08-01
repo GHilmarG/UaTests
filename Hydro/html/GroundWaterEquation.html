@@ -1,0 +1,301 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>GroundWaterEquation</title><meta name="generator" content="MATLAB 9.14"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2023-08-12"><meta name="DC.source" content="GroundWaterEquation.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; }
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+span.typesection { color:#A0522D }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#2">Effective water pressure equation</a></li><li><a href="#4">Solve for phi</a></li><li><a href="#6">Solve for N</a></li></ul></div><pre class="codeinput"><span class="keyword">function</span> [UserVar,R,K]=GroundWaterEquation(UserVar,CtrlVar,MUA,F0,F1,K,Sw,Phi)
+</pre><h2 id="2">Effective water pressure equation</h2><p><img src="GroundWaterEquation_eq16944076120861166122.png" alt="$$\frac{S_w}{\rho g}  \partial_t N +  \mathbf{V} \cdot \nabla N  + \nabla \cdot (K \nabla N) = m + \nabla \cdot ( K \Phi ) $$" style="width:311px;height:33px;"></p><p>where</p><p><img src="GroundWaterEquation_eq04756003372682352489.png" alt="$$\Phi = (\rho_w-\rho) g \nabla b - \rho g \nabla s  $$" style="width:160px;height:15px;"></p><p>and</p><p><img src="GroundWaterEquation_eq14865820103705800682.png" alt="$$\phi= \Phi - N $$" style="width:69px;height:13px;"></p><h2 id="4">Solve for phi</h2><p>Here the equation to solve is</p><p><img src="GroundWaterEquation_eq16454782357502431163.png" alt="$$\frac{S_w}{\rho g}  \partial_t \phi - \nabla \cdot (K \nabla \phi ) = m   $$" style="width:159px;height:33px;"></p><p>I set</p><p><img src="GroundWaterEquation_eq05450532212417857648.png" alt="$$K=-K$" style="width:57px;height:11px;"></p><p><img src="GroundWaterEquation_eq11691014736512682379.png" alt="$$ \Phi=0 $$" style="width:37px;height:11px;"></p><p>Solve for <img src="GroundWaterEquation_eq16179117359969153947.png" alt="$\phi$" style="width:8px;height:13px;"> and then set</p><p><img src="GroundWaterEquation_eq04756003372682352489.png" alt="$$\Phi = (\rho_w-\rho) g \nabla b - \rho g \nabla s  $$" style="width:160px;height:15px;"></p><p>and</p><p><img src="GroundWaterEquation_eq18421195340838498489.png" alt="$$ N=\Phi - \phi $$" style="width:70px;height:13px;"></p><pre class="codeinput"><span class="comment">% Testing</span>
+<span class="keyword">if</span>  contains(UserVar.Example,<span class="string">"-Phi-"</span>)
+    Phi=Phi*0 ;  F.aw=zeros(MUA.Nnodes,1)+1 ;   K=zeros(MUA.Nnodes,1)-1e5;  <span class="comment">% time scale about 500 years</span>
+    Phi=Phi*0 ;  F.aw=zeros(MUA.Nnodes,1)+1 ;   K=zeros(MUA.Nnodes,1)-1e7;  <span class="comment">% time scale about 5 years</span>
+    <span class="comment">%  Phi=Phi*0 ;  F.aw=zeros(MUA.Nnodes,1)+1 ;   K=zeros(MUA.Nnodes,1)-1e6;  % time scale about 5 years</span>
+<span class="keyword">end</span>
+
+
+BCs=BoundaryConditions ;
+[UserVar,BCs]=GetBoundaryConditions(UserVar,CtrlVar,MUA,BCs,F) ;
+MLC=BCs2MLC(CtrlVar,MUA,BCs);
+LL=MLC.hL ; cc=MLC.hRhs ;
+N=LL\cc;   <span class="comment">% make feasable</span>
+
+
+
+<span class="keyword">for</span> Isteps=1:nTimeSteps
+
+    F0.N=F1.N ; <span class="comment">% update</span>
+    F0.N=phi;
+    <span class="keyword">for</span> JNL=1:2  <span class="comment">% since the system is linear, only one iteration is required</span>
+        [UserVar,RR,KK]=NEquationAssembly(UserVar,CtrlVar,MUA,F0,F1,K,Sw,Phi) ;
+
+        <span class="keyword">if</span> ~isempty(LL)
+            hh=cc-LL*F1.N;
+        <span class="keyword">else</span>
+            hh=[];
+        <span class="keyword">end</span>
+
+        [dN,dlambda]=solveKApeSymmetric(KK,LL,RR,hh,dN,dlambda,CtrlVar) ;
+        F1.N=F1.N+dN ;
+
+        fprintf(<span class="string">"nit=%i \t norm(dN)=%g \t norm(hh)=%g \n"</span>,JNL,norm(dN),norm(hh))
+
+
+    <span class="keyword">end</span>
+
+    <span class="keyword">if</span> contains(UserVar.Example,<span class="string">"-Phi-"</span>)
+
+        phi=F1.N;  <span class="comment">% I'm solving for phi, not N</span>
+        Phi=F.g.* ( (F.rhow-F.rho).*F.b + F.rho.*F.s) ;
+        F1.N=Phi-phi ;
+
+    <span class="keyword">end</span>
+    CtrlVar.time=CtrlVar.time+CtrlVar.dt ;
+    F1.time=CtrlVar.time ;
+
+
+<span class="keyword">end</span>
+</pre><h2 id="6">Solve for N</h2><pre class="codeinput">BCs=BoundaryConditions ;
+[UserVar,BCs]=GetBoundaryConditions(UserVar,CtrlVar,MUA,BCs,F) ;
+MLC=BCs2MLC(CtrlVar,MUA,BCs);
+LL=MLC.hL ; cc=MLC.hRhs ;
+N=LL\cc;   <span class="comment">% make feasable</span>
+
+
+
+<span class="keyword">for</span> Isteps=1:nTimeSteps
+
+    F0.N=F1.N ; <span class="comment">% update</span>
+    F0.N=phi;
+    <span class="keyword">for</span> JNL=1:2  <span class="comment">% since the system is linear, only one iteration is required</span>
+        [UserVar,RR,KK]=NEquationAssembly(UserVar,CtrlVar,MUA,F0,F1,K,Sw,Phi) ;
+
+        <span class="keyword">if</span> ~isempty(LL)
+            hh=cc-LL*F1.N;
+        <span class="keyword">else</span>
+            hh=[];
+        <span class="keyword">end</span>
+
+        [dN,dlambda]=solveKApeSymmetric(KK,LL,RR,hh,dN,dlambda,CtrlVar) ;
+        F1.N=F1.N+dN ;
+
+        fprintf(<span class="string">"nit=%i \t norm(dN)=%g \t norm(hh)=%g \n"</span>,JNL,norm(dN),norm(hh))
+
+
+    <span class="keyword">end</span>
+
+    <span class="keyword">if</span> contains(UserVar.Example,<span class="string">"-Phi-"</span>)
+
+        phi=F1.N;  <span class="comment">% I'm solving for phi, not N</span>
+        Phi=F.g.* ( (F.rhow-F.rho).*F.b + F.rho.*F.s) ;
+        F1.N=Phi-phi ;
+
+    <span class="keyword">end</span>
+    CtrlVar.time=CtrlVar.time+CtrlVar.dt ;
+    F1.time=CtrlVar.time ;
+
+
+<span class="keyword">end</span>
+</pre><p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2023a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+
+
+function [UserVar,R,K]=GroundWaterEquation(UserVar,CtrlVar,MUA,F0,F1,K,Sw,Phi)
+
+
+%% Effective water pressure equation
+%
+%
+% $$\frac{S_w}{\rho g}  \partial_t N +  \mathbf{V} \cdot \nabla N  + \nabla \cdot (K \nabla N) = m + \nabla \cdot ( K \Phi ) $$
+%
+% where
+%
+% $$\Phi = (\rho_w-\rho) g \nabla b - \rho g \nabla s  $$ 
+%
+% and
+%
+% $$\phi= \Phi - N $$
+% 
+%%
+
+%% Solve for phi
+%
+% Here the equation to solve is 
+%
+% $$\frac{S_w}{\rho g}  \partial_t \phi - \nabla \cdot (K \nabla \phi ) = m   $$
+%
+% I set
+%
+% $$K=-K$
+%
+% $$ \Phi=0 $$ 
+% 
+% Solve for $\phi$ and then set
+%
+% $$\Phi = (\rho_w-\rho) g \nabla b - \rho g \nabla s  $$ 
+%
+% and
+%
+% $$ N=\Phi - \phi $$
+%
+%
+%%
+
+% Testing
+if  contains(UserVar.Example,"-Phi-")
+    Phi=Phi*0 ;  F.aw=zeros(MUA.Nnodes,1)+1 ;   K=zeros(MUA.Nnodes,1)-1e5;  % time scale about 500 years
+    Phi=Phi*0 ;  F.aw=zeros(MUA.Nnodes,1)+1 ;   K=zeros(MUA.Nnodes,1)-1e7;  % time scale about 5 years
+    %  Phi=Phi*0 ;  F.aw=zeros(MUA.Nnodes,1)+1 ;   K=zeros(MUA.Nnodes,1)-1e6;  % time scale about 5 years
+end
+
+
+BCs=BoundaryConditions ;
+[UserVar,BCs]=GetBoundaryConditions(UserVar,CtrlVar,MUA,BCs,F) ;
+MLC=BCs2MLC(CtrlVar,MUA,BCs);
+LL=MLC.hL ; cc=MLC.hRhs ;
+N=LL\cc;   % make feasable
+
+
+
+for Isteps=1:nTimeSteps
+
+    F0.N=F1.N ; % update
+    F0.N=phi;
+    for JNL=1:2  % since the system is linear, only one iteration is required
+        [UserVar,RR,KK]=NEquationAssembly(UserVar,CtrlVar,MUA,F0,F1,K,Sw,Phi) ;
+
+        if ~isempty(LL)
+            hh=cc-LL*F1.N;
+        else
+            hh=[];
+        end
+
+        [dN,dlambda]=solveKApeSymmetric(KK,LL,RR,hh,dN,dlambda,CtrlVar) ;
+        F1.N=F1.N+dN ;
+
+        fprintf("nit=%i \t norm(dN)=%g \t norm(hh)=%g \n",JNL,norm(dN),norm(hh))
+
+
+    end
+
+    if contains(UserVar.Example,"-Phi-")
+
+        phi=F1.N;  % I'm solving for phi, not N
+        Phi=F.g.* ( (F.rhow-F.rho).*F.b + F.rho.*F.s) ;
+        F1.N=Phi-phi ;
+
+    end
+    CtrlVar.time=CtrlVar.time+CtrlVar.dt ;
+    F1.time=CtrlVar.time ;
+
+
+end
+
+
+%% Solve for N
+
+BCs=BoundaryConditions ;
+[UserVar,BCs]=GetBoundaryConditions(UserVar,CtrlVar,MUA,BCs,F) ;
+MLC=BCs2MLC(CtrlVar,MUA,BCs);
+LL=MLC.hL ; cc=MLC.hRhs ;
+N=LL\cc;   % make feasable
+
+
+
+for Isteps=1:nTimeSteps
+
+    F0.N=F1.N ; % update
+    F0.N=phi;
+    for JNL=1:2  % since the system is linear, only one iteration is required
+        [UserVar,RR,KK]=NEquationAssembly(UserVar,CtrlVar,MUA,F0,F1,K,Sw,Phi) ;
+
+        if ~isempty(LL)
+            hh=cc-LL*F1.N;
+        else
+            hh=[];
+        end
+
+        [dN,dlambda]=solveKApeSymmetric(KK,LL,RR,hh,dN,dlambda,CtrlVar) ;
+        F1.N=F1.N+dN ;
+
+        fprintf("nit=%i \t norm(dN)=%g \t norm(hh)=%g \n",JNL,norm(dN),norm(hh))
+
+
+    end
+
+    if contains(UserVar.Example,"-Phi-")
+
+        phi=F1.N;  % I'm solving for phi, not N
+        Phi=F.g.* ( (F.rhow-F.rho).*F.b + F.rho.*F.s) ;
+        F1.N=Phi-phi ;
+
+    end
+    CtrlVar.time=CtrlVar.time+CtrlVar.dt ;
+    F1.time=CtrlVar.time ;
+
+
+end
+##### SOURCE END #####
+--></body></html>

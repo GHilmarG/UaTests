@@ -1,4 +1,4 @@
-function [UserVar,C,m,q,muk]=DefineSlipperyDistribution(UserVar,CtrlVar,MUA,F)
+function [UserVar,C,m,q,muk,V0]=DefineSlipperyDistribution(UserVar,CtrlVar,MUA,F)
 
 persistent FC
 
@@ -6,11 +6,13 @@ persistent FC
 q=3 ; 
 muk=0.5 ; 
 m=3; 
+V0=300;
+
 
 if ~UserVar.Slipperiness.ReadFromFile
     
     switch CtrlVar.SlidingLaw
-      % Rough estimates for reasonable order of magnitue for C
+      % Rough estimates for reasonable order of magnitude for C
     
     case {"W","Weertman","Tsai","Cornford","Umbi"}
         
@@ -21,6 +23,17 @@ if ~UserVar.Slipperiness.ReadFromFile
         C0=Speed./(tau.^m);
         C=C0;
         
+   case {"Joughin"}
+  
+       % C tau^m = (V/(V+V0))
+
+        tau=100 ; % units meters, year , kPa
+        Speed=100;
+        
+        C0=(Speed/(Speed+V0))    ./(tau.^m);
+        C=C0;
+
+
     case {"Budd","W-N0"}
         
         % u=C tau^m/N^q
@@ -51,12 +64,12 @@ else
     
     if isempty(FC)
         
-        if isfile(UserVar.CFile)  || isfile(UserVar.CFile+".mat")
-            fprintf('DefineSlipperyDistribution: loading file: %-s \n',UserVar.CFile)
-            load(UserVar.CFile,'FC')
+        if isfile(UserVar.FCFile)  || isfile(UserVar.FCFile+".mat")
+            fprintf('DefineSlipperyDistribution: loading file: %-s \n',UserVar.FCFile)
+            load(UserVar.FCFile,'FC')
             fprintf(' done \n')
         else
-            fprintf('DefineSlipperyDistribution: file not found, was expecting: %-s \n',UserVar.CFile)
+            fprintf('DefineSlipperyDistribution: file not found, was expecting: %-s \n',UserVar.FCFile)
             error("DefineSlipperyDistribution:FileNotFound","Required input file not found")
             % create a FC file
             %load('C-Estimate.mat','C','xC','yC')

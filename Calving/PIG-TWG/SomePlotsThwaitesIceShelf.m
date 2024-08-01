@@ -3,7 +3,11 @@
 % Restart-FT-P-Duvh-TWISC0-MR4-SM-TM001-Cornford-10km-Alim-Ca1-Cs100000-Aa1-As100000-.mat  at t=53.3
 % Restart-FT-P-Duvh-TWIS-MR4-SM-TM001-Cornford-10km-Alim-Ca1-Cs100000-Aa1-As100000-.mat  at t=105.55
 
-
+% 30km = 14km
+% 20km = 9.3km
+% 10km = 4.6km
+%  5km = 2.3km
+% 2.5km = 1.16km
 
 WorkDir=pwd ;
 
@@ -29,7 +33,7 @@ FigureDirectory="C:\Users\Hilmar\OneDrive - Northumbria University - Production 
 xb=[-1520 -1445 -1100 -1100 -1350 -1590 -1520] ;yb=[-510  -547  -547 -180 -180   -390 -510];
 xyBoundary=[xb(:) yb(:)]*1000;
 
-TimeInterval=[0 400] ; 
+TimeInterval=[0 inf] ; 
 
 Experiment="AC-lim" ;
 Experiment="5km-New";
@@ -407,6 +411,11 @@ switch Experiment
 
         IRange=[1  3  4  6  7  8]; 
         IRange=[4  7 ]; 
+        IRange=[9]; 
+       % IRange=[10]; 
+       % IRange=[11]; 
+
+
 
 
         % MR4
@@ -427,6 +436,10 @@ switch Experiment
         SubString(7)="-FT-P-TWIS-MR4-SM-TM001-Cornford-20km-Alim-Ca1-Cs100000-Aa1-As100000-.mat";
         SubString(8)="-FT-P-TWISC0-MR4-SM-TM001-Cornford-20km-Alim-Ca1-Cs100000-Aa1-As100000-.mat";
 
+        SubString(9)="-FT-P-Duvh-TWIS-MR4-SM-TM001-Cornford-2k5km-Alim-Clim-Ca1-Cs100000-Aa1-As100000-InvMR5.mat"; 
+        SubString(10)="-FT-P-Duvh-TWIS-MR4-SM-TM001-Cornford-5km-Alim-Clim-Ca1-Cs100000-Aa1-As100000-.mat"; 
+        SubString(11)="-FT-P-Duvh-TWIS-MR4-SM-TM001-Cornford-10km-Alim-Clim-Ca1-Cs100000-Aa1-As100000-.mat"; 
+
 
         LegendEntry=[...
             "2.3km: Thwaites ice shelf kept (Alim, Cornford, MR4)",...
@@ -437,10 +450,13 @@ switch Experiment
             "4.6km: Thwaites ice shelf removed (Alim, Cornford, MR4)",...
             "9.3km: Thwaites ice shelf kept (Alim, Cornford, MR4)",...
             "9.3km: Thwaites ice shelf removed (Alim, Cornford, MR4)",...
+            "1.16km: MR4",...
+            "2.3km:  MR4",...
+            "4.6km:  MR4",...
             ];
 
 
-        TimeInterval=[0 400] ;  VAFStep=5; VideoStep=1;  CreateVideo=true; CalculateVAF=false; 
+        TimeInterval=[0 inf] ;  VAFStep=5; VideoStep=5;  CreateVideo=true; CalculateVAF=false; 
 
         xyBoundary=nan;  % since this is always with respect to a reference run, I think that limiting the region is not needed
 
@@ -487,7 +503,7 @@ if CreateVideo
         % ReadPlotSequenceOfResultFiles2(FileNameSubstring=SubString(I),PlotTimestep=Step,PlotType="-ubvb-B-") ;
         % ReadPlotSequenceOfResultFiles2(FileNameSubstring=SubString(I),PlotTimestep=Step,PlotType="-ubvb-VAF-",VAFBoundary=xyBoundary) ;
         % ReadPlotSequenceOfResultFiles2(FileNameSubstring=SubString(I),PlotTimestep=Step,PlotType="-ubvb-ds-",VAFBoundary=xyBoundary) ;
-        ReadPlotSequenceOfResultFiles2(FileNameSubstring=SubString(I),PlotTimestep=Step,PlotType="-ds-VAF-",VAFBoundary=xyBoundary,PlotTimeInterval=[0 400]) ;
+        ReadPlotSequenceOfResultFiles2(FileNameSubstring=SubString(I),PlotTimestep=Step,PlotType="-ds-VAF-",VAFBoundary=xyBoundary,PlotTimeInterval=TimeInterval) ;
     end
 end
 

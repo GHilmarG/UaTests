@@ -82,9 +82,10 @@ Melt="-MR4-" ;                  % BasalMeltRateParameterisation=
 UserVar.InvMeshResolution=[];
 GLrange="";
 uvh="" ;  % uvh="-uv-h-" implies semi-implicit
-UserVar.CtrlVar.LevelSetDownstreamRheology="";
+UserVar.LevelSetDownstreamRheology="";
 UserVar.GroupAssembly="";
 UserVar.kH="" ;  % defaults to kH=10 
+UserVar.VelDataSet="";
 
 % Resolution="-5km-" ;  CtrlVar.SlidingLaw="Cornford"; C="" ;     Duvh="-Duvh-" ;  % missing
 Resolution="-5km-" ;  CtrlVar.SlidingLaw="Cornford"; C="" ;     Duvh="" ;  % submitted
@@ -158,18 +159,49 @@ Resolution="-5km-" ;  CtrlVar.SlidingLaw="Weertman"; C="" ;     Duvh="" ;  Melt=
 
 
 
-Resolution="-20km-" ;  CtrlVar.SlidingLaw="Cornford"; C="" ;     Duvh="" ;  Melt="-MR4-" ;  IceShelf="Thwaites" ;  UserVar.InvMeshResolution=[];  GLrange="-GLrange-";
+
 Resolution="-10km-" ;  CtrlVar.SlidingLaw="Cornford"; C="" ;     Duvh="" ;  Melt="-MR4-" ;  IceShelf="Thwaites" ;  UserVar.InvMeshResolution=[];  GLrange="-GLrange-";
-Resolution="-5km-" ;  CtrlVar.SlidingLaw="Cornford"; C="" ;     Duvh="" ;  Melt="-MR4-" ;  IceShelf="Thwaites" ;  UserVar.InvMeshResolution=[];  GLrange="-GLrange-";
-Resolution="-2.5km-" ;  CtrlVar.SlidingLaw="Cornford"; C="" ;     Duvh="" ;  Melt="-MR4-" ;  IceShelf="Thwaites" ;  UserVar.InvMeshResolution=[];  GLrange="-GLrange-";  UserVar.InvMeshResolution=5000; 
+Resolution="-5km-"  ;  CtrlVar.SlidingLaw="Cornford"; C="" ;     Duvh="" ;  Melt="-MR4-" ;  IceShelf="Thwaites" ;  UserVar.InvMeshResolution=[];  GLrange="-GLrange-";
 
 
-Resolution="-20km-" ;  CtrlVar.SlidingLaw="Cornford"; C="" ;     Duvh="" ;  Melt="-MR4-" ;  IceShelf="Thwaites" ;  UserVar.InvMeshResolution=[];  GLrange="-GLrange-";
 
 
-Resolution="-20km-" ;  CtrlVar.SlidingLaw="Cornford"; C="" ;     Duvh="" ;  Melt="-MR4-" ;  IceShelf="Thwaites" ;  UserVar.InvMeshResolution=[];  
-                        GLrange="-GLrange-";  UserVar.LevelSetDownstreamRheology="-LSDRlin-" ;  UserVar.kH="-kH10-" ; Duvh="-Duvh-" ; 
-                        uvh="-uvh-"  ; UserVar.GroupAssembly="-uvhGroup-uvGroup-" ; 
+Resolution="-5km-"   ;  CtrlVar.SlidingLaw="Cornford"; C="" ;     Duvh="" ;  Melt="-MR4-" ;  IceShelf="Thwaites" ;  UserVar.InvMeshResolution=[];    GLrange="";
+Resolution="-2.5km-" ;  CtrlVar.SlidingLaw="Cornford"; C="" ;     Duvh="" ;  Melt="-MR4-" ;  IceShelf="Thwaites" ;  UserVar.InvMeshResolution=5000;  GLrange="";  
+
+
+
+Resolution="-10km-"   ;  CtrlVar.SlidingLaw="Cornford"; C="" ;     Duvh=""     ;  Melt="-MR4-" ;  IceShelf="Thwaites" ;  UserVar.InvMeshResolution=[];    GLrange="";
+Resolution="-5km-"    ;  CtrlVar.SlidingLaw="Cornford"; C="" ;     Duvh=""     ;  Melt="-MR4-" ;  IceShelf="Thwaites" ;  UserVar.InvMeshResolution=[];    GLrange="";   % has hit boundary of computational domain
+Resolution="-2.5km-"  ;  CtrlVar.SlidingLaw="Cornford"; C="" ;     Duvh=""     ;  Melt="-MR4-" ;  IceShelf="Thwaites" ;  UserVar.InvMeshResolution=5000;    GLrange=""; 
+
+Resolution="-20km-"  ;  CtrlVar.SlidingLaw="Cornford"; C="" ;     Duvh="Duvh" ;  Melt="-MR4-" ;  IceShelf="Thwaites" ;  UserVar.InvMeshResolution=[];      GLrange="";
+Resolution="-10km-"  ;  CtrlVar.SlidingLaw="Cornford"; C="" ;     Duvh="Duvh" ;  Melt="-MR4-" ;  IceShelf="Thwaites" ;  UserVar.InvMeshResolution=[];      GLrange="";
+Resolution="-5km-"   ;  CtrlVar.SlidingLaw="Cornford"; C="" ;     Duvh="Duvh" ;  Melt="-MR4-" ;  IceShelf="Thwaites" ;  UserVar.InvMeshResolution=[];      GLrange="";
+Resolution="-2.5km-" ;  CtrlVar.SlidingLaw="Cornford"; C="" ;     Duvh="Duvh" ;  Melt="-MR4-" ;  IceShelf="Thwaites" ;  UserVar.InvMeshResolution=5000;    GLrange=""; 
+
+
+Resolution="-20km-"  ;  CtrlVar.SlidingLaw="Weertman"; C="" ;     Duvh="Duvh" ;  Melt="-MR4-" ;  IceShelf="Thwaites" ;  UserVar.InvMeshResolution=[];      GLrange="";
+
+Resolution="-2.5km-" ;  CtrlVar.SlidingLaw="Cornford"; C="" ;     Duvh="Duvh" ;  Melt="-MR4-" ;  IceShelf="Thwaites" ;  UserVar.InvMeshResolution=[];    GLrange=""; 
+Resolution="-5km-"  ;  CtrlVar.SlidingLaw="Weertman"; C="" ;     Duvh="Duvh" ;  Melt="-MR4-" ;  IceShelf="Thwaites" ;  UserVar.InvMeshResolution=[];      GLrange="";
+
+Resolution="-5km-"  ;  CtrlVar.SlidingLaw="Joughin"; C="" ;     Duvh="Duvh" ;  Melt="-MR4-" ;  IceShelf="Thwaites" ;  UserVar.InvMeshResolution=[];      GLrange=""; UserVar.VelDataSet="-ITS120-";
+
+
+
+CtrlVar.InfoLevelNonLinIt=5;  CtrlVar.doplots=1;   % testing
+CtrlVar.LocateAndDeleteDetachedIslandsAndRegionsConnectedByOneNodeOnly=true;
+CtrlVar.ExplicitEstimationMethod="-no extrapolation-" ;
+
+% setting GLrange="-GLrange-"  implies further refinement around grounding-line 
+
+% Resolution="-20km-" ;  CtrlVar.SlidingLaw="Cornford"; C="" ;     Duvh="" ;  Melt="-MR4-" ;  IceShelf="Thwaites" ;  UserVar.InvMeshResolution=[];  GLrange="-GLrange-";
+
+
+% Resolution="-20km-" ;  CtrlVar.SlidingLaw="Cornford"; C="" ;     Duvh="" ;  Melt="-MR4-" ;  IceShelf="Thwaites" ;  UserVar.InvMeshResolution=[];  
+%                        GLrange="-GLrange-";  UserVar.LevelSetDownstreamRheology="-LSDRlin-" ;  UserVar.kH="-kH10-" ; Duvh="-Duvh-" ; 
+%                        uvh="-uvh-"  ; UserVar.GroupAssembly="-uvhGroup-uvGroup-" ; 
                   
 
 % Note: Setting Duvh="-Duvh-" gives automated element deactivation based on the level-set                    
@@ -183,8 +215,7 @@ Resolution="-20km-" ;  CtrlVar.SlidingLaw="Cornford"; C="" ;     Duvh="" ;  Melt
 
 
 
-% Old Defaults:
-% GLrange=""; uvh="" ;  UserVar.CtrlVar.LevelSetDownstreamRheology=""; UserVar.GroupAssembly=""; UserVar.kH="" ; 
+
 
 % CtrlVar.ExplicitEstimationMethod="-no extrapolation-";
 
@@ -207,7 +238,7 @@ BatchJob=false;
 
 
 
-UserVar.RunType="-FT-P-"+Duvh+"-TWIS"+C+Melt+"SM-TM001-"+CtrlVar.SlidingLaw+Resolution+GLrange+uvh+ UserVar.LevelSetDownstreamRheology+UserVar.GroupAssembly+UserVar.kH+"Alim-Clim-Ca1-Cs100000-Aa1-As100000-";  
+UserVar.RunType="-FT-P-"+Duvh+"-TWIS"+C+Melt+"SM-TM001-"+CtrlVar.SlidingLaw+Resolution+GLrange+uvh+ UserVar.LevelSetDownstreamRheology+UserVar.GroupAssembly+UserVar.kH+"Alim-Clim-Ca1-Cs100000-Aa1-As100000-"+UserVar.VelDataSet;  
 
 if CtrlVar.uvh.SUPG.tauMultiplier~=1  ||  CtrlVar.uvh.SUPG.tau~="taus"
     UserVar.RunType=UserVar.RunType+"-"+CtrlVar.uvh.SUPG.tau+"-SUPGm"+num2str(CtrlVar.uvh.SUPG.tauMultiplier) ;
@@ -243,7 +274,7 @@ UserVar.RunType=replace(UserVar.RunType,"--","-");
 UserVar.RunType=replace(UserVar.RunType,".","k");
 
 
-CtrlVar.TotalTime=400;
+CtrlVar.TotalTime=500;
 
 CtrlVar.Inverse.Regularize.logC.ga=str2double(extract(extract(UserVar.RunType,"-Ca"+digitsPattern+"-"),digitsPattern)) ;
 CtrlVar.Inverse.Regularize.logC.gs=str2double(extract(extract(UserVar.RunType,"-Cs"+digitsPattern+"-"),digitsPattern)) ;
@@ -305,6 +336,42 @@ UserVar.CFile="FC-"+InvFile+".mat";
 
 AdataFile="InvA-"+InvFile+".mat";
 CdataFile="InvC-"+InvFile+".mat";
+
+
+%% Set output files directory
+[~,hostname]=system('hostname') ;
+if contains(hostname,"DESKTOP-G5TCRTD")
+
+    UserVar.ResultsFileDirectory="F:\Runs\Calving\PIG-TWG\ResultsFiles\";
+    UserVar.InverseRestartFileDirectory="F:\Runs\Calving\PIG-TWG\InverseRestartFiles\";
+    UserVar.InversionFileDirectory="F:\Runs\Calving\PIG-TWG\InversionFiles\";
+    UserVar.MeshFileDirectory="F:\Runs\Calving\PIG-TWG\MeshFiles\";
+    UserVar.ForwardRestartFileDirectory="F:\Runs\Calving\PIG-TWG\RestartFiles";
+
+elseif contains(hostname,"DESKTOP-BU2IHIR")   % home
+
+    UserVar.ResultsFileDirectory="D:\Runs\Calving\PIG-TWG\ResultsFiles\";
+    UserVar.InverseRestartFileDirectory="D:\Runs\Calving\PIG-TWG\InverseRestartFiles\";
+    UserVar.InversionFileDirectory="D:\Runs\Calving\PIG-TWG\InversionFiles\";
+    UserVar.MeshFileDirectory="D:\Runs\Calving\PIG-TWG\MeshFiles\";
+    UserVar.ForwardRestartFileDirectory="D:\Runs\Calving\PIG-TWG\RestartFiles\";
+
+else
+    UserVar.ResultsFileDirectory=pwd+"\ResultsFiles\";
+end
+
+AdataFile=UserVar.InversionFileDirectory+AdataFile;
+CdataFile=UserVar.InversionFileDirectory+CdataFile;
+
+
+UserVar.AFile=UserVar.InversionFileDirectory+UserVar.AFile;
+UserVar.CFile=UserVar.InversionFileDirectory+UserVar.CFile;
+
+%%
+
+
+
+
 
 
 if CreateAndSaveACInterpolants ||  (~isfile(UserVar.AFile)  || ~isfile(UserVar.CFile) )

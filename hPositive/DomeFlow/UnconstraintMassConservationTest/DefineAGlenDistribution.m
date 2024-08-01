@@ -1,11 +1,9 @@
 
+function  [UserVar,AGlen,n]=DefineAGlenDistribution(UserVar,CtrlVar,MUA,F)
 
-function [UserVar,AGlen,n]=DefineAGlenDistribution(Experiment,coordinates,connectivity,s,b,h,S,B,rho,rhow,Itime,time,CtrlVar)
+
         
-    
-    Nnodes=length(coordinates);
-        
-    n=3 ;  AGlen=3.0e-9+zeros(Nnodes,1) ; % kPa year about -20 degrees Celcius
+    n=3 ;  AGlen=3.0e-9+zeros(MUA.Nnodes,1) ; % kPa year about -20 degrees Celcius
     
     %if time>110 ; AGlen=100*AGlen ; end
     

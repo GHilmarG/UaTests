@@ -50,7 +50,7 @@ Meas.vsCov=sparse(1:MUA.Nnodes,1:MUA.Nnodes,vsError.^2,MUA.Nnodes,MUA.Nnodes);
 
 Priors.AGlen=AGlenVersusTemp(-10);
 Priors.n=F.n; 
-
+Priors.V0=UserVar.V0 ;
 
 switch CtrlVar.SlidingLaw
     

@@ -1,5 +1,5 @@
 
-function [UserVar,CtrlVar,MeshBoundaryCoordinates]=Ua2D_InitialUserInput(UserVar,CtrlVar)
+function [UserVar,CtrlVar,MeshBoundaryCoordinates]=DefineInitialInputs(UserVar,CtrlVar)
 
 
 
@@ -12,22 +12,25 @@ CtrlVar.ThicknessConstraintsLambdaPosThreshold=0;
 
 %% testing restart
 CtrlVar.ResetTimeStep=0; CtrlVar.dt=1e-3;
-CtrlVar.InfoLevelNonLinIt=10 ; CtrlVar.doplots=1;
+CtrlVar.InfoLevelNonLinIt=1 ; CtrlVar.doplots=1;
 %%
 
-CtrlVar.uvhCostFunction="Work Residuals" ; % ["Work Residuals","Force Residuals"] 
+% CtrlVar.uvhCostFunction="Work Residuals" ; % ["Work Residuals","Force Residuals"] 
 
-UserVar=[];
+UserVar.RunType="-GaussMelt-";
+UserVar.RunType="-ThicknessConstrained-UniformMelt-";
+UserVar.RunType="-ThicknessConstrained-GaussMelt-";  % thickness constrained within a radius of 50k and Gauss shaped melt applied, h reactions recover the applied melt within the circle.
+UserVar.Plots="-R-"; % calculate and plot reactions
 
 
 CtrlVar.time=0 ; 
 CtrlVar.TimeDependentRun=1 ; CtrlVar.AdaptiveTimeStepping=1 ; 
 CtrlVar.TotalNumberOfForwardRunSteps=10000; CtrlVar.TotalTime=500;
 
-CtrlVar.UaOutputsDt=1;
-CtrlVar.Restart=1;  
+CtrlVar.DefineOutputsDt=0;
+CtrlVar.Restart=0;  
 CtrlVar.WriteRestartFile=1;
-CtrlVar.TriNodes=10; 
+CtrlVar.TriNodes=3; 
 CtrlVar.MeshSize=2e3 ; % 5e3 ; 
 
 
@@ -54,16 +57,23 @@ CtrlVar.ReadInitialMeshFileName='LocallyRefinedMesh.mat'; CtrlVar.SaveInitialMes
 
 
 
-CtrlVar.Experiment=sprintf("GaussMelting-Nod%i-MeshSize%i-lambdak%i-%s",CtrlVar.TriNodes,...
+CtrlVar.Experiment=sprintf("%s-Nod%i-MeshSize%i-lambdak%i",UserVar.RunType,CtrlVar.TriNodes,...
     CtrlVar.MeshSize,...
-    100*CtrlVar.ThicknessConstraintsLambdaPosThreshold,...
-    CtrlVar.uvhCostFunction) ; 
+    100*CtrlVar.ThicknessConstraintsLambdaPosThreshold); 
+
 
 CtrlVar.Experiment=replace(CtrlVar.Experiment," ","");
 
 CtrlVar.NameOfRestartFiletoWrite="Restart-"+CtrlVar.Experiment+".mat" ; 
 CtrlVar.NameOfRestartFiletoRead=CtrlVar.NameOfRestartFiletoWrite;
 
+%%
 
+CtrlVar.Parallel.uvhAssembly.spmd.isOn=true;    % assembly in parallel using spmd over sub-domain (domain decomposition)  
+CtrlVar.Parallel.uvAssembly.spmd.isOn=true;     % assembly in parallel using spmd over sub-domain (domain decomposition)  
+CtrlVar.Distribute=false;                       % linear system is solved using distributed arrays. 
+
+CtrlVar.Parallel.isTest=false;                  % Runs both with and without parallel approach, and prints out some information on relative performance. 
+                                                % Good for testing if switching on the parallel options speeds things up, and by how much.
 
 end

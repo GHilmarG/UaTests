@@ -22,7 +22,7 @@ MeshBoundaryCoordinates=[xu yl ; xd yl ; xd yr ; xu yr];
 CtrlVar.TimeDependentRun=1 ;
 CtrlVar.dt=0.1;
 CtrlVar.TotalNumberOfForwardRunSteps=200;
-CtrlVar.TotalTime=10;          % maximum model time
+CtrlVar.TotalTime=1;          % maximum model time
 CtrlVar.time=0; 
 CtrlVar.ATSdtMax=10.0;  % Timestep maximum is 10 years
 
@@ -41,7 +41,9 @@ CtrlVar.MaxNumberOfElements=5000;
 
 
 %%
-
+CtrlVar.SlidingLaw="Weertman" ;
+CtrlVar.SlidingLaw="Umbi" ;
+CtrlVar.MustBe.SlidingLaw=["Weertman","Budd","Tsai","Coulomb","Cornford","Umbi","Joughin","W","W-N0","minCW-N0","C","rpCW-N0","rCW-N0","rCW-V0"]  ;
 
 %% plotting
 CtrlVar.PlotXYscale=1000;

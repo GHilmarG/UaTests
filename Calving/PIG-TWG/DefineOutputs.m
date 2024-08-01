@@ -57,25 +57,29 @@ if contains(plots,'-save-')
             
             FileName=sprintf('%s%07i-Nodes%i-Ele%i-Tri%i-kH%i-%s.mat',...
                 UserVar.ResultsFileDirectory,...
-                round(100*CtrlVar.time),MUA.Nnodes,MUA.Nele,MUA.nod,1000*CtrlVar.kH,CtrlVar.Experiment);
+                round(100*F.time),MUA.Nnodes,MUA.Nele,MUA.nod,1000*CtrlVar.kH,CtrlVar.Experiment);
         else
 
-            FileName=sprintf('%s%07i-Nodes%i-Ele%i-Tri%i-kH%i-ThickMin%3.2f-%s.mat',...
+            % FileName=sprintf('%s%07i-Nodes%i-Ele%i-Tri%i-kH%i-ThickMin%3.2f-%s.mat',...
+            %     UserVar.ResultsFileDirectory,...
+            %     round(100*F.time),MUA.Nnodes,MUA.Nele,MUA.nod,1000*CtrlVar.kH,CtrlVar.ThickMin,CtrlVar.Experiment);
+    
+            FileName=sprintf('%s%07i-%s.mat',...
                 UserVar.ResultsFileDirectory,...
-                round(100*CtrlVar.time),MUA.Nnodes,MUA.Nele,MUA.nod,1000*CtrlVar.kH,CtrlVar.ThickMin,CtrlVar.Experiment);
+                round(100*F.time),CtrlVar.Experiment);  
 
         end
         FileName=replace(FileName,".mat","");
         FileName=replace(FileName,"--","-");
         FileName=replace(FileName,".","k");
         fprintf(' Saving data in %s \n',FileName)
-        save(FileName,"CtrlVar","MUA","F")
+        save(FileName,"CtrlVar","UserVar","MUA","F","BCs","l")
 
     end
 end
 
 % only do plots at end of run
-% if ~strcmp(CtrlVar.DefineOutputsInfostring,'Last call') ; return ; end
+if ~strcmp(CtrlVar.DefineOutputsInfostring,'Last call') ; return ; end
 
 switch UserVar.MeshResolution
 
@@ -131,7 +135,7 @@ if contains(plots,'-LSF-')
 
     fig= FindOrCreateFigure("LSF") ; clf(fig) ;
     [~,cbar]=PlotMeshScalarVariable(CtrlVar,MUA,F.LSF/1000);
-    title(sprintf('LSF at t=%g (yr)',CtrlVar.time)) ;
+    title(sprintf('LSF at t=%g (yr)',F.time)) ;
     hold on
     [xGL,yGL,GLgeo]=PlotGroundingLines(CtrlVar,MUA,F.GF,GLgeo,xGL,yGL,"color","r");
     [xc,yc]=PlotCalvingFronts(CtrlVar,MUA,F,'b',LineWidth=2);
@@ -157,12 +161,12 @@ if contains(UserVar.RunType,"-C-")  && ~isempty(F.c)
 
 
     FigCR=FindOrCreateFigure("Calving rate");
-    PlotMuaMesh(CtrlVar,MUA); hold on
-    cbar=UaPlots(CtrlVar,MUA,F,F.c/1000);
-    T=sprintf("Calving rate at t=%g for mesh resolution %s",CtrlVar.time,MRT);
+    cbar=UaPlots(CtrlVar,MUA,F,F.c/1000,PlotUnderMesh=true);
+    
+    T=sprintf("Calving rate at t=%g for mesh resolution %s",F.time,MRT);
     title(T,Interpreter="latex")
     title(cbar,("(km/yr)"))
-    FigCR.Children(1).Label.String="Calving Rate";
+    % FigCR.Children(1).Label.String="Calving Rate";  % produces error
     xlabel("xps (km)",Interpreter="latex"); ylabel("yps (km)",Interpreter="latex");
     axis tight
     FigCR.Position=[1000 490 900 820] ; 
@@ -172,13 +176,13 @@ if contains(UserVar.RunType,"-C-")  && ~isempty(F.c)
 
 
     FigCH=FindOrCreateFigure("Cliff height");
-    PlotMuaMesh(CtrlVar,MUA); hold on
-    cbar=UaPlots(CtrlVar,MUA,F,CliffHeight);
+   
+    cbar=UaPlots(CtrlVar,MUA,F,CliffHeight,PlotUnderMesh=true);
     
-    T=sprintf("Cliff Height at t=%g and for mesh resolution %s",CtrlVar.time,MRT);
+    T=sprintf("Cliff Height at t=%g and for mesh resolution %s",F.time,MRT);
     title(T)
     title(cbar,("(m)"))
-    FigCH.Children(1).Label.String="Cliff Height";
+   %FigCH.Children(1).Label.String="Cliff Height";
     xlabel("xps (km)",Interpreter="latex"); ylabel("yps (km)",Interpreter="latex");
     axis tight
     FigCH.Position=[15,490 900 820];
@@ -203,7 +207,7 @@ if contains(UserVar.RunType,"-C-")  && ~isempty(F.c)
         cbar=UaPlots(CtrlVar,MUA,F,speed/1000);
         xlabel("xps (km)",Interpreter="latex"); ylabel("yps (km)",Interpreter="latex");
         axis tight
-        T=sprintf("Speed along calving front, time=%g, Mesh=%s",CtrlVar.time,MRT);
+        T=sprintf("Speed along calving front, time=%g, Mesh=%s",F.time,MRT);
         title(T,Interpreter="latex")
 
         title(cbar,"(km/yr)")
@@ -216,7 +220,7 @@ if contains(UserVar.RunType,"-C-")  && ~isempty(F.c)
         plot(CliffHeight,speed/1000,'.k')
         xlabel("Cliff Height (m)",Interpreter="latex") ;
         ylabel("Speed and Calving Rate (km/yr)",Interpreter="latex") ;
-  %      T=sprintf("Anna Crawford et al, 2021, T=-20 C $\\alpha$=7.2 at t=%g (yr), Mesh=%s",CtrlVar.time,MRT) ;
+  %      T=sprintf("Anna Crawford et al, 2021, T=-20 C $\\alpha$=7.2 at t=%g (yr), Mesh=%s",F.time,MRT) ;
   %      title(T,Interpreter="latex") ;
         
         text(0.1,0.9,"Mesh Resolution "+MRT,Interpreter="latex",Units="normalized")
@@ -243,13 +247,8 @@ if contains(plots,'-CR-')  % calving rate
     
 
     fig= FindOrCreateFigure("Calving Rate")  ;  clf(fig) ;
-    [~,cbar]=PlotMeshScalarVariable(CtrlVar,MUA,F.c/1000);  % km/yr
-    title(sprintf('Calving Rate at t=%g (yr)',CtrlVar.time)) ;
-    hold on
-    [xGL,yGL,GLgeo]=PlotGroundingLines(CtrlVar,MUA,F.GF,GLgeo,xGL,yGL,"color","r");
-    [xc,yc]=PlotCalvingFronts(CtrlVar,MUA,F,'b',LineWidth=2);
-    title(cbar,"(km/yr)")
-    axis tight
+    cbar=UaPlots(CtrlVar,MUA,F,F.c) ; title(cbar,"(m/yr)") ; 
+    title(sprintf('Calving Rate at t=%g (yr)',F.time)) ;
     hold off
 
 
@@ -336,7 +335,7 @@ if contains(plots,'-PIGprofile-')
     end
 
 
-    title(sprintf('PIG profile at t=%g (yr)',CtrlVar.time),Interpreter="latex") ;
+    title(sprintf('PIG profile at t=%g (yr)',F.time),Interpreter="latex") ;
     xlabel(" distance (km) ",Interpreter="latex")
     ylabel("$s$, $b$ and $B$ (m) ",Interpreter="latex")
 end
@@ -381,7 +380,7 @@ if contains(plots,'-ubvb-')
     plot(xBMGL/CtrlVar.PlotXYscale,yBMGL/CtrlVar.PlotXYscale,'r');
     PlotMuaBoundary(CtrlVar,MUA,'k')
     axis([min(MUA.Boundary.x) max(MUA.Boundary.x)    min(MUA.Boundary.y) max(MUA.Boundary.y)]/CtrlVar.PlotXYscale)
-    title(sprintf('(ub,vb) t=%-g ',CtrlVar.time)) ; xlabel('x (km)') ; ylabel('y (km)')
+    title(sprintf('(ub,vb) t=%-g ',F.time)) ; xlabel('x (km)') ; ylabel('y (km)')
     %%
 
 end
@@ -399,7 +398,7 @@ if contains(plots,'-udvd-')
     hold on ;
     [xGL,yGL,GLgeo]=PlotGroundingLines(CtrlVar,MUA,F.GF,GLgeo,xGL,yGL,'k');
     PlotMuaBoundary(CtrlVar,MUA,'b')
-    title(sprintf('(ud,vd) t=%-g ',CtrlVar.time)) ; xlabel('xps (km)') ; ylabel('yps (km)')
+    title(sprintf('(ud,vd) t=%-g ',F.time)) ; xlabel('xps (km)') ; ylabel('yps (km)')
     axis equal tight
 
 end
@@ -418,7 +417,7 @@ if contains(plots,'-e-')
     hold on ;
     [xGL,yGL,GLgeo]=PlotGroundingLines(CtrlVar,MUA,F.GF,GLgeo,xGL,yGL,'k');
     PlotMuaBoundary(CtrlVar,MUA,'b')
-    title(sprintf('e t=%-g ',CtrlVar.time)) ; xlabel('x (km)') ; ylabel('y (km)')
+    title(sprintf('e t=%-g ',F.time)) ; xlabel('x (km)') ; ylabel('y (km)')
 
 end
 
@@ -430,7 +429,7 @@ if contains(plots,'-log10(AGlen)-')
     hold on ;
     [xGL,yGL,GLgeo]=PlotGroundingLines(CtrlVar,MUA,F.GF,GLgeo,xGL,yGL,'k');
     PlotMuaBoundary(CtrlVar,MUA,'b')
-    title(sprintf('log_{10}(AGlen) t=%-g ',CtrlVar.time)) ; xlabel('x (km)') ; ylabel('y (km)')
+    title(sprintf('log_{10}(AGlen) t=%-g ',F.time)) ; xlabel('x (km)') ; ylabel('y (km)')
     title(colorbar,'log_{10}(yr^{-1} kPa^{-3})')
     %%
 end
@@ -443,7 +442,7 @@ if contains(plots,'-log10(C)-')
     hold on
     [xGL,yGL,GLgeo]=PlotGroundingLines(CtrlVar,MUA,F.GF,GLgeo,xGL,yGL,'k');
     PlotMuaBoundary(CtrlVar,MUA,'b')
-    title(sprintf('log_{10}(C) t=%-g ',CtrlVar.time)) ; xlabel('x (km)') ; ylabel('y (km)')
+    title(sprintf('log_{10}(C) t=%-g ',F.time)) ; xlabel('x (km)') ; ylabel('y (km)')
     title(colorbar,'log_{10}(m yr^{-1} kPa^{-3})')
     %%
 end
@@ -453,7 +452,7 @@ if contains(plots,'-C-')
 
     figure
     PlotElementBasedQuantities(MUA.connectivity,MUA.coordinates,C,CtrlVar);
-    title(sprintf('C t=%-g ',CtrlVar.time)) ; xlabel('x (km)') ; ylabel('y (km)')
+    title(sprintf('C t=%-g ',F.time)) ; xlabel('x (km)') ; ylabel('y (km)')
 
 end
 
@@ -470,7 +469,7 @@ if contains(plots,'-log10(SurfSpeed)-')
     [xc,yc]=PlotCalvingFronts(CtrlVar,MUA,F,'b',LineWidth=2);
     PlotMuaBoundary(CtrlVar,MUA,'b')
 
-    title(sprintf('log_{10}(Surface speed) t=%-g ',CtrlVar.time)) ; xlabel('x (km)') ; ylabel('y (km)')
+    title(sprintf('log_{10}(Surface speed) t=%-g ',F.time)) ; xlabel('x (km)') ; ylabel('y (km)')
     title(colorbar,'log_{10}(m/yr)')
 end
 
@@ -482,7 +481,7 @@ if contains(plots,'-log10(BasalSpeed)-')
     PlotNodalBasedQuantities(MUA.connectivity,MUA.coordinates,log10(BasalSpeed),CtrlVar);
     hold on
     plot(GLgeo(:,[3 4])'/CtrlVar.PlotXYscale,GLgeo(:,[5 6])'/CtrlVar.PlotXYscale,'k','LineWidth',1);
-    title(sprintf('log_{10}(Basal speed) t=%-g ',CtrlVar.time)) ; xlabel('x (km)') ; ylabel('y (km)') ; title(colorbar,'log_{10}(m/yr)')
+    title(sprintf('log_{10}(Basal speed) t=%-g ',F.time)) ; xlabel('x (km)') ; ylabel('y (km)') ; title(colorbar,'log_{10}(m/yr)')
 end
 
 
@@ -495,7 +494,7 @@ if contains(plots,'-ab-')
     PlotMeshScalarVariable(CtrlVar,MUA,ab)
     hold on
     plot(GLgeo(:,[3 4])'/CtrlVar.PlotXYscale,GLgeo(:,[5 6])'/CtrlVar.PlotXYscale,'k','LineWidth',1);
-    title(sprintf('ab t=%-g ',CtrlVar.time)) ; xlabel('x (km)') ; ylabel('y (km)') ; title(colorbar,'(m/yr)')
+    title(sprintf('ab t=%-g ',F.time)) ; xlabel('x (km)') ; ylabel('y (km)') ; title(colorbar,'(m/yr)')
     axis equal
     %%
 end
@@ -507,7 +506,7 @@ if contains(plots,'-as-')
     PlotMeshScalarVariable(CtrlVar,MUA,as)
     hold on
     plot(GLgeo(:,[3 4])'/CtrlVar.PlotXYscale,GLgeo(:,[5 6])'/CtrlVar.PlotXYscale,'k','LineWidth',1);
-    title(sprintf('as t=%-g ',CtrlVar.time)) ; xlabel('x (km)') ; ylabel('y (km)') ; title(colorbar,'(m/yr)')
+    title(sprintf('as t=%-g ',F.time)) ; xlabel('x (km)') ; ylabel('y (km)') ; title(colorbar,'(m/yr)')
     axis equal
     %%
 end
@@ -526,7 +525,7 @@ if contains(plots,'-h-')
 
     I=F.h<=CtrlVar.ThickMin;
     plot(MUA.coordinates(I,1)/CtrlVar.PlotXYscale,MUA.coordinates(I,2)/CtrlVar.PlotXYscale,'.r')
-    title(sprintf('h t=%-g ',CtrlVar.time)) ; xlabel('x (km)') ; ylabel('y (km)') ; title(colorbar,'(m/yr)')
+    title(sprintf('h t=%-g ',F.time)) ; xlabel('x (km)') ; ylabel('y (km)') ; title(colorbar,'(m/yr)')
     axis equal
     %%
 end
@@ -543,7 +542,7 @@ if contains(plots,'-dhdt-')
     [xc,yc]=PlotCalvingFronts(CtrlVar,MUA,F,color="w",LineWidth=2);
     I=F.h<=CtrlVar.ThickMin;
     plot(MUA.coordinates(I,1)/CtrlVar.PlotXYscale,MUA.coordinates(I,2)/CtrlVar.PlotXYscale,'.r')
-    title(sprintf('dh/dt t=%-g ',CtrlVar.time)) ; xlabel('x (km)') ; ylabel('y (km)') ; title(colorbar,'(m/yr)')
+    title(sprintf('dh/dt t=%-g ',F.time)) ; xlabel('x (km)') ; ylabel('y (km)') ; title(colorbar,'(m/yr)')
     axis equal
     %%
 end
@@ -562,7 +561,7 @@ if contains(plots,'-speed-')
     %caxis([0 3000]);
     ModifyColormap(0,1028);
     title(cbar,"(m/yr)");
-    title(sprintf('speed t=%-g ',CtrlVar.time)) ; xlabel('x (km)') ; ylabel('y (km)') ; title(colorbar,'(m/yr)')
+    title(sprintf('speed t=%-g ',F.time)) ; xlabel('x (km)') ; ylabel('y (km)') ; title(colorbar,'(m/yr)')
     axis equal
     %%
 end
