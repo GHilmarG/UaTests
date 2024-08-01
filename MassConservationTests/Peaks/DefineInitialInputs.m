@@ -9,14 +9,14 @@ function [UserVar,CtrlVar,MeshBoundaryCoordinates]=DefineInitialInputs(UserVar,C
 %
 %
 % BDeltaPeak creates as delta bedrock (B) perturbation resulting in a nunatak. Here min thickness needs to be enforced, and
-% this does understandably results in slight violation of mass conservation .
+% this does understandably results in a (slight) violation of mass conservation .
 %
 %%
 
 if isempty(UserVar) || ~isfield(UserVar,"TestCase")
     UserVar.TestCase="sGaussPeak";
     UserVar.TestCase="sDeltaPeak";
-    % UserVar.TestCase="BDeltaPeak";  % This e
+    % UserVar.TestCase="BDeltaPeak";  
 end
 
 CtrlVar.Experiment=UserVar.TestCase;

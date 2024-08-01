@@ -31,10 +31,11 @@ ylabel("y (km)",Interpreter="latex")
 
 if ~isempty(hFirst)
     
-    UaPlots(CtrlVar,MUA,F,F.h-hFirst,FigureTitle="Change in ice thickness")
+    cbar=UaPlots(CtrlVar,MUA,F,F.h-hFirst,FigureTitle="Change in ice thickness");
     title(sprintf("Change in ice thickness at t=%g compared to t=0",F.time))
     subtitle(sprintf("change in ice volume=%g m^3",TotalIceVolume-VolumeFirst))
     xlabel("x (km)",Interpreter="latex") ; ylabel("y (km)",Interpreter="latex")
+    title(cbar,"(m)",Interpreter="latex")
 end
 
 if isempty(hFirst)

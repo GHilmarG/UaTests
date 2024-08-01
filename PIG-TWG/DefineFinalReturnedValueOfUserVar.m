@@ -19,5 +19,6 @@ UserVar.Test.Norm.actValue=norm(F.ub+F.vb);
 UserVar.Test.Norm.expValue=201932.019377657   ; %  Z840   
 UserVar.Test.Norm.expValue=198335.949259139   ; % HP C20503924 24/06/2023
 UserVar.Test.Norm.expValue=197996.614170081   ; % HP Z8 G4 C230000099 30/04/2024 
+UserVar.Test.Norm.expValue=198335.949259139   ; % HP Z8 DESKTOP-BU2IHIR 01/08/2024
 
 end
