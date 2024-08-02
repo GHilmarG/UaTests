@@ -1,11 +1,24 @@
 function  [UserVar,BCs]=DefineBoundaryConditions(UserVar,CtrlVar,MUA,F,BCs)
 
 
-persistent MeshBoundaryCoordinates
+persistent MeshBoundaryCoordinates FuMeas FvMeas
 
 
 % Since the mesh does not change in this run, I only need to define the boundary conditions once.
 
+
+
+if isempty(FuMeas)
+
+    if contains(UserVar.RunType,"-BCVel-")
+
+        fprintf('Loading interpolants for surface velocity data: %-s ',UserVar.SurfaceVelocityInterpolant)
+        load(UserVar.SurfaceVelocityInterpolant,'FuMeas','FvMeas','FerrMeas')
+        fprintf(' done.\n')
+    else
+        FuMeas=nan; FvMeas=nan; 
+    end
+end
 
 
 MeshBoundaryCoordinates=CreateMeshBoundaryCoordinatesForPIGandTWG(UserVar,CtrlVar);
@@ -17,8 +30,21 @@ BCs.ubFixedNode=MUA.Boundary.Nodes(I);
 
 % [BCs.ubFixedValue,BCs.vbFixedValue]=EricVelocities(CtrlVar,[x(Boundary.Nodes(I)) y(Boundary.Nodes(I))]);
 
-BCs.ubFixedValue=BCs.ubFixedNode*0;
-BCs.vbFixedValue=BCs.vbFixedNode*0;
+
+
+if contains(UserVar.RunType,"-BCVel-")
+    
+    BCs.ubFixedValue=FuMeas(F.x(BCs.ubFixedNode),F.y(BCs.ubFixedNode)) ;
+    BCs.vbFixedValue=FvMeas(F.x(BCs.vbFixedNode),F.y(BCs.vbFixedNode)) ;
+    
+else
+    BCs.ubFixedValue=BCs.ubFixedNode*0;
+    BCs.vbFixedValue=BCs.vbFixedNode*0;
+end
+
+
+PlotBoundaryConditions(CtrlVar,MUA,BCs) ;
+
 
 
 
@@ -33,6 +59,7 @@ BCs.vbFixedValue=BCs.vbFixedNode*0;
 %     isPIGIS=In & F.GF.node <0.5 ;
 % 
 %     BCs.hFixedNode=find(isPIGIS);
+
 %     BCs.hFixedValue=F.h(isPIGIS);
 % 
 % else
@@ -65,22 +92,5 @@ if ~isempty(BoundaryNodesGroundedNotAlreadyIncluded)
 end
 
 
-
-
-%% Testing
-% Box=[-1735  -1690 -405. -375.]*1000;
-%
-% In=find(IsInBox(Box,F.x,F.y)) ;
-%
-%
-%
-% BCs.vbFixedNode=[BCs.ubFixedNode ; In];
-% BCs.ubFixedNode=[BCs.vbFixedNode ; In];
-% BCs.ubFixedValue=BCs.ubFixedNode*0;
-% BCs.vbFixedValue=BCs.vbFixedNode*0;
-
-
-%
-%FindOrCreateFigure("BCs") ; PlotBoundaryConditions(CtrlVar,MUA,BCs);
 
 end

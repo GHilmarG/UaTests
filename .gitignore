@@ -15,5 +15,9 @@
 *.png
 *.jpg
 *.html
+*.log
+*.aux
+*.blg
+
 
 

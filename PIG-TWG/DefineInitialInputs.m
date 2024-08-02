@@ -394,5 +394,5 @@ CtrlVar.NameOfRestartFiletoWrite="FR-"+filename ;
 CtrlVar.Parallel.uvhAssembly.spmd.isOn=true; 
 CtrlVar.Parallel.uvAssembly.spmd.isOn=true; 
 CtrlVar.Parallel.Distribute=false;
-CtrlVar.Parallel.isTest=true;
+CtrlVar.Parallel.isTest=false;
 end

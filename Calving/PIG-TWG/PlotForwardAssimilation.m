@@ -56,7 +56,7 @@ Fh=[] ; Fu=[] ; Fv=[]; F=UaFields ;
 
 tMax=inf;
 
-VideoDhDt=VideoWriter(UserVar.RunType+".avi");
+VideoDhDt=VideoWriter(UserVar.VideoFileDirectory+UserVar.RunType+".avi");
 open(VideoDhDt)
 
 for ifile=1:numel(ResultFiles)

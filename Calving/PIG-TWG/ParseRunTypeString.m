@@ -12,7 +12,7 @@ function [CtrlVar,UserVar]=ParseRunTypeString(CtrlVar,UserVar)
 %
 %
 %
-% various model options and set CrtlVar fields accordingly
+% various model options and set CtrlVar fields accordingly
 %
 %
 %
@@ -58,7 +58,7 @@ elseif contains(UserVar.RunType,"-IR")
 end
 
 
-UserVar.VelDataSet=extractBetween(UserVar.RunType,"Vel","-") ;
+UserVar.VelDataSet=extractBetween(UserVar.RunType,"-Vel","-") ;
 
 %% from to : start and end times of run
 

@@ -150,9 +150,10 @@ if CtrlVar.InverseRun
 
     CtrlVar.ReadInitialMesh=1;
     CtrlVar.AdaptMesh=0;
-   
 
-    CtrlVar.Inverse.Iterations=10;
+
+    CtrlVar.Inverse.Iterations=2;
+
     CtrlVar.Inverse.OptimalityTolerance=0.01; 
     CtrlVar.Inverse.StepTolerance=0.001;
 
@@ -306,24 +307,33 @@ end
 
 %% Make this automatically a restart run if corresponding restart files already exists
 
-if CtrlVar.InverseRun
-    fprintf(" Inverse restart file: %s \n",CtrlVar.Inverse.NameOfRestartOutputFile)
-end
+
 
 if CtrlVar.InverseRun
-    CtrlVar.Restart=1;  % try restart inverse run if possible
-    if isfile(CtrlVar.Inverse.NameOfRestartInputFile)  && CtrlVar.Restart
+
+    if isfile(CtrlVar.Inverse.NameOfRestartInputFile)
         fprintf("Inverse restart file found. Starting a restart run. \n")
+        fprintf("Inverse restart file to read: %s \n",CtrlVar.Inverse.NameOfRestartInputFile)
+        CtrlVar.Restart=1;
     else
         CtrlVar.Restart=0;
-        fprintf("Either no INVERSE restart file found, or restart variable not true. Starting a new run. \n")
+        fprintf("No INVERSE restart file found. Starting a new INVERSE run. \n")
     end
 else
-    if isfile(CtrlVar.NameOfRestartFiletoRead) && CtrlVar.Restart
+
+    if isfield(UserVar.Assimilation,"tEnd") && CtrlVar.time <= UserVar.Assimilation.tEnd
+
+        fprintf("The start model time (t=%f)  of this forward run is within the assimilation period (from t=%f to t=%f) \n",CtrlVar.time,UserVar.Assimilation.tStart,UserVar.Assimilation.tEnd)
+        fprintf(" Therefore this can not be a forward restart run.\n")
+        CtrlVar.Restart=0;
+
+    elseif isfile(CtrlVar.NameOfRestartFiletoRead)
+        CtrlVar.Restart=1;
         fprintf("Forward restart file found. Starting a restart run. \n")
+        fprintf("Forward restart file to read %s :\n",CtrlVar.NameOfRestartFiletoRead)
     else
         CtrlVar.Restart=0;
-        fprintf("Either no FORWARD restart file found, or restart variable not true. Starting a new run. \n")
+        fprintf("No FORWARD restart file found. Starting a new FORWARD run. \n")
     end
 end
 
