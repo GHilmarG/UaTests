@@ -24,6 +24,10 @@ UserVar.RunType="ES5km-Tri3-SlidWeertman-Duvh-MRlASE1-abMask0-P-kH10000-TM0k1-Al
 %UserVar.RunType="ES5km-Tri3-SlidWeertman-Duvh-MRlASE2-abMask0-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-";
 UserVar.RunType="ES5km-Tri3-SlidWeertman-Duvh-MRlASE3-abMask0-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-";
 
+UserVar.RunType="ES5km-Tri3-SlidWeertman-Duvh-MRlASE3-abMask0-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; 
+UserVar.RunType="ES5km-Tri3-SlidWeertman-Duvh-MRlASE2-abMask0-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; % not done
+UserVar.RunType="ES5km-Tri3-SlidWeertman-Duvh-MRlASE1-abMask0-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; % not done
+
 % UserVar.RunType="ES10km-Tri3-SlidWeertman-Duvh-MRlASE2-abMask0-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-";
 
 CtrlVar=Ua2D_DefaultParameters();
@@ -42,6 +46,12 @@ SearchString=replace(SearchString,"ES","");  % for some reason the output files 
 % SearchString=replace(SearchString,"**","*") ;
 ResultFiles=dir(UserVar.ResultsFileDirectory+"*"+SearchString+".mat"); 
 
+if isempty(ResultFiles)
+
+    fprintf("No output files found. \n ")
+    return
+
+end
 
 hVector=nan(10,100) ;
 uVector=nan(10,100);
@@ -237,6 +247,36 @@ title("Mean rate of thickness change between 2000 and 2010")
 subtitle("based on Schroder 2019 and Susheel")
 title(cbar,["dh/dt","(m/yr)"],interpreter="latex")
 clim([-5 5])
-PlotLatLonGrid() ; 
+PlotLatLonGrid() ;
+
+
+%% Calculated dh/dt at end of run
+
+fFig=FindOrCreateFigure("Final rate of thickness change",[50 100  1200 1200])  ; clf(fFig)  ;
+fFig.Position=[50 100  1200 1200] ;
+
+FigTitle=sprintf("Rate of thickness change from t=%4.2f to  t=%4.2f (yr)",timePrevious,F.time);
+
+
+
+dhdtFinal=dhdtPrevious ;
+
+dhdtFinal(MUA.Boundary.Nodes)=0; 
+L=2e3 ; [UserVar,dhdtFinal]=HelmholtzEquation([],CtrlVar,MUA,1,L^2,dhdtFinal,0); 
+
+[cbar,xGL,yGL]=UaPlots(CtrlVar,MUA,F,dhdtFinal,GetRidOfValuesDownStreamOfCalvingFronts=false,CreateNewFigure=false) ;
+hold on ; plot(xGL/CtrlVar.PlotXYscale,yGL/CtrlVar.PlotXYscale,"k",LineWidth=1)
+hold on ; plot(xGL0/CtrlVar.PlotXYscale,yGL0/CtrlVar.PlotXYscale,"k",LineWidth=1.5)
+clim([-5 5])
+Ti=title(FigTitle,Interpreter="latex");
+SuTi=subtitle(sprintf("Median element size %3.1f km. Melt: %s",Emedian/1000,MeltParameterisation),Interpreter="latex");
+Ti.Color="blue"; Ti.FontSize=16;
+SuTi.Color="blue"; SuTi.FontSize=14;
+
+title(cbar,["dh/dt","(m/yr)"],interpreter="latex")
+%subtitle(sprintf("t=%g",CtrlVar.time),interpreter="latex")
+colormap(othercolor("Mtemperaturemap",1028))
+PlotLatLonGrid();
+
 
 %%
