@@ -61,11 +61,12 @@ if nargin==0 | isempty(RunString)
     %RunString="ES10km-Tri3-SlidWeertman-Duvh-MRlASE2-abMask0-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; % Dell office
 
     % RunString="ES30km-Tri3-SlidWeertman-Duvh-MRlASE2-abMask0-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; %
-
+    RunString="ES2.5km-Tri3-SlidWeertman-Duvh-MRlASE2-abMask0-P-BCVel-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; % Dell office
+    RunString="ES2.5km-Tri3-SlidWeertman-Duvh-MRlASE3-abMask0-P-BCVel-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; % Dell office
 
 end
 
-UserVar.Assimilation.tStart=0 ; %
+UserVar.Assimilation.tStart=2 ; %
 UserVar.Assimilation.tEnd=10   ; %  Actually the end is at tEnd+1 once the final forward transient run is done
 
 

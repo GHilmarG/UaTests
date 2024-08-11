@@ -43,7 +43,7 @@ else
 end
 
 
-PlotBoundaryConditions(CtrlVar,MUA,BCs) ;
+% PlotBoundaryConditions(CtrlVar,MUA,BCs) ;
 
 
 
