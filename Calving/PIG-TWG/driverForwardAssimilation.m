@@ -60,8 +60,9 @@ if nargin==0 | isempty(RunString)
     % RunString="ES10km-Tri3-SlidWeertman-Duvh-MRlASE1-abMask0-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; % Dell office
     % RunString="ES10km-Tri3-SlidWeertman-Duvh-MRlASE2-abMask0-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; % Dell office
     % RunString="ES30km-Tri3-SlidWeertman-Duvh-MRlASE2-abMask0-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; %
-    RunString="ES2.5km-Tri3-SlidWeertman-Duvh-MRlASE2-abMask0-P-BCVel-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; % Dell office
-    RunString="ES2.5km-Tri3-SlidWeertman-Duvh-MRlASE3-abMask0-P-BCVel-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; % Dell office
+
+
+   RunString="ES2.5km-Tri3-SlidWeertman-Duvh-MRlASE3-abMask0-P-BCVel-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-";  % HP Office
 
 end
 
@@ -91,7 +92,10 @@ for itime=UserVar.Assimilation.tStart:UserVar.Assimilation.tEnd-1
     % inverse restart file
     UserVar.RunType=sprintf("-FR%ito%i-",from,to)+RunString ;
     
-    Ua(UserVar) ;       % This FORWARD run will go t=from to t=to,
+    % Ua(UserVar) ;       % This FORWARD run will go t=from to t=to,
+
+    CtrlVar.Restart=1; Ua(UserVar,CtrlVar) ; % if want to force restart
+    
 
     %% This is an INVERSE run using geometry based on the previous forward run that ended at time=to, ie the previous forward run
 
