@@ -417,12 +417,16 @@ else
     CtrlVar.NameOfRestartFiletoRead=UserVar.NameOfRestartFiletoRead;
 end
 
-UserVar.GeometryInterpolant=replace( UserVar.GeometryInterpolant,"--","-") ;
-UserVar.SurfaceVelocityInterpolant=replace( UserVar.SurfaceVelocityInterpolant,"--","-") ;
-UserVar.InverseRestartFile=replace( UserVar.InverseRestartFile,"--","-") ;
-UserVar.FAFile=replace(UserVar.FAFile,"--","-");
-UserVar.FCFile=replace(UserVar.FCFile,"--","-");
 
+
+UserVar.GeometryInterpolant=RemoveSomeUnwantedCharactersFromString(UserVar.GeometryInterpolant);
+UserVar.SurfaceVelocityInterpolant=RemoveSomeUnwantedCharactersFromString(UserVar.SurfaceVelocityInterpolant);
+UserVar.InverseRestartFile=RemoveSomeUnwantedCharactersFromString(UserVar.InverseRestartFile);
+CtrlVar.NameOfRestartFiletoRead=RemoveSomeUnwantedCharactersFromString(CtrlVar.NameOfRestartFiletoRead);
+UserVar.FAFile=RemoveSomeUnwantedCharactersFromString(UserVar.FAFile);
+UserVar.FCFile=RemoveSomeUnwantedCharactersFromString(UserVar.FCFile);
+UserVar.AFile=RemoveSomeUnwantedCharactersFromString(UserVar.AFile);
+UserVar.CFile=RemoveSomeUnwantedCharactersFromString(UserVar.CFile);
 
 
 fprintf(" UserVar.GeometryInterpolant:       \t %s \n ",UserVar.GeometryInterpolant)

@@ -134,17 +134,17 @@ if contains(UserVar.RunType,"-abMask0-")  && F.time <= UserVar.Assimilation.tEnd
 
         % The OceanNodes0 mask is only dependent on the mesh and the initial GF at t=0.
         FOceanNodes0=scatteredInterpolant(F.x,F.y,double(OceanNodes0));
-        save(FileNameOceanNodes0,"OceanNodes0","FOceanNodes0")
+        save(UserVar.ResultsFileDirectory+FileNameOceanNodes0,"OceanNodes0","FOceanNodes0")
 
     end
 
     if isempty(FOceanNodes0)
 
         % this in principle should hardly happen, but since the transient initialisation involves several forward runs, it is
-        % possible that the current forward run did not start at t=0. But even so, if the matlab session has not been interupted and
+        % possible that the current forward run did not start at t=0. But even so, if the matlab session has not been interrupted and
         % the m-file not changed, the OceanNodes0 created at t=0 in a previous run, should still be available.
       
-        load(FileNameOceanNodes0,"FOceanNodes0")
+        load(UserVar.ResultsFileDirectory+FileNameOceanNodes0,"FOceanNodes0")
 
     end
 
