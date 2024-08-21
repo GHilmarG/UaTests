@@ -32,13 +32,19 @@ if nargin==0 | isempty(RunString)
 
    RunString="ES2.5km-Tri3-SlidWeertman-Duvh-MRlASE3-abMask0-P-BCVel-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-";  % HP Office
 
+   RunString="ES20km-uv-h-Tri3-SlidWeertman-Duvh-MRlASE1-abMask0-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; 
+   RunString="ES5km-uv-h-Tri3-SlidWeertman-Duvh-MRlASE1-abMask0-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-";  
+   RunString="ES10km-uv-h-Tri3-SlidWeertman-Duvh-MRlASE1-abMask0-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; 
+   RunString="ES2.5km-uv-h-Tri3-SlidWeertman-Duvh-MRlASE1-abMask0-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; 
+
 end
 
-UserVar.Assimilation.tStart=2 ; %
+
+UserVar.Assimilation.tStart=0 ; %
 UserVar.Assimilation.tEnd=10   ; %  Actually the end is at tEnd+1 once the final forward transient run is done
 
-
-if UserVar.Assimilation.tStart==0  % Generally I would start with an inverse run, except if possible I like to continue a previous initialisation at some tStart>0
+InverseRunAtStart=true ; 
+if InverseRunAtStart && (UserVar.Assimilation.tStart==0)  % Generally I would start with an inverse run, except if possible I like to continue a previous initialisation at some tStart>0
     %% First INVERSE run,
     UserVar.RunType="-IR-"+RunString ;
     CtrlVar.Restart=0;  % Here forcing this NOT to be an inverse run. I need this if I have changed data sets such as Bedmachine,
@@ -60,9 +66,9 @@ for itime=UserVar.Assimilation.tStart:UserVar.Assimilation.tEnd-1
     % inverse restart file
     UserVar.RunType=sprintf("-FR%ito%i-",from,to)+RunString ;
     
-    % Ua(UserVar) ;       % This FORWARD run will go t=from to t=to,
+    Ua(UserVar) ;       % This FORWARD run will go t=from to t=to,
 
-    CtrlVar.Restart=1; Ua(UserVar,CtrlVar) ; % if want to force restart
+    % CtrlVar.Restart=1; CtrlVar.ForwardTimeIntegration="-uv-h-" ; Ua(UserVar,CtrlVar) ; % if want to force restart
     
 
     %% This is an INVERSE run using geometry based on the previous forward run that ended at time=to, ie the previous forward run
@@ -71,7 +77,7 @@ for itime=UserVar.Assimilation.tStart:UserVar.Assimilation.tEnd-1
     UserVar.RunType=sprintf("-IR%ito%i-",from,to)+RunString ;
     
     Ua(UserVar)
-
+    close all 
 end
 
 

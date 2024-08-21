@@ -57,6 +57,16 @@ elseif contains(UserVar.RunType,"-IR")
     CtrlVar.InverseRun=1;
 end
 
+%%  ; % "-uvh-" , "-uv-h-" , "-uv-" , "-h-" ;
+
+if contains(UserVar.RunType,"-uv-h-")
+    CtrlVar.ForwardTimeIntegration="-uv-h-" ;
+else
+    CtrlVar.ForwardTimeIntegration="-uvh-" ;
+end
+%
+
+%%
 
 UserVar.VelDataSet=extractBetween(UserVar.RunType,"-Vel","-") ;
 
