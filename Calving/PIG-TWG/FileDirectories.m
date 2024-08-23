@@ -37,6 +37,7 @@ elseif contains(hostname,"DESKTOP-BU2IHIR")   % home
     UserVar.ForwardRestartFileDirectory="D:\GoogleDriveStreamingHomeHP\My Drive\Runs\Calving\PIG-TWG\RestartFiles\";
     UserVar.VideoFileDirectory="D:\GoogleDriveStreamingHomeHP\My Drive\Runs\Calving\PIG-TWG\Videos\";
     UserVar.Interpolants="D:\GoogleDriveStreamingHomeHP\My Drive\Interpolants\";
+    UserVar.ISMIP6Directory="D:\GoogleDriveStreamingHomeHP\My Drive\ISMIP6-Forcings\";
 
 elseif contains(hostname,"C23000099")   
 

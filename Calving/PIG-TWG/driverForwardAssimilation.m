@@ -36,14 +36,24 @@ if nargin==0 | isempty(RunString)
    RunString="ES5km-uv-h-Tri3-SlidWeertman-Duvh-MRlASE1-abMask0-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-";  
    RunString="ES10km-uv-h-Tri3-SlidWeertman-Duvh-MRlASE1-abMask0-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; 
    RunString="ES2.5km-uv-h-Tri3-SlidWeertman-Duvh-MRlASE1-abMask0-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; 
+   
+   %RunString="ES30km-uv-h-Tri3-SlidWeertman-Duvh-MRIM6HadGEM2-abMask0-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; 
 
 end
 
-
-UserVar.Assimilation.tStart=0 ; %
+UserVar.Assimilation.tStart=7 ; %
 UserVar.Assimilation.tEnd=10   ; %  Actually the end is at tEnd+1 once the final forward transient run is done
 
+
+
+if contains(RunString,"-MRIM6")  % this implies the use of ISMIP6 forcing
+    UserVar.Assimilation.tStart=UserVar.Assimilation.tStart+2015;
+    UserVar.Assimilation.tEnd=UserVar.Assimilation.tEnd+2015; 
+end
+
+
 InverseRunAtStart=true ; 
+
 if InverseRunAtStart && (UserVar.Assimilation.tStart==0)  % Generally I would start with an inverse run, except if possible I like to continue a previous initialisation at some tStart>0
     %% First INVERSE run,
     UserVar.RunType="-IR-"+RunString ;
@@ -68,7 +78,7 @@ for itime=UserVar.Assimilation.tStart:UserVar.Assimilation.tEnd-1
     
     Ua(UserVar) ;       % This FORWARD run will go t=from to t=to,
 
-    % CtrlVar.Restart=1; CtrlVar.ForwardTimeIntegration="-uv-h-" ; Ua(UserVar,CtrlVar) ; % if want to force restart
+    %CtrlVar.Restart=1; CtrlVar.ForwardTimeIntegration="-uv-h-" ; Ua(UserVar,CtrlVar) ; % if want to force restart
     
 
     %% This is an INVERSE run using geometry based on the previous forward run that ended at time=to, ie the previous forward run

@@ -51,24 +51,14 @@ if contains(plots,'-save-')
         mkdir(UserVar.ResultsFileDirectory)
     end
 
-    if strcmp(CtrlVar.DefineOutputsInfostring,'Last call')==0
+    if CtrlVar.DefineOutputsInfostring=="inside transient loop and inside run-step loop"
 
-        if CtrlVar.ThickMin==1
-            
-            FileName=sprintf('%s%07i-Nodes%i-Ele%i-Tri%i-kH%i-%s.mat',...
-                UserVar.ResultsFileDirectory,...
-                round(100*F.time),MUA.Nnodes,MUA.Nele,MUA.nod,1000*CtrlVar.kH,CtrlVar.Experiment);
-        else
 
-            % FileName=sprintf('%s%07i-Nodes%i-Ele%i-Tri%i-kH%i-ThickMin%3.2f-%s.mat',...
-            %     UserVar.ResultsFileDirectory,...
-            %     round(100*F.time),MUA.Nnodes,MUA.Nele,MUA.nod,1000*CtrlVar.kH,CtrlVar.ThickMin,CtrlVar.Experiment);
-    
-            FileName=sprintf('%s%07i-%s.mat',...
-                UserVar.ResultsFileDirectory,...
-                round(100*F.time),CtrlVar.Experiment);  
+        FileName=sprintf('%s%07i-%s.mat',...
+            UserVar.ResultsFileDirectory,...
+            round(100*F.time),CtrlVar.Experiment);
 
-        end
+
         FileName=replace(FileName,".mat","");
         FileName=replace(FileName,"--","-");
         FileName=replace(FileName,".","k");

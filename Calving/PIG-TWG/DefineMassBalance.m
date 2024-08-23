@@ -1,6 +1,12 @@
+
+
+
+
+
+
 function [UserVar,as,ab,dasdh,dabdh]=DefineMassBalance(UserVar,CtrlVar,MUA,F)
 
-persistent Fdh2000to2018 dhdtMeasured CurrentRunStepNumber Fas FOceanNodes0
+persistent Fdh2000to2018 dhdtMeasured CurrentRunStepNumber Fas FOceanNodes0 gamma0 Fdeltbasin Ftf
 
 as=zeros(MUA.Nnodes,1) ;
 ab=zeros(MUA.Nnodes,1) ;
@@ -20,98 +26,165 @@ if isempty(Fdh2000to2018)
 end
 
 
-if isempty(Fas)
-    fprintf("Loading surface mass balance interpolant: %s ",UserVar.FasFile)
-    load(UserVar.FasFile,"Fas")
-    fprintf("...done.\n")
+%% ISMIP6:  Are we using the ISMIP6 forcing?
+if contains(UserVar.RunType,"-MRIM6")
+
+    F.GF=IceSheetIceShelves(CtrlVar,MUA,F.GF);
+
+    if isempty(Fas)
+        % Read in the surface forcing interpolant, Fas
+        load('ISMIP6-Melt\FasRACMO.mat','Fas'); % Change path if necessary
+        % Read in interpolants for deltaT_basin and thermal forcing, Fdeltbasin
+        % and Ftf. Also the value of gamma0.
+        load('ISMIP6-Melt\ocean_local_median_new.mat','gamma0','Fdeltbasin','Ftf'); % Change path if necessary
+    end
+
+    dasdh=0;
+    dabdh=0;
+    as0=Fas(MUA.coordinates);
+
+    rhoi_SI=917.0; % ice density (kg/m^3)
+    rhosw_SI=1027.0; % sea water density
+    Lf_SI=3.34e5; % fusion latent heat of Ice (J/kg)
+    cpw_SI=3974.0; % specific heat of sea water (J/kg/K)
+    deltaT_basin=Fdeltbasin(MUA.coordinates);
+
+    if ~contains(UserVar.RunType,"-MRIM6Control-")
+        % Here we load chosen forcing, if not using Control
+        year_anom=floor(time); % Define year for input files
+        anomfile=[UserVar.SMBfilename,num2str(year_anom),'.mat'];
+        load(anomfile,'smb_anomaly');
+        as_anom=smb_anomaly(MUA.coordinates).*3600*24*365/917; % changing units from kg m^-2 s^-1 to m/year
+        load([UserVar.TFfilename,num2str(year_anom),'.mat'],'tf_anomaly');
+        tf_anom=tf_anomaly([MUA.coordinates b]);
+    else
+        % Just use control forcing
+        tf_anom=Ftf([MUA.coordinates b]);
+        as_anom=0;
+    end
+
+    as=as0+as_anom; % Add model SMB anomalies to control.
+    thermal_forcing=tf_anom; % Control+anomalies are included in files from Sainan. Don't need to add again!
+    ab=-gamma0.*(rhosw_SI.*cpw_SI./rhoi_SI./Lf_SI).^2.*(max(thermal_forcing+deltaT_basin,0.0)).^2; % mass balance needs the negative sign
+    ab(GF.node>0.5)=0;
+
+    OceanBoundaryNodes=[];
+    NodesDownstreamOfGroundingLines="Relaxed" ;
+    [LakeNodes,OceanNodes,LakeElements,OceanElements] = LakeOrOcean3(CtrlVar,MUA,F.GF,OceanBoundaryNodes,NodesDownstreamOfGroundingLines);
+    ab(LakeNodes)=0;
+    ab(isnan(ab))=0;
+
+
+
+
+
+else
+
+    %%
+
+
+    if isempty(Fas)
+        fprintf("Loading surface mass balance interpolant: %s ",UserVar.FasFile)
+        load(UserVar.FasFile,"Fas")
+        fprintf("...done.\n")
+    end
+
+    year=2000+zeros(MUA.Nnodes,1);
+    as=Fas(F.x,F.y,year);  % units kg/m^2/yr
+
+    as=as./F.rho ; % units kg/m^2/yr
+
+    % UaPlots(CtrlVar,MUA,F,as,GetRidOfValuesDownStreamOfCalvingFronts=false)
+
+    % Most of the melt-rate parameterisations below are based on that old Favier 2014 paper:
+    % Favier, L., Durand, G., Cornford, S. L., Gudmundsson, G. H., Gagliardini, O.,
+    % Gillet-Chaulet, F., Zwinger, T., Payne, A. J., & Le Brocq, a. M. (2014).
+    % Retreat of Pine Island Glacier controlled by marine ice-sheet instability.
+    % Nature Climate Change, 4(2), 117121. https://doi.org/10.1038/nclimate2094
+
+
+    %
+    % When calculating dabdh from ab(b) for floating ice shelves:
+    % b=S-F.rho h /F.rhow
+    % h=F.rhow (S-b)/F.rho
+    % ab(b)=ab(S-F.rho h/F.rhow)
+    % dab/dh= -(F.rho/F.rhow) dab/db
+    % or:
+    % dab/dh = dab/db  db/dh = dab/db (-F.rho/F.rhow)= -(F.rho/F.rhow) dab/db
+
+    if contains(UserVar.RunType,"-I-")  % This is a 'dynamical' initialization, use with care!
+
+        if isempty(F.dhdt)
+            as=zeros(MUA.Nnodes,1) ;
+        else
+
+            if F.time < 0  ...  % only for neg times
+                    && CtrlVar.CurrentRunStepNumber>1 ... % only once a uvh solve has been done
+                    && CurrentRunStepNumber~=CtrlVar.CurrentRunStepNumber % not if already applied to the current run step
+
+                dhdtMeasured=Fdh2000to2018(F.x,F.y) ;
+                da=dhdtMeasured-F.dhdt ;
+                fprintf("DefineMassBalance: norm(dhdtMeasured-F.dhdt)=%f \n ",norm(da))
+                CurrentRunStepNumber=CtrlVar.CurrentRunStepNumber ;
+            else
+                da=0;
+            end
+
+            as=F.as+da ;
+
+
+        end
+    elseif contains(UserVar.RunType,"-MRZERO")
+
+
+        ab=zeros(MUA.Nnodes,1) ;
+        dasdh=zeros(MUA.Nnodes,1) ;
+        dabdh=zeros(MUA.Nnodes,1) ;
+
+    elseif contains(UserVar.RunType,"-MR")
+
+        MRP=extractBetween(UserVar.RunType,"-MR","-");
+        % MRP="l"+MRP;
+        [ab,dabdh]=DraftDependentMeltParameterisations(UserVar,CtrlVar,F,MRP) ;
+
+
+
+    elseif contains(UserVar.RunType,"-DMR")
+
+        dsdt=F.x*0 ; dhdt=F.x*0;
+
+        pat="DMR"+("+"|"-")+digitsPattern ;
+        mathSymbols = asManyOfPattern(digitsPattern | characterListPattern("+-*/="),1) ;
+        SubString=extract(extract(UserVar.RunType,pat),mathSymbols);
+
+
+        if ~isempty(SubString)
+            dhdtValue=str2double(SubString);
+            if isnumeric(dhdtValue)
+                dhdt=F.x*0+dhdtValue;
+            end
+        end
+
+
+
+        if ~isempty(F.ub)
+            [ab,qx,qy,dqxdx,dqxdy,dqydx,dqydy]=CalcIceShelfMeltRates(CtrlVar,MUA,F.ub,F.vb,F.s,F.b,F.S,F.B,F.rho,F.rhow,dsdt,F.as,dhdt) ;
+
+            ab(F.LSF<0.5)=0 ;
+            ab(ab>0)=0;
+        end
+    end
+
 end
 
-year=2000+zeros(MUA.Nnodes,1); 
-as=Fas(F.x,F.y,year);  % units kg/m^2/yr
 
-as=as./F.rho ; % units kg/m^2/yr  
-
-% UaPlots(CtrlVar,MUA,F,as,GetRidOfValuesDownStreamOfCalvingFronts=false)
-
-% Most of the melt-rate parameterisations below are based on that old Favier 2014 paper:
-% Favier, L., Durand, G., Cornford, S. L., Gudmundsson, G. H., Gagliardini, O.,
-% Gillet-Chaulet, F., Zwinger, T., Payne, A. J., & Le Brocq, a. M. (2014).
-% Retreat of Pine Island Glacier controlled by marine ice-sheet instability.
-% Nature Climate Change, 4(2), 117121. https://doi.org/10.1038/nclimate2094
+%% Now the general mass balance forcings have been defined. However, I might still want to add melt do to frictional heating,
+% and I might want to use the initial GF mask during the initialisation/relaxation phase 
+%
+%
 
 
 %
-% When calculating dabdh from ab(b) for floating ice shelves:
-% b=S-F.rho h /F.rhow
-% h=F.rhow (S-b)/F.rho
-% ab(b)=ab(S-F.rho h/F.rhow)
-% dab/dh= -(F.rho/F.rhow) dab/db
-% or:
-% dab/dh = dab/db  db/dh = dab/db (-F.rho/F.rhow)= -(F.rho/F.rhow) dab/db
-
-if contains(UserVar.RunType,"-I-")  % This is a 'dynamical' initialization, use with care!
-
-    if isempty(F.dhdt)
-        as=zeros(MUA.Nnodes,1) ;
-    else
-
-        if F.time < 0  ...  % only for neg times
-                && CtrlVar.CurrentRunStepNumber>1 ... % only once a uvh solve has been done
-                && CurrentRunStepNumber~=CtrlVar.CurrentRunStepNumber % not if already applied to the current run step
-
-            dhdtMeasured=Fdh2000to2018(F.x,F.y) ;
-            da=dhdtMeasured-F.dhdt ;
-            fprintf("DefineMassBalance: norm(dhdtMeasured-F.dhdt)=%f \n ",norm(da))
-            CurrentRunStepNumber=CtrlVar.CurrentRunStepNumber ;
-        else
-            da=0;
-        end
-
-        as=F.as+da ;
-
-
-    end
-elseif contains(UserVar.RunType,"-MRZERO")
-
-    
-    ab=zeros(MUA.Nnodes,1) ;
-    dasdh=zeros(MUA.Nnodes,1) ;
-    dabdh=zeros(MUA.Nnodes,1) ;
-
-elseif contains(UserVar.RunType,"-MR")
-
-    MRP=extractBetween(UserVar.RunType,"-MR","-");
-   % MRP="l"+MRP; 
-    [ab,dabdh]=DraftDependentMeltParameterisations(UserVar,CtrlVar,F,MRP) ;
-
-
-
-elseif contains(UserVar.RunType,"-DMR")
-
-    dsdt=F.x*0 ; dhdt=F.x*0;
-
-    pat="DMR"+("+"|"-")+digitsPattern ;
-    mathSymbols = asManyOfPattern(digitsPattern | characterListPattern("+-*/="),1) ;
-    SubString=extract(extract(UserVar.RunType,pat),mathSymbols);
-
-
-    if ~isempty(SubString)
-        dhdtValue=str2double(SubString);
-        if isnumeric(dhdtValue)
-            dhdt=F.x*0+dhdtValue;
-        end
-    end
-
-
-
-    if ~isempty(F.ub)
-        [ab,qx,qy,dqxdx,dqxdy,dqydx,dqydy]=CalcIceShelfMeltRates(CtrlVar,MUA,F.ub,F.vb,F.s,F.b,F.S,F.B,F.rho,F.rhow,dsdt,F.as,dhdt) ;
-
-        ab(F.LSF<0.5)=0 ;
-        ab(ab>0)=0;
-    end
-end
-
 % if ~isfield(UserVar,"IceSheetIceShelves") || UserVar.IceSheetIceShelves
 %     % only apply basal melt strictly below/outside of grounding lines
 %     F.GF=IceSheetIceShelves(CtrlVar,MUA,F.GF);
@@ -143,7 +216,7 @@ if contains(UserVar.RunType,"-abMask0-")  && F.time <= UserVar.Assimilation.tEnd
         % this in principle should hardly happen, but since the transient initialisation involves several forward runs, it is
         % possible that the current forward run did not start at t=0. But even so, if the matlab session has not been interrupted and
         % the m-file not changed, the OceanNodes0 created at t=0 in a previous run, should still be available.
-      
+
         load(UserVar.ResultsFileDirectory+FileNameOceanNodes0,"FOceanNodes0")
 
     end
@@ -152,9 +225,9 @@ if contains(UserVar.RunType,"-abMask0-")  && F.time <= UserVar.Assimilation.tEnd
     OceanNodes0=OceanNodes0Double>0.5 ;       % presumably not needed, but interpolation might create values between 0 and 1
     [LakeNodes,OceanNodesCurrent] = LakeOrOcean3(CtrlVar,MUA,F.GF,[],"Strickt") ;
     OceanNodes=OceanNodesCurrent | OceanNodes0 ; % here "OceanNodes" are nodes that either
-                                                  %  1) currently are ocean nodes based on the current GF mask 2) or were ocean nodes at the start of the run.
-                                                  % So melt will be applied over any ocean nodes, and also over all ocean nodes at the start of the run, even if they have by
-                                                  % now become grounded.
+    %  1) currently are ocean nodes based on the current GF mask 2) or were ocean nodes at the start of the run.
+    % So melt will be applied over any ocean nodes, and also over all ocean nodes at the start of the run, even if they have by
+    % now become grounded.
 
 
 else

@@ -222,8 +222,45 @@ CtrlVar.Experiment=replace(CtrlVar.Experiment,"--","-");
 CtrlVar.Experiment=replace(CtrlVar.Experiment,".","k");
 CtrlVar.Experiment=replace(CtrlVar.Experiment,"+","p");
 
-%%
+%% Mass balance, both upper and lower surface, ie including ocean-induced melt
+%
+% This is selected in DefineMassBalance, depending on 
+%
+MassBalanceControlString=extractBetween(UserVar.RunType,"-MR","-") ;
 
+if contains(MassBalanceControlString,"IM6")  % this implies the use of ISMIP6 forcing
+      UserVar.ISMIP6=true;
+else
+      UserVar.ISMIP6=false;
+end
+
+if  UserVar.ISMIP6
+   
+
+    if contains(UserVar.RunType,"CCSM4")
+        UserVar.SMBfilename="ISMIP6_smb\CCSM4_";
+        UserVar.TFfilename="ISMIP6_ocean\CCSM4_ocean_";
+    elseif contains(UserVar.RunType,'CESM2')
+        UserVar.SMBfilename="ISMIP6_smb\CESM2_ssp585_";
+        UserVar.TFfilename="ISMIP6_ocean\CESM2-WACCM_SSP585_ocean_";
+    elseif contains(UserVar.RunType,'HadGEM2')
+        UserVar.SMBfilename="ISMIP6_smb\HadGEM2_rcp85_";
+        UserVar.TFfilename="ISMIP6_ocean\HadGEM2_RCP85_ocean_";
+    elseif contains(UserVar.RunType,'NorESM1')
+        UserVar.SMBfilename="ISMIP6_smb\NorESM1_M_RCP26_repeat";
+        UserVar.TFfilename="ISMIP6_ocean\NorESM1-M_RCP26_ocean_";
+    elseif contains(UserVar.RunType,'UKESM1rep')
+        UserVar.SMBfilename="ISMIP6_smb\UKESM1_ssp585_repeat_";
+        UserVar.TFfilename="ISMIP6_ocean\UKESM1_ssp585_repeat_ocean_";
+    elseif contains(UserVar.RunType,'UKESM1')
+        UserVar.SMBfilename="ISMIP6_smb\UKESM1_ssp585_";
+        UserVar.TFfilename="ISMIP6_ocean\UKESM1_ssp585_ocean_";
+    end
+
+    UserVar.SMBfilename=UserVar.ISMIP6Directory+UserVar.SMBfilename;
+    UserVar.TFfilename=UserVar.ISMIP6Directory+UserVar.TFfilename;
+
+end
 
 
 %%
@@ -387,7 +424,7 @@ if UserVar.GeometryInterpolant=="create the name of inverse restart file from Us
 
         % Here the interpolants are based on data, ie Bedmachine, and those are located in a separate folder.
         UserVar.GeometryInterpolant=UserVar.Interpolants+"BedMachineGriddedInterpolants";
-        UserVar.MeshBoundaryCoordinatesFile='../../../Interpolants/MeshBoundaryCoordinatesForAntarcticaBasedOnBedmachine';
+        UserVar.MeshBoundaryCoordinatesFile="../../../Interpolants/MeshBoundaryCoordinatesForAntarcticaBasedOnBedmachine";
 
         if contains(UserVar.RunType,"-BM3-")
 

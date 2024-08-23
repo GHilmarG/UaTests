@@ -146,9 +146,9 @@ elseif CtrlVar.TimeDependentRun
 
     else
 
-        fprintf("FindAndCreateInterpolants: Existing files with A and C interpolants found:")
-        fprintf("FA: %s ",UserVar.FAFile)
-        fprintf("FC: %s ",UserVar.FCFile)
+        fprintf("FindAndCreateInterpolants: Existing files with A and C interpolants found:\n")
+        fprintf("FA: %s \n",UserVar.FAFile)
+        fprintf("FC: %s \n",UserVar.FCFile)
 
     end
 

@@ -11,6 +11,7 @@ UserVar.RunType="ES5km-Tri3-SlidWeertman-Duvh-MRlASE1-abMask0-P-BCVel-kH10000-TM
 
 UserVar.RunType="ES10km-Tri3-SlidWeertman-Duvh-MRlASE3-abMask0-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; 
 
+UserVar.RunType="ES2.5km-uv-h-Tri3-SlidWeertman-Duvh-MRlASE1-abMask0-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; 
 
 CtrlVar=Ua2D_DefaultParameters();
 
@@ -23,6 +24,7 @@ UserVar.InverseRestartFile="create the name of inverse restart file from User.Ru
 
 
 SearchString=replaceBetween(UserVar.RunType,"-FR","-","*");
+SearchString=replace(SearchString,"2.5","2k5");
 SearchString=replace(SearchString,"ES","");  % for some reason the output files were named with ES missing
 % SearchString="*"+SearchString; 
 % SearchString=replace(SearchString,"**","*") ;
@@ -48,11 +50,12 @@ nloc=size(Location,1) ;
 Fh=[] ; Fu=[] ; Fv=[]; F=UaFields ; 
 
 tMax=inf;
+CreateReferenceFile=true; 
+VideoDhDt=VideoWriter(UserVar.VideoFileDirectory+UserVar.RunType+"DhDt.avi"); open(VideoDhDt)
+VideoDVel=VideoWriter(UserVar.VideoFileDirectory+UserVar.RunType+"VelocityChanges.avi"); open(VideoDVel)
+VideoVel=VideoWriter(UserVar.VideoFileDirectory+UserVar.RunType+"Velocities.avi"); open(VideoVel)
 
-VideoDhDt=VideoWriter(UserVar.VideoFileDirectory+UserVar.RunType+".avi");
-open(VideoDhDt)
-
-for ifile=1:numel(ResultFiles)
+for ifile=2:numel(ResultFiles)
 
     FhPrevious=Fh; timePrevious=F.time;
     FuPrevious=Fu;
@@ -85,24 +88,41 @@ for ifile=1:numel(ResultFiles)
         CtrlVar.QuiverSameVelocityScalingsAsBefore=false;
     end
 
-    CtrlVar.QuiverColorSpeedLimits=[0 5000] ; CtrlVar.VelPlotIntervalSpacing="log10" ; CtrlVar.QuiverColorPowRange=3;
+    speed=sqrt(F.ub.*F.ub+F.vb.*F.vb);
+    MaxSpeedPlot=ceil(max(speed/1000))*1000 ;
+    CtrlVar.QuiverColorSpeedLimits=[0 MaxSpeedPlot] ;
+
+    CtrlVar.VelPlotIntervalSpacing="log10" ; CtrlVar.QuiverColorPowRange=3;
     [cbar,xGL,yGL,xCF,yCF,CtrlVar]=UaPlots(CtrlVar,MUA,F,"-uv-",FigureTitle="velocity") ;
+    FigTitle=sprintf("Velocity at t=%4.2f (yr)",F.time);
+    Ti=title(FigTitle,Interpreter="latex");
+    SuTi=subtitle(sprintf("Median element size %3.1f km. Melt: %s",Emedian/1000,MeltParameterisation),Interpreter="latex");
+    Ti.Color="blue"; Ti.FontSize=14;
+    SuTi.Color="blue"; SuTi.FontSize=12;
+    Fig=gcf; Fig.Position=[50 100  1200 1200] ;
+    frame=getframe(gcf) ;  writeVideo(VideoVel,frame);
 
-    if ifile==1
+    if CreateReferenceFile  % this is just to avoid the first output file containing velocities equal to zero
 
-        Fh0=Fh; Fu0=Fu ; Fv0=Fv;
-        F0=F; % keep a copy of F from first solution
-        MUA0=MUA;
-        xGL0=xGL ; yGL0=yGL  ;
-        RunIDCompare=RunID;
+        if any(abs(F.ub)>0)
+
+            CreateReferenceFile=false ;
+            Fh0=Fh; Fu0=Fu ; Fv0=Fv;
+            F0=F; % keep a copy of F from first solution
+            MUA0=MUA;
+            xGL0=xGL ; yGL0=yGL  ;
+            RunIDCompare=RunID;
 
 
-        UaPlots(CtrlVar,MUA,F,F.s,FigureTitle="Inital Surface")
-        hold on
-        axis([-1722.86513409962         -1479.58176245211          -410.98275862069         -149.399310344828])
-        plot(Location(:,1)/1000,Location(:,2)/1000,"or",MarkerFaceColor="r")
+            UaPlots(CtrlVar,MUA,F,F.s,FigureTitle="Inital Surface")
+            hold on
+            axis([-1722.86513409962         -1479.58176245211          -410.98275862069         -149.399310344828])
+            plot(Location(:,1)/1000,Location(:,2)/1000,"or",MarkerFaceColor="r")
 
-        PlotLatLonGrid();
+            PlotLatLonGrid();
+
+        end
+
     else
 
         CtrlVar.QuiverSameVelocityScalingsAsBefore=false;
@@ -123,15 +143,19 @@ for ifile=1:numel(ResultFiles)
         hPrevious=FhPrevious(F.x,F.y);
 
 
-        F.ub=F.ub-ub0 ; F.vb=F.vb-vb0 ;
+        dub=F.ub-ub0 ; dvb=F.vb-vb0 ;
     
+       
         CtrlVar.QuiverColorSpeedLimits=[0 2000] ; CtrlVar.VelPlotIntervalSpacing="log10" ; CtrlVar.QuiverColorPowRange=3;
         FigTitle=sprintf("Velocity changes at %s compared to %s",RunID,RunIDCompare) ;
-        [cbar,xGL,yGL,xCF,yCF,CtrlVar]=UaPlots(CtrlVar,MUA,F,"-uv-",FigureTitle="VelChanges",GetRidOfValuesDownStreamOfCalvingFronts=true) ;
+        [cbar,xGL,yGL,xCF,yCF,CtrlVar]=UaPlots(CtrlVar,MUA,F,[dub dvb],FigureTitle="VelChanges",GetRidOfValuesDownStreamOfCalvingFronts=true) ;
         hold on ; 
         plot(xGL0/CtrlVar.PlotXYscale,yGL0/CtrlVar.PlotXYscale,"k",LineWidth=1.5)
         title(FigTitle)
         subtitle(sprintf("t=%3.1f",CtrlVar.time),interpreter="latex")
+        Fig=gcf; 
+        Fig.Position=[50 100  1200 1200] ;
+        frame=getframe(gcf) ;  writeVideo(VideoDVel,frame);
 
         dh0=F.h-h0 ;
         
@@ -183,6 +207,8 @@ for ifile=1:numel(ResultFiles)
 end
 
 close(VideoDhDt)
+close(VideoDVel)
+close(VideoVel)
 
 %%
 

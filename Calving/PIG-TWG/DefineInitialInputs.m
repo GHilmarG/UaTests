@@ -24,7 +24,7 @@ if ~isfield(UserVar,"RunType") || isempty(UserVar.RunType)
     UserVar.RunType="-IR1to2-ES20km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-GeoBed2-SMB_RACHMO2k3_2km-";
 
     % forward restart run continuing from t=2 and using inversion products from t=2,
-    UserVar.RunType="-FR2to3-ES20km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-GeoBed2-SMB_RACHMO2k3_2km-";
+    UserVar.RunType="-FR2to3-E015S20km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-GeoBed2-SMB_RACHMO2k3_2km-";
 
     % inverse run using forward run results from t=3. This implies using the geometry from t=3 instead of Bedmachine2  geometry.
     UserVar.RunType="-IR2to3-ES20km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-GeoBed2-SMB_RACHMO2k3_2km-";
@@ -40,6 +40,8 @@ if ~isfield(UserVar,"RunType") || isempty(UserVar.RunType)
 
     UserVar.RunType="-FR0to1-ES10km-Tri3-SlidWeertman-Duvh-MRZERO-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-GeoBed2-SMB_RACHMO2k3_2km-";
     UserVar.RunType="-FR0to1-ES5km-Tri3-SlidWeertman-Duvh-MRZERO-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-GeoBed2-SMB_RACHMO2k3_2km-";
+
+    UserVar.RunType="ES30km-uv-h-Tri3-SlidWeertman-Duvh-MRIM6HadGEM2-abMask0-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; 
 
 end
 
@@ -103,6 +105,8 @@ CtrlVar.dt=1e-5;
 CtrlVar.ATSdtMax=0.1;
 CtrlVar.ATSdtMin=1e-5;  
 CtrlVar.ATSTargetIterations=6;
+
+
 
 CtrlVar.ExplicitEstimationMethod="-no extrapolation-";
 
