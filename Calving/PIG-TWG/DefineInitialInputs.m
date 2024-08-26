@@ -153,10 +153,11 @@ if CtrlVar.InverseRun
     UserVar.AGlen.ReadFromFile=1;
 
     CtrlVar.ReadInitialMesh=1;
+  
     CtrlVar.AdaptMesh=0;
 
 
-    CtrlVar.Inverse.Iterations=10;
+    CtrlVar.Inverse.Iterations=UserVar.Inverse.Iterations;
 
     CtrlVar.Inverse.OptimalityTolerance=0.01; 
     CtrlVar.Inverse.StepTolerance=0.001;

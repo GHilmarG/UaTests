@@ -5,16 +5,21 @@
 
 
 
-UserVar.RunType="ES5km-Tri3-SlidWeertman-Duvh-MRlASE3-abMask0-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; 
-UserVar.RunType="ES5km-Tri3-SlidWeertman-Duvh-MRlASE2-abMask0-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; 
-UserVar.RunType="ES5km-Tri3-SlidWeertman-Duvh-MRlASE1-abMask0-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; 
+RunString="ES5km-Tri3-SlidWeertman-Duvh-MRlASE3-abMask0-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; 
+RunString="ES5km-Tri3-SlidWeertman-Duvh-MRlASE2-abMask0-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; 
+RunString="ES5km-Tri3-SlidWeertman-Duvh-MRlASE1-abMask0-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; 
 
-UserVar.RunType="ES10km-Tri3-SlidWeertman-Duvh-MRlASE3-abMask0-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; 
+RunString="ES10km-Tri3-SlidWeertman-Duvh-MRlASE3-abMask0-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; 
 
-UserVar.RunType="ES2.5km-uv-h-Tri3-SlidWeertman-Duvh-MRlASE1-abMask0-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; 
+RunString="ES2.5km-uv-h-Tri3-SlidWeertman-Duvh-MRlASE1-abMask0-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; 
+
+RunString="ES20km-uv-h-Tri3-SlidWeertman-Duvh-MRIM6HadGEM2-abMask0-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; 
+
+
 
 CtrlVar=Ua2D_DefaultParameters();
 
+UserVar.RunType=RunString ;
 
 UserVar=FileDirectories(UserVar) ;
 UserVar.GeometryInterpolant="create the name of inverse restart file from User.RunType";
@@ -94,12 +99,12 @@ for ifile=2:numel(ResultFiles)
 
     CtrlVar.VelPlotIntervalSpacing="log10" ; CtrlVar.QuiverColorPowRange=3;
     [cbar,xGL,yGL,xCF,yCF,CtrlVar]=UaPlots(CtrlVar,MUA,F,"-uv-",FigureTitle="velocity") ;
+    Fig=gcf; Fig.Position=[50 100  1200 1200] ;
     FigTitle=sprintf("Velocity at t=%4.2f (yr)",F.time);
     Ti=title(FigTitle,Interpreter="latex");
     SuTi=subtitle(sprintf("Median element size %3.1f km. Melt: %s",Emedian/1000,MeltParameterisation),Interpreter="latex");
     Ti.Color="blue"; Ti.FontSize=14;
     SuTi.Color="blue"; SuTi.FontSize=12;
-    Fig=gcf; Fig.Position=[50 100  1200 1200] ;
     frame=getframe(gcf) ;  writeVideo(VideoVel,frame);
 
     if CreateReferenceFile  % this is just to avoid the first output file containing velocities equal to zero
@@ -145,16 +150,15 @@ for ifile=2:numel(ResultFiles)
 
         dub=F.ub-ub0 ; dvb=F.vb-vb0 ;
     
-       
+
         CtrlVar.QuiverColorSpeedLimits=[0 2000] ; CtrlVar.VelPlotIntervalSpacing="log10" ; CtrlVar.QuiverColorPowRange=3;
         FigTitle=sprintf("Velocity changes at %s compared to %s",RunID,RunIDCompare) ;
         [cbar,xGL,yGL,xCF,yCF,CtrlVar]=UaPlots(CtrlVar,MUA,F,[dub dvb],FigureTitle="VelChanges",GetRidOfValuesDownStreamOfCalvingFronts=true) ;
-        hold on ; 
+        Fig=gcf; Fig.Position=[50 100  1200 1200] ;
+        hold on ;
         plot(xGL0/CtrlVar.PlotXYscale,yGL0/CtrlVar.PlotXYscale,"k",LineWidth=1.5)
         title(FigTitle)
         subtitle(sprintf("t=%3.1f",CtrlVar.time),interpreter="latex")
-        Fig=gcf; 
-        Fig.Position=[50 100  1200 1200] ;
         frame=getframe(gcf) ;  writeVideo(VideoDVel,frame);
 
         dh0=F.h-h0 ;

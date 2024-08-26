@@ -6,13 +6,16 @@
 
 function [UserVar,as,ab,dasdh,dabdh]=DefineMassBalance(UserVar,CtrlVar,MUA,F)
 
-persistent Fdh2000to2018 dhdtMeasured CurrentRunStepNumber Fas FOceanNodes0 gamma0 Fdeltbasin Ftf
+persistent Fdh2000to2018 dhdtMeasured CurrentRunStepNumber Fas FOceanNodes0 gamma0 Fdeltbasin Ftf OceanNodes0FileSaved
 
 as=zeros(MUA.Nnodes,1) ;
 ab=zeros(MUA.Nnodes,1) ;
 dasdh=zeros(MUA.Nnodes,1) ;
 dabdh=zeros(MUA.Nnodes,1) ;
 
+if isempty(OceanNodes0FileSaved)
+    OceanNodes0FileSaved=false;
+end
 
 %% Surface mass balance
 
@@ -33,10 +36,13 @@ if contains(UserVar.RunType,"-MRIM6")
 
     if isempty(Fas)
         % Read in the surface forcing interpolant, Fas
-        load('ISMIP6-Melt\FasRACMO.mat','Fas'); % Change path if necessary
+       % load('ISMIP6-Melt\FasRACMO.mat','Fas'); % Change path if necessary
+        load(UserVar.ISMIP6Directory+"ISMIP6-Melt\FasRACMO.mat","Fas"); % Change path if necessary
         % Read in interpolants for deltaT_basin and thermal forcing, Fdeltbasin
         % and Ftf. Also the value of gamma0.
-        load('ISMIP6-Melt\ocean_local_median_new.mat','gamma0','Fdeltbasin','Ftf'); % Change path if necessary
+        load(UserVar.ISMIP6Directory+"ISMIP6-Melt\ocean_local_median_new.mat","gamma0","Fdeltbasin","Ftf"); % Change path if necessary
+
+
     end
 
     dasdh=0;
@@ -51,22 +57,23 @@ if contains(UserVar.RunType,"-MRIM6")
 
     if ~contains(UserVar.RunType,"-MRIM6Control-")
         % Here we load chosen forcing, if not using Control
-        year_anom=floor(time); % Define year for input files
-        anomfile=[UserVar.SMBfilename,num2str(year_anom),'.mat'];
-        load(anomfile,'smb_anomaly');
+        year_anom=floor(F.time); % Define year for input files
+        %anomfile=[UserVar.SMBfilename,num2str(year_anom),'.mat'];
+        anomfile=UserVar.SMBfilename+num2str(year_anom)+".mat";
+        load(anomfile,"smb_anomaly");
         as_anom=smb_anomaly(MUA.coordinates).*3600*24*365/917; % changing units from kg m^-2 s^-1 to m/year
-        load([UserVar.TFfilename,num2str(year_anom),'.mat'],'tf_anomaly');
-        tf_anom=tf_anomaly([MUA.coordinates b]);
+        load(UserVar.TFfilename+num2str(year_anom)+".mat","tf_anomaly");
+        tf_anom=tf_anomaly([MUA.coordinates F.b]);
     else
         % Just use control forcing
-        tf_anom=Ftf([MUA.coordinates b]);
+        tf_anom=Ftf([MUA.coordinates F.b]);
         as_anom=0;
     end
 
     as=as0+as_anom; % Add model SMB anomalies to control.
     thermal_forcing=tf_anom; % Control+anomalies are included in files from Sainan. Don't need to add again!
     ab=-gamma0.*(rhosw_SI.*cpw_SI./rhoi_SI./Lf_SI).^2.*(max(thermal_forcing+deltaT_basin,0.0)).^2; % mass balance needs the negative sign
-    ab(GF.node>0.5)=0;
+    ab(F.GF.node>0.5)=0;
 
     OceanBoundaryNodes=[];
     NodesDownstreamOfGroundingLines="Relaxed" ;
@@ -201,13 +208,14 @@ if contains(UserVar.RunType,"-abMask0-")  && F.time <= UserVar.Assimilation.tEnd
 
     FileNameOceanNodes0="OceanNodes0"+extractBetween(UserVar.RunType,"-"+digitsPattern,"km-",Boundaries="inclusive")+".mat";
 
-    if F.time==0
+    if F.time==UserVar.RunStartYear && ~OceanNodes0FileSaved
 
         [LakeNodes0,OceanNodes0] = LakeOrOcean3(CtrlVar,MUA,F.GF,[],"Strickt") ;
 
         % The OceanNodes0 mask is only dependent on the mesh and the initial GF at t=0.
         FOceanNodes0=scatteredInterpolant(F.x,F.y,double(OceanNodes0));
         save(UserVar.ResultsFileDirectory+FileNameOceanNodes0,"OceanNodes0","FOceanNodes0")
+        OceanNodes0FileSaved=true;
 
     end
 

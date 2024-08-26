@@ -43,7 +43,7 @@ end
 
 UserVar.Assimilation.tStart=7 ; %
 UserVar.Assimilation.tEnd=10   ; %  Actually the end is at tEnd+1 once the final forward transient run is done
-
+UserVar.RunStartYear=0; 
 
 
 if contains(RunString,"-MRIM6")  % this implies the use of ISMIP6 forcing

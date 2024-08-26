@@ -22,6 +22,8 @@ if contains(hostname,"DESKTOP-G5TCRTD")  % office Dell
     UserVar.VideoFileDirectory="F:\GoogleDriveStreamingOfficeDell\My Drive\Runs\Calving\PIG-TWG\Videos\";
     UserVar.Interpolants="F:\GoogleDriveStreamingOfficeDell\My Drive\Interpolants\";
 
+    UserVar.ISMIP6Directory="F:\GoogleDriveStreamingOfficeDell\My Drive\ISMIP6-Forcings\";
+
 elseif contains(hostname,"DESKTOP-BU2IHIR")   % home
 
     % UserVar.ResultsFileDirectory="D:\Runs\Calving\PIG-TWG\ResultsFiles\";
@@ -37,7 +39,11 @@ elseif contains(hostname,"DESKTOP-BU2IHIR")   % home
     UserVar.ForwardRestartFileDirectory="D:\GoogleDriveStreamingHomeHP\My Drive\Runs\Calving\PIG-TWG\RestartFiles\";
     UserVar.VideoFileDirectory="D:\GoogleDriveStreamingHomeHP\My Drive\Runs\Calving\PIG-TWG\Videos\";
     UserVar.Interpolants="D:\GoogleDriveStreamingHomeHP\My Drive\Interpolants\";
+    
     UserVar.ISMIP6Directory="D:\GoogleDriveStreamingHomeHP\My Drive\ISMIP6-Forcings\";
+
+
+
 
 elseif contains(hostname,"C23000099")   
 
@@ -57,11 +63,9 @@ elseif contains(hostname,"C23000099")
     UserVar.MeshFileDirectory="E:\GoogleDriveStreamingOfficeHP\My Drive\Runs\Calving\PIG-TWG\MeshFiles\";
     UserVar.ForwardRestartFileDirectory="E:\GoogleDriveStreamingOfficeHP\My Drive\Runs\Calving\PIG-TWG\RestartFiles\";
     UserVar.VideoFileDirectory="E:\GoogleDriveStreamingOfficeHP\My Drive\Runs\Calving\PIG-TWG\Videos\";
-
-   
-
-
     UserVar.Interpolants="C:\cygwin64\home\pcnj6\Ua\Interpolants\";
+
+   UserVar.ISMIP6Directory=" E:\GoogleDriveStreamingOfficeHP\My Drive\ISMIP6-Forcings\";
 
 else
     UserVar.ResultsFileDirectory=pwd+"\ResultsFiles\";

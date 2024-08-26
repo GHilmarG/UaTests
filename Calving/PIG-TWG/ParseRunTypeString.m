@@ -78,13 +78,16 @@ pat="R"+digitsPattern+"to";    from=str2double(extract(extract(UserVar.RunType,p
 pat="to"+digitsPattern+"-";    to=str2double(extract(extract(UserVar.RunType,pat),digitsPattern)) ;
 
 
+if ~isfield(UserVar,"RunStartYear")
+    UserVar.RunStartYear=0;
+end
 
 if isempty(from)
-    from=0;
+    from=UserVar.RunStartYear;
 end
 
 if isempty(to)
-    to=0;
+    to=UserVar.RunStartYear;
 end
 
 CtrlVar.time=from ; CtrlVar.TotalTime=to ;
@@ -226,15 +229,9 @@ CtrlVar.Experiment=replace(CtrlVar.Experiment,"+","p");
 %
 % This is selected in DefineMassBalance, depending on 
 %
-MassBalanceControlString=extractBetween(UserVar.RunType,"-MR","-") ;
 
-if contains(MassBalanceControlString,"IM6")  % this implies the use of ISMIP6 forcing
-      UserVar.ISMIP6=true;
-else
-      UserVar.ISMIP6=false;
-end
 
-if  UserVar.ISMIP6
+if  contains(UserVar.RunType,"-MRIM")
    
 
     if contains(UserVar.RunType,"CCSM4")
@@ -274,8 +271,15 @@ end
 
 
 
+% This is here for the first inverse run, or the first transient run. The idea is to always use the same inverse file at the
+% beginning. This inverse file is then updated at the end of the inverse run. This should ensure that I have a good initial A
+% and C estimates at the beginning.  All later inversion files that are used during the transient relaxation phase, get names
+% that are specific to that run and have geometries which are those of a previous transient run.
+% 
 
-if contains(UserVar.RunType,"-IR-") || contains(UserVar.RunType,"-FR0to")
+
+
+if contains(UserVar.RunType,"-IR-") || contains(UserVar.RunType,"-FR"+num2str(UserVar.RunStartYear))
 
     % old naming convection, fine for initial inverse run
     %  The new naming convention is simply to use the UserVar.RunType for the name of the inverse restart file
@@ -404,7 +408,7 @@ else
 end
 
 if UserVar.GeometryInterpolant=="create the name of inverse restart file from User.RunType"
-    if CtrlVar.InverseRun && to > 0
+    if CtrlVar.InverseRun && to > UserVar.RunStartYear
 
         CtrlVar.time=to;
         % If this is a "transient" restart run, ie a restart run that uses geometry from a previous forward run, then read and save
@@ -414,7 +418,7 @@ if UserVar.GeometryInterpolant=="create the name of inverse restart file from Us
 
         UserVar.GeometryInterpolant=replaceBetween(UserVar.GeometryInterpolant,"IR","-","-",Boundaries="inclusive") ;
 
-    elseif ~CtrlVar.InverseRun && from > 0
+    elseif ~CtrlVar.InverseRun && from > UserVar.RunStartYear
 
         CtrlVar.time=from;
         UserVar.GeometryInterpolant=UserVar.InversionFileDirectory+"FsbB-at"+num2str(from)+UserVar.RunType ;  % This should already exist, since I must have done a previous inverse run to get here.

@@ -15,7 +15,7 @@ if CtrlVar.InverseRun
     % inverse run using forward run results from t=1. This implies using the geometry from t=1 instead of Bedmachine2  geometry.
     % UserVar.RunType="-IRt1-ES20km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-GeoBed2-SMB_RACHMO2k3_2km-";
 
-    if UserVar.to == 0
+    if UserVar.to == UserVar.RunStartYear
 
         % This is the initial inverse run. It will use the Bedmachine geometry
 
@@ -153,7 +153,7 @@ elseif CtrlVar.TimeDependentRun
     end
 
 
-    if UserVar.from ~= 0
+    if UserVar.from ~= UserVar.RunStartYear
 
         % Since this is a forward run, following an inverse run, the geometrical interpolants should already exist.
 
