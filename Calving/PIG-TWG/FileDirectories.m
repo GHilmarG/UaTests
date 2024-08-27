@@ -65,7 +65,7 @@ elseif contains(hostname,"C23000099")
     UserVar.VideoFileDirectory="E:\GoogleDriveStreamingOfficeHP\My Drive\Runs\Calving\PIG-TWG\Videos\";
     UserVar.Interpolants="C:\cygwin64\home\pcnj6\Ua\Interpolants\";
 
-   UserVar.ISMIP6Directory=" E:\GoogleDriveStreamingOfficeHP\My Drive\ISMIP6-Forcings\";
+   UserVar.ISMIP6Directory="E:\GoogleDriveStreamingOfficeHP\My Drive\ISMIP6-Forcings\";
 
 else
     UserVar.ResultsFileDirectory=pwd+"\ResultsFiles\";
