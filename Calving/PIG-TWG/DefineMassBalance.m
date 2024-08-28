@@ -68,6 +68,7 @@ if contains(UserVar.RunType,"-MRIM6")
         % Just use control forcing
         tf_anom=Ftf([MUA.coordinates F.b]);
         as_anom=0;
+    
     end
 
     as=as0+as_anom; % Add model SMB anomalies to control.
@@ -204,13 +205,13 @@ end
 
 %% During the "transient initialisation" phase, optionally, apply melt using the initial GF mask at t=0;
 
-if contains(UserVar.RunType,"-abMask0-")  && F.time <= UserVar.Assimilation.tEnd  % the initialisation period is up to t=5
+if contains(UserVar.RunType,"-abMask0")  && F.time <= UserVar.Assimilation.tEnd  % the initialisation period is up to t=5
 
     FileNameOceanNodes0="OceanNodes0"+extractBetween(UserVar.RunType,"-"+digitsPattern,"km-",Boundaries="inclusive")+".mat";
 
     if F.time==UserVar.RunStartYear && ~OceanNodes0FileSaved
 
-        [LakeNodes0,OceanNodes0] = LakeOrOcean3(CtrlVar,MUA,F.GF,[],"Strickt") ;
+        [LakeNodes0,OceanNodes0] = LakeOrOcean3(CtrlVar,MUA,F.GF,[],"Strict") ;
 
         % The OceanNodes0 mask is only dependent on the mesh and the initial GF at t=0.
         FOceanNodes0=scatteredInterpolant(F.x,F.y,double(OceanNodes0));
@@ -229,14 +230,52 @@ if contains(UserVar.RunType,"-abMask0-")  && F.time <= UserVar.Assimilation.tEnd
 
     end
 
+   
+
+
+
     OceanNodes0Double=FOceanNodes0(F.x,F.y) ; % this is a double
     OceanNodes0=OceanNodes0Double>0.5 ;       % presumably not needed, but interpolation might create values between 0 and 1
-    [LakeNodes,OceanNodesCurrent] = LakeOrOcean3(CtrlVar,MUA,F.GF,[],"Strickt") ;
-    OceanNodes=OceanNodesCurrent | OceanNodes0 ; % here "OceanNodes" are nodes that either
-    %  1) currently are ocean nodes based on the current GF mask 2) or were ocean nodes at the start of the run.
+    [LakeNodes,OceanNodes] = LakeOrOcean3(CtrlVar,MUA,F.GF,[],"Strict") ;
+    
+    InitialOceanNodesThatNowAreGrounded=OceanNodes0 & ~OceanNodes;
+
+    OceanNodes=OceanNodes | OceanNodes0 ; % here "OceanNodes" are nodes that either: 
+                                                 %  1) currently are ocean nodes based on the current GF mask, or
+                                                 %  2) or were ocean nodes at the start of the run.
     % So melt will be applied over any ocean nodes, and also over all ocean nodes at the start of the run, even if they have by
     % now become grounded.
 
+    % Alternative idea:  Find nodes that were afloat, but no longer are, and then add melt over those nodes which is a function
+    % of how close to flotation they are, ie h-hf, for example apply high melt were (h+dh)-hf > 0 , where dh is a desired
+    % min thickness below flotation at those locations.  
+    %
+    % NOTE:  Because "OceanNodes" are here based on the "strict" definition, a node that is a afloat might not be included in
+    % Ocean-nodes if it is attached to some other nodes that are not afloat.  And a node initially included in OceaNodes might
+    % be deleted from the array if nodes that it is attached to become grounded. This implies that one can have the situation where
+    % a node that is afloat enters, or leaves, the OceanNodes array depending on whether its neighboring nodes go afloat or not.
+    %
+    %
+
+
+    if contains(UserVar.RunType,"-abMask0M")
+        if any(InitialOceanNodesThatNowAreGrounded)
+
+            fprintf("nodes initially afloat, now have become grounded\n")
+
+            hf=F.rhow.*(F.S-F.B)./F.rho ;
+
+            ThicknessAboveFloation=F.h(InitialOceanNodesThatNowAreGrounded)-hf(InitialOceanNodesThatNowAreGrounded) ;
+
+            dh=ThicknessAboveFloation+20;
+            dh(dh<0)=0 ;
+
+            if any(dh>0)
+                ab(InitialOceanNodesThatNowAreGrounded)=ab(InitialOceanNodesThatNowAreGrounded)-100*dh;
+            end
+
+        end
+    end
 
 else
 

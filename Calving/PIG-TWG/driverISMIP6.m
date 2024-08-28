@@ -11,7 +11,9 @@ if nargin==0 | isempty(RunString)
    RunString="ES10km-uv-h-Tri3-SlidWeertman-Duvh-MRIM6HadGEM2-abMask0-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; 
    RunString="ES10km-uvh-Tri3-SlidWeertman-Duvh-MRIM6HadGEM2-abMask0-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; 
 
-   RunString="ES30km-uvh-Tri3-SlidWeertman-Duvh-MRIM6HadGEM2-abMask0-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; 
+   RunString="ES20km-uv-h-Tri3-SlidWeertman-Duvh-MRIM6HadGEM2-abMask0-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; 
+
+   RunString="ES10km-uv-h-Tri3-SlidWeertman-Duvh-MRIM6HadGEM2-abMask0M-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; 
 
 end
 
@@ -22,13 +24,13 @@ UserVar.GeometryInterpolant="create the name of inverse restart file from User.R
 
 UserVar.RunStartYear=2015;     
 UserVar.Assimilation.Period=5;   % (years) 
-UserVar.Inverse.Iterations=2;
+UserVar.Inverse.Iterations=200;
 
 UserVar.Assimilation.tStart=UserVar.RunStartYear+0;
 UserVar.Assimilation.tEnd=UserVar.RunStartYear+UserVar.Assimilation.Period;  % 
 UserVar.ForwardRunDuration=10 ;   %  This is the number of years of forward run following the assimilation/relaxation phase
                                   %  This forward run will start at time=UserVar.Assimilation.tEnd; 
-InverseRunAtStart=true ; 
+InverseRunAtStart=false ; 
 %%
 
 if contains(RunString,"-MRIM6")  % this implies the use of ISMIP6 forcing

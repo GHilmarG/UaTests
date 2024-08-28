@@ -102,7 +102,7 @@ end
 
 % time and TotalTime already extracted from UserVar.RunType
 CtrlVar.DefineOutputsDt=0.1;
-CtrlVar.dt=1e-5;   
+CtrlVar.dt=1e-3;   
 CtrlVar.ATSdtMax=0.1;
 CtrlVar.ATSdtMin=1e-5;  
 CtrlVar.ATSTargetIterations=6;
