@@ -41,11 +41,11 @@ if ~isfield(UserVar,"RunType") || isempty(UserVar.RunType)
     UserVar.RunType="-FR0to1-ES10km-Tri3-SlidWeertman-Duvh-MRZERO-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-GeoBed2-SMB_RACHMO2k3_2km-";
     UserVar.RunType="-FR0to1-ES5km-Tri3-SlidWeertman-Duvh-MRZERO-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-GeoBed2-SMB_RACHMO2k3_2km-";
 
-    UserVar.RunType="ES30km-uv-h-Tri3-SlidWeertman-Duvh-MRIM6HadGEM2-abMask0-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; 
+    UserVar.RunType="ES30km-uv-h-Tri3-SlidWeertman-Duvh-MRIM6HadGEM2-abMask0-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-";
 
 end
 
-% Create_AC_ScatteredInterpolants([],UserVar)
+% Create_AC_ScatteredInterpolants([],UserVar)MinTh
 %%
 
 UserVar=FileDirectories(UserVar) ;
@@ -55,14 +55,14 @@ UserVar.DefineOutputs="-ubvb-LSF-h-dhdt-speed-save-AC-";
 CtrlVar.LimitRangeInUpdateFtimeDerivatives=true ;
 %% Parse UserVar
 
-[CtrlVar,UserVar]=ParseRunTypeString(CtrlVar,UserVar) ; 
+[CtrlVar,UserVar]=ParseRunTypeString(CtrlVar,UserVar) ;
 
 %%
 
-[CtrlVar,UserVar]=FindAndCreateInterpolants(CtrlVar,UserVar) ; 
+[CtrlVar,UserVar]=FindAndCreateInterpolants(CtrlVar,UserVar) ;
 
 %% Parallel options
-CtrlVar.Parallel.uvhAssembly.spmd.isOn=true; 
+CtrlVar.Parallel.uvhAssembly.spmd.isOn=true;
 CtrlVar.Parallel.uvAssembly.spmd.isOn=true;
 CtrlVar.Parallel.Distribute=false;
 CtrlVar.Parallel.isTest=false;
@@ -102,20 +102,23 @@ end
 
 % time and TotalTime already extracted from UserVar.RunType
 CtrlVar.DefineOutputsDt=0.1;
-CtrlVar.dt=1e-3;   
+CtrlVar.dt=1e-3;
 CtrlVar.ATSdtMax=0.1;
-CtrlVar.ATSdtMin=1e-5;  
+CtrlVar.ATSdtMin=1e-5;
 CtrlVar.ATSTargetIterations=6;
 
 
 
 CtrlVar.ExplicitEstimationMethod="-no extrapolation-";
 
+%%
+
+
 %%  Level-set parameters
 
 CtrlVar.LevelSetInitialisationInterval=100 ;
-CtrlVar.LevelSetMethodMassBalanceFeedbackCoeffLin=-10;  % This is the constant a1, it has units 1/time.
-CtrlVar.LevelSetMethodMassBalanceFeedbackCoeffCubic=0;
+CtrlVar.LevelSetMethodMassBalanceFeedbackCoeffCubic=CtrlVar.ThicknessBarrierMassBalanceFeedbackCoeffCubic ;
+CtrlVar.LevelSetMethodMassBalanceFeedbackCoeffLin=CtrlVar.ThicknessBarrierMassBalanceFeedbackCoeffLin ;
 CtrlVar.LevelSetInfoLevel=1 ;
 CtrlVar.LevelSetInitialisationMethod="-geo-" ;
 CtrlVar.LevelSetReinitializePDist=true ;
@@ -126,7 +129,7 @@ CtrlVar.DevelopmentVersion=false;
 CtrlVar.LevelSetFABmu.Scale="-u-cl-" ; % "-constant-";
 CtrlVar.LevelSetFABmu.Value=0.1;
 CtrlVar.CalvingLaw.Evaluation="-int-";
-CtrlVar.LevelSetMethodSolveOnAStrip=1; 
+CtrlVar.LevelSetMethodSolveOnAStrip=1;
 
 
 
@@ -145,28 +148,28 @@ if CtrlVar.InverseRun
     UserVar.DefineOutputs="-"; %
 
 
-    
+
     CtrlVar.Inverse.InfoLevel=1;
     CtrlVar.InfoLevelNonLinIt=0;  CtrlVar.InfoLevel=0;
-   
+
 
     UserVar.Slipperiness.ReadFromFile=1;
     UserVar.AGlen.ReadFromFile=1;
 
     CtrlVar.ReadInitialMesh=1;
-  
+
     CtrlVar.AdaptMesh=0;
 
 
     CtrlVar.Inverse.Iterations=UserVar.Inverse.Iterations;
 
-    CtrlVar.Inverse.OptimalityTolerance=0.01; 
+    CtrlVar.Inverse.OptimalityTolerance=0.01;
     CtrlVar.Inverse.StepTolerance=0.001;
 
     CtrlVar.Inverse.InvertFor="-logA-logC-" ; % {'C','logC','AGlen','logAGlen'}
     CtrlVar.Inverse.Regularize.Field=CtrlVar.Inverse.InvertFor;
     CtrlVar.Inverse.DataMisfit.GradientCalculation="-adjoint-" ; % "-FixpointC-"; "adjoint";
-    
+
     CtrlVar.NameOfFileForSavingSlipperinessEstimate= UserVar.CFile;
     CtrlVar.NameOfFileForSavingAGlenEstimate= UserVar.AFile;
 
@@ -176,11 +179,11 @@ elseif  CtrlVar.TimeDependentRun
 
     CtrlVar.InverseRun=0;
     CtrlVar.TimeDependentRun=1;
-    
+
     CtrlVar.InfoLevelNonLinIt=1;
     UserVar.Slipperiness.ReadFromFile=1;
     UserVar.AGlen.ReadFromFile=1;
-  
+
     CtrlVar.AdaptMesh=0;
     CtrlVar.TotalNumberOfForwardRunSteps=inf;
     %CtrlVar.LevelSetMethod=0;
@@ -189,7 +192,7 @@ elseif contains(UserVar.RunType,"Forward-Diagnostic")
 
     CtrlVar.InverseRun=0;
     CtrlVar.TimeDependentRun=0;
-    
+
     CtrlVar.InfoLevelNonLinIt=1;
     UserVar.Slipperiness.ReadFromFile=1;
     UserVar.AGlen.ReadFromFile=1;
@@ -200,12 +203,12 @@ elseif contains(UserVar.RunType,"GenerateMesh")
 
     CtrlVar.TimeDependentRun=0;  % {0|1} if true (i.e. set to 1) then the run is a forward transient one, if not
     CtrlVar.InverseRun=0;
-    
+
     CtrlVar.ReadInitialMesh=0;
     CtrlVar.MeshGenerator="mesh2d" ; % "mesh2d" ; % 'mesh2d';
 
     CtrlVar.OnlyMeshDomainAndThenStop=0;
-    CtrlVar.AdaptMeshAndThenStop=1; 
+    CtrlVar.AdaptMeshAndThenStop=1;
 
     UserVar.Slipperiness.ReadFromFile=1;
     UserVar.AGlen.ReadFromFile=1;
@@ -214,21 +217,21 @@ elseif contains(UserVar.RunType,"GenerateMesh")
     if contains(UserVar.RunType,"-AM-")
         CtrlVar.AdaptMesh=1;
         CtrlVar.AdaptMeshMaxIterations=5;
-        CtrlVar.MeshRefinementMethod='explicit:global'; 
+        CtrlVar.MeshRefinementMethod='explicit:global';
     else
         CtrlVar.AdaptMesh=0;
     end
 
 
-     CtrlVar.MeshAdapt.CFrange=[5*CtrlVar.MeshSize   CtrlVar.MeshSize/2 ; ...
-                                2*CtrlVar.MeshSize   CtrlVar.MeshSize/5 ; ...
-                                 CtrlVar.MeshSize   CtrlVar.MeshSize/10 ];
-  
-    
+    CtrlVar.MeshAdapt.CFrange=[5*CtrlVar.MeshSize   CtrlVar.MeshSize/2 ; ...
+        2*CtrlVar.MeshSize   CtrlVar.MeshSize/5 ; ...
+        CtrlVar.MeshSize   CtrlVar.MeshSize/10 ];
+
+
 
     CtrlVar.AdaptMeshInitial=1  ;       % remesh in first iteration (Itime=1)  even if mod(Itime,CtrlVar.AdaptMeshRunStepInterval)~=0.
-    
-    
+
+
     CtrlVar.InfoLevelAdaptiveMeshing=1;
 
 
@@ -282,10 +285,10 @@ if contains(UserVar.RunType,"-Alim-")
     CtrlVar.AGlenmin=AGlenVersusTemp(-20) ;
 end
 CtrlVar.Cmin=1e-8; % This is based on having done some inversions for C for m=3 where no such contraint was used
-                   % and finding that only inverted values where
-                   % velocity data was available, where higher than this.
-               
-     
+% and finding that only inverted values where
+% velocity data was available, where higher than this.
+
+
 %%
 if batchStartupOptionUsed
     CtrlVar.doplots=0;   % disable plotting if running as batch
@@ -366,7 +369,17 @@ end
 CtrlVar.WriteRestartFileInterval=20;
 
 
-CtrlVar.UpdateBoundaryConditionsAtEachTimeStep=true;    
+CtrlVar.UpdateBoundaryConditionsAtEachTimeStep=true;
 
+%% Thickness Constraints
 CtrlVar.ThicknessConstraintsInfoLevel=1;
-CtrlVar.MinNumberOfNewlyIntroducedActiveThicknessConstraints=0;
+CtrlVar.LevelSetMethodThicknessConstraints=1;    
+CtrlVar.MinNumberOfNewlyIntroducedActiveThicknessConstraints=0;  
+CtrlVar.ThicknessConstraintsItMax=5;
+CtrlVar.ThicknessBarrierMassBalanceFeedbackCoeffCubic=-1000 ; CtrlVar.ThicknessBarrierMassBalanceFeedbackCoeffLin=-10000;
+CtrlVar.LevelSetMethodMassBalanceFeedbackCoeffCubic=-0      ; CtrlVar.LevelSetMethodMassBalanceFeedbackCoeffLin=-1000; 
+CtrlVar.ThickMin=0.2 ; 
+
+
+
+end

@@ -22,65 +22,81 @@ end
 UserVar.InverseRestartFile="create the name of inverse restart file from User.RunType";
 UserVar.GeometryInterpolant="create the name of inverse restart file from User.RunType";
 
-UserVar.RunStartYear=2015;     
-UserVar.Assimilation.Period=5;   % (years) 
-UserVar.Inverse.Iterations=200;
 
-UserVar.Assimilation.tStart=UserVar.RunStartYear+0;
-UserVar.Assimilation.tEnd=UserVar.RunStartYear+UserVar.Assimilation.Period;  % 
-UserVar.ForwardRunDuration=10 ;   %  This is the number of years of forward run following the assimilation/relaxation phase
-                                  %  This forward run will start at time=UserVar.Assimilation.tEnd; 
-InverseRunAtStart=false ; 
+UserVar.Assimilation.tStart=2015;       % typically RunStartYear = Assimilation.tStart
+UserVar.Assimilation.tEnd=2020;
+
+UserVar.RunStartYear=2028;               % assimilation/relaxation is only done if RunStartYear falls within the assimilation period
+UserVar.RunEndYear=2100;                 % If RunStartYear > Assimilation.tEnd, it is implicitly assumed that this is a continuation of a previous run
+                                         % and that corresponding input files have already been generated in a previous assimilation/relaxation phase.
+
+
+
+
+
+                                  
+
+UserVar.Inverse.Iterations=200;                                  
+InverseRunAtStart=true ; 
 %%
 
-if contains(RunString,"-MRIM6")  % this implies the use of ISMIP6 forcing
-    UserVar.Assimilation.tStart=UserVar.Assimilation.tStart;
-    UserVar.Assimilation.tEnd=UserVar.Assimilation.tEnd; 
+% if contains(RunString,"-MRIM6")  % this implies the use of ISMIP6 forcing
+%     UserVar.Assimilation.tStart=UserVar.Assimilation.tStart;
+%     UserVar.Assimilation.tEnd=UserVar.Assimilation.tEnd;
+% end
+% 
+
+if UserVar.RunStartYear < UserVar.Assimilation.tEnd
+
+    %% 1) Initial inverse run
+
+    if InverseRunAtStart
+        %% First INVERSE run,
+
+        UserVar.RunType="-IR-"+RunString ;
+        CtrlVar.Restart=0;  % Here forcing this NOT to be an inverse run. I need this if I have changed data sets such as Bedmachine,
+        CtrlVar.Restart=1;  % Only use the inverse restart option if geometry has not been changed
+        % if this change is not reflected in the name of the restart file
+
+        Ua(UserVar,CtrlVar) ;
+
+    end
+
+    %% 2) Relaxation phase
+    % Loop over repeated forward and then inverse runs, each forward run is for 1 year, and uses the previous inversion data for A and C
+    for itime=UserVar.Assimilation.tStart:UserVar.Assimilation.tEnd-1
+
+        from=itime;
+        to=itime+1;
+
+        %% 2a) This is the first transient run, uses geometry from previous inverse run (this will be Bedmachine if from=0)
+        % A and C interpolants are created from a inverse restart file, unless existing FA and FC files are found that are newer than the
+        % inverse restart file
+        UserVar.RunType=sprintf("-FR%ito%i-",from,to)+RunString ;
+
+        Ua(UserVar) ;       % This FORWARD run will go t=from to t=to,
+
+        %CtrlVar.Restart=1; CtrlVar.ForwardTimeIntegration="-uv-h-" ; Ua(UserVar,CtrlVar) ; % if want to force restart
+
+
+        %% 2b) This is an INVERSE run using geometry based on the previous forward run that ended at time=to, ie the previous forward run
+
+        UserVar.RunType=sprintf("-IR%ito%i-",from,to)+RunString ;
+        Ua(UserVar)
+        close all
+
+    end
+
 end
-
-%% 1) Initial inverse run
-
-if InverseRunAtStart 
-    %% First INVERSE run,
-
-    UserVar.RunType="-IR-"+RunString ;
-    CtrlVar.Restart=0;  % Here forcing this NOT to be an inverse run. I need this if I have changed data sets such as Bedmachine,
-    CtrlVar.Restart=1;  % Only use the inverse restart option if geometry has not been changed
-    % if this change is not reflected in the name of the restart file
-
-    Ua(UserVar,CtrlVar) ;
-
-end
-
-%% 2) Relaxation phase
-% Loop over repeated forward and then inverse runs, each forward run is for 1 year, and uses the previous inversion data for A and C
-for itime=UserVar.Assimilation.tStart:UserVar.Assimilation.tEnd-1
-
-    from=itime;
-    to=itime+1;
-
-    %% 2a) This is the first transient run, uses geometry from previous inverse run (this will be Bedmachine if from=0)
-    % A and C interpolants are created from a inverse restart file, unless existing FA and FC files are found that are newer than the
-    % inverse restart file
-    UserVar.RunType=sprintf("-FR%ito%i-",from,to)+RunString ;
-    
-    Ua(UserVar) ;       % This FORWARD run will go t=from to t=to,
-
-    %CtrlVar.Restart=1; CtrlVar.ForwardTimeIntegration="-uv-h-" ; Ua(UserVar,CtrlVar) ; % if want to force restart
-    
-
-    %% 2b) This is an INVERSE run using geometry based on the previous forward run that ended at time=to, ie the previous forward run
-
-    UserVar.RunType=sprintf("-IR%ito%i-",from,to)+RunString ;
-    Ua(UserVar)
-    close all 
-
-end
-
 %% 3) Forward run
+% Generally, the forward run should continue from after the end of the assimilation/relaxation period.
+%
+% However, if RunStartYear is set to a value greater or equal to the end of the relaxation period, the run starts at
+% the time of the RunStartYear. This assumes that the relaxation phase has already been done, and does not need to tbe done
+% again. 
 
-from=UserVar.Assimilation.tEnd ; 
-to=UserVar.Assimilation.tEnd + UserVar.ForwardRunDuration ; 
+from=max(UserVar.RunStartYear,UserVar.Assimilation.tEnd)  ; 
+to=UserVar.RunEndYear;
 
 UserVar.RunType=sprintf("-FR%ito%i-",from,to)+RunString ;
 

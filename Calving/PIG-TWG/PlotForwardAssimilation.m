@@ -15,7 +15,7 @@ RunString="ES2.5km-uv-h-Tri3-SlidWeertman-Duvh-MRlASE1-abMask0-P-BCVel-kH10000-T
 
 RunString="ES20km-uv-h-Tri3-SlidWeertman-Duvh-MRIM6HadGEM2-abMask0-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; 
 
-
+RunString="ES10km-uv-h-Tri3-SlidWeertman-Duvh-MRIM6HadGEM2-abMask0M-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; 
 
 CtrlVar=Ua2D_DefaultParameters();
 
@@ -59,8 +59,9 @@ CreateReferenceFile=true;
 VideoDhDt=VideoWriter(UserVar.VideoFileDirectory+UserVar.RunType+"DhDt.avi"); open(VideoDhDt)
 VideoDVel=VideoWriter(UserVar.VideoFileDirectory+UserVar.RunType+"VelocityChanges.avi"); open(VideoDVel)
 VideoVel=VideoWriter(UserVar.VideoFileDirectory+UserVar.RunType+"Velocities.avi"); open(VideoVel)
+Videoab=VideoWriter(UserVar.VideoFileDirectory+UserVar.RunType+"ab.avi"); open(Videoab)
 
-for ifile=2:numel(ResultFiles)
+for ifile=1:numel(ResultFiles)
 
     FhPrevious=Fh; timePrevious=F.time;
     FuPrevious=Fu;
@@ -98,7 +99,13 @@ for ifile=2:numel(ResultFiles)
     CtrlVar.QuiverColorSpeedLimits=[0 MaxSpeedPlot] ;
 
     CtrlVar.VelPlotIntervalSpacing="log10" ; CtrlVar.QuiverColorPowRange=3;
-    [cbar,xGL,yGL,xCF,yCF,CtrlVar]=UaPlots(CtrlVar,MUA,F,"-uv-",FigureTitle="velocity") ;
+    vFig = FindOrCreateFigure("velocity",[50 100  1200 1200]) ; clf(vFig)  ;
+    vFig.Position=[50 100  1200 1200] ;
+    speed=sqrt(F.ub.*F.ub+F.vb.*F.vb) ;
+    mspeed=ceil(max(speed)/1000)*1000;
+    mspeed=max(mspeed,6000);
+    CtrlVar.QuiverColorSpeedLimits=[0 mspeed] ; 
+    [cbar,xGL,yGL,xCF,yCF,CtrlVar]=UaPlots(CtrlVar,MUA,F,"-uv-",FigureTitle="velocity",CreateNewFigure=false) ;
     Fig=gcf; Fig.Position=[50 100  1200 1200] ;
     FigTitle=sprintf("Velocity at t=%4.2f (yr)",F.time);
     Ti=title(FigTitle,Interpreter="latex");
@@ -153,7 +160,9 @@ for ifile=2:numel(ResultFiles)
 
         CtrlVar.QuiverColorSpeedLimits=[0 2000] ; CtrlVar.VelPlotIntervalSpacing="log10" ; CtrlVar.QuiverColorPowRange=3;
         FigTitle=sprintf("Velocity changes at %s compared to %s",RunID,RunIDCompare) ;
-        [cbar,xGL,yGL,xCF,yCF,CtrlVar]=UaPlots(CtrlVar,MUA,F,[dub dvb],FigureTitle="VelChanges",GetRidOfValuesDownStreamOfCalvingFronts=true) ;
+        dvFig=FindOrCreateFigure("VelChanges",[50 100  1200 1200]); clf(dvFig);
+        dvFig.Position=[50 100  1200 1200] ;
+        [cbar,xGL,yGL,xCF,yCF,CtrlVar]=UaPlots(CtrlVar,MUA,F,[dub dvb],FigureTitle="VelChanges",GetRidOfValuesDownStreamOfCalvingFronts=true,CreateNewFigure=false) ;
         Fig=gcf; Fig.Position=[50 100  1200 1200] ;
         hold on ;
         plot(xGL0/CtrlVar.PlotXYscale,yGL0/CtrlVar.PlotXYscale,"k",LineWidth=1.5)
@@ -164,7 +173,9 @@ for ifile=2:numel(ResultFiles)
         dh0=F.h-h0 ;
         
         FigTitle=sprintf("thickness change at %s compared to  %s",RunID,RunIDCompare) ;
-        UaPlots(CtrlVar,MUA,F,dh0,FigureTitle="thickness changes",GetRidOfValuesDownStreamOfCalvingFronts=true) ;
+        dhFig=FindOrCreateFigure("thickness changes",[50 100  1200 1200]); clf(dhFig);
+        dhFig.Position=[50 100  1200 1200] ;
+        UaPlots(CtrlVar,MUA,F,dh0,FigureTitle="thickness changes",GetRidOfValuesDownStreamOfCalvingFronts=true,CreateNewFigure=false) ;
         hold on ; plot(xGL0/CtrlVar.PlotXYscale,yGL0/CtrlVar.PlotXYscale,"k",LineWidth=1.5)
         clim([-100 100])
         title(FigTitle)
@@ -201,6 +212,26 @@ for ifile=2:numel(ResultFiles)
 
         end
 
+        abFig=FindOrCreateFigure("ab",[50 100  1200 1200])  ; clf(abFig)  ;
+        abFig.Position=[50 100  1200 1200] ;
+        FigTitle=sprintf("Basal melt rate t=%4.2f (yr)",F.time);
+
+        [cbar,xGL,yGL]=UaPlots(CtrlVar,MUA,F,F.ab,GetRidOfValuesDownStreamOfCalvingFronts=true,CreateNewFigure=false) ;
+        hold on ; plot(xGL/CtrlVar.PlotXYscale,yGL/CtrlVar.PlotXYscale,"k",LineWidth=1)
+        hold on ; plot(xGL0/CtrlVar.PlotXYscale,yGL0/CtrlVar.PlotXYscale,"k",LineWidth=1.5)
+        clim([-150 0]) ; ModifyColormap(GrayLevelRange=0.2);
+        Ti=title(FigTitle,Interpreter="latex");
+        SuTi=subtitle(sprintf("Median element size %3.1f km. Melt: %s",Emedian/1000,MeltParameterisation),Interpreter="latex");
+        Ti.Color="blue"; Ti.FontSize=16;
+        SuTi.Color="blue"; SuTi.FontSize=14;
+
+        title(cbar,["$a_b$","(m/yr)"],interpreter="latex")
+        %subtitle(sprintf("t=%g",CtrlVar.time),interpreter="latex")
+        colormap(othercolor("Mtemperaturemap",1028))
+        PlotLatLonGrid();
+        clim([-150 0]) ; ModifyColormap(GrayLevelRange=0.2);
+        frame=getframe(gcf) ;
+        writeVideo(Videoab,frame);
 
     end
 
@@ -213,6 +244,7 @@ end
 close(VideoDhDt)
 close(VideoDVel)
 close(VideoVel)
+close(Videoab)
 
 %%
 
