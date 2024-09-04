@@ -26,22 +26,15 @@ end
 UserVar.InverseRestartFile="create the name of inverse restart file from User.RunType";
 UserVar.GeometryInterpolant="create the name of inverse restart file from User.RunType";
 
-
+%% Keep his
 UserVar.Assimilation.tStart=2015;       % typically RunStartYear = Assimilation.tStart
 UserVar.Assimilation.tEnd=2020;
-
 UserVar.RunStartYear=UserVar.Assimilation.tStart ;  % Currently this will automatically be a restart run if a restart file is found
-                                                  % and the start year will be that of the restart file.
-UserVar.RunEndYear=2100;               
-                            
-
-UserVar.Assimilation.is=true ;
-
-
-                                  
-
-UserVar.Inverse.Iterations=200;                                  
+                                                  % and the start year will be that of the restart file.UserVar.RunEndYear=2100;               
+                          UserVar.Assimilation.is=true ;
+                          UserVar.Inverse.Iterations=200;                                  
 InverseRunAtStart=true ; 
+%% -] 
 %%
 
 % if contains(RunString,"-MRIM6")  % this implies the use of ISMIP6 forcing

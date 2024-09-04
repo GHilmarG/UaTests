@@ -272,9 +272,7 @@ end
 % that are specific to that run and have geometries which are those of a previous transient run.
 %
 
-
-
-if contains(UserVar.RunType,"-IR-") || contains(UserVar.RunType,"-FR"+num2str(UserVar.Assimilation.tStart))
+if contains(UserVar.RunType,"-IR-") ||  contains(UserVar.RunType,"-FR"+num2str(UserVar.Assimilation.tStart))
 
     % old naming convection, fine for initial inverse run
     %  The new naming convention is simply to use the UserVar.RunType for the name of the inverse restart file
