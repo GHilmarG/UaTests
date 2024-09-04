@@ -14,6 +14,10 @@ if nargin==0 | isempty(RunString)
    RunString="ES20km-uv-h-Tri3-SlidWeertman-Duvh-MRIM6HadGEM2-abMask0-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; 
 
    RunString="ES10km-uv-h-Tri3-SlidWeertman-Duvh-MRIM6HadGEM2-abMask0M-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; 
+   RunString="ES10km-uvh-Tri3-SlidWeertman-Duvh-MRIM6HadGEM2-abMask0M-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; 
+
+   RunString="ES10km-uv-h-Tri3-SlidWeertman-Duvh-MRIM6HadGEM2-abMask0A-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; 
+   RunString="ES10km-uvh-Tri3-SlidWeertman-Duvh-MRIM6HadGEM2-abMask0A-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; 
 
 end
 
@@ -26,12 +30,12 @@ UserVar.GeometryInterpolant="create the name of inverse restart file from User.R
 UserVar.Assimilation.tStart=2015;       % typically RunStartYear = Assimilation.tStart
 UserVar.Assimilation.tEnd=2020;
 
-UserVar.RunStartYear=2028;               % assimilation/relaxation is only done if RunStartYear falls within the assimilation period
-UserVar.RunEndYear=2100;                 % If RunStartYear > Assimilation.tEnd, it is implicitly assumed that this is a continuation of a previous run
-                                         % and that corresponding input files have already been generated in a previous assimilation/relaxation phase.
+UserVar.RunStartYear=UserVar.Assimilation.tStart ;  % Currently this will automatically be a restart run if a restart file is found
+                                                  % and the start year will be that of the restart file.
+UserVar.RunEndYear=2100;               
+                            
 
-
-
+UserVar.Assimilation.is=true ;
 
 
                                   
@@ -46,7 +50,7 @@ InverseRunAtStart=true ;
 % end
 % 
 
-if UserVar.RunStartYear < UserVar.Assimilation.tEnd
+if UserVar.Assimilation.is
 
     %% 1) Initial inverse run
 
@@ -54,7 +58,7 @@ if UserVar.RunStartYear < UserVar.Assimilation.tEnd
         %% First INVERSE run,
 
         UserVar.RunType="-IR-"+RunString ;
-        CtrlVar.Restart=0;  % Here forcing this NOT to be an inverse run. I need this if I have changed data sets such as Bedmachine,
+        CtrlVar.Restart=0;  % Here forcing this NOT to be a restart inverse run. I need this if I have changed data sets such as Bedmachine,
         CtrlVar.Restart=1;  % Only use the inverse restart option if geometry has not been changed
         % if this change is not reflected in the name of the restart file
 
@@ -95,7 +99,7 @@ end
 % the time of the RunStartYear. This assumes that the relaxation phase has already been done, and does not need to tbe done
 % again. 
 
-from=max(UserVar.RunStartYear,UserVar.Assimilation.tEnd)  ; 
+from=UserVar.RunStartYear  ; 
 to=UserVar.RunEndYear;
 
 UserVar.RunType=sprintf("-FR%ito%i-",from,to)+RunString ;

@@ -1,7 +1,7 @@
 function [UserVar,AGlen,n]=DefineAGlenDistribution(UserVar,CtrlVar,MUA,F)
 
 
-persistent FA
+persistent FA FAFile
 
 
 if ~UserVar.AGlen.ReadFromFile
@@ -12,7 +12,11 @@ if ~UserVar.AGlen.ReadFromFile
 
 else
 
-    if isempty(FA)
+    % is is possible that the FA interpolant is still in memory from a previous
+    % case, but that the name of the FA file has changed
+    if isempty(FA)   || isempty(FAFile)  || (FAFile~=UserVar.FAFile)
+
+        FAFile=UserVar.FAFile;
 
         if isfile(UserVar.FAFile) || isfile(UserVar.FAFile+".mat")
 

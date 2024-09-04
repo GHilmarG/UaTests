@@ -314,7 +314,7 @@ end
 
 
 
-%% Make this automatically a restart run if corresponding restart files already exists
+%% If an inverse rund, make it a restart run if corresponding restart files already exists
 
 
 
@@ -330,20 +330,31 @@ if CtrlVar.InverseRun
     end
 else
 
-    if isfield(UserVar.Assimilation,"tEnd") && CtrlVar.time <= UserVar.Assimilation.tEnd
+    if isfield(UserVar.Assimilation,"tEnd") && CtrlVar.time < UserVar.Assimilation.tEnd
 
         fprintf("The start model time (t=%f)  of this forward run is within the assimilation period (from t=%f to t=%f) \n",CtrlVar.time,UserVar.Assimilation.tStart,UserVar.Assimilation.tEnd)
         fprintf(" Therefore this can not be a forward restart run.\n")
         CtrlVar.Restart=0;
 
-    elseif isfile(CtrlVar.NameOfRestartFiletoRead)
-        CtrlVar.Restart=1;
-        fprintf("Forward restart file found. Starting a restart run. \n")
-        fprintf("Forward restart file to read %s :\n",CtrlVar.NameOfRestartFiletoRead)
     else
-        CtrlVar.Restart=0;
-        fprintf("No FORWARD restart file found. Starting a new FORWARD run. \n")
+
+        fprintf("The start model time (t=%f)  of this forward run is after the assimilation period (from t=%f to t=%f) \n",CtrlVar.time,UserVar.Assimilation.tStart,UserVar.Assimilation.tEnd)
+        fprintf("This will now be a restart run, provided a restart file is found.\n")
+
+        if isfile(CtrlVar.NameOfRestartFiletoRead)
+
+
+            CtrlVar.Restart=1;
+            fprintf("Forward restart file found. Starting a restart run. \n")
+            fprintf("Forward restart file to read %s :\n",CtrlVar.NameOfRestartFiletoRead)
+
+        else
+            CtrlVar.Restart=0;
+            fprintf("No FORWARD restart file found. Starting a new FORWARD run. \n")
+        end
     end
+
+
 end
 
 if ~CtrlVar.InverseRun
@@ -372,13 +383,28 @@ CtrlVar.WriteRestartFileInterval=20;
 CtrlVar.UpdateBoundaryConditionsAtEachTimeStep=true;
 
 %% Thickness Constraints
+CtrlVar.ThickMin=0.2 ; 
+
+CtrlVar.ThicknessConstraints=1;      
 CtrlVar.ThicknessConstraintsInfoLevel=1;
-CtrlVar.LevelSetMethodThicknessConstraints=1;    
+
 CtrlVar.MinNumberOfNewlyIntroducedActiveThicknessConstraints=0;  
 CtrlVar.ThicknessConstraintsItMax=5;
-CtrlVar.ThicknessBarrierMassBalanceFeedbackCoeffCubic=-1000 ; CtrlVar.ThicknessBarrierMassBalanceFeedbackCoeffLin=-10000;
+
+CtrlVar.ThicknessBarrier=0; 
+CtrlVar.ThicknessBarrierMassBalanceFeedbackCoeffCubic=-0 ; CtrlVar.ThicknessBarrierMassBalanceFeedbackCoeffLin=-1000;
+
+CtrlVar.LevelSetMethodAutomaticallyApplyMassBalanceFeedback=0; 
+CtrlVar.LevelSetMethodThicknessConstraints=1;    
 CtrlVar.LevelSetMethodMassBalanceFeedbackCoeffCubic=-0      ; CtrlVar.LevelSetMethodMassBalanceFeedbackCoeffLin=-1000; 
-CtrlVar.ThickMin=0.2 ; 
+
+
+%%
+
+if contains(UserVar.RunType,"-FR")  && contains(UserVar.RunType,"-uv-h-")
+     CtrlVar.InfoLevelNonLinIt=5 ; 
+
+end
 
 
 

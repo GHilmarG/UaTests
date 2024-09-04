@@ -77,22 +77,17 @@ UserVar.VelDataSet=extractBetween(UserVar.RunType,"-Vel","-") ;
 pat="R"+digitsPattern+"to";    from=str2double(extract(extract(UserVar.RunType,pat),digitsPattern)) ;
 pat="to"+digitsPattern+"-";    to=str2double(extract(extract(UserVar.RunType,pat),digitsPattern)) ;
 
+% In the initial inverse run I do not include the from and to times, so these will not be found, resulting in from=[] and
+% to=[];
 
-if ~isfield(UserVar,"RunStartYear")
-    UserVar.RunStartYear=0;
-end
+if isempty(from) ; from=nan ; end
+if isempty(to) ; to=nan ; end
 
-if isempty(from)
-    from=UserVar.RunStartYear;
-end
+CtrlVar.time=from ; 
+CtrlVar.TotalTime=to ; 
 
-if isempty(to)
-    to=UserVar.RunStartYear;
-end
-
-CtrlVar.time=from ; CtrlVar.TotalTime=to ;
-UserVar.from=from ; UserVar.to=to ;
-
+UserVar.from=from;
+UserVar.to=to;
 
 %% ??km : mesh resolution and input file with initial mesh
 UserVar.MeshResolution=1000*str2double(extractBetween(UserVar.RunType,"-ES","km-"));
@@ -139,11 +134,11 @@ else
 
 end
 
- if contains(UserVar.RunType,"-P-")
+if contains(UserVar.RunType,"-P-")
 
     CtrlVar.LevelSetEvolution="-Prescribed-"   ; % "-prescribed-",
     CtrlVar.LevelSetMethod=1;
-   
+
 
 elseif contains(UserVar.RunType,"-C-")
 
@@ -227,12 +222,12 @@ CtrlVar.Experiment=replace(CtrlVar.Experiment,"+","p");
 
 %% Mass balance, both upper and lower surface, ie including ocean-induced melt
 %
-% This is selected in DefineMassBalance, depending on 
+% This is selected in DefineMassBalance, depending on
 %
 
 
 if  contains(UserVar.RunType,"-MRIM")
-   
+
 
     if contains(UserVar.RunType,"CCSM4")
         UserVar.SMBfilename="ISMIP6_smb\CCSM4_";
@@ -275,11 +270,11 @@ end
 % beginning. This inverse file is then updated at the end of the inverse run. This should ensure that I have a good initial A
 % and C estimates at the beginning.  All later inversion files that are used during the transient relaxation phase, get names
 % that are specific to that run and have geometries which are those of a previous transient run.
-% 
+%
 
 
 
-if contains(UserVar.RunType,"-IR-") || contains(UserVar.RunType,"-FR"+num2str(UserVar.RunStartYear))
+if contains(UserVar.RunType,"-IR-") || contains(UserVar.RunType,"-FR"+num2str(UserVar.Assimilation.tStart))
 
     % old naming convection, fine for initial inverse run
     %  The new naming convention is simply to use the UserVar.RunType for the name of the inverse restart file
@@ -359,7 +354,7 @@ else
 
     ACFiles=replace(InvRestartFile,["-IR-","IR-"],"-");
     ACFiles=replace(ACFiles,["-FR-","-FR-"],"-");
-   
+
 
 
     ACFiles=strip(ACFiles,"left","-");
@@ -408,24 +403,17 @@ else
 end
 
 if UserVar.GeometryInterpolant=="create the name of inverse restart file from User.RunType"
-    if CtrlVar.InverseRun && to > UserVar.RunStartYear
 
-        CtrlVar.time=to;
-        % If this is a "transient" restart run, ie a restart run that uses geometry from a previous forward run, then read and save
-        % the interpolants in the UserVar.InversionFileDirectory
+    % Note: Here I'm only defining the name the file with the GeometryInterpolant, the file is then found or created in
+    % 'FindAndCreateInterpolants.m'
 
-        UserVar.GeometryInterpolant=UserVar.InversionFileDirectory+"FsbB-at"+num2str(to)+UserVar.RunType ;
+    if isnan(UserVar.from) || (contains(UserVar.RunType,"-FR") && UserVar.from == UserVar.Assimilation.tStart)
 
-        UserVar.GeometryInterpolant=replaceBetween(UserVar.GeometryInterpolant,"IR","-","-",Boundaries="inclusive") ;
+        fprintf("Parsing: This is either the very first inversion, which does not contain the from variable in the RunType, or this is the first forward run during the assimilation phase\n")
 
-    elseif ~CtrlVar.InverseRun && from > UserVar.RunStartYear
-
-        CtrlVar.time=from;
-        UserVar.GeometryInterpolant=UserVar.InversionFileDirectory+"FsbB-at"+num2str(from)+UserVar.RunType ;  % This should already exist, since I must have done a previous inverse run to get here.
-        UserVar.GeometryInterpolant=replaceBetween(UserVar.GeometryInterpolant,"FR","-","-",Boundaries="inclusive") ;
-
-    else
-
+        % 
+        % 
+        %
         % Here the interpolants are based on data, ie Bedmachine, and those are located in a separate folder.
         UserVar.GeometryInterpolant=UserVar.Interpolants+"BedMachineGriddedInterpolants";
         UserVar.MeshBoundaryCoordinatesFile="../../../Interpolants/MeshBoundaryCoordinatesForAntarcticaBasedOnBedmachine";
@@ -437,13 +425,42 @@ if UserVar.GeometryInterpolant=="create the name of inverse restart file from Us
 
         end
 
+         fprintf("The file for the geometry interpolant is %s \n",UserVar.GeometryInterpolant)
+
+    elseif to <= UserVar.Assimilation.tEnd  % within assimilation period
+
+        if CtrlVar.InverseRun
+
+            fprintf("Inverse run within the assimilation period. \n")
+            % This is an inverse run that uses the final geometry from a previous transient run
+            % Apart from the first inversion, those later inversions are always done after a forward run from t=from to t=to.
+            % and the RunType string has the same values for the 'from' and 'to' variables, and only an "IR" instead of a "FR"
+            %
+            % Thus, the geometry that should be used for this inverse run is based on the "to" time of that previous forward run.
+            UserVar.GeometryInterpolant=UserVar.InversionFileDirectory+"FsbB-at"+num2str(to)+UserVar.RunType ;
+            UserVar.GeometryInterpolant=replaceBetween(UserVar.GeometryInterpolant,"IR","-","-",Boundaries="inclusive") ;
+            fprintf("The file for the geometry interpolant is %s \n",UserVar.GeometryInterpolant)
+
+        else
+
+            fprintf("Forward run within the assimilation period. \n")
+            % This is a forward run within the assimilation/relaxation period.
+            UserVar.GeometryInterpolant=UserVar.InversionFileDirectory+"FsbB-at"+num2str(from)+UserVar.RunType ;  % This should already exist, since I must have done a previous inverse run to get here.
+            UserVar.GeometryInterpolant=replaceBetween(UserVar.GeometryInterpolant,"FR","-","-",Boundaries="inclusive") ;
+            fprintf("The file for the geometry interpolant is %s \n",UserVar.GeometryInterpolant)
+
+        end
+
+    elseif from >= UserVar.Assimilation.tEnd  % after assimilation period
+
+        fprintf("After the assimilation period. \n")
+        UserVar.GeometryInterpolant=UserVar.InversionFileDirectory+"FsbB-at"+num2str(UserVar.Assimilation.tEnd)+UserVar.RunType ;  % This should already exist, since I must have done a previous inverse run to get here.
+        UserVar.GeometryInterpolant=replaceBetween(UserVar.GeometryInterpolant,"FR","-","-",Boundaries="inclusive") ;
+        fprintf("The file for the geometry interpolant is %s \n",UserVar.GeometryInterpolant)
+
     end
-
-    
 else
-
     UserVar.GeometryInterpolant=UserVar.InversionFileDirectory+UserVar.GeometryInterpolant;
-
 end
 
 
@@ -461,6 +478,9 @@ CtrlVar.NameOfRestartFiletoWrite=UserVar.ForwardRestartFileDirectory+UserVar.Run
 CtrlVar.NameOfRestartFiletoWrite=replace(CtrlVar.NameOfRestartFiletoWrite,"--","-");
 CtrlVar.NameOfRestartFiletoWrite=replace(CtrlVar.NameOfRestartFiletoWrite,".","k");
 CtrlVar.NameOfRestartFiletoWrite=replace(CtrlVar.NameOfRestartFiletoWrite,"\-","\");
+
+
+
 
 if ~isfield(UserVar,"NameOfRestartFiletoRead")
     CtrlVar.NameOfRestartFiletoRead=CtrlVar.NameOfRestartFiletoWrite;

@@ -6,7 +6,7 @@ persistent FB Fs Fb Frho GeometryInterpolant
 
 fprintf('DefineGeometry %s \n',FieldsToBeDefined)
 
-if isempty(FB) || UserVar.GeometryInterpolant~=GeometryInterpolant
+if isempty(FB) || isempty(GeometryInterpolant) || UserVar.GeometryInterpolant~=GeometryInterpolant
     
     fprintf('DefineGeometry: loading file: %-s ',UserVar.GeometryInterpolant)
     load(UserVar.GeometryInterpolant,'FB','Fb','Fs','Frho')

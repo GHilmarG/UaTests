@@ -16,6 +16,7 @@ RunString="ES2.5km-uv-h-Tri3-SlidWeertman-Duvh-MRlASE1-abMask0-P-BCVel-kH10000-T
 RunString="ES20km-uv-h-Tri3-SlidWeertman-Duvh-MRIM6HadGEM2-abMask0-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; 
 
 RunString="ES10km-uv-h-Tri3-SlidWeertman-Duvh-MRIM6HadGEM2-abMask0M-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; 
+RunString="ES10km-uvh-Tri3-SlidWeertman-Duvh-MRIM6HadGEM2-abMask0M-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; 
 
 CtrlVar=Ua2D_DefaultParameters();
 
@@ -24,6 +25,13 @@ UserVar.RunType=RunString ;
 UserVar=FileDirectories(UserVar) ;
 UserVar.GeometryInterpolant="create the name of inverse restart file from User.RunType";
 UserVar.InverseRestartFile="create the name of inverse restart file from User.RunType";
+
+UserVar.Assimilation.tStart=2015;       % typically RunStartYear = Assimilation.tStart
+UserVar.Assimilation.tEnd=2020;
+
+UserVar.RunStartYear=UserVar.Assimilation.tEnd ;          
+UserVar.RunEndYear=2100;         
+
 
 [CtrlVar,UserVar]=ParseRunTypeString(CtrlVar,UserVar) ;
 
@@ -42,10 +50,10 @@ if isempty(ResultFiles)
 
 end
 
-hVector=nan(10,100) ;
-uVector=nan(10,100);
-vVector=nan(10,100);
-tVector=nan(10,100) ;
+hVector=nan(10,1000) ;
+uVector=nan(10,1000);
+vVector=nan(10,1000);
+tVector=nan(10,1000) ;
 TextVector=strings(10,1) ;
 Location(1,:)=[-1585e3 -240e3 ]  ; TextVector(1)="PIG 20km upstream of GL" ;
 Location(2,:)=[-1595e3 -271e3 ]  ; TextVector(2)="PIG about 20km downstream of GL" ;

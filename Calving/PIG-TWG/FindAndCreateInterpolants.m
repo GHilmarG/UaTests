@@ -10,12 +10,16 @@ arguments
     options.SaveFiles logical = true  ; % if true, save new interpolants and inverse restart files
 end
 
+
+
+
+
 if CtrlVar.InverseRun
 
     % inverse run using forward run results from t=1. This implies using the geometry from t=1 instead of Bedmachine2  geometry.
     % UserVar.RunType="-IRt1-ES20km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-GeoBed2-SMB_RACHMO2k3_2km-";
 
-    if UserVar.to == UserVar.RunStartYear
+    if isnan(UserVar.from)
 
         % This is the initial inverse run. It will use the Bedmachine geometry
 
@@ -92,7 +96,7 @@ if CtrlVar.InverseRun
             fprintf("is found. \n ")
 
             % Have to consider the possibility that after this inverse restart file was generated a further transient run was
-            % conduced and the geometry should therefore be updated based on the results of this more recent transient run. So I
+            % conducted and the geometry should therefore be updated based on the results of this more recent transient run. So I
             % load the inverse restart file and replace F.s, F.n , F.B F.S and F.h in that file with (possibly) the more recent
             % results from a transient run for the time at which this restart run should start from
 
@@ -121,7 +125,10 @@ if CtrlVar.InverseRun
 elseif CtrlVar.TimeDependentRun
 
 
-    % The FA and FC interpolants must be based on previous restart run
+    % The FA and FC interpolants must be based on previous inverse run that produced an inverse restart file
+    %
+    % I check if there are available FA and FC interpolants, but still use the inverse restart file if it is newer
+    %
     FAdir=dir(UserVar.FAFile);
     FCdir=dir(UserVar.FCFile);
     IRdir=dir(UserVar.InverseRestartFile);
@@ -153,7 +160,7 @@ elseif CtrlVar.TimeDependentRun
     end
 
 
-    if UserVar.from ~= UserVar.RunStartYear
+    if UserVar.from ~= UserVar.Assimilation.tStart
 
         % Since this is a forward run, following an inverse run, the geometrical interpolants should already exist.
 
