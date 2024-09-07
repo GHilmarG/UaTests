@@ -40,7 +40,7 @@ if contains(FieldsToBeDefined,'b')  || contains(FieldsToBeDefined,'B')
     
     I=b<B; b(I)=B(I);  % make sure that interpolation errors don't create a situation where b<B
     % Get rid of lake Vostock.
-    % NOte: This might already have been done in the geometry data set, so possibly this could be commented away. 
+    % Note: This might already have been done in the geometry data set, so possibly this could be commented away. 
     I=F.x>1000e3 & F.x < 1600e3 & F.y>-500e3 & F.y<-200e3  ;
     B(I)=b(I); % shift bed upwards towards lower ice surface and ignore lake
     
@@ -68,8 +68,8 @@ end
 
 % Warning:  There is a shallow sill just downstream of Dotson ice shelf crossing the edges of the computational boundary
 %           This can cause occasional grounding right at the boundary when using mesh refinement.
-%           The ice thicknesses there are supprisingly large (>100m) but Bedmachine indicates no grounded areas there.
-%           Grounding right at the bounday causes numerical issus. I've decided to modify the bathymetry in this area to get
+%           The ice thicknesses there are surprisingly large (>100m) but Bedmachine indicates no grounded areas there.
+%           Grounding right at the boundary causes numerical issues. I've decided to modify the bathymetric in this area to get
 %           rid of this. 
 
 

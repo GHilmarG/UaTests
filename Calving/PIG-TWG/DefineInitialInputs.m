@@ -7,45 +7,11 @@ function [UserVar,CtrlVar,MeshBoundaryCoordinates]=DefineInitialInputs(UserVar,C
 
 if ~isfield(UserVar,"RunType") || isempty(UserVar.RunType)
 
-
-    % initial inverse run using ITS120 velocities and Bedmachine2 geometry.
-    UserVar.RunType="-IR-ES20km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-GeoBed2-SMB_RACHMO2k3_2km-";
-
-    % forward run from t=0 to t=1, using inversion products FA and FC from t=0, which implies using the initial inversion
-    UserVar.RunType="-FR0to1-ES20km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-GeoBed2-SMB_RACHMO2k3_2km-";
-
-    % inverse run using forward run results from t=1. This implies using the geometry from t=1 instead of Bedmachine2  geometry.
-    UserVar.RunType="-IR0to1-ES20km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-GeoBed2-SMB_RACHMO2k3_2km-";
-
-    % forward restart run continuing from t=1 and using inversion products from t=1,
-    UserVar.RunType="-FR1to2-ES20km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-GeoBed2-SMB_RACHMO2k3_2km-";
-
-    % inverse run using forward run results from t=2. This implies using the geometry from t=2 instead of Bedmachine2  geometry.
-    UserVar.RunType="-IR1to2-ES20km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-GeoBed2-SMB_RACHMO2k3_2km-";
-
-    % forward restart run continuing from t=2 and using inversion products from t=2,
-    UserVar.RunType="-FR2to3-E015S20km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-GeoBed2-SMB_RACHMO2k3_2km-";
-
-    % inverse run using forward run results from t=3. This implies using the geometry from t=3 instead of Bedmachine2  geometry.
-    UserVar.RunType="-IR2to3-ES20km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-GeoBed2-SMB_RACHMO2k3_2km-";
-
-    % forward restart run continuing from t=3 and using inversion products from t=3,
-    UserVar.RunType="-FR3to4-ES20km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-GeoBed2-SMB_RACHMO2k3_2km-";
-
-    % inverse run using forward run results from t=4. This implies using the geometry from t=4 instead of Bedmachine2  geometry.
-    UserVar.RunType="-IR3to4-ES20km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-GeoBed2-SMB_RACHMO2k3_2km-";
-
-    % forward restart run continuing from t=4 and using inversion products from t=4,
-    UserVar.RunType="-FR4to5-ES20km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-GeoBed2-SMB_RACHMO2k3_2km-";
-
-    UserVar.RunType="-FR0to1-ES10km-Tri3-SlidWeertman-Duvh-MRZERO-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-GeoBed2-SMB_RACHMO2k3_2km-";
-    UserVar.RunType="-FR0to1-ES5km-Tri3-SlidWeertman-Duvh-MRZERO-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-GeoBed2-SMB_RACHMO2k3_2km-";
-
-    UserVar.RunType="ES30km-uv-h-Tri3-SlidWeertman-Duvh-MRIM6HadGEM2-abMask0-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-";
-
+    error(" input needed ")
+    
 end
 
-% Create_AC_ScatteredInterpolants([],UserVar)MinTh
+
 %%
 
 UserVar=FileDirectories(UserVar) ;
@@ -173,7 +139,7 @@ if CtrlVar.InverseRun
     CtrlVar.NameOfFileForSavingSlipperinessEstimate= UserVar.CFile;
     CtrlVar.NameOfFileForSavingAGlenEstimate= UserVar.AFile;
 
-    CtrlVar.Inverse.NameOfRestartOutputFile=UserVar.InverseRestartFile;
+   
 
 elseif  CtrlVar.TimeDependentRun
 
@@ -383,20 +349,25 @@ CtrlVar.WriteRestartFileInterval=20;
 CtrlVar.UpdateBoundaryConditionsAtEachTimeStep=true;
 
 %% Thickness Constraints
-CtrlVar.ThickMin=0.2 ; 
+CtrlVar.ThickMin=0.2 ;
 
-CtrlVar.ThicknessConstraints=1;      
+CtrlVar.ThicknessConstraints=1;
 CtrlVar.ThicknessConstraintsInfoLevel=1;
 
-CtrlVar.MinNumberOfNewlyIntroducedActiveThicknessConstraints=0;  
-CtrlVar.ThicknessConstraintsItMax=5;
+CtrlVar.MinNumberOfNewlyIntroducedActiveThicknessConstraints=0;
 
-CtrlVar.ThicknessBarrier=0; 
+if contains(UserVar.RunType,"-uv-h-")
+    CtrlVar.ThicknessConstraintsItMax=5;
+else
+    CtrlVar.ThicknessConstraintsItMax=0;
+end
+
+CtrlVar.ThicknessBarrier=0;
 CtrlVar.ThicknessBarrierMassBalanceFeedbackCoeffCubic=-0 ; CtrlVar.ThicknessBarrierMassBalanceFeedbackCoeffLin=-1000;
 
-CtrlVar.LevelSetMethodAutomaticallyApplyMassBalanceFeedback=0; 
-CtrlVar.LevelSetMethodThicknessConstraints=1;    
-CtrlVar.LevelSetMethodMassBalanceFeedbackCoeffCubic=-0      ; CtrlVar.LevelSetMethodMassBalanceFeedbackCoeffLin=-1000; 
+CtrlVar.LevelSetMethodAutomaticallyApplyMassBalanceFeedback=0;
+CtrlVar.LevelSetMethodThicknessConstraints=1;
+CtrlVar.LevelSetMethodMassBalanceFeedbackCoeffCubic=-0      ; CtrlVar.LevelSetMethodMassBalanceFeedbackCoeffLin=-1000;
 
 
 %%

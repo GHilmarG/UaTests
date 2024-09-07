@@ -45,8 +45,9 @@ if contains(UserVar.RunType,"-MRIM6")
 
     end
 
-    dasdh=0;
-    dabdh=0;
+    
+    dasdh=zeros(MUA.Nnodes,1) ;
+    dabdh=zeros(MUA.Nnodes,1) ;
     as0=Fas(MUA.coordinates);
 
     rhoi_SI=917.0; % ice density (kg/m^3)
@@ -324,6 +325,7 @@ if contains(UserVar.RunType,"-abMask0")
 
                 if any(dh>0)
                     ab(InitialOceanNodesThatNowAreGrounded)=ab(InitialOceanNodesThatNowAreGrounded)-100*dh;
+                    dabdh(InitialOceanNodesThatNowAreGrounded)=dabdh(InitialOceanNodesThatNowAreGrounded)-100;
                 end
 
             end
@@ -344,7 +346,7 @@ end
 ab(~OceanNodes)=0;
 dabdh(~OceanNodes)=0;
 
-
+dabdh=dabdh*0; % testing impact of uv-h convergence
 
 %% Basal melting due to frictional heating
 

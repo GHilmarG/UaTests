@@ -83,8 +83,8 @@ pat="to"+digitsPattern+"-";    to=str2double(extract(extract(UserVar.RunType,pat
 if isempty(from) ; from=nan ; end
 if isempty(to) ; to=nan ; end
 
-CtrlVar.time=from ; 
-CtrlVar.TotalTime=to ; 
+CtrlVar.time=from ;
+CtrlVar.TotalTime=to ;
 
 UserVar.from=from;
 UserVar.to=to;
@@ -272,7 +272,11 @@ end
 % that are specific to that run and have geometries which are those of a previous transient run.
 %
 
-if contains(UserVar.RunType,"-IR-") ||  contains(UserVar.RunType,"-FR"+num2str(UserVar.Assimilation.tStart))
+if isnan(UserVar.from) || (contains(UserVar.RunType,"-FR") && UserVar.from == UserVar.Assimilation.tStart)
+
+    fprintf("Parsing: This is either the very first inversion, which does not contain the from variable in the RunType, or this is the first forward run during the assimilation phase\n")
+
+    % if contains(UserVar.RunType,"-IR-") ||  contains(UserVar.RunType,"-FR"+num2str(UserVar.Assimilation.tStart))
 
     % old naming convection, fine for initial inverse run
     %  The new naming convention is simply to use the UserVar.RunType for the name of the inverse restart file
@@ -319,54 +323,70 @@ if contains(UserVar.RunType,"-IR-") ||  contains(UserVar.RunType,"-FR"+num2str(U
 
 
 
-else
 
 
-    if UserVar.InverseRestartFile=="create the name of inverse restart file from User.RunType"
-        InvRestartFile=UserVar.RunType;
+elseif to <= UserVar.Assimilation.tEnd  % within assimilation period
 
-        % I need to create the name of the inverse restart file for both inverse and forward run.
-        %
-        % In the case of a forward run this will be used to find the previously created inverse restart file from which to get the A
-        % and the C interpolants, as well as the geometry interpolants
+    InvRestartFile=UserVar.RunType;
 
-        % get rid of the "IR<from>to<to>" or the "FR<from>to<to>" and replace with "-at<to>?"
-        if CtrlVar.InverseRun
-            % InvFile=replace(InvFile,num2str(from)+"to",  "-at");
-            InvRestartFile=replaceBetween(InvRestartFile,"IR","-","IR-at"+num2str(to)+"-",Boundaries="inclusive");
-        else
-            InvRestartFile=replaceBetween(InvRestartFile,"FR","-","IR-at"+num2str(from)+"-",Boundaries="inclusive");
-        end
+    % I need to create the name of the inverse restart file for both inverse and forward run.
+    %
+    % In the case of a forward run this will be used to find the previously created inverse restart file from which to get the A
+    % and the C interpolants, as well as the geometry interpolants
 
-        InvRestartFile=replace(InvRestartFile,"--","-") ;
-        InvRestartFile=replace(InvRestartFile,"--","-") ;
+    % get rid of the "IR<from>to<to>" or the "FR<from>to<to>" and replace with "-at<to>"
+    if CtrlVar.InverseRun
 
+        fprintf("Inverse run within the assimilation period. \n")
+        InvRestartFile=replaceBetween(InvRestartFile,"IR","-","IR-at"+num2str(to)+"-",Boundaries="inclusive");
 
     else
-
-        InvRestartFile=UserVar.InverseRestartFile;
-
+        fprintf("Forward run within the assimilation period. \n")
+        InvRestartFile=replaceBetween(InvRestartFile,"FR","-","IR-at"+num2str(from)+"-",Boundaries="inclusive");
     end
 
-    UserVar.InverseRestartFile=UserVar.InverseRestartFileDirectory+InvRestartFile;
-
-    ACFiles=replace(InvRestartFile,["-IR-","IR-"],"-");
-    ACFiles=replace(ACFiles,["-FR-","-FR-"],"-");
+    InvRestartFile=RemoveSomeUnwantedCharactersFromString(InvRestartFile);
 
 
+elseif from >= UserVar.Assimilation.tEnd  % after assimilation period
 
-    ACFiles=strip(ACFiles,"left","-");
-    ACFiles=replace(ACFiles,".","k");
-    UserVar.AFile="InvA-"+ACFiles;
-    UserVar.CFile="InvC-"+ACFiles;
-    UserVar.FAFile="FA-"+ACFiles;
-    UserVar.FCFile="FC-"+ACFiles;
+    InvRestartFile=UserVar.RunType;
+
+    if CtrlVar.InverseRun
+        fprintf("Inverse run after the assimilation period. \n")
+        error(" something wrong, there should be on inverse run after the end of a assimilation/relaxation period.")
+    else
+        fprintf("Forward run after the assimilation period. \n")
+        InvRestartFile=replaceBetween(InvRestartFile,"FR","-","IR-at"+num2str(UserVar.Assimilation.tEnd)+"-",Boundaries="inclusive");
+    end
+
+    InvRestartFile=RemoveSomeUnwantedCharactersFromString(InvRestartFile);
+
+
+else
+
+    error(" case not found")
 
 end
 
+UserVar.InverseRestartFile=UserVar.InverseRestartFileDirectory+InvRestartFile;
+
+
+ACFiles=replace(InvRestartFile,["-InverseRestartFile-","InverseRestartFile-","-IR-","IR-"],"-");
+ACFiles=replace(ACFiles,["-FR-","-FR-"],"-");
+
+ACFiles=strip(ACFiles,"left","-");
+ACFiles=replace(ACFiles,".","k");
+UserVar.AFile="InvA-"+ACFiles;
+UserVar.CFile="InvC-"+ACFiles;
+UserVar.FAFile="FA-"+ACFiles;
+UserVar.FCFile="FC-"+ACFiles;
+
+
+
 InvRestartFile=replace(InvRestartFile,".","k");
 InvRestartFile=replace(InvRestartFile,"--","-");
-InvRestartFile=strip(InvRestartFile,"left","-");
+
 
 
 
@@ -387,8 +407,7 @@ UserVar.AFile=replace(UserVar.AFile,".mat","");
 UserVar.CFile=replace(UserVar.CFile,".","k");
 UserVar.AFile=replace(UserVar.AFile,".","k");
 
-UserVar.CFile=replace(UserVar.CFile,"--","-");
-UserVar.AFile=replace(UserVar.AFile,"--","-");
+
 
 
 SMB=extractBetween(UserVar.RunType,"-SMB_","-");
@@ -409,8 +428,8 @@ if UserVar.GeometryInterpolant=="create the name of inverse restart file from Us
 
         fprintf("Parsing: This is either the very first inversion, which does not contain the from variable in the RunType, or this is the first forward run during the assimilation phase\n")
 
-        % 
-        % 
+        %
+        %
         %
         % Here the interpolants are based on data, ie Bedmachine, and those are located in a separate folder.
         UserVar.GeometryInterpolant=UserVar.Interpolants+"BedMachineGriddedInterpolants";
@@ -423,7 +442,7 @@ if UserVar.GeometryInterpolant=="create the name of inverse restart file from Us
 
         end
 
-         fprintf("The file for the geometry interpolant is %s \n",UserVar.GeometryInterpolant)
+        fprintf("The file for the geometry interpolant is %s \n ",UserVar.GeometryInterpolant)
 
     elseif to <= UserVar.Assimilation.tEnd  % within assimilation period
 
@@ -498,19 +517,9 @@ UserVar.AFile=RemoveSomeUnwantedCharactersFromString(UserVar.AFile);
 UserVar.CFile=RemoveSomeUnwantedCharactersFromString(UserVar.CFile);
 
 
-fprintf(" UserVar.GeometryInterpolant:       \t %s \n ",UserVar.GeometryInterpolant)
-fprintf("UserVar.SurfaceVelocityInterpolant: \t %s \n ",UserVar.SurfaceVelocityInterpolant)
-fprintf("UserVar.InverseRestartFile:         \t %s \n ",UserVar.InverseRestartFile)
-fprintf("UserVar.FAFile:                     \t %s \n ",UserVar.FAFile)
-fprintf("UserVar.FCFile:                     \t %s \n ",UserVar.FCFile)
-fprintf("CtrlVar.NameOfRestartFiletoWrite:   \t %s \n \n \n",CtrlVar.NameOfRestartFiletoWrite)
-[ isfile(UserVar.GeometryInterpolant+".mat") , isfile(UserVar.InverseRestartFile+".mat") , isfile(UserVar.FAFile+".mat") , isfile(UserVar.FCFile+".mat")]
 
 
 
-if ~nargout   % A trick to suppress any function output if no output requested. No need to suppress output using ;
-    clearvars CtrlVar
-end
 
 % Now add ".mat" to filenames if it is not already a part of the name
 
@@ -533,8 +542,43 @@ UserVar.AFile=RemoveSomeUnwantedCharactersFromString(UserVar.AFile);
 UserVar.CFile=RemoveSomeUnwantedCharactersFromString(UserVar.CFile);
 
 
-
 CtrlVar.Inverse.NameOfRestartInputFile=UserVar.InverseRestartFile;
+CtrlVar.Inverse.NameOfRestartOutputFile=UserVar.InverseRestartFile;
 
+fprintf("\n\n")
+fprintf(" UserVar.GeometryInterpolant:       \t %s \n ",UserVar.GeometryInterpolant)
+fprintf("UserVar.SurfaceVelocityInterpolant: \t %s \n ",UserVar.SurfaceVelocityInterpolant)
+
+fprintf("UserVar.FAFile:                     \t %s \n ",UserVar.FAFile)
+fprintf("UserVar.FCFile:                     \t %s \n ",UserVar.FCFile)
+
+if CtrlVar.InverseRun
+
+    fprintf("CtrlVar.Inverse.NameOfRestartInputFile:         \t %s \n ",CtrlVar.Inverse.NameOfRestartInputFile)
+    fprintf("CtrlVar.Inverse.NameOfRestartOutputFile:         \t %s \n ",CtrlVar.Inverse.NameOfRestartOutputFile)
+
+else
+    fprintf("\n Forward run restart files:\n")
+    fprintf("CtrlVar.NameOfRestartFiletoRead:    \t %s \n ",CtrlVar.NameOfRestartFiletoRead)
+    fprintf("CtrlVar.NameOfRestartFiletoWrite:   \t %s \n \n \n",CtrlVar.NameOfRestartFiletoWrite)
+end
+
+[ isfile(UserVar.GeometryInterpolant) , isfile(UserVar.InverseRestartFile) , isfile(UserVar.FAFile) , isfile(UserVar.FCFile)]
+
+if  CtrlVar.InverseRun && ~isnan(UserVar.from)
+
+    fprintf("This inverse run will create new geometry interpolants and save them in: %s \n",UserVar.GeometryInterpolant)
+
+
+elseif CtrlVar.TimeDependentRun
+
+
+    fprintf("This forward run will use geometry interpolants in: %s \n",UserVar.GeometryInterpolant)
+
+end
+
+if ~nargout   % A trick to suppress any function output if no output requested. No need to suppress output using ;
+    clearvars CtrlVar
+end
 
 end

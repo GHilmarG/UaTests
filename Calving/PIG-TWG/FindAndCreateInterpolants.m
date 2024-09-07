@@ -59,10 +59,10 @@ if CtrlVar.InverseRun
             FC=scatteredInterpolant(F.x,F.y,F.C);
             FA=scatteredInterpolant(F.x,F.y,F.AGlen);
 
-            if options.SaveFiles
-                fprintf("Saving FA interpolant in: %s \n",UserVar.FAFile)
-                fprintf("Saving FC interpolant in: %s \n",UserVar.FCFile)
 
+            fprintf("Saving FA interpolant in: %s \n",UserVar.FAFile)
+            fprintf("Saving FC interpolant in: %s \n",UserVar.FCFile)
+            if options.SaveFiles
                 save(UserVar.FAFile,"FA")
                 save(UserVar.FCFile,"FC")
 
@@ -78,8 +78,9 @@ if CtrlVar.InverseRun
             Frho=scatteredInterpolant(F.x,F.y,F.rho);
             rhow=F.rhow;
 
+            fprintf("Saving new geometrical interpolants for this inverse run in %s \n",UserVar.GeometryInterpolant)
             if options.SaveFiles
-                fprintf("Saving new geometrical interpolants for this inverse run in %s \n",UserVar.GeometryInterpolant)
+                
                 save(UserVar.GeometryInterpolant,'FB','Fh','Frho','Fs','Fb','rhow')
             end
 
@@ -111,8 +112,9 @@ if CtrlVar.InverseRun
 
             [F.b,F.s,F.h,GF]=Calc_bs_From_hBS(CtrlVar,MUA,F.h,F.S,F.B,F.rho,F.rhow);
 
+             fprintf("Saving an updated restart file for inverse restart run with new geometry based on previous forward transient run. \n")
             if options.SaveFiles
-                fprintf("Saving an updated restart file for inverse restart run with new geometry based on previous forward transient run. \n")
+               
                 save(UserVar.InverseRestartFile,...
                     'CtrlVarInRestartFile','UserVarInRestartFile','MUA','BCs','F','GF','l','RunInfo',...
                     'InvStartValues','Priors','Meas','BCsAdjoint','InvFinalValues');
@@ -121,8 +123,9 @@ if CtrlVar.InverseRun
         end
 
     end
+end
 
-elseif CtrlVar.TimeDependentRun
+if CtrlVar.TimeDependentRun
 
 
     % The FA and FC interpolants must be based on previous inverse run that produced an inverse restart file
@@ -142,11 +145,12 @@ elseif CtrlVar.TimeDependentRun
         FC=scatteredInterpolant(F.x,F.y,F.C);
         FA=scatteredInterpolant(F.x,F.y,F.AGlen);
 
-        if options.SaveFiles
-            fprintf("FindAndCreateInterpolants: New FA and FC interpolants created and saved.\n")
-            fprintf("FA interpolant: %s \n",UserVar.FAFile)
-            fprintf("FC interpolant: %s \n",UserVar.FCFile)
 
+        fprintf("FindAndCreateInterpolants: New FA and FC interpolants created and saved.\n")
+        fprintf("FA interpolant: %s \n",UserVar.FAFile)
+        fprintf("FC interpolant: %s \n",UserVar.FCFile)
+
+        if options.SaveFiles
             save(UserVar.FAFile,"FA")
             save(UserVar.FCFile,"FC")
         end
