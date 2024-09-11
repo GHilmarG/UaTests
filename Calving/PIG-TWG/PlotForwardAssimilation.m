@@ -18,6 +18,11 @@ RunString="ES20km-uv-h-Tri3-SlidWeertman-Duvh-MRIM6HadGEM2-abMask0-P-BCVel-kH100
 RunString="ES10km-uv-h-Tri3-SlidWeertman-Duvh-MRIM6HadGEM2-abMask0M-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; 
 RunString="ES10km-uvh-Tri3-SlidWeertman-Duvh-MRIM6HadGEM2-abMask0M-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; 
 
+
+RunString="ES5km-uv-h-Tri3-SlidWeertman-Duvh-MRlASE3-abMask0A-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-";
+
+
+
 CtrlVar=Ua2D_DefaultParameters();
 
 UserVar.RunType=RunString ;
@@ -224,20 +229,25 @@ for ifile=1:numel(ResultFiles)
         abFig.Position=[50 100  1200 1200] ;
         FigTitle=sprintf("Basal melt rate t=%4.2f (yr)",F.time);
 
-        [cbar,xGL,yGL]=UaPlots(CtrlVar,MUA,F,F.ab,GetRidOfValuesDownStreamOfCalvingFronts=true,CreateNewFigure=false) ;
+        ab=-F.ab ; ab(ab<eps)=nan ; 
+        [cbar,xGL,yGL]=UaPlots(CtrlVar,MUA,F,ab,GetRidOfValuesDownStreamOfCalvingFronts=true,CreateNewFigure=false) ;
+        set(gca,'ColorScale','log')
         hold on ; plot(xGL/CtrlVar.PlotXYscale,yGL/CtrlVar.PlotXYscale,"k",LineWidth=1)
         hold on ; plot(xGL0/CtrlVar.PlotXYscale,yGL0/CtrlVar.PlotXYscale,"k",LineWidth=1.5)
-        clim([-150 0]) ; ModifyColormap(GrayLevelRange=0.2);
+        
+        % clim([-150 0]) ; ModifyColormap(GrayLevelRange=0.2);
         Ti=title(FigTitle,Interpreter="latex");
         SuTi=subtitle(sprintf("Median element size %3.1f km. Melt: %s",Emedian/1000,MeltParameterisation),Interpreter="latex");
         Ti.Color="blue"; Ti.FontSize=16;
         SuTi.Color="blue"; SuTi.FontSize=14;
 
         title(cbar,["$a_b$","(m/yr)"],interpreter="latex")
-        %subtitle(sprintf("t=%g",CtrlVar.time),interpreter="latex")
-        colormap(othercolor("Mtemperaturemap",1028))
+        set(gca,'ColorScale','log') ; clim([0.1 150]) ; colormap(othercolor("Greys7",1028))
         PlotLatLonGrid();
-        clim([-150 0]) ; ModifyColormap(GrayLevelRange=0.2);
+        %subtitle(sprintf("t=%g",CtrlVar.time),interpreter="latex")
+        
+        % PlotLatLonGrid();
+        % clim([-150 0]) ; ModifyColormap(GrayLevelRange=0.2);
         frame=getframe(gcf) ;
         writeVideo(Videoab,frame);
 

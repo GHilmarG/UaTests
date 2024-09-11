@@ -339,8 +339,6 @@ else
 
 end
 
-
-
 % only apply basal melt strictly below/outside of grounding lines over nodes connected to the ocean
 
 ab(~OceanNodes)=0;
