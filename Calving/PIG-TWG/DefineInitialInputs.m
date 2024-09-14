@@ -357,7 +357,7 @@ CtrlVar.ThicknessConstraintsInfoLevel=1;
 CtrlVar.MinNumberOfNewlyIntroducedActiveThicknessConstraints=0;
 
 if contains(UserVar.RunType,"-uv-h-")
-    CtrlVar.ThicknessConstraintsItMax=5;
+    CtrlVar.ThicknessConstraintsItMax=2;
 else
     CtrlVar.ThicknessConstraintsItMax=0;
 end
@@ -373,7 +373,7 @@ CtrlVar.LevelSetMethodMassBalanceFeedbackCoeffCubic=-0      ; CtrlVar.LevelSetMe
 %%
 
 if contains(UserVar.RunType,"-FR")  && contains(UserVar.RunType,"-uv-h-")
-     CtrlVar.InfoLevelNonLinIt=5 ; 
+     CtrlVar.InfoLevelNonLinIt=1 ; 
 
 end
 

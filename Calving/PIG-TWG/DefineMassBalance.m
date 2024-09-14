@@ -223,7 +223,11 @@ if contains(UserVar.RunType,"-abMask0")
 
     if F.time==UserVar.Assimilation.tStart && ~OceanNodes0FileSaved
 
-        [~,OceanNodes0] = LakeOrOcean3(CtrlVar,MUA,F.GF,[],"Strict") ;
+        if contains(UserVar.RunType,"-IOR-")
+            [~,OceanNodes0] = LakeOrOcean3(CtrlVar,MUA,F.GF,[],"Relaxed") ;
+        else
+            [~,OceanNodes0] = LakeOrOcean3(CtrlVar,MUA,F.GF,[],"Strict") ;
+        end
 
         % The OceanNodes0 mask is only dependent on the mesh and the initial GF at t=0.
         FOceanNodes0=scatteredInterpolant(F.x,F.y,double(OceanNodes0));
@@ -242,14 +246,20 @@ if contains(UserVar.RunType,"-abMask0")
 
     end
 
-   
 
-   % also apply melt over all nodes that initially were grounded
+
+    % also apply melt over all nodes that initially were grounded
 
     OceanNodes0Double=FOceanNodes0(F.x,F.y) ; % this is a double
     OceanNodes0=OceanNodes0Double>0.5 ;       % presumably not needed, but interpolation might create values between 0 and 1
-    [~,OceanNodes] = LakeOrOcean3(CtrlVar,MUA,F.GF,[],"Strict") ;
-    
+
+    if contains(UserVar.RunType,"-IOR-")
+        [~,OceanNodes] = LakeOrOcean3(CtrlVar,MUA,F.GF,[],"Relaxed") ;
+    else
+        [~,OceanNodes] = LakeOrOcean3(CtrlVar,MUA,F.GF,[],"Strict") ;
+    end
+
+
     InitialOceanNodesThatNowAreGrounded=OceanNodes0 & ~OceanNodes;
 
 
@@ -335,7 +345,13 @@ if contains(UserVar.RunType,"-abMask0")
 
 else
 
-    [~,OceanNodes] = LakeOrOcean3(CtrlVar,MUA,F.GF,[],"Strickt") ;
+    if contains(UserVar.RunType,"-IOR-")
+
+        [~,OceanNodes] = LakeOrOcean3(CtrlVar,MUA,F.GF,[],"Relaxed") ;
+    else
+
+        [~,OceanNodes] = LakeOrOcean3(CtrlVar,MUA,F.GF,[],"Strict") ;
+    end
 
 end
 
