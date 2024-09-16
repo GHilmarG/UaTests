@@ -20,7 +20,7 @@ RunString="ES10km-uvh-Tri3-SlidWeertman-Duvh-MRIM6HadGEM2-abMask0M-P-BCVel-kH100
 
 
 RunString="ES5km-uv-h-Tri3-SlidWeertman-Duvh-MRlASE3-abMask0A-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-";
-
+%RunString="ES5km-uv-h-Tri3-SlidWeertman-Duvh-MRlASE3-abMask0A-IOR-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-";
 
 
 CtrlVar=Ua2D_DefaultParameters();
@@ -44,6 +44,9 @@ UserVar.RunEndYear=2100;
 SearchString=replaceBetween(UserVar.RunType,"-FR","-","*");
 SearchString=replace(SearchString,"2.5","2k5");
 SearchString=replace(SearchString,"ES","");  % for some reason the output files were named with ES missing
+
+SearchString="000-FR*"+"-"+SearchString; 
+
 % SearchString="*"+SearchString; 
 % SearchString=replace(SearchString,"**","*") ;
 ResultFiles=dir(UserVar.ResultsFileDirectory+"*"+SearchString+".mat"); 
@@ -55,6 +58,9 @@ if isempty(ResultFiles)
 
 end
 
+
+
+xGL0=nan ; yGL0=nan  ;
 hVector=nan(10,1000) ;
 uVector=nan(10,1000);
 vVector=nan(10,1000);
@@ -117,8 +123,13 @@ for ifile=1:numel(ResultFiles)
     speed=sqrt(F.ub.*F.ub+F.vb.*F.vb) ;
     mspeed=ceil(max(speed)/1000)*1000;
     mspeed=max(mspeed,6000);
-    CtrlVar.QuiverColorSpeedLimits=[0 mspeed] ; 
+    CtrlVar.QuiverColorSpeedLimits=[0 mspeed] ;
+
     [cbar,xGL,yGL,xCF,yCF,CtrlVar]=UaPlots(CtrlVar,MUA,F,"-uv-",FigureTitle="velocity",CreateNewFigure=false) ;
+
+    if ~isnan(xGL0)
+        plot(xGL0/CtrlVar.PlotXYscale,yGL0/CtrlVar.PlotXYscale,"k",LineWidth=1.5)
+    end
     Fig=gcf; Fig.Position=[50 100  1200 1200] ;
     FigTitle=sprintf("Velocity at t=%4.2f (yr)",F.time);
     Ti=title(FigTitle,Interpreter="latex");
@@ -209,7 +220,7 @@ for ifile=1:numel(ResultFiles)
             [cbar,xGL,yGL]=UaPlots(CtrlVar,MUA,F,dhdtPrevious,GetRidOfValuesDownStreamOfCalvingFronts=true,CreateNewFigure=false) ;
             hold on ; plot(xGL/CtrlVar.PlotXYscale,yGL/CtrlVar.PlotXYscale,"k",LineWidth=1)
             hold on ; plot(xGL0/CtrlVar.PlotXYscale,yGL0/CtrlVar.PlotXYscale,"k",LineWidth=1.5)
-            clim([-30 30])
+            clim([-10 2])
             Ti=title(FigTitle,Interpreter="latex");
             SuTi=subtitle(sprintf("Median element size %3.1f km. Melt: %s",Emedian/1000,MeltParameterisation),Interpreter="latex");
             Ti.Color="blue"; Ti.FontSize=16;
@@ -217,7 +228,8 @@ for ifile=1:numel(ResultFiles)
             
             title(cbar,["dh/dt","(m/yr)"],interpreter="latex")
             %subtitle(sprintf("t=%g",CtrlVar.time),interpreter="latex")
-            colormap(othercolor("Mtemperaturemap",1028))
+            %colormap(othercolor("Mtemperaturemap",1028))
+            ModifyColormap();
             PlotLatLonGrid();
 
             frame=getframe(gcf) ;
@@ -241,7 +253,7 @@ for ifile=1:numel(ResultFiles)
         Ti.Color="blue"; Ti.FontSize=16;
         SuTi.Color="blue"; SuTi.FontSize=14;
 
-        title(cbar,["$a_b$","(m/yr)"],interpreter="latex")
+        title(cbar,["$-a_b$","(m/yr)"],interpreter="latex")
         set(gca,'ColorScale','log') ; clim([0.1 150]) ; colormap(othercolor("Greys7",1028))
         PlotLatLonGrid();
         %subtitle(sprintf("t=%g",CtrlVar.time),interpreter="latex")
