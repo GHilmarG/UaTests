@@ -20,10 +20,12 @@ RunString="ES10km-uvh-Tri3-SlidWeertman-Duvh-MRIM6HadGEM2-abMask0M-P-BCVel-kH100
 
 
 RunString="ES5km-uv-h-Tri3-SlidWeertman-Duvh-MRlASE3-abMask0A-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-";
-%RunString="ES5km-uv-h-Tri3-SlidWeertman-Duvh-MRlASE3-abMask0A-IOR-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-";
+RunString="ES5km-uv-h-Tri3-SlidWeertman-Duvh-MRlASE3-abMask0A-IOR-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-";
 
+RunString="ES5km-uvh-Tri3-SlidWeertman-Duvh-MRlASE3-abMask0A-IOR-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-";
 
 CtrlVar=Ua2D_DefaultParameters();
+
 
 UserVar.RunType=RunString ;
 
@@ -35,7 +37,7 @@ UserVar.Assimilation.tStart=2015;       % typically RunStartYear = Assimilation.
 UserVar.Assimilation.tEnd=2020;
 
 UserVar.RunStartYear=UserVar.Assimilation.tEnd ;          
-UserVar.RunEndYear=2100;         
+UserVar.RunEndYear=2200;         
 
 
 [CtrlVar,UserVar]=ParseRunTypeString(CtrlVar,UserVar) ;
@@ -45,7 +47,7 @@ SearchString=replaceBetween(UserVar.RunType,"-FR","-","*");
 SearchString=replace(SearchString,"2.5","2k5");
 SearchString=replace(SearchString,"ES","");  % for some reason the output files were named with ES missing
 
-SearchString="000-FR*"+"-"+SearchString; 
+SearchString="00-FR*"+"-"+SearchString; 
 
 % SearchString="*"+SearchString; 
 % SearchString=replace(SearchString,"**","*") ;
