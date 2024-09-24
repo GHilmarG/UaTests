@@ -25,6 +25,8 @@ if nargin==0 | isempty(RunString)
 
    RunString="ES30km-uv-h-Tri3-SlidWeertman-Duvh-MRlASE3-abMask0A-IOR-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; 
    RunString="ES5km-uv-h-Tri3-SlidWeertman-Duvh-MRlASE3-abMask0A-IOR-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; 
+    
+   RunString="ES30km-uv-h-Tri3-SlidWeertman-Duvh-MRZERO-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; 
 
 
 end
@@ -51,13 +53,13 @@ UserVar.Assimilation.tEnd=2020;
 UserVar.RunStartYear=UserVar.Assimilation.tEnd ;    % I don't really need this RunStartYear variable, 
                                                     % and I always must make sure that the RunStartYear 
                                                     % is that of the end of the assimilation/period
-UserVar.RunEndYear=2100;
+UserVar.RunEndYear=2300;
 
 UserVar.Assimilation.is=true ;       % This is a flag to bypass the assimilation/relaxation phase. 
                                       % This will only work if the assimilation/relaxation has already 
                                       % been performed previously and all the related files exists
 
-UserVar.Inverse.Iterations=200;
+UserVar.Inverse.Iterations=2;
 InverseRunAtStart=true ;
 %% -]
 %%

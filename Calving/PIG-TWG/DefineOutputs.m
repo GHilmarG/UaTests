@@ -63,7 +63,28 @@ if contains(plots,'-save-')
         FileName=replace(FileName,"--","-");
         FileName=replace(FileName,".","k");
         fprintf(' Saving data in %s \n',FileName)
-        save(FileName,"CtrlVar","UserVar","MUA","F","BCs","l")
+
+
+        isSaved=false;
+
+        while ~isSaved
+
+            try
+                save(FileName,"CtrlVar","UserVar","MUA","F","BCs","l")
+                isSaved=true; 
+
+            catch ME
+
+
+                fprintf("%s \n ",ME.message)
+                fprintf("DefineOutputs:  Pausing for one min, then trying again. \n")
+                pause(60)
+
+            end
+
+        end
+
+
 
     end
 end
