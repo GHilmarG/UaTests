@@ -164,7 +164,8 @@ if isempty(MUA.TR)
     [MUA.Boundary,MUA.TR]=FindBoundary(MUA.connectivity,MUA.coordinates);
 end
 
-I=nearestNeighbor(MUA.TR,[X(:) Y(:)]);  % find nodes within computational grid closest to the regularly scape X and Y grid points.
+
+I=nearestNeighbor(MUA.TR,[X(:) Y(:)]);  % find nodes within computational grid closest to the regularly spaced X and Y grid points.
 
 
 figtau2=FindOrCreateFigure("dev stresses 2") ; clf(figtau2)
