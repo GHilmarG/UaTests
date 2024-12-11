@@ -54,14 +54,19 @@ function  BCs=DefineBoundaryConditions(UserVar,CtrlVar,MUA,F,BCs)
 
 
 tolerance=1;
+V=5000 ; % This is the +/- v velocity applied at upper and lower boundaries 
 
-xmax=max(F.x) ; ymax=max(F.y) ; xmax=min(F.x) ;  ymin=min(F.y) ; 
+
+xmax=max(F.x) ; ymax=max(F.y) ; xmin=min(F.x) ;  ymin=min(F.y) ; 
 
 UpperEdgeNodes= MUA.Boundary.Nodes(abs(F.y(MUA.Boundary.Nodes)-ymax) <tolerance) ; 
 LowerEdgeNodes= MUA.Boundary.Nodes(abs(F.y(MUA.Boundary.Nodes)-ymin) <tolerance) ; 
+LeftEdgeNodes= MUA.Boundary.Nodes(abs(F.x(MUA.Boundary.Nodes)-xmin) <tolerance) ; 
 
-BCs.ubFixedNode=[UpperEdgeNodes; LowerEdgeNodes] ;  BCs.ubFixedValue=BCs.ubFixedNode*0;
-BCs.vbFixedNode=[UpperEdgeNodes ; LowerEdgeNodes] ; BCs.vbFixedValue=[UpperEdgeNodes*0 ; LowerEdgeNodes*0-5000]; 
+BCs.ubFixedNode=[UpperEdgeNodes; LowerEdgeNodes ; LeftEdgeNodes] ;  BCs.ubFixedValue=BCs.ubFixedNode*0;
+BCs.vbFixedNode=[UpperEdgeNodes ; LowerEdgeNodes] ; BCs.vbFixedValue=[UpperEdgeNodes*0+V ; LowerEdgeNodes*0-V]; 
+
+
 % BCs.ubFixedNode=1 ;  BCs.ubFixedValue=BCs.ubFixedNode*0;
 
 
