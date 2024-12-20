@@ -100,7 +100,10 @@ UserVar.Assimilation.is=false ;        % This is a flag to bypass the assimilati
                                       % been performed previously and all the related files exists
                                       % Set to false for a restart run, starting after the initialization period
 
-UserVar.Inverse.Iterations=50;
+
+UserVar.Inverse.Iterations=500;
+
+
 InverseRunAtStart=true ;
 %% -]
 %%
