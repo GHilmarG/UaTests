@@ -1,6 +1,7 @@
 
 
 
+
 function driverISMIP6(RunString)
 
 % Driver for repeated inversions over time. This is done to reduce initial transients
@@ -34,7 +35,7 @@ if nargin==0 | isempty(RunString)
 
    RunString="ES5km-uvh-Tri3-SlidWeertman-Duvh-MRlASE3-abMask0A-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; 
    RunString="ES5km-uvh-Tri3-SlidWeertman-Duvh-MRlASE3-abMask0A-IOR-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; 
-
+             
    % RunString="ES2.5km-uv-h-Tri3-SlidWeertman-Duvh-MRlASE3-abMask0A-IOR-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; 
 
    RunString="ES5km-uv-h-Tri3-SlidWeertman-Duvh-MRZERO-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; 
@@ -95,7 +96,8 @@ UserVar.RunStartYear=UserVar.Assimilation.tEnd ;    % I don't really need this R
 UserVar.RunEndYear=2500;
 
 
-UserVar.Assimilation.is=false ;        % This is a flag to bypass the assimilation/relaxation phase. 
+
+UserVar.Assimilation.is=false ;       % This is a flag to bypass the assimilation/relaxation phase. 
                                       % This will only work if the assimilation/relaxation has already 
                                       % been performed previously and all the related files exists
                                       % Set to false for a restart run, starting after the initialization period
