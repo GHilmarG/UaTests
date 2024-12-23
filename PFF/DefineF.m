@@ -1,4 +1,4 @@
-function F=DefineF(CtrlVar,MUA)
+function F=DefineF(UserVar,CtrlVar,MUA)
 
 
 F=UaFields;

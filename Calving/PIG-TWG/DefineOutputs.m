@@ -51,7 +51,7 @@ if contains(plots,'-save-')
         mkdir(UserVar.ResultsFileDirectory)
     end
 
-    if CtrlVar.DefineOutputsInfostring=="inside transient loop and inside run-step loop"
+    if CtrlVar.DefineOutputsInfostring=="inside transient loop and inside run-step loop" || CtrlVar.DefineOutputsInfostring=="Last call"
 
 
         FileName=sprintf('%s%07i-%s.mat',...
