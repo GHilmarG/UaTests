@@ -2,10 +2,13 @@
 function PFFPlots(UserVar,CtrlVar,MUA,F,BCs,BCsphi,phi,Psi,e,PlotTitle) 
 
 
-persistent phiVideo MeshVideo
+persistent phiVideo MeshVideo uvVideo
 
 narginchk(10,10)
 
+if ~isfield(CtrlVar.PhaseFieldFracture,"Video")
+    CtrlVar.PhaseFieldFracture.Video=false;
+end
 
 [xphi,yphi]=CalcMuaFieldsContourLine(CtrlVar,MUA,phi,0.9) ;
 
@@ -22,19 +25,45 @@ UaPlots(CtrlVar,MUA,F,F.AGlen,FigureTitle="A Effective") ; set(gca,'ColorScale',
 hold on ;  plot(xphi/CtrlVar.PlotXYscale,yphi/CtrlVar.PlotXYscale,Color="r",LineWidth=2)
 title(sprintf("$A$")+PlotTitle,Interpreter="latex")
 
+
+
+%% uv 
+uvVideoFile="uv-"+UserVar.Experiment+".avi";
+
+if CtrlVar.PhaseFieldFracture.Video
+    if CtrlVar.PhaseFieldFracture.iphiUpdate==1
+        uvVideo=VideoWriter(uvVideoFile) ;
+        uvVideo.FrameRate=1;
+        open(uvVideo)
+    end
+end
+
 fvel=FindOrCreateFigure("uv") ; clf(fvel)
 QuiverColorGHG(F.x,F.y,F.ub,F.vb,CtrlVar) ;
 hold on ; 
 plot(xphi/CtrlVar.PlotXYscale,yphi/CtrlVar.PlotXYscale,Color="r",LineWidth=2)
 
+Tphi=sprintf("$(u,v)$ with $l=$%g m, $G_c$=%g",CtrlVar.PhaseFieldFracture.l,CtrlVar.PhaseFieldFracture.Gc)   ; 
+title(Tphi,Interpreter="latex")
+subtitle(PlotTitle,Interpreter="latex");
 
+if CtrlVar.PhaseFieldFracture.Video
+
+    if (CtrlVar.PhaseFieldFracture.iphiUpdate>=1) && (CtrlVar.PhaseFieldFracture.iphiUpdate <=CtrlVar.PhaseFieldFracture.MaxUpdates)
+        frame=getframe(gcf);
+        writeVideo(uvVideo,frame) ;
+    end
+
+    if CtrlVar.PhaseFieldFracture.iphiUpdate==CtrlVar.PhaseFieldFracture.MaxUpdates
+
+        close(uvVideo)
+
+    end
+end
 %% phi
 
 phiVideoFile="phi-"+UserVar.Experiment+".avi";
 
-if ~isfield(CtrlVar.PhaseFieldFracture,"Video")
-    
-end
 
 if CtrlVar.PhaseFieldFracture.Video
     if CtrlVar.PhaseFieldFracture.iphiUpdate==1
@@ -47,9 +76,21 @@ end
 figphi=FindOrCreateFigure("phi")  ; clf(figphi) ;
 cbar=UaPlots(CtrlVar,MUA,F,phi) ;
 title(cbar,"$\phi$",interpreter="latex")
-CM=cmocean('balanced',25,'pivot',0.5) ; colormap(CM);
+
+
+pivot=0.5 ;
+if min(phi) < pivot && max(phi) > pivot
+
+    CM=cmocean('balanced',25,'pivot',pivot) ; colormap(CM);
+
+end
+
 hold on ;  plot(xphi/CtrlVar.PlotXYscale,yphi/CtrlVar.PlotXYscale,Color="r",LineWidth=2)
-title(sprintf("$\\phi$  ")+PlotTitle,Interpreter="latex")
+
+Tphi=sprintf("$\\phi$ with $l=$%g m, $G_c$=%g",CtrlVar.PhaseFieldFracture.l,CtrlVar.PhaseFieldFracture.Gc)   ; 
+title(Tphi,Interpreter="latex")
+subtitle(PlotTitle,Interpreter="latex");
+
 xlabel("$x$ (km)",Interpreter="latex") ; ylabel("$y$ (km)",Interpreter="latex")
 
 if CtrlVar.PhaseFieldFracture.Video

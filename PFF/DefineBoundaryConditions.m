@@ -67,12 +67,31 @@ switch  CtrlVar.BCs
         UpperEdgeNodes= MUA.Boundary.Nodes(abs(F.y(MUA.Boundary.Nodes)-ymax) <tolerance) ;
         LowerEdgeNodes= MUA.Boundary.Nodes(abs(F.y(MUA.Boundary.Nodes)-ymin) <tolerance) ;
         LeftEdgeNodes= MUA.Boundary.Nodes(abs(F.x(MUA.Boundary.Nodes)-xmin) <tolerance) ;
-
-        BCs.ubFixedNode=[UpperEdgeNodes; LowerEdgeNodes ; LeftEdgeNodes] ;  BCs.ubFixedValue=BCs.ubFixedNode*0;
-        BCs.vbFixedNode=[UpperEdgeNodes ; LowerEdgeNodes] ; BCs.vbFixedValue=[UpperEdgeNodes*0+V ; LowerEdgeNodes*0-V];
+        RightEdgeNodes= MUA.Boundary.Nodes(abs(F.x(MUA.Boundary.Nodes)-xmax) <tolerance) ;
 
 
-        % BCs.ubFixedNode=1 ;  BCs.ubFixedValue=BCs.ubFixedNode*0;
+        if   UserVar.Experiment=="ice shelf single notch" || UserVar.Experiment=="damaged/deactivated"
+
+                        
+            I=MUA.Boundary.Nodes(F.x(MUA.Boundary.Nodes) < xmax)  ; 
+
+            BCs.ubFixedNode=I ; BCs.ubFixedValue=BCs.ubFixedNode*0;
+            BCs.vbFixedNode=I ; BCs.vbFixedValue=BCs.vbFixedNode*0;
+
+        elseif UserVar.Experiment=="1D ice shelf"
+
+            BCs.ubFixedNode=[LeftEdgeNodes ; RightEdgeNodes ] ;  BCs.ubFixedValue=BCs.ubFixedNode*0;
+            BCs.vbFixedNode=[LeftEdgeNodes ; UpperEdgeNodes ; LowerEdgeNodes ; RightEdgeNodes ] ; BCs.vbFixedValue= BCs.vbFixedNode*0; 
+
+
+        else
+
+            BCs.ubFixedNode=[UpperEdgeNodes; LowerEdgeNodes ; LeftEdgeNodes] ;  BCs.ubFixedValue=BCs.ubFixedNode*0;
+            BCs.vbFixedNode=[UpperEdgeNodes ; LowerEdgeNodes] ; BCs.vbFixedValue=[UpperEdgeNodes*0+V; LowerEdgeNodes*0-V];
+
+
+            % BCs.ubFixedNode=1 ;  BCs.ubFixedValue=BCs.ubFixedNode*0;
+        end
 
     case "-phi-"
 
@@ -97,14 +116,28 @@ switch  CtrlVar.BCs
                 yr=20e3;
                 yl=-20e3 ;
 
-                Iy0=(abs(F.y-yr)<(l/2) & F.x <-50e3 )  | (abs(F.y-yl)<(l/2) & F.x >50e3 ) ; 
-                
-                Iy0=find(Iy0) ;     
+                Iy0=(abs(F.y-yr)<(l/2) & F.x <-50e3 )  | (abs(F.y-yl)<(l/2) & F.x >50e3 ) ;
+
+                Iy0=find(Iy0) ;
 
 
 
-                BCs.hFixedNode=Iy0 ;  
+                BCs.hFixedNode=Iy0 ;
                 BCs.hFixedValue=Iy0*0+1 ;
+
+            case "ice shelf single notch"
+
+
+                l=CtrlVar.PhaseFieldFracture.l ;
+                Iy0=(abs(F.x-80e3 ) < (l/2) )  & (F.y<-50e3);
+
+                Iy0=find(Iy0) ;
+
+
+
+                BCs.hFixedNode=Iy0 ;
+                BCs.hFixedValue=Iy0*0+1 ;
+
 
 
             otherwise

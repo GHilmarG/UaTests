@@ -1,10 +1,31 @@
-function F=DefineF(UserVar,CtrlVar,MUA)
+
+
+
+
+
+
+function F=DefineF(UserVar,CtrlVar,MUA,hIce)
 
 
 F=UaFields;
 n=MUA.Nnodes;
 
-h=300;
+if   UserVar.Experiment=="ice shelf single notch"
+
+    h=1000;
+
+
+else
+
+
+    h=300;
+
+end
+
+if nargin>0
+    h=hIce;
+end
+
 rho=920;
 rhow=1030;
 
@@ -26,10 +47,16 @@ F.x=MUA.coordinates(:,1) ;
 F.y=MUA.coordinates(:,2) ;
 
 
-F.n=zeros(n,1)+3;
+
+F.n=zeros(n,1)+1;
 F.m=zeros(n,1)+3;
 
 
 [F.b,F.s,F.h,F.GF]=Calc_bs_From_hBS(CtrlVar,MUA,F.h,F.S,F.B,F.rho,F.rhow);
+
+
+F.AGlen0=F.AGlen; 
+F.rho0=F.rho; 
+
 
 end

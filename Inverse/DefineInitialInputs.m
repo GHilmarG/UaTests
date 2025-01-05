@@ -25,7 +25,7 @@ end
 UserVar.uError=1; 
 UserVar.dhdtError=1; 
 
-UserVar.Inverse.SynthData.Pert="-B-" ; %  {"-B-","-C-","-A-"}
+UserVar.Inverse.SynthData.Pert="-C-" ; %  {"-B-","-C-","-A-"}
 UserVar.Inverse.CreateSyntData=1;  % This field
 
 %%
@@ -61,7 +61,7 @@ CtrlVar.Inverse.Measurements='-uv-dhdt-' ;   % {'-dhdt-,'-uv-dhdt-','-dhdt-'}
 CtrlVar.Inverse.MinimisationMethod='MatlabOptimization'; % {'MatlabOptimization','UaOptimization'}
 %CtrlVar.Inverse.MinimisationMethod='UaOptimization';
 CtrlVar.Inverse.Iterations=10;
-CtrlVar.Inverse.InvertFor='-B-' ; % {'-C-','-logC-','-AGlen-','-logAGlen-'}
+CtrlVar.Inverse.InvertFor='-logC-' ; % {'-C-','-logC-','-AGlen-','-logAGlen-'}
 CtrlVar.Inverse.OnlyModifyBedUpstreamOfGL=false ;
 
 
@@ -100,7 +100,7 @@ CtrlVar.TestAdjointFiniteDifferenceType="central-second-order" ;
 CtrlVar.Inverse.TestAdjoint.FiniteDifferenceStepSize=0.01 ;
 
 % CtrlVar.Inverse.TestAdjoint.iRange=[220:250] ;  % range of parameters over which brute force gradient is to be calculated.
-% if left empty, values are calulated for every node/element within the mesh.
+% if left empty, values are calculated for every node/element within the mesh.
 % If set to for example [1,10,45]
 % values are calculated for these
 % parameters
@@ -142,7 +142,7 @@ CtrlVar.GmshMeshingAlgorithm=8;    % see gmsh manual
 % 7=bamg
 % 8=DelQuad (experimental)
 
-CtrlVar.ReadInitialMesh=1;    % if true then read FE mesh (i.e the MUA variable) directly from a .mat file
+CtrlVar.ReadInitialMesh=0;    % if true then read FE mesh (i.e the MUA variable) directly from a .mat file
 % unless the adaptive meshing option is used, no further meshing is done.
 
 if CtrlVar.Inverse.TestAdjoint.isTrue
