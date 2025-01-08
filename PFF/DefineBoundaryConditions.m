@@ -1,3 +1,8 @@
+
+
+
+
+
 function  BCs=DefineBoundaryConditions(UserVar,CtrlVar,MUA,F,BCs) 
 
 %%
@@ -151,6 +156,10 @@ switch  CtrlVar.BCs
         error("case not found")
 
 end
+
+
+% BCs.hFixedNode=1:MUA.Nnodes;  BCs.hFixedValue=BCs.hFixedNode*0; 
+
 
 
 end

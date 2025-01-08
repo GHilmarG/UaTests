@@ -45,16 +45,17 @@ CtrlVar.QuadratureRuleDegree=[] ;
 CtrlVar.PhaseFieldFracture.Video=true;
 
 
-lIce=100e3 ; lGap=20e3 ;
+lIce=100e3 ; lGap=10e3 ;
 
 xmin=-lIce-lGap; xmax=lIce+lGap;
 ymin=-20e3 ; ymax=20e3;
-
-
+xc=0 ; 
 
 MeshBoundaryCoordinates=[(-lIce-lGap) ymin ;  -lGap ymin ; -lGap ymax ; -lGap ymin ; lGap ymin ; lGap ymax ; lGap ymin ; (lIce+lGap) ymin ; (lIce+lGap) ymax ; (-lIce-lGap) ymax ; (-lIce-lGap) ymin ] ;
 
-                         
+% left-hand part of the symmetrical geometry only
+% MeshBoundaryCoordinates=[(-lIce-lGap) ymin ;  -lGap ymin ; -lGap ymax ; -lGap ymin ; 0 ymin ; 0 ymax ; (-lIce-lGap) ymax ; (-lIce-lGap) ymin ] ; 
+
 
 CtrlVar.MeshBoundaryCoordinates=MeshBoundaryCoordinates;
 % Now generate mesh (When using Úa this is done internally, no such call
@@ -74,9 +75,15 @@ g=F.g ;
 AIce=F.AGlen(1);
 rhoi=F.rho(1);
 
-hGap=hIce/2; 
-AGap=AIce; 
-rhoGap=rhoi; 
+%% good parameter example for demonstration
+hGap=hIce/10; 
+AGap=AIce/10; 
+rhoGap=rhoi/10; 
+%%
+hGap=hIce/10; 
+AGap=AIce*10; 
+rhoGap=rhoi/1000; 
+
 
 rhow=F.rhow;
 n=F.n(1); 
@@ -143,34 +150,49 @@ switch Extension
         r= 1+ (hGap/hIce)*  ((lIce/lGap)*(AIce/AGap))^(1/n)  ;
         K= 0.25*rhoi*g*hIce^2 - 0.25*rhow*g*hw^2 - 0.5*rhoGap*g*hGap*hw - 0.25*rhoGap*g*hGap^2;
        
-        tauIce = K/(r*hIce) +zeros(MUA.Nnodes,1);
-        tauGap = (((lIce/lGap)*(AIce/AGap))^(1/n)) .* tauIce; % the effective is pos, the txx is negative
+        tauIce = K/(r*hIce) ;%  +zeros(MUA.Nnodes,1);
+        tauGap = -(((lIce/lGap)*(AIce/AGap))^(1/n)) .* tauIce; % the effective is pos, the txx is negative
 
-        eAnalyticalIce=AIce.*(tauIce.^F.n);
-        eAnalyticalGap=AGap.*(tauGap.^F.n);
+    
 
     case "water"
 
-        r=1 /(1+ (rhoi/rhow)*((lIce/lGap)*(AIce/AGap))^(1/n)) ;
+        r=1+ (rhoi/rhow)*((lIce/lGap)*(AIce/AGap))^(1/n) ;
 
-        
-        tauIce=r*txx0+zeros(MUA.Nnodes,1);
+        tauIce=txx0/r; % +zeros(MUA.Nnodes,1);
 
         tauGap = (((lIce/lGap)*(AIce/AGap))^(1/n)) .* tauIce; % the effective is pos, the txx is negative
 
-        eAnalyticalIce=AIce.*tauIce.^F.n;
-        eAnalyticalGap=AGap.*tauGap.^F.n;
-
+    
 
 end
 
+eAnalyticalIce=AIce.*(abs(tauIce).^n);
+eAnalyticalGap=AGap.*(abs(tauGap).^n);
 
+exxAnalyticalIce=AIce.*(abs(tauIce).^(n-1)).*tauIce;
+exxAnalyticalGap=AGap.*(abs(tauGap).^(n-1)).*tauGap;
 
 eAnalytical=zeros(MUA.Nnodes,1);
-eAnalytical(~IGap)=eAnalyticalIce(~IGap);
-eAnalytical(IGap)=eAnalyticalGap(IGap);
+eAnalytical(~IGap)=eAnalyticalIce;
+eAnalytical(IGap)=eAnalyticalGap;
 
 de=(eNumerical-eAnalytical);
+
+
+iIce=F.x < (-2*lGap) | F.x > (2*lGap) ;
+iGap=F.x > (-lGap/2) & F.x < (lGap/2) ;
+
+exxNumericalIce=mean(exx(iIce));  % this could be estimated better by performing an integration, but ...
+exxNumericalGap=mean(exx(iGap));
+
+fprintf(" Ice exx:  analytical %g \t numerical %g \t rel error %g%s \n",exxAnalyticalIce,exxNumericalIce,100*(exxNumericalIce-exxAnalyticalIce)/exxAnalyticalIce,"%")
+fprintf(" Gap exx:  analytical %g \t numerical %g \t rel error %g%s \n",exxAnalyticalGap,exxNumericalGap,100*(exxNumericalGap-exxAnalyticalGap)/exxAnalyticalGap,"%")
+
+fprintf(" exx analytical integrated: %g \n", (xmax-lGap)*exxAnalyticalIce+lGap*exxAnalyticalGap)
+fprintf("  exx numerical integrated: %g \n", (xmax-lGap)*exxNumericalIce+lGap*exxNumericalGap)
+
+fprintf(" exx numerical integrated: %g \n ",sum(FEintegrate2D(CtrlVar,MUA,exx)))
 
 UaPlots(CtrlVar,MUA,F,de,FigureTitle="de")
 title("error in calculated effective effective strain rates",Interpreter="latex")
@@ -178,24 +200,37 @@ title("error in calculated effective effective strain rates",Interpreter="latex"
 [xsorted,ixSort]=sort(F.x); 
 [xIntSorted,IxIntSort]=sort(xint);
 
-
-fige=FindOrCreateFigure("e(x) 2") ;  clf(fige)
-
+%% exx: comparison between numerically and analytically calculated values
+fige=FindOrCreateFigure("exx") ;  clf(fige)
 hold off
-plot(F.x(ixSort)/1000,eAnalytical(ixSort),".r-",DisplayName="$\dot{\epsilon}$ Analytical",LineWidth=2) ;
-hold on ; 
-plot(xIntSorted/1000,eInt(IxIntSort),".b",DisplayName="$\dot{\epsilon}$ Numerical")
-
-%plot(F.x(ixSort)/1000,eNumerical(ixSort),".b",DisplayName="$e$ Numerical")
-emin=min(eAnalytical) ;
-emax=max(eAnalytical) ;
-eD=(emax-emin)*0.1; 
-yline(exx0,DisplayName="$\dot{\epsilon}$ for $r=1$",LineStyle="--")
-%ylim([emin-eD emax+eD])
-xlabel("$x$ (km)",Interpreter="latex")
+plot(xIntSorted/1000,exxInt(IxIntSort),".b",DisplayName="$\dot{\epsilon}_{xx}$ Numerical")
+yline(exxNumericalGap,DisplayName="$\dot{\epsilon}_{xx}$ Gap",LineStyle="--",Color="m",LineWidth=2)
+yline(exxNumericalIce,DisplayName="$\dot{\epsilon}_{xx}$ Ice",LineStyle="--",Color="r",LineWidth=2)
+yline(exx0,DisplayName="$\dot{\epsilon}$ for $r=1$",LineStyle="--",Color="k",LineWidth=2)
 ylabel("$\dot{e}$ (1/yr)",Interpreter="latex")
-legend(Interpreter="latex")
-xlim([xmin xmax ]/1000)
+xlabel("$x$ (km)",Interpreter="latex")
+legend(Interpreter="latex",Location="best")
+xlim([min(F.x) max(F.x) ]/1000)
+%%
+
+% fige=FindOrCreateFigure("e(x) 2") ;  clf(fige)
+% hold off
+% yyaxis left
+% plot(F.x(ixSort)/1000,eAnalytical(ixSort),".r-",DisplayName="$\dot{\epsilon}$ Analytical",LineWidth=2) ;
+% hold on ; 
+% plot(xIntSorted/1000,eInt(IxIntSort),".b",DisplayName="$\dot{\epsilon}$ Numerical")
+% yline(exx0,DisplayName="$\dot{\epsilon}$ for $r=1$",LineStyle="--")
+% % plot(F.x(ixSort)/1000,eNumerical(ixSort),".b",DisplayName="$e$ Numerical")
+% % emin=min(eAnalytical) ;
+% % emax=max(eAnalytical) ;
+% % eD=(emax-emin)*0.1; 
+% % ylim([emin-eD emax+eD])
+% ylabel("$\dot{e}$ (1/yr)",Interpreter="latex")
+% xlabel("$x$ (km)",Interpreter="latex")
+% legend(Interpreter="latex")
+% xlim([min(F.x) max(F.x) ]/1000)
+%%
+
 
 de=(eNumerical-eAnalytical)./eAnalytical;
 %de=(eNumerical-eAnalytical);

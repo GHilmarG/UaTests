@@ -39,7 +39,7 @@ F.vb=zeros(n,1);
 F.rho=zeros(n,1)+rho;
 F.rhow=rhow;
 F.AGlen=zeros(n,1)+AGlenVersusTemp(-10) ;
-F.C=zeros(n,1)+1 ;
+F.C=zeros(n,1)+3 ;
 F.g=9.81/1000;
 F.alpha=0;
 
@@ -47,8 +47,7 @@ F.x=MUA.coordinates(:,1) ;
 F.y=MUA.coordinates(:,2) ;
 
 
-
-F.n=zeros(n,1)+1;
+F.n=zeros(n,1)+3;
 F.m=zeros(n,1)+3;
 
 
