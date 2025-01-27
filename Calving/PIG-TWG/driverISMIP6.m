@@ -86,7 +86,7 @@ UserVar.RunStartYear=UserVar.Assimilation.tEnd ;    % I don't really need this R
 UserVar.RunEndYear=2500;
 
 
-UserVar.Assimilation.is=true ;        % This is a flag to bypass the assimilation/relaxation phase. 
+UserVar.Assimilation.is=false ;        % This is a flag to bypass the assimilation/relaxation phase. 
                                       % This will only work if the assimilation/relaxation has already 
                                       % been performed previously and all the related files exists
 

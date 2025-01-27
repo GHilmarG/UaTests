@@ -6,6 +6,12 @@ function driverForwardAssimilation(RunString)
 
 % Driver for repeated inversions over time. This is done to reduce initial transients
 %
+%                       -side of a perfect square of equal area-
+% 30km = 14km                        9.806 km
+% 20km = 9.3km                       6.559 km
+% 10km = 4.6km                       3.28  km
+%  5km = 2.3km                       1.64  km
+% 2.5km = 1.16km                     0.821 km
 
 
 UserVar.InverseRestartFile="create the name of inverse restart file from User.RunType";
@@ -15,11 +21,7 @@ if nargin==0 | isempty(RunString)
 
     % The RunString defined here is then used in DefineInitialInputs to set various fields of CtrlVar. This is mostly done by
     % calling: [CtrlVar,UserVar]=ParseRunTypeString(CtrlVar,UserVar).
-    %
-    %
-
-
-   
+       
 
     RunString="ES5km-Tri3-SlidWeertman-Duvh-MRlASE3-abMask0-P-BCVel-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-";  % HO Office
     RunString="ES5km-Tri3-SlidWeertman-Duvh-MRlASE2-abMask0-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-";  % HP Office
