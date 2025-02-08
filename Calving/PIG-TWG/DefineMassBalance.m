@@ -61,9 +61,35 @@ if contains(UserVar.RunType,"-MRIM6")
         year_anom=floor(F.time); % Define year for input files
         %anomfile=[UserVar.SMBfilename,num2str(year_anom),'.mat'];
         anomfile=UserVar.SMBfilename+num2str(year_anom)+".mat";
-        load(anomfile,"smb_anomaly");
+        
+        for iLoadTry=1:10
+            try
+                fprintf("\t\t\t DefineMassBalance: loading %s \n",anomfile)
+                load(anomfile,"smb_anomaly");
+                break
+            catch
+                fprintf("could not load %s\n",anomfile)
+                fprintf("Attempt nr %i , pausing for 10 sec. \n",iLoadTry)
+                pause(10)
+            end
+        end
+        %%
         as_anom=smb_anomaly(MUA.coordinates).*3600*24*365/917; % changing units from kg m^-2 s^-1 to m/year
-        load(UserVar.TFfilename+num2str(year_anom)+".mat","tf_anomaly");
+
+        anomfile=UserVar.TFfilename+num2str(year_anom)+".mat";
+        for iLoadTry=1:10
+            try
+                fprintf("\t\t\t DefineMassBalance: loading %s \n","tf_anomaly"); 
+                load(anomfile,"tf_anomaly");
+                %load(UserVar.TFfilename+num2str(year_anom)+".mat","tf_anomaly");
+                break
+            catch
+                fprintf("could not load %s\n",anomfile)
+                fprintf("Attempt nr %i , pausing for 10 sec. \n",iLoadTry)
+                pause(10) % attempts 
+            end
+        end
+
         tf_anom=tf_anomaly([MUA.coordinates F.b]);
     else
         % Just use control forcing

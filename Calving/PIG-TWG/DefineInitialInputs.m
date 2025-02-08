@@ -35,8 +35,8 @@ CtrlVar.LimitRangeInUpdateFtimeDerivatives=true ;
 [CtrlVar,UserVar]=FindAndCreateInterpolants(CtrlVar,UserVar) ;
 
 %% Parallel options
-CtrlVar.Parallel.uvhAssembly.spmd.isOn=true;
-CtrlVar.Parallel.uvAssembly.spmd.isOn=true;
+CtrlVar.Parallel.uvhAssembly.spmd.isOn=false;
+CtrlVar.Parallel.uvAssembly.spmd.isOn=false;
 CtrlVar.Parallel.Distribute=false;
 CtrlVar.Parallel.isTest=false;
 %% Data input files
@@ -74,9 +74,9 @@ end
 %% Times, time steps, output interval
 
 % time and TotalTime already extracted from UserVar.RunType
-CtrlVar.DefineOutputsDt=0.1;
+CtrlVar.DefineOutputsDt=0.5;
 CtrlVar.dt=1e-3;
-CtrlVar.ATSdtMax=0.1;
+CtrlVar.ATSdtMax=0.5;
 CtrlVar.ATSdtMin=1e-5;
 CtrlVar.ATSTargetIterations=6;
 
@@ -384,6 +384,25 @@ if contains(UserVar.RunType,"-FR")  && contains(UserVar.RunType,"-uv-h-")
 
 end
 
+% development version?  Using the development version is by default set to tru
+% this can be disabled by addint "-DV0-" to the run-string
+if contains(UserVar.RunType,"-DV0-") 
 
+    CtrlVar.DevelopmentVersion=false; 
+
+else
+
+    CtrlVar.DevelopmentVersion=true ; % Internal variable, always set to 0 
+
+end
+
+if contains(UserVar.RunType,"-TH1-") 
+
+    CtrlVar.theta=1;
+    
+
+else
+
+    CtrlVar.theta=0.5;
 
 end

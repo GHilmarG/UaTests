@@ -18,14 +18,21 @@ TitleText=extractBetween(RunString{1},"-Duvh-","-P-");
 RunString{1}="ES5km-uvh-Tri3-SlidWeertman-Duvh-MRlASE3-abMask0A-IOR-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-";  % year 2459  (no collapse)
 RunString{2}="ES10km-uvh-Tri3-SlidWeertman-Duvh-MRlASE3-abMask0A-IOR-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-";  % year 2459 (collapse)
 Titles=["uvh-implicit, Element size 1.65km" ; "uvh-implicit, Element size 3.28km" ] ;
-RunString{2}="ES2.5km-uvh-Tri3-SlidWeertman-Duvh-MRlASE3-abMask0A-IOR-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-";  % 
 
+RunString{2}="ES2.5km-uvh-Tri3-SlidWeertman-Duvh-MRlASE3-abMask0A-IOR-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-";  % 
 Titles=["uvh-implicit, Element size 1.65km" ; "uvh-implicit, Element size 0.82 km" ] ;
 
 
+RunString{1}="ES20km-uvh-DV1-Tri3-SlidWeertman-Duvh-MRIM6HadGEM2-abMask0A-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-" ; 
+RunString{2}="ES20km-uvh-DV1-TH1-Tri3-SlidWeertman-Duvh-MRIM6HadGEM2-abMask0A-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-" ; 
+Titles=["uvh-implicit, dev, 9.3km" ; "uvh-implicit, dev, theta=1, 9.3 km" ] ;
+
+RunString{2}="ES20km-uvh-DV0-Tri3-SlidWeertman-Duvh-MRIM6HadGEM2-abMask0A-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-" ; 
+Titles=["uvh-implicit, dev, 9.3km" ; "uvh-implicit, ~dev, 9.3 km" ] ;
 
 %                       -side of a perfect square of equal area-
 % 30km = 14km                        9.806 km
+
 % 20km = 9.3km                       6.559 km
 % 10km = 4.6km                       3.28  km
 %  5km = 2.3km                       1.64  km
