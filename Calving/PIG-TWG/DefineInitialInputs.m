@@ -385,7 +385,7 @@ if contains(UserVar.RunType,"-FR")  && contains(UserVar.RunType,"-uv-h-")
 end
 
 % development version?  Using the development version is by default set to tru
-% this can be disabled by addint "-DV0-" to the run-string
+% this can be disabled by adding "-DV0-" to the run-string
 if contains(UserVar.RunType,"-DV0-") 
 
     CtrlVar.DevelopmentVersion=false; 
