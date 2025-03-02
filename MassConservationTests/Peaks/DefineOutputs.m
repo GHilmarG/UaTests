@@ -33,7 +33,7 @@ if ~isempty(hFirst)
     
     cbar=UaPlots(CtrlVar,MUA,F,F.h-hFirst,FigureTitle="Change in ice thickness");
     title(sprintf("Change in ice thickness at t=%g compared to t=0",F.time))
-    subtitle(sprintf("change in ice volume=%g m^3",TotalIceVolume-VolumeFirst))
+    subtitle(sprintf("Change in ice volume=%g $\\mathrm{m}^3$",TotalIceVolume-VolumeFirst),interpreter="latex")
     xlabel("x (km)",Interpreter="latex") ; ylabel("y (km)",Interpreter="latex")
     title(cbar,"(m)",Interpreter="latex")
 end

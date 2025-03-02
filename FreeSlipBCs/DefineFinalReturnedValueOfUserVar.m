@@ -20,4 +20,7 @@ UserVar.Test.Norm.expValue=116500.144060475 ; % Z840   on 08/03/2023
 UserVar.Test.Norm.expValue=112356.339425682 ; % HP C20503924 24/06/2023
 
 UserVar.Test.Norm.expValue=112224.005956391 ; % HP HO, with new dint uv at integration points
+
+UserVar.Test.Norm.expValue=112017.072159859  ; % with new uv, ie  2014 assembly, and   112356.339425682 with the pre 2025 assembly
+
 end
