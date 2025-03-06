@@ -82,7 +82,7 @@ CtrlVar.MaxNumberOfElements=250e3;           % max number of elements. If #eleme
 
 CtrlVar.AdaptMesh=1;         
 CtrlVar.AdaptMeshMaxIterations=10;  % Number of adapt mesh iterations within each run-step.
-CtrlVar.AdaptMeshMaxIterations=2;  % Number of adapt mesh iterations within each run-step.
+% CtrlVar.AdaptMeshMaxIterations=2;  % Number of adapt mesh iterations within each run-step.
 CtrlVar.MeshRefinementMethod='explicit:local:newest vertex bisection';    % can have any of these values:
                                                    % 'explicit:global' 
                                                    % 'explicit:local'
