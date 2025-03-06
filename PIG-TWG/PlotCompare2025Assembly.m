@@ -27,6 +27,8 @@ UaPlots(CtrlVar,MUA,F2024,"-uv-",FigureTitle="2024")
 CtrlVar.QuiverSameVelocityScalingsAsBefore=false;
 UaPlots(CtrlVar,MUA,F2025,[du dv],FigureTitle="Difference")
 
+
+UaPlots(CtrlVar,MUA,F2024,F2024.b,FigureTitle="b",PlotUnderMesh=true)
 %%
 
 %%
