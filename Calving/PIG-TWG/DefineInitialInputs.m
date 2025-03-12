@@ -35,8 +35,8 @@ CtrlVar.LimitRangeInUpdateFtimeDerivatives=true ;
 [CtrlVar,UserVar]=FindAndCreateInterpolants(CtrlVar,UserVar) ;
 
 %% Parallel options
-CtrlVar.Parallel.uvhAssembly.spmd.isOn=false;
-CtrlVar.Parallel.uvAssembly.spmd.isOn=false;
+CtrlVar.Parallel.uvhAssembly.spmd.isOn=true;
+CtrlVar.Parallel.uvAssembly.spmd.isOn=true;
 CtrlVar.Parallel.Distribute=false;
 CtrlVar.Parallel.isTest=false;
 %% Data input files
@@ -76,7 +76,7 @@ end
 % time and TotalTime already extracted from UserVar.RunType
 CtrlVar.DefineOutputsDt=0.5;
 CtrlVar.dt=1e-3;
-CtrlVar.ATSdtMax=0.5;
+CtrlVar.ATSdtMax=0.01;
 CtrlVar.ATSdtMin=1e-5;
 CtrlVar.ATSTargetIterations=6;
 
