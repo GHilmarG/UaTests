@@ -7,8 +7,8 @@
 warning('off','MATLAB:triangulation:PtsNotInTriWarnId')
 warning('off','MATLAB:decomposition:SaveNotSupported')
 warning('off','MATLAB:decomposition:genericError')
-parfevalOnAll(gcp(), @warning, 0, 'off','MATLAB:decomposition:genericError');
-parfevalOnAll(gcp(), @warning, 0, 'off','MATLAB:decomposition:SaveNotSupported');
+parfevalOnAll(gcp("nocreate"), @warning, 0, 'off','MATLAB:decomposition:genericError');
+parfevalOnAll(gcp("nocreate"), @warning, 0, 'off','MATLAB:decomposition:SaveNotSupported');
 
 
 
@@ -96,18 +96,22 @@ n=F.n(1);
 %
  Extension="min thick" ;
 % Extension="water" ;
+CtrlVar.Development.Pre2025uvAssembly=false ;
 
-IGap=F.x >= -lGap & F.x <= lGap ; 
+UserVar.TestCase="Eq. water column";
+UserVar.TestCase="thin ice";
 
-switch Extension
+IGap=F.x > -lGap & F.x < lGap ; 
 
-    case "min thick"
+switch UserVar.TestCase
+
+    case "thin ice"
 
         F.h(IGap)=hGap;  
         %F.rho(IGap)=rhoGap;
         %F.AGlen(IGap)=AGap;
 
-    case "water"
+    case "Eq. water column"
         
         % here the gap is water
         F.h(IGap)=F.h(IGap)*rhoi/rhow; % reducing full ice thickness to equivalent water thickness 
@@ -123,7 +127,8 @@ end
 [F.b,F.s,F.h,F.GF]=Calc_bs_From_hBS(CtrlVar,MUA,F.h,F.S,F.B,F.rho,F.rhow);
 
 CtrlVar.BCs="-uv-" ;
-BCs=DefineBoundaryConditions(UserVar,CtrlVar,MUA,F,BCs) ;
+[UserVar,BCs]=GetBoundaryConditions(UserVar,CtrlVar,MUA,BCs,F) ;
+       
 
 
 lm=UaLagrangeVariables ;
@@ -234,26 +239,14 @@ xlabel("$x$ (km)",Interpreter="latex")
 legend(Interpreter="latex",Location="best")
 xlim([min(F.x) max(F.x) ]/1000)
 title(sprintf("RMS difference: %g ",D))
-%%
 
-% fige=FindOrCreateFigure("e(x) 2") ;  clf(fige)
-% hold off
-% yyaxis left
-% plot(F.x(ixSort)/1000,eAnalytical(ixSort),".r-",DisplayName="$\dot{\epsilon}$ Analytical",LineWidth=2) ;
-% hold on ; 
-% plot(xIntSorted/1000,eInt(IxIntSort),".b",DisplayName="$\dot{\epsilon}$ Numerical")
-% yline(exx0,DisplayName="$\dot{\epsilon}$ for $r=1$",LineStyle="--")
-% % plot(F.x(ixSort)/1000,eNumerical(ixSort),".b",DisplayName="$e$ Numerical")
-% % emin=min(eAnalytical) ;
-% % emax=max(eAnalytical) ;
-% % eD=(emax-emin)*0.1; 
-% % ylim([emin-eD emax+eD])
-% ylabel("$\dot{e}$ (1/yr)",Interpreter="latex")
-% xlabel("$x$ (km)",Interpreter="latex")
-% legend(Interpreter="latex")
-% xlim([min(F.x) max(F.x) ]/1000)
-%%
 
+%% compare with deactivation
+
+
+F.phi=zeros(MUA.Nnodes,1);
+F.phi(IGap)=1;
+dV=CompareThinIceWithDeactivation(UserVar,RunInfo,CtrlVar,MUA,BCs,F)  ;
 
 
 %%

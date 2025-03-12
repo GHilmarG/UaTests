@@ -33,7 +33,7 @@ if ~isempty(BCs.ubFixedNode)
 
         iOld=k(BCsdeactivated.ubFixedNode(I))     ;  % j=k(i) gives old node number j, for for the new node number i
         iFind=find(BCs.ubFixedNode == iOld)        ;  % finding the location of the old node
-        BCsdeactivated.ubFixedValue(I)=BCs.ubFixedValue(iFind) ;
+        BCsdeactivated.ubFixedValue(I)=BCs.ubFixedValue(iFind) ;   % this will fail, if there are more than one BCs for a given node, but this should be sorted out by the user in DefineBCs.
 
     end
 
@@ -50,7 +50,7 @@ if ~isempty(BCs.ubFixedNode)
 
         iOld=k(BCsdeactivated.vbFixedNode(I))     ;  % j=k(i) gives old node number j, for for the new node number i
         iFind=find(BCs.vbFixedNode == iOld)        ;  % finding the location of the old node
-        BCsdeactivated.vbFixedValue(I)=BCs.vbFixedValue(iFind) ;
+        BCsdeactivated.vbFixedValue(I)=BCs.vbFixedValue(iFind) ;  % this will fail, if there are more than one BCs for a given node, but this should be sorted out by the user in DefineBCs.
 
     end
 

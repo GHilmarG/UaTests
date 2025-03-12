@@ -243,22 +243,6 @@ end
 
 % save("ThinIceOnlyDeactivated.mat","MUAdeactivated","Fdeactivated")
 
-ubD=Fdeactivated.ub ;  vbD=Fdeactivated.vb ;
-load("ThinIceOnlyDeactivated.mat","MUAdeactivated","Fdeactivated")
-
-if numel(ubD)==numel(Fdeactivated.ub)
-    Ddu=ubD-Fdeactivated.ub ; Ddv=vbD-Fdeactivated.vb ;
-
-    CtrlVar.QuiverSameVelocityScalingsAsBefore=false ;
-    CtrlVar.MaxPlottedSpeed=[] ;
-    CtrlVar.MinPlottedSpeed=[] ;
-    CtrlVar.QuiverColorSpeedLimits=[]; 
-
-
-    [cbar,~,~,~,~,CtrlVar]=UaPlots(CtrlVar,MUAdeactivated,Fdeactivated,[Ddu Ddv],FigureTitle="(du,dv) deactivated") ;
-    hold on ; plot(xphi/CtrlVar.PlotXYscale,yphi/CtrlVar.PlotXYscale,Color="r",LineWidth=2)
-    title("Velocity differences for deactivated meshes, compared to spatially constant rho and A")
-end
 
 
 [etaInt,xint,yint,exx,eyy,exy,Eint,e,txx,tyy,txy]=calcStrainRatesEtaInt(CtrlVar,MUA,F.ub,F.vb,F.AGlen,F.n); % returns integration point values

@@ -15,8 +15,8 @@
 warning('off','MATLAB:triangulation:PtsNotInTriWarnId')
 warning('off','MATLAB:decomposition:SaveNotSupported')
 warning('off','MATLAB:decomposition:genericError')
-parfevalOnAll(gcp(), @warning, 0, 'off','MATLAB:decomposition:genericError');
-parfevalOnAll(gcp(), @warning, 0, 'off','MATLAB:decomposition:SaveNotSupported');
+parfevalOnAll(gcp("nocreate"), @warning, 0, 'off','MATLAB:decomposition:genericError');
+parfevalOnAll(gcp("nocreate"), @warning, 0, 'off','MATLAB:decomposition:SaveNotSupported');
 
 
 
@@ -93,9 +93,9 @@ lm=UaLagrangeVariables ;
 %%
 
 % UserVar.TestCase="Eq. water column" ;  % 
-UserVar.TestCase="thin ice";    % gives very good results 
+ UserVar.TestCase="thin ice";    % gives very good results 
 % UserVar.TestCase="PFF" ;
-
+CtrlVar.Development.Pre2025uvAssembly=false ;
 %%
 
 iMeshRefinementMax=2;
