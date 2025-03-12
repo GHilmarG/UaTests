@@ -18,13 +18,13 @@ function dV=CompareThinIceWithDeactivation(UserVar,RunInfo,CtrlVar,MUA,BCs,F)
 
 % here I use the field F.phi to determine where to deactivate or create a region of very thin ice.
 
-TestCase="Eq. water column" ;
+% TestCase="Eq. water column" ;
 % TestCase="all water" ;
 % TestCase="thin ice"; 
 
-switch TestCase
+switch UserVar.TestCase
 
-    case "thin ice"
+    case "thin ice"  % rifts are thin ice above inviscid water
 
         % As long as the ice is very thin, there is no difference between damage and deactivation and A and rho can have any values
         % over the thin ice region. 
@@ -33,7 +33,7 @@ switch TestCase
         % earlier!
         %
         % However, when using Ua2024a, there is a significant difference between deactivated without any density variations, 
-        % and deactivated without density variations. This is due to sharp density gradients in the border elements, and the fact
+        % and deactivated with density variations. This is due to sharp density gradients in the border elements, and the fact
         % that dint was based on 
         % 
         %   H^+ (Sint-bint) 
@@ -61,7 +61,7 @@ switch TestCase
         F.rho(ThinIceNodes)=F.rho(ThinIceNodes)/100;
         F.AGlen(ThinIceNodes)=F.AGlen(ThinIceNodes)*1000;
 
-    case "Eq. water column"
+    case "Eq. water column"  % rifts are viscous water columns
 
         % send density within "crack" to that of ocean, and upper surface to that of ocean
         ThinIceNodes=F.phi>0.99 ;
@@ -69,13 +69,13 @@ switch TestCase
         % gphi=DegradationFunction(CtrlVar,F.phi) ;
         % F.AGlen=F.AGlen./(gphi.^F.n);
 
-        % F.AGlen(ThinIceNodes)=F.AGlen(ThinIceNodes)*1000;
+        F.AGlen(ThinIceNodes)=F.AGlen(ThinIceNodes)*1e20;
         F.rho(ThinIceNodes)=F.rho(ThinIceNodes)*0+F.rhow ;
 
         F.s(ThinIceNodes)=F.S(ThinIceNodes); 
         F.h=F.s-F.b ; 
 
-    case "all water"
+    case "all water"  % simple test case where ALL elements are 'water'
 
         %
         % as expected, all velocities are zero, for all Ua versions
@@ -105,6 +105,8 @@ end
 lm=UaLagrangeVariables ;
 [UserVar,RunInfo,F,lm]= uv(UserVar,RunInfo,CtrlVar,MUA,BCs,F,lm) ;  
 
+UaPlots(CtrlVar,MUA,F,F.b,FigureTitle="b") ; title("b")
+UaPlots(CtrlVar,MUA,F,F.AGlen,FigureTitle="A") ; set(gca,'ColorScale','log')
 
 phiEmean=Nodes2EleMean(MUA.connectivity,F.phi);
 UaPlots(CtrlVar,MUA,F,phiEmean,FigureTitle="phi Ele")
@@ -131,13 +133,13 @@ CtrlVar.QuiverSameVelocityScalingsAsBefore=false ;
 % CtrlVar.QuiverColorSpeedLimits=[0 250];     
 [cbar,~,~,~,~,CtrlVar]=UaPlots(CtrlVar,MUAdeactivated,Fdeactivated,"-uv-",FigureTitle="uv deactivated") ; 
 hold on ; plot(xphi/CtrlVar.PlotXYscale,yphi/CtrlVar.PlotXYscale,Color="r",LineWidth=2)
-title("Velocity for ThinIce elements deactivated "+TestCase)
+title("Velocity for ThinIce elements deactivated "+UserVar.TestCase)
 % f=gcf ; exportgraphics(f,"DeactivatedVel.pdf") ; saveas(f,"DeactivatedVel.fig")do
 
 CtrlVar.QuiverSameVelocityScalingsAsBefore=true ;
 [cbar,~,~,~,~,CtrlVar]=UaPlots(CtrlVar,MUA,F,"-uv-",FigureTitle="uv with damage") ; 
 hold on ; plot(xphi/CtrlVar.PlotXYscale,yphi/CtrlVar.PlotXYscale,Color="r",LineWidth=2)
-title("Velocity with ThinIce elements included "+TestCase)
+title("Velocity with ThinIce elements included "+UserVar.TestCase)
 
 
 
@@ -149,7 +151,7 @@ CtrlVar.QuiverColorSpeedLimits=[];
 % f=gcf ; exportgraphics(f,"ThinIceVel.pdf") ; saveas(f,"ThinIceVel.fig")
 
 
-% UaPlots(CtrlVar,MUA,F,F.rho,FigureTitle="rho full mesh "+TestCase)
+% UaPlots(CtrlVar,MUA,F,F.rho,FigureTitle="rho full mesh "+UserVar.TestCase)
 % UaPlots(CtrlVar,MUAdeactivated,Fdeactivated,Fdeactivated.rho,FigureTitle="rho deactivated mesh")
 % 
 % cbar=UaPlots(CtrlVar,MUA,F,F.AGlen,FigureTitle="A full mesh") ; set(gca,'ColorScale','log') ; title("$A$",Interpreter="latex") ; title(cbar,"$A$",Interpreter="latex")
@@ -180,14 +182,14 @@ if CalcDiff=="over nodes not belonging to deactivated elements"
 
     [cbar,~,~,~,~,CtrlVar]=UaPlots(CtrlVar,MUA,F,[uDiff vDiff],FigureTitle="uv diff") ;
     hold on ; plot(xphi/CtrlVar.PlotXYscale,yphi/CtrlVar.PlotXYscale,Color="r",LineWidth=2)
-    title("Velocity differences deactivated/damaged "+TestCase)
+    title("Velocity differences deactivated/damaged "+UserVar.TestCase)
 
 
     
    
     [cbar,~,~,~,~,CtrlVar]=UaPlots(CtrlVar,MUA,F,dspeed,FigureTitle="diff speed") ;
     hold on ; plot(xphi/CtrlVar.PlotXYscale,yphi/CtrlVar.PlotXYscale,Color="r",LineWidth=2)
-    title("difference in speed deactivated/damated "+TestCase)
+    title("difference in speed deactivated/damated "+UserVar.TestCase)
 
     DiffNorm=sqrt((uDiff'*MUA.M*uDiff+vDiff'*MUA.M*vDiff)) ;
     SpeedNorm=sqrt(F.ub'*MUA.M*F.ub+F.vb'*MUA.M*F.vb);
@@ -206,7 +208,7 @@ else
     CtrlVar.QuiverColorSpeedLimits=[];
     [cbar,~,~,~,~,CtrlVar]=UaPlots(CtrlVar,MUAdeactivated,Fdeactivated,[uDiff vDiff],FigureTitle="uv diff") ;
     hold on ; plot(xphi/CtrlVar.PlotXYscale,yphi/CtrlVar.PlotXYscale,Color="r",LineWidth=2)
-    title("Velocity differences deactivated/damaged "+TestCase)
+    title("Velocity differences deactivated/damaged "+UserVar.TestCase)
 
 
 
@@ -223,7 +225,7 @@ else
 
 end
 
-% UaPlots(CtrlVar,MUAdeactivated,Fdeactivated,Fdeactivated.rho,FigureTitle="rho deactivated "+TestCase) ;
+% UaPlots(CtrlVar,MUAdeactivated,Fdeactivated,Fdeactivated.rho,FigureTitle="rho deactivated "+UserVar.TestCase) ;
 % hold on ; plot(xphi/CtrlVar.PlotXYscale,yphi/CtrlVar.PlotXYscale,Color="r",LineWidth=2)
 % 
 % UaPlots(CtrlVar,MUA,F,F.rho,FigureTitle="rho ThinIce") ;

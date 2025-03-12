@@ -1,4 +1,7 @@
-%% Testing comparision between damaged and deactivated elements
+
+
+%% approaches to simulating rifts by changing thickens, density, rate factor, etc.
+%
 
 
 warning('off','MATLAB:triangulation:PtsNotInTriWarnId')
@@ -79,17 +82,19 @@ rhoi=F.rho(1);
 hGap=hIce/10; 
 AGap=AIce/10; 
 rhoGap=rhoi/10; 
-%%
-hGap=hIce/10; 
-AGap=AIce*10; 
-rhoGap=rhoi/1000; 
+%% In the gap, thickness is reduced, density and rho are not
+hGap=hIce/1e6;
+AGap=AIce*1e10; 
+rhoGap=rhoi; 
 
 
 rhow=F.rhow;
 n=F.n(1); 
 
 
-Extension="min thick" ;
+
+%
+ Extension="min thick" ;
 % Extension="water" ;
 
 IGap=F.x >= -lGap & F.x <= lGap ; 
@@ -99,13 +104,13 @@ switch Extension
     case "min thick"
 
         F.h(IGap)=hGap;  
-        F.rho(IGap)=rhoGap;
-        F.AGlen(IGap)=AGap;
+        %F.rho(IGap)=rhoGap;
+        %F.AGlen(IGap)=AGap;
 
     case "water"
         
         % here the gap is water
-        F.h(IGap)=F.h(IGap)*rhoi/rhow; 
+        F.h(IGap)=F.h(IGap)*rhoi/rhow; % reducing full ice thickness to equivalent water thickness 
         F.rho(IGap)=rhow; 
         F.AGlen(IGap)=AGap;
 
@@ -132,7 +137,7 @@ UaPlots(CtrlVar,MUA,F,F.b,FigureTitle="b")
 [tbx,tby,txx,tyy,txy,exx,eyy,exy,eNumerical,eta]=CalcNodalStrainRatesAndStresses(CtrlVar,UserVar,MUA,F) ;
 
 [etaInt,xint,yint,exxInt,eyyInt,exyInt,Eint,eInt,txxInt,tyyInt,txyInt]=calcStrainRatesEtaInt(CtrlVar,MUA,F.ub,F.vb,F.AGlen,F.n);
-xint=xint(:) ; eInt=eInt(:); 
+
 
 
 txx0=rhoi.*F.g.*hIce.*(1-rhoi/rhow)/4;
@@ -140,7 +145,7 @@ exx0=AIce*txx0^n;
 
 switch Extension
 
-    case "min thick"
+    case "min thick"  % rifts are think ice above inviscid water 
 
     
         
@@ -155,17 +160,19 @@ switch Extension
 
     
 
-    case "water"
+    case "water" % rifts are viscous water columns 
 
         r=1+ (rhoi/rhow)*((lIce/lGap)*(AIce/AGap))^(1/n) ;
 
         tauIce=txx0/r; % +zeros(MUA.Nnodes,1);
 
-        tauGap = (((lIce/lGap)*(AIce/AGap))^(1/n)) .* tauIce; % the effective is pos, the txx is negative
+        tauGap = -(((lIce/lGap)*(AIce/AGap))^(1/n)) .* tauIce; % the effective is pos, the txx is negative
 
     
 
 end
+
+
 
 eAnalyticalIce=AIce.*(abs(tauIce).^n);
 eAnalyticalGap=AGap.*(abs(tauGap).^n);
@@ -173,44 +180,60 @@ eAnalyticalGap=AGap.*(abs(tauGap).^n);
 exxAnalyticalIce=AIce.*(abs(tauIce).^(n-1)).*tauIce;
 exxAnalyticalGap=AGap.*(abs(tauGap).^(n-1)).*tauGap;
 
-eAnalytical=zeros(MUA.Nnodes,1);
-eAnalytical(~IGap)=eAnalyticalIce;
-eAnalytical(IGap)=eAnalyticalGap;
 
-de=(eNumerical-eAnalytical);
+% comparison of exx at integration points
 
+iIce=xint < (-lGap) | xint > (lGap) ;
+exxAnalytical=exxInt*0 ;
+exxAnalytical(iIce)=exxAnalyticalIce;
+exxAnalytical(~iIce)=exxAnalyticalGap;
 
-iIce=F.x < (-2*lGap) | F.x > (2*lGap) ;
-iGap=F.x > (-lGap/2) & F.x < (lGap/2) ;
+dexxInt=exxInt-exxAnalytical ;
+UaPlots(CtrlVar,MUA,F,dexxInt,FigureTitle="exxInt error") ; 
+title("diff in exx analytical and numerical"); subtitle("integration points")
 
-exxNumericalIce=mean(exx(iIce));  % this could be estimated better by performing an integration, but ...
-exxNumericalGap=mean(exx(iGap));
+D2int=dexxInt.^2 ;
+Int=FEintegrate2D(CtrlVar,MUA,D2int);
+D=sqrt(sum(Int)/MUA.Area);
 
-fprintf(" Ice exx:  analytical %g \t numerical %g \t rel error %g%s \n",exxAnalyticalIce,exxNumericalIce,100*(exxNumericalIce-exxAnalyticalIce)/exxAnalyticalIce,"%")
-fprintf(" Gap exx:  analytical %g \t numerical %g \t rel error %g%s \n",exxAnalyticalGap,exxNumericalGap,100*(exxNumericalGap-exxAnalyticalGap)/exxAnalyticalGap,"%")
-
-fprintf(" exx analytical integrated: %g \n", (xmax-lGap)*exxAnalyticalIce+lGap*exxAnalyticalGap)
-fprintf("  exx numerical integrated: %g \n", (xmax-lGap)*exxNumericalIce+lGap*exxNumericalGap)
-
-fprintf(" exx numerical integrated: %g \n ",sum(FEintegrate2D(CtrlVar,MUA,exx)))
-
-UaPlots(CtrlVar,MUA,F,de,FigureTitle="de")
-title("error in calculated effective effective strain rates",Interpreter="latex")
-
-[xsorted,ixSort]=sort(F.x); 
-[xIntSorted,IxIntSort]=sort(xint);
+fprintf("Numerical - Anlytical, RMS=%g \n",D)
 
 %% exx: comparison between numerically and analytically calculated values
+xint=xint(:);
+exxInt=exxInt(:); 
+[xsorted,ixSort]=sort(F.x); 
+[xIntSorted,IxIntSort]=sort(xint(:));
+exxNumerical=exxInt(IxIntSort);
+exxAnalytical=xIntSorted*0; 
+iIce=xIntSorted < -lGap | xIntSorted >lGap ;
+exxAnalytical(iIce)=exxAnalyticalIce; 
+exxAnalytical(~iIce)=exxAnalyticalGap;
+
+% set numerical values around jump to nan for 
+% id= abs(xIntSorted+lGap) < 5e3 |  abs(xIntSorted-lGap) < 5e3 ;
+% exxNumerical(id)=nan;
+
+% Important to do so at integration points
 fige=FindOrCreateFigure("exx") ;  clf(fige)
 hold off
+yyaxis left
 plot(xIntSorted/1000,exxInt(IxIntSort),".b",DisplayName="$\dot{\epsilon}_{xx}$ Numerical")
-yline(exxNumericalGap,DisplayName="$\dot{\epsilon}_{xx}$ Gap",LineStyle="--",Color="m",LineWidth=2)
-yline(exxNumericalIce,DisplayName="$\dot{\epsilon}_{xx}$ Ice",LineStyle="--",Color="r",LineWidth=2)
-yline(exx0,DisplayName="$\dot{\epsilon}$ for $r=1$",LineStyle="--",Color="k",LineWidth=2)
+hold on
+plot(xIntSorted/1000,exxAnalytical,DisplayName="$\dot{\epsilon}_{xx}$ analytical",LineStyle="--",Color="m",LineWidth=1)
+
+%yline(exxAnalyticalGap,DisplayName="$\dot{\epsilon}_{xx}$ Gap analytical",LineStyle="--",Color="m",LineWidth=2)
+%yline(exxAnalyticalIce,DisplayName="$\dot{\epsilon}_{xx}$ Ice analytical",LineStyle="--",Color="r",LineWidth=2)
+yline(exx0,DisplayName="$\dot{\epsilon}$ for $r=1$",LineStyle="-.",Color="k",LineWidth=2)
+
 ylabel("$\dot{e}$ (1/yr)",Interpreter="latex")
+
+delta=exxNumerical-exxAnalytical;
+yyaxis right ; plot(xIntSorted/1000,delta,DisplayName="numerical-analytical",LineStyle="none",marker=".", Color="r",LineWidth=1)
+
 xlabel("$x$ (km)",Interpreter="latex")
 legend(Interpreter="latex",Location="best")
 xlim([min(F.x) max(F.x) ]/1000)
+title(sprintf("RMS difference: %g ",D))
 %%
 
 % fige=FindOrCreateFigure("e(x) 2") ;  clf(fige)
@@ -232,11 +255,5 @@ xlim([min(F.x) max(F.x) ]/1000)
 %%
 
 
-de=(eNumerical-eAnalytical)./eAnalytical;
-%de=(eNumerical-eAnalytical);
-
-%D=sqrt((de'*MUA.M*de)/MUA.Area);
-
-fprintf("intergrated fractional difference in calculated and analytical e values: %g \n",D)
 
 %%

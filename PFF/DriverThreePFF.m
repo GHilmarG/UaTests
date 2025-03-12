@@ -34,7 +34,7 @@ CtrlVar.WhenPlottingMesh_PlotMeshBoundaryCoordinatesToo=0;
 % three lines are required in the Ua2D_InitialUserInput.m
 
 CtrlVar.MeshSizeMax=1000e3;
-CtrlVar.MeshSize=5e3;  CtrlVar.MeshSize=1e3;  CtrlVar.MeshSize=0.5e3;
+CtrlVar.MeshSize=5e3; 
 CtrlVar.MeshSizeMin=0.1e3 ; 
 CtrlVar.TriNodes=3;
 

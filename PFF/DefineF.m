@@ -22,7 +22,7 @@ else
 
 end
 
-if nargin>0
+if nargin>3
     h=hIce;
 end
 
