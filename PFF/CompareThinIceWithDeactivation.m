@@ -1,3 +1,6 @@
+
+
+
 function dV=CompareThinIceWithDeactivation(UserVar,RunInfo,CtrlVar,MUA,BCs,F) 
 
 
@@ -21,6 +24,7 @@ function dV=CompareThinIceWithDeactivation(UserVar,RunInfo,CtrlVar,MUA,BCs,F)
 % TestCase="Eq. water column" ;
 % TestCase="all water" ;
 % TestCase="thin ice"; 
+CtrlVar.PhaseFieldFracture.RiftsAre="-thin ice above inviscid water-"; 
 
 switch UserVar.TestCase
 
@@ -58,8 +62,8 @@ switch UserVar.TestCase
         ThinIceNodes=F.phi>0.99 ;
 
         F.h(ThinIceNodes)=CtrlVar.ThickMin ;
-        F.rho(ThinIceNodes)=F.rho(ThinIceNodes)/100;
-        F.AGlen(ThinIceNodes)=F.AGlen(ThinIceNodes)*1000;
+        F.rho(ThinIceNodes)=F.rhow ; % (ThinIceNodes);
+        F.AGlen(ThinIceNodes)=F.AGlen(ThinIceNodes); % *1e6;
 
     case "Eq. water column"  % rifts are viscous water columns
 
@@ -105,11 +109,14 @@ end
 lm=UaLagrangeVariables ;
 [UserVar,RunInfo,F,lm]= uv(UserVar,RunInfo,CtrlVar,MUA,BCs,F,lm) ;  
 
-UaPlots(CtrlVar,MUA,F,F.b,FigureTitle="b") ; title("b")
-UaPlots(CtrlVar,MUA,F,F.AGlen,FigureTitle="A") ; set(gca,'ColorScale','log')
+
+UaPlots(CtrlVar,MUA,F,F.b,FigureTitle="b") ; title("b") ; xlabel("$x$ (km)",interpreter="latex") ; ylabel("$y$ (km)",interpreter="latex")
+
+UaPlots(CtrlVar,MUA,F,F.AGlen,FigureTitle="A") ; set(gca,'ColorScale','log') ; xlabel("$x$ (km)",interpreter="latex") ; ylabel("$y$ (km)",interpreter="latex")
 
 phiEmean=Nodes2EleMean(MUA.connectivity,F.phi);
-UaPlots(CtrlVar,MUA,F,phiEmean,FigureTitle="phi Ele")
+UaPlots(CtrlVar,MUA,F,phiEmean,FigureTitle="phi Ele") ; xlabel("$x$ (km)",interpreter="latex") ; ylabel("$y$ (km)",interpreter="latex")
+xlabel("$x$ (km)",interpreter="latex") ; ylabel("$y$ (km)",interpreter="latex")
 
 ElementsToBeDeactivated=phiEmean>0.99 ;
 CtrlVar.UpdateMUAafterDeactivating=true;
@@ -126,20 +133,24 @@ lm=UaLagrangeVariables ;
 
 [xphi,yphi]=CalcMuaFieldsContourLine(CtrlVar,MUA,F.phi,0.99) ;
 UaPlots(CtrlVar,MUAdeactivated,Fdeactivated,Fdeactivated.phi,FigureTitle="new",PlotUnderMesh=true,MeshColor="w") ; CM=cmocean('balanced',25,'pivot',0.5) ; colormap(CM);
+xlabel("$x$ (km)",interpreter="latex") ; ylabel("$y$ (km)",interpreter="latex")
 
 FindOrCreateFigure("MeshDeactivated") ; PlotMuaMesh(CtrlVar,MUAdeactivated);
+xlabel("$x$ (km)",interpreter="latex") ; ylabel("$y$ (km)",interpreter="latex")
 CtrlVar.QuiverSameVelocityScalingsAsBefore=false ;
 
 % CtrlVar.QuiverColorSpeedLimits=[0 250];     
 [cbar,~,~,~,~,CtrlVar]=UaPlots(CtrlVar,MUAdeactivated,Fdeactivated,"-uv-",FigureTitle="uv deactivated") ; 
 hold on ; plot(xphi/CtrlVar.PlotXYscale,yphi/CtrlVar.PlotXYscale,Color="r",LineWidth=2)
 title("Velocity for ThinIce elements deactivated "+UserVar.TestCase)
+xlabel("$x$ (km)",interpreter="latex") ; ylabel("$y$ (km)",interpreter="latex")
 % f=gcf ; exportgraphics(f,"DeactivatedVel.pdf") ; saveas(f,"DeactivatedVel.fig")do
 
 CtrlVar.QuiverSameVelocityScalingsAsBefore=true ;
 [cbar,~,~,~,~,CtrlVar]=UaPlots(CtrlVar,MUA,F,"-uv-",FigureTitle="uv with damage") ; 
 hold on ; plot(xphi/CtrlVar.PlotXYscale,yphi/CtrlVar.PlotXYscale,Color="r",LineWidth=2)
 title("Velocity with ThinIce elements included "+UserVar.TestCase)
+xlabel("$x$ (km)",interpreter="latex") ; ylabel("$y$ (km)",interpreter="latex")
 
 
 
@@ -183,6 +194,7 @@ if CalcDiff=="over nodes not belonging to deactivated elements"
     [cbar,~,~,~,~,CtrlVar]=UaPlots(CtrlVar,MUA,F,[uDiff vDiff],FigureTitle="uv diff") ;
     hold on ; plot(xphi/CtrlVar.PlotXYscale,yphi/CtrlVar.PlotXYscale,Color="r",LineWidth=2)
     title("Velocity differences deactivated/damaged "+UserVar.TestCase)
+    xlabel("$x$ (km)",interpreter="latex") ; ylabel("$y$ (km)",interpreter="latex")
 
 
     
@@ -190,6 +202,7 @@ if CalcDiff=="over nodes not belonging to deactivated elements"
     [cbar,~,~,~,~,CtrlVar]=UaPlots(CtrlVar,MUA,F,dspeed,FigureTitle="diff speed") ;
     hold on ; plot(xphi/CtrlVar.PlotXYscale,yphi/CtrlVar.PlotXYscale,Color="r",LineWidth=2)
     title("difference in speed deactivated/damated "+UserVar.TestCase)
+    xlabel("$x$ (km)",interpreter="latex") ; ylabel("$y$ (km)",interpreter="latex")
 
     DiffNorm=sqrt((uDiff'*MUA.M*uDiff+vDiff'*MUA.M*vDiff)) ;
     SpeedNorm=sqrt(F.ub'*MUA.M*F.ub+F.vb'*MUA.M*F.vb);
@@ -209,6 +222,7 @@ else
     [cbar,~,~,~,~,CtrlVar]=UaPlots(CtrlVar,MUAdeactivated,Fdeactivated,[uDiff vDiff],FigureTitle="uv diff") ;
     hold on ; plot(xphi/CtrlVar.PlotXYscale,yphi/CtrlVar.PlotXYscale,Color="r",LineWidth=2)
     title("Velocity differences deactivated/damaged "+UserVar.TestCase)
+    xlabel("$x$ (km)",interpreter="latex") ; ylabel("$y$ (km)",interpreter="latex")
 
 
 
@@ -216,6 +230,7 @@ else
     [cbar,~,~,~,~,CtrlVar]=UaPlots(CtrlVar,MUAdeactivated,Fdeactivated,dspeed,FigureTitle="diff speed") ;
     hold on ; plot(xphi/CtrlVar.PlotXYscale,yphi/CtrlVar.PlotXYscale,Color="r",LineWidth=2)
     title("difference in speed")
+    xlabel("$x$ (km)",interpreter="latex") ; ylabel("$y$ (km)",interpreter="latex")
 
     DiffNorm=sqrt((uDiff'*MUAdeactivated.M*uDiff+vDiff'*MUAdeactivated.M*vDiff)) ;
     SpeedNorm=sqrt(Fdeactivated.ub'*MUAdeactivated.M*Fdeactivated.ub+Fdeactivated.vb'*MUAdeactivated.M*Fdeactivated.vb);

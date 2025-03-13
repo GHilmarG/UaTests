@@ -130,5 +130,17 @@ while true
 
 end
 
+%%
+% re-position figures
+
+figBC=FindOrCreateFigure("BCs original") ; figBC.Position=[1945 60 600 1050];
+xlabel("$x$ (km)",interpreter="latex") ; ylabel("$y$ (km)",interpreter="latex") ; title("")
+figdv=FindOrCreateFigure("uv diff") ; figdv.Position=[1300 60 600 1050];
+xlabel("$x$ (km)",interpreter="latex") ; ylabel("$y$ (km)",interpreter="latex") ; subtitle("")
+figuvD=FindOrCreateFigure("uv with damage") ; figuvD.Position=[680 60 600 1050];
+xlabel("$x$ (km)",interpreter="latex") ; ylabel("$y$ (km)",interpreter="latex") ;  subtitle("")
+figuv=FindOrCreateFigure("uv deactivated") ; figuv.Position=[70 60 600 1050];
+xlabel("$x$ (km)",interpreter="latex") ; ylabel("$y$ (km)",interpreter="latex") ;  subtitle("")
+%%
 
 %%

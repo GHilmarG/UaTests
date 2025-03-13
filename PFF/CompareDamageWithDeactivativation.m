@@ -82,14 +82,19 @@ if CalcDiff=="over nodes not belonging to deactivated elements"
     uDiff(NodesNotBelonginToDeactivatedElements)=Fdeactivated.ub(l(NodesNotBelonginToDeactivatedElements))-F.ub(NodesNotBelonginToDeactivatedElements);
     vDiff(NodesNotBelonginToDeactivatedElements)=Fdeactivated.vb(l(NodesNotBelonginToDeactivatedElements))-F.vb(NodesNotBelonginToDeactivatedElements) ;
 
+    dspeed=sqrt(uDiff.*uDiff+vDiff.*vDiff);
+    CtrlVar.QuiverSameVelocityScalingsAsBefore=false ;
+    CtrlVar.MaxPlottedSpeed=[] ;
+    CtrlVar.MinPlottedSpeed=[] ;
+    CtrlVar.QuiverColorSpeedLimits=[];
+
 
     [cbar,~,~,~,~,CtrlVar]=UaPlots(CtrlVar,MUA,F,[uDiff vDiff],FigureTitle="uv diff") ;
     hold on ; plot(xphi/CtrlVar.PlotXYscale,yphi/CtrlVar.PlotXYscale,Color="r",LineWidth=2)
     title("Velocity differences")
 
 
-    CtrlVar.QuiverSameVelocityScalingsAsBefore=true ;
-    dspeed=sqrt(uDiff.*uDiff+vDiff.*vDiff);
+  
     [cbar,~,~,~,~,CtrlVar]=UaPlots(CtrlVar,MUA,F,dspeed,FigureTitle="diff speed") ;
     hold on ; plot(xphi/CtrlVar.PlotXYscale,yphi/CtrlVar.PlotXYscale,Color="r",LineWidth=2)
     title("difference in speed")

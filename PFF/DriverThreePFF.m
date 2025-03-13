@@ -4,8 +4,8 @@
 warning('off','MATLAB:triangulation:PtsNotInTriWarnId')
 warning('off','MATLAB:decomposition:SaveNotSupported')
 warning('off','MATLAB:decomposition:genericError')
-parfevalOnAll(gcp(), @warning, 0, 'off','MATLAB:decomposition:genericError');
-parfevalOnAll(gcp(), @warning, 0, 'off','MATLAB:decomposition:SaveNotSupported');
+parfevalOnAll(gcp("nocreate"), @warning, 0, 'off','MATLAB:decomposition:genericError');
+parfevalOnAll(gcp("nocreate"), @warning, 0, 'off','MATLAB:decomposition:SaveNotSupported');
 
 
 
@@ -81,7 +81,7 @@ CtrlVar.PhaseFieldFracture.Gc=1e5;
 CtrlVar.PhaseFieldFracture.l=5e3;
 CtrlVar.PhaseFieldFracture.k=1e-15; % regularisation parameter
 % CtrlVar.MeshSizeMin=CtrlVar.PhaseFieldFracture.l/4;
-
+CtrlVar.PhaseFieldFracture.RiftsAre="-thin ice above inviscid water-"; 
 CtrlVar.PhaseFieldFracture.MaxMeshRefinements=5;   % max number of mesh refinements per phi solve where phi is not updated
 CtrlVar.PhaseFieldFracture.MaxUpdates=15;           % number of updates in phi and Psi
 
