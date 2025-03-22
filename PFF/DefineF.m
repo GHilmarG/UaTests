@@ -14,6 +14,9 @@ if   UserVar.Experiment=="ice shelf single notch"
 
     h=1000;
 
+elseif UserVar.Experiment=="ice shelf constricted"
+    
+    h=1000;
 
 else
 
@@ -51,11 +54,29 @@ F.n=zeros(n,1)+3;
 F.m=zeros(n,1)+3;
 
 
-[F.b,F.s,F.h,F.GF]=Calc_bs_From_hBS(CtrlVar,MUA,F.h,F.S,F.B,F.rho,F.rhow);
+
 
 
 F.AGlen0=F.AGlen; 
 F.rho0=F.rho; 
 
+
+switch UserVar.Experiment
+    
+    case "ice shelf stream flow"
+
+    % I=abs(F.y)<20e3 ; 
+    % F.AGlen(I)=AGlenVersusTemp(0) ;  % make ice here weaker
+
+    F.h=F.h*0+700;
+
+
+    case "ice shelf constricted"
+
+        F.h=F.h*0+700;
+
+end
+
+[F.b,F.s,F.h,F.GF]=Calc_bs_From_hBS(CtrlVar,MUA,F.h,F.S,F.B,F.rho,F.rhow);
 
 end

@@ -246,7 +246,7 @@ title(sprintf("RMS difference: %g ",D))
 
 F.phi=zeros(MUA.Nnodes,1);
 F.phi(IGap)=1;
-dV=CompareThinIceWithDeactivation(UserVar,RunInfo,CtrlVar,MUA,BCs,F)  ;
+dV=CompareDamageWithDeactivation(UserVar,RunInfo,CtrlVar,MUA,BCs,F)  ;
 
 
 %%

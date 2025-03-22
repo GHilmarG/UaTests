@@ -34,12 +34,12 @@ CtrlVar.WhenPlottingMesh_PlotMeshBoundaryCoordinatesToo=0;
 % three lines are required in the Ua2D_InitialUserInput.m
 
 CtrlVar.MeshSizeMax=1000e3;
-CtrlVar.MeshSize=5e3; 
+CtrlVar.MeshSize=2e3; 
 CtrlVar.MeshSizeMin=0.1e3 ; 
 CtrlVar.TriNodes=3;
 
 
-CtrlVar.PhaseFieldFracture.Video=true;
+CtrlVar.PhaseFieldFracture.Video=false;
 
 
 xmin=0e3 ; xmax=100e3 ; ymin=-100e3 ; ymax=100e3;
@@ -77,12 +77,16 @@ F=DefineF(UserVar,CtrlVar,MUA) ;
 
 
 CtrlVar.PhaseFieldFracture.Gc=1e5;
-% CtrlVar.PhaseFieldFracture.Gc=1e4;
+CtrlVar.PhaseFieldFracture.Gc=1e6;
+CtrlVar.PhaseFieldFracture.Gc=1e7;
 CtrlVar.PhaseFieldFracture.l=5e3;
 CtrlVar.PhaseFieldFracture.k=1e-15; % regularisation parameter
 % CtrlVar.MeshSizeMin=CtrlVar.PhaseFieldFracture.l/4;
+
 CtrlVar.PhaseFieldFracture.RiftsAre="-thin ice above inviscid water-"; 
-CtrlVar.PhaseFieldFracture.MaxMeshRefinements=5;   % max number of mesh refinements per phi solve where phi is not updated
+UserVar.TestCase="PFF";
+
+CtrlVar.PhaseFieldFracture.MaxMeshRefinements=0;   % max number of mesh refinements per phi solve where phi is not updated
 CtrlVar.PhaseFieldFracture.MaxUpdates=15;           % number of updates in phi and Psi
 
 F.Psi=zeros(MUA.Nnodes,1) ;
@@ -94,18 +98,17 @@ CtrlVar.BCs="-uv-" ;
 BCs=DefineBoundaryConditions(UserVar,CtrlVar,MUA,F,BCs) ;
 lm=UaLagrangeVariables ;
 
-%%
+%% Compare with deactivation?
 
-Inod=F.x >= xl & F.x <= xr & F.y >= yd & F.y <= yu; 
-%Inod=F.x > xl & F.x < xr & F.y > yd & F.y < yu; 
-F.phi(Inod)=1; 
-
-CompareDamageWithDeactivativation(UserVar,RunInfo,CtrlVar,MUA,BCs,F) ; 
+% Inod=F.x >= xl & F.x <= xr & F.y >= yd & F.y <= yu; 
+% Inod=F.x > xl & F.x < xr & F.y > yd & F.y < yu; 
+% F.phi(Inod)=1; 
+% CompareDamageWithDeactivation(UserVar,RunInfo,CtrlVar,MUA,BCs,F) ; 
 
                              
 %%
-
-
+close all
+F.phi=zeros(MUA.Nnodes,1) ; 
 [MUA,BCs,BCsphi,F]=PhaseFieldFractureSolver(UserVar,RunInfo,CtrlVar,MUA,F,BCs) ;
 
 

@@ -4,8 +4,8 @@
 warning('off','MATLAB:triangulation:PtsNotInTriWarnId')
 warning('off','MATLAB:decomposition:SaveNotSupported')
 warning('off','MATLAB:decomposition:genericError')
-parfevalOnAll(gcp(), @warning, 0, 'off','MATLAB:decomposition:genericError');
-parfevalOnAll(gcp(), @warning, 0, 'off','MATLAB:decomposition:SaveNotSupported');
+parfevalOnAll(gcp("nocreate"), @warning, 0, 'off','MATLAB:decomposition:genericError');
+parfevalOnAll(gcp("nocreate"), @warning, 0, 'off','MATLAB:decomposition:SaveNotSupported');
 
 
 
@@ -38,7 +38,7 @@ CtrlVar.MeshSize=5e3;
 CtrlVar.TriNodes=3;
 
 
-CtrlVar.PhaseFieldFracture.Video=false;
+CtrlVar.PhaseFieldFracture.Video=true;
 
 
 xmin=-100e3 ; xmax=100e3 ; ymin=-100e3 ; ymax=100e3;
@@ -54,21 +54,20 @@ CtrlVar.MeshBoundaryCoordinates=MeshBoundaryCoordinates;
 FindOrCreateFigure("Mesh") ; PlotMuaMesh(CtrlVar,MUA); drawnow
 
 
-
-
-% Calculate initial phi for undamaged ice, and do some local mesh refinement around initial crack
-
-
 F=DefineF(UserVar,CtrlVar,MUA) ;
 
 
 
 CtrlVar.PhaseFieldFracture.Gc=1e5;  
 CtrlVar.PhaseFieldFracture.l=10e3;
-CtrlVar.PhaseFieldFracture.k=1e-3; % regularisation parameter
+CtrlVar.PhaseFieldFracture.k=1e-3; % regularization parameter
 
 CtrlVar.PhaseFieldFracture.MaxMeshRefinements=5;   % max number of mesh refinements per phi solve where phi is not updated 
-CtrlVar.PhaseFieldFracture.MaxUpdates=15;           % number of updates in phi and Psi
+CtrlVar.PhaseFieldFracture.MaxUpdates=10;           % number of updates in phi and Psi
+
+
+CtrlVar.PhaseFieldFracture.RiftsAre="-thin ice above inviscid water-"; 
+% UserVar.TestCase="PFF";
 
 F.Psi=zeros(MUA.Nnodes,1) ; 
 
@@ -80,11 +79,6 @@ F.phi=zeros(MUA.Nnodes,1) ;  % phi=0, undamaged,
 [MUA,BCs,BCsphi,F]=PhaseFieldFractureSolver(UserVar,RunInfo,CtrlVar,MUA,F,BCs) ;
 
 
-A0=F.AGlen(1);
-[PsiPlot,e,eInt]=StrainRateEnergy(CtrlVar,MUA,F,A0) ; % just here for plotting purposes
-PlotTitle="";
-CtrlVar.PhaseFieldFracture.iphiUpdate=nan; ;  
-PFFPlots(UserVar,CtrlVar,MUA,F,BCs,BCsphi,F.phi,F.Psi,e,PlotTitle) ;
 
 
 

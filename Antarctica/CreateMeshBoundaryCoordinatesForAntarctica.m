@@ -11,7 +11,10 @@ MeshBoundaryCoordinates=[xB(:) yB(:)] ;
 
 
 % fc=FindOrCreateFigure('MeshBoundaryCoordinates') ;  
-% plot(MeshBoundaryCoordinates(:,1),MeshBoundaryCoordinates(:,2),'.-') ; axis equal
+% plot(MeshBoundaryCoordinates(:,1)/1000,MeshBoundaryCoordinates(:,2)/1000,'-r') ; 
+% axis equal
+% hold on
+% plot(Boundary(:,1)/1000,Boundary(:,2)/1000,"-b")
 % title("MeshBoundaryCoordinates")
 
 

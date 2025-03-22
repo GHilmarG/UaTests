@@ -1,7 +1,7 @@
 
 
 
-function dV=CompareThinIceWithDeactivation(UserVar,RunInfo,CtrlVar,MUA,BCs,F) 
+function dV=CompareDamageWithDeactivation(UserVar,RunInfo,CtrlVar,MUA,BCs,F) 
 
 
 %% check if deactivating "fully" ThinIce elements gives about the same solution

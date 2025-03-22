@@ -109,7 +109,7 @@ while true
     %Inod=F.x > xl & F.x < xr & F.y > yd & F.y < yu;
     F.phi(Inod)=1;
 
-     dV=CompareThinIceWithDeactivation(UserVar,RunInfo,CtrlVar,MUA,BCs,F) ;
+     dV=CompareDamageWithDeactivation(UserVar,RunInfo,CtrlVar,MUA,BCs,F) ;
    
 
     fprintf("dv=%g\n",dV)

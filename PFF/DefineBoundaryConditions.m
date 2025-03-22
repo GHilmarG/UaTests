@@ -78,8 +78,10 @@ switch  CtrlVar.BCs
         if   UserVar.Experiment=="ice shelf single notch" || UserVar.Experiment=="damaged/deactivated"
 
                         
-            I=MUA.Boundary.Nodes(F.x(MUA.Boundary.Nodes) < xmax)  ; 
+       %     I=MUA.Boundary.Nodes(F.x(MUA.Boundary.Nodes) < xmax)  ; 
+            I=MUA.Boundary.Nodes(F.x(MUA.Boundary.Nodes) < 80e3)  ; 
 
+            
             BCs.ubFixedNode=I ; BCs.ubFixedValue=BCs.ubFixedNode*0;
             BCs.vbFixedNode=I ; BCs.vbFixedValue=BCs.vbFixedNode*0;
 
@@ -89,7 +91,46 @@ switch  CtrlVar.BCs
             BCs.vbFixedNode=[LeftEdgeNodes ; UpperEdgeNodes ; LowerEdgeNodes ; RightEdgeNodes ] ; BCs.vbFixedValue= BCs.vbFixedNode*0; 
 
 
+        elseif UserVar.Experiment=="ice shelf stream flow"
+
+
+            
+             
+             % BCs.ubFixedNode=[UpperEdgeNodes; LowerEdgeNodes ; LeftEdgeNodes] ;
+             
+             xU=F.x(MUA.Boundary.Nodes);
+             yU=F.y(MUA.Boundary.Nodes);
+             
+             % Iu=xU < 0 | (xU>=0 & abs(yU)>20e3 ) ;
+             % 
+             % 
+             % BCs.ubFixedNode=MUA.Boundary.Nodes(Iu);
+             % BCs.ubFixedValue=BCs.ubFixedNode*0;
+             % 
+             % 
+             % BCs.vbFixedNode=[UpperEdgeNodes ; LowerEdgeNodes] ; BCs.vbFixedValue=[UpperEdgeNodes*0; LowerEdgeNodes*0];
+
+             Iu=xU < 60e3 & ~(yU<-80e3 & xU> -90e3) ; 
+             BCs.ubFixedNode=MUA.Boundary.Nodes(Iu); BCs.ubFixedValue=BCs.ubFixedNode*0;
+
+              BCs.vbFixedNode=[LeftEdgeNodes ; UpperEdgeNodes ; LowerEdgeNodes ] ; BCs.vbFixedValue= BCs.vbFixedNode*0; 
+
+              %BCs.vbFixedNode=MUA.Boundary.Nodes(Iu); BCs.vbFixedValue=BCs.vbFixedNode*0;
+
+
+
+        elseif UserVar.Experiment=="ice shelf constricted"
+
+            uFixedNodes=setdiff(MUA.Boundary.Nodes,[RightEdgeNodes;LowerEdgeNodes;UpperEdgeNodes]) ;
+            BCs.ubFixedNode=uFixedNodes;  BCs.ubFixedValue=BCs.ubFixedNode*0;
+           
+            vFixedNodes=setdiff(MUA.Boundary.Nodes,RightEdgeNodes) ;
+            BCs.vbFixedNode=vFixedNodes;  BCs.vbFixedValue=BCs.vbFixedNode*0;
+
+
+
         else
+
 
             BCs.ubFixedNode=[UpperEdgeNodes; LowerEdgeNodes ; LeftEdgeNodes] ;  BCs.ubFixedValue=BCs.ubFixedNode*0;
             BCs.vbFixedNode=[UpperEdgeNodes ; LowerEdgeNodes] ; BCs.vbFixedValue=[UpperEdgeNodes*0+V; LowerEdgeNodes*0-V];
@@ -134,7 +175,7 @@ switch  CtrlVar.BCs
 
 
                 l=CtrlVar.PhaseFieldFracture.l ;
-                Iy0=(abs(F.x-80e3 ) < (l/2) )  & (F.y<-50e3);
+                Iy0=(abs(F.x-80e3 ) < (l/2) )  & (F.y<-60e3);
 
                 Iy0=find(Iy0) ;
 
@@ -143,6 +184,15 @@ switch  CtrlVar.BCs
                 BCs.hFixedNode=Iy0 ;
                 BCs.hFixedValue=Iy0*0+1 ;
 
+            case "ice shelf stream flow"
+
+                  BCs.hFixedNode=[];
+                BCs.hFixedValue=[];
+
+            case "ice shelf constricted" 
+
+                  BCs.hFixedNode=[];
+                BCs.hFixedValue=[];
 
 
             otherwise
