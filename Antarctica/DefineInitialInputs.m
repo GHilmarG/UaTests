@@ -96,7 +96,7 @@ switch UserVar.RunType
 
         CtrlVar.Restart=1;
 
-        CtrlVar.Inverse.Iterations=100;
+        CtrlVar.Inverse.Iterations=1000;
 
         if contains(UserVar.RunType,"MatOpt")
             CtrlVar.Inverse.MinimisationMethod="MatlabOptimization-HessianBased";
