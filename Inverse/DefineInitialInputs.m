@@ -11,34 +11,31 @@ if ~isfield(UserVar,'RunType')
     %UserVar.RunType='Channel';   %  either 'IceStream' or  'IceShelf'
     UserVar.RunType='IceStream';   UserVar.Inverse.Syntdata.GeoPerturbation='gauss';
     % UserVar.RunType='IceShelf';   %  either 'IceStream' or  'IceShelf'
-    
-    UserVar.Inverse.Syntdata.GeoPerturbation='valley'; 
-    UserVar.RunType='valley';  
+
+    UserVar.Inverse.Syntdata.GeoPerturbation='valley';
+    UserVar.RunType='valley';
     UserVar.vShift=1000 ; % UserVar.vShift=-4000 ; % This generates a synthetic valley shaped b geometry
     % For vShift=0 there is no grounding-line within the domain, but it is exactly
-    % at the edge. 
+    % at the edge.
     % for vShift=-2000 , for example, the grounding line is within the domain
-    
+
 end
 
 
-UserVar.uError=1; 
-UserVar.dhdtError=1; 
+UserVar.uError=1;
+UserVar.dhdtError=1;
 
 UserVar.Inverse.SynthData.Pert="-C-" ; %  {"-B-","-C-","-A-"}
 UserVar.Inverse.CreateSyntData=1;  % This field
 
 %%
-%CtrlVar.nip=37;
-%CtrlVar.niph=37;
-CtrlVar.kH=10;
-CtrlVar.NLtol=1e-15; % tolerance for the square of the norm of the residual error
+
 
 %%
 CtrlVar.doplots=1;
-CtrlVar.Plot.Units.xDistance="(km)" ; 
-CtrlVar.Plot.Units.yDistance="(km)" ; 
-CtrlVar.Plot.Units.zDistance="(m)" ; 
+CtrlVar.Plot.Units.xDistance="(km)" ;
+CtrlVar.Plot.Units.yDistance="(km)" ;
+CtrlVar.Plot.Units.zDistance="(m)" ;
 
 %%
 xd=200e3; xu=-200e3 ; yl=200e3 ; yr=-200e3;
@@ -67,7 +64,7 @@ CtrlVar.Inverse.OnlyModifyBedUpstreamOfGL=false ;
 
 CtrlVar.Inverse.DataMisfit.GradientCalculation='Adjoint' ; % {'Adjoint','FixPoint'
 %CtrlVar.Inverse.DataMisfit.GradientCalculation='-FixPoint-' ; % {'Adjoint','FixPoint'}
-CtrlVar.Inverse.AdjointGradientPreMultiplier="I"; % {"I","M"}
+
 
 
 CtrlVar.Inverse.InfoLevel=1;  % Set to 1 to get some basic information,
@@ -95,9 +92,10 @@ end
 CtrlVar.Inverse.InfoLevel=1;
 
 % Testing adjoint parameters, start:
-CtrlVar.Inverse.TestAdjoint.isTrue=0; % If true then perform a brute force calculation
+CtrlVar.Inverse.TestAdjoint.isTrue=true; % If true then perform a brute force calculation
 CtrlVar.TestAdjointFiniteDifferenceType="central-second-order" ;
-CtrlVar.Inverse.TestAdjoint.FiniteDifferenceStepSize=0.01 ;
+CtrlVar.TestAdjointFiniteDifferenceType="central-fourth-order" ;
+CtrlVar.Inverse.TestAdjoint.FiniteDifferenceStepSize=0.001 ;
 
 % CtrlVar.Inverse.TestAdjoint.iRange=[220:250] ;  % range of parameters over which brute force gradient is to be calculated.
 % if left empty, values are calculated for every node/element within the mesh.
@@ -125,7 +123,7 @@ CtrlVar.Inverse.Regularize.logAGlen.ga=1;
 CtrlVar.Inverse.Regularize.logAGlen.gs=10000 ;
 
 
-CtrlVar.Inverse.DataMisfit.HessianEstimate='0'; % {'0','I','MassMatrix'}
+
 
 CtrlVar.Inverse.DataMisfit.Multiplier=1;
 CtrlVar.Inverse.Regularize.Multiplier=1;
