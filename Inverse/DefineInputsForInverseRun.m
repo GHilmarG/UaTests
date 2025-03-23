@@ -76,8 +76,8 @@ Priors.Bmax=F.s-5 ;
 
 
 
-[UserVar,Priors.C,Priors.m]=DefineSlipperyDistribution(UserVar,CtrlVar,MUA,CtrlVar.time,F.s,F.b,F.s-F.b,F.S,F.B,F.rho,F.rhow,GF);
-[UserVar,Priors.AGlen,Priors.n]=DefineAGlenDistribution(UserVar,CtrlVar,MUA,CtrlVar.time,F.s,F.b,F.s-F.b,F.S,F.B,F.rho,F.rhow,GF);
+[UserVar,Priors.C,Priors.m]=DefineSlipperyDistribution(UserVar,CtrlVar,MUA,F); 
+[UserVar,Priors.AGlen,Priors.n]=DefineAGlenDistribution(UserVar,CtrlVar,MUA,F);
 
 [Priors.AGlen,Priors.n]=TestAGlenInputValues(CtrlVar,MUA,Priors.AGlen,Priors.n);
 [Priors.C,Priors.m]=TestSlipperinessInputValues(CtrlVar,MUA,Priors.C,Priors.m);
@@ -106,12 +106,13 @@ if UserVar.Inverse.CreateSyntData==1
     UserVar.Inverse.CreateSyntData=2;
 end
 
-[UserVar,F.s,F.b,F.S,F.B,F.alpha]=DefineGeometry(UserVar,CtrlVar,MUA,CtrlVar.time);
-[UserVar,F.C,F.m]=DefineSlipperyDistribution(UserVar,CtrlVar,MUA,CtrlVar.time,F.s,F.b,F.s-F.b,F.S,F.B,F.rho,F.rhow,GF);
-[UserVar,F.AGlen,F.n]=DefineAGlenDistribution(UserVar,CtrlVar,MUA,CtrlVar.time,F.s,F.b,F.s-F.b,F.S,F.B,F.rho,F.rhow,GF);
+
+[UserVar,F.s,F.b,F.S,F.B,F.rho,F.rhow,F.g]=DefineGeometryAndDensities(UserVar,CtrlVar,MUA,F,"-s-b-S-B-rho-");
+[UserVar,F.C,F.m]=DefineSlipperyDistribution(UserVar,CtrlVar,MUA,F);
+[UserVar,F.AGlen,F.n]=DefineAGlenDistribution(UserVar,CtrlVar,MUA,F);
 UserVar.Inverse.CreateSyntData=1;
 
-[UserVar,RunInfo,F,l,Kuv,Ruv,Lubvb]= uv(UserVar,RunInfo,CtrlVar,MUA,BCs,F,l);
+[UserVar,RunInfo,F,l]= uv(UserVar,RunInfo,CtrlVar,MUA,BCs,F,l);
 [UserVar,F.dhdt]=dhdtExplicit(UserVar,CtrlVar,MUA,F,BCs) ;
 
 Priors.TrueC=F.C;

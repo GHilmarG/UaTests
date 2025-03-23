@@ -1,6 +1,8 @@
-function [UserVar,C,m]=DefineSlipperyDistribution(UserVar,CtrlVar,MUA,time,s,b,h,S,B,rho,rhow,GF)
 
 
+%function [UserVar,C,m]=DefineSlipperyDistribution(UserVar,CtrlVar,MUA,time,s,b,h,S,B,rho,rhow,GF)
+
+function  [UserVar,C,m]=DefineSlipperyDistribution(UserVar,CtrlVar,MUA,F)
 %m=3 ;  C=1/20^m+zeros(Nnodes,1); % m=3 , 1 m/a and basal shear stress of 20 kPa
 m=3 ;
 
@@ -25,8 +27,8 @@ if UserVar.Inverse.CreateSyntData==2 && contains(UserVar.Inverse.SynthData.Pert,
         case 'icestream'
             
             
-            x=MUA.coordinates(:,1) ;
-            y=MUA.coordinates(:,2);
+            x=F.x;
+            y=F.y;
             
             if CtrlVar.CisElementBased
                 x=mean(reshape(x(MUA.connectivity,1),MUA.Nele,MUA.nod),2);

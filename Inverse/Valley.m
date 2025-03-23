@@ -1,3 +1,7 @@
+
+
+
+
 function [s,b,B,S]=Valley(UserVar,CtrlVar,MUA,pert)
 
 narginchk(4,4)
@@ -48,8 +52,10 @@ b=s-h;
 B=b;
 S=x*0 ;
 
-[~,rho,rhow,g]=DefineDensities(UserVar,CtrlVar,MUA,CtrlVar.time,s,b,h,S,B);
-[b,s,h,GF]=Calc_bs_From_hBS(CtrlVar,MUA,h,S,B,rho,rhow);
+[~,~,~,~,~,rho,rhow]=DefineGeometryAndDensities(UserVar,CtrlVar,MUA,[],"-rho-");
+
+
+[b,s]=Calc_bs_From_hBS(CtrlVar,MUA,h,S,B,rho,rhow);
 
 
 

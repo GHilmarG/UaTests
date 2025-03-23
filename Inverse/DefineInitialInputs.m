@@ -25,7 +25,7 @@ end
 UserVar.uError=1;
 UserVar.dhdtError=1;
 
-UserVar.Inverse.SynthData.Pert="-C-" ; %  {"-B-","-C-","-A-"}
+UserVar.Inverse.SynthData.Pert="-C-B-" ; %  {"-B-","-C-","-A-"}
 UserVar.Inverse.CreateSyntData=1;  % This field
 
 %%
