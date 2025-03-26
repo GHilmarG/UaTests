@@ -1,7 +1,10 @@
 function [UserVar,CtrlVar,MeshBoundaryCoordinates]=DefineInitialInputs(UserVar,CtrlVar)
 
 %
-% Klear ; UserVar.RunType='IceStream' ; Ua(UserVar)
+% Used primarily to test various inversion options.
+%
+% 2025, March: A, B, and C inversions all working, and test of adjoint gradients against brute-force difference approach
+% showed an excellent agreement (including for B). But as before, the B inversion is not to designed to work across grounding lines. 
 %
 
 UserVar.Inverse.Syntdata.GeoPerturbation='Gauss';
@@ -30,6 +33,11 @@ UserVar.Inverse.CreateSyntData=1;  % This field
 
 %%
 
+if UserVar.RunType=="IceStream"
+    CtrlVar.alpha=0.01;
+else
+    CtrlVar.alpha=0.0 ;
+end
 
 %%
 CtrlVar.doplots=1;
@@ -57,14 +65,12 @@ CtrlVar.Inverse.Measurements='-uv-dhdt-' ;   % {'-dhdt-,'-uv-dhdt-','-dhdt-'}
 
 CtrlVar.Inverse.MinimisationMethod='MatlabOptimization'; % {'MatlabOptimization','UaOptimization'}
 %CtrlVar.Inverse.MinimisationMethod='UaOptimization';
-CtrlVar.Inverse.Iterations=10;
-CtrlVar.Inverse.InvertFor='-logC-' ; % {'-C-','-logC-','-AGlen-','-logAGlen-'}
+CtrlVar.Inverse.Iterations=100;
+CtrlVar.Inverse.InvertFor='-B-' ; % {'-C-','-logC-','-AGlen-','-logAGlen-'}
 CtrlVar.Inverse.OnlyModifyBedUpstreamOfGL=false ;
 
 
 CtrlVar.Inverse.DataMisfit.GradientCalculation='Adjoint' ; % {'Adjoint','FixPoint'
-%CtrlVar.Inverse.DataMisfit.GradientCalculation='-FixPoint-' ; % {'Adjoint','FixPoint'}
-
 
 
 CtrlVar.Inverse.InfoLevel=1;  % Set to 1 to get some basic information,
@@ -78,20 +84,9 @@ else
 end
 
 
-%
-% Fixpoint gradient calculation is possible with both B and C but not A Often using the fixpoint gradient, instead of the adjoint gradient,
-% results in a much larger initial decrease of the cost function. Experience also suggest using the 'UaOptimisation' rather than the
-% 'MatlabOptimization', but this might be problem dependent.
-%
-% Note that the fixpoint gradients (both for B and C) are 'short-cuts' that only work far away from the final solution. So, in general, only do a
-% few (<5) iterations using the fixpoint option.  This method is likely to stagnate as the fixpoint gradients are less accurate than the adjoint
-% gradients.
-%
-
-
 CtrlVar.Inverse.InfoLevel=1;
 
-% Testing adjoint parameters, start:
+%% Testing adjoint parameters
 CtrlVar.Inverse.TestAdjoint.isTrue=true; % If true then perform a brute force calculation
 CtrlVar.TestAdjointFiniteDifferenceType="central-second-order" ;
 CtrlVar.TestAdjointFiniteDifferenceType="central-fourth-order" ;
@@ -103,7 +98,7 @@ CtrlVar.Inverse.TestAdjoint.FiniteDifferenceStepSize=0.001 ;
 % values are calculated for these
 % parameters
 
-% end, testing adjoint parameters.
+%% 
 
 UserVar.AddDataErrors=0;
 
@@ -129,39 +124,24 @@ CtrlVar.Inverse.DataMisfit.Multiplier=1;
 CtrlVar.Inverse.Regularize.Multiplier=1;
 
 
-%% Mesh generation and remeshing parameters
+%% Mesh generation and re-meshing parameters
 
-CtrlVar.meshgeneration=1;
-CtrlVar.GmshMeshingAlgorithm=8;    % see gmsh manual
-% 1=MeshAdapt
-% 2=Automatic
-% 5=Delaunay
-% 6=Frontal
-% 7=bamg
-% 8=DelQuad (experimental)
 
 CtrlVar.ReadInitialMesh=0;    % if true then read FE mesh (i.e the MUA variable) directly from a .mat file
 % unless the adaptive meshing option is used, no further meshing is done.
-
-if CtrlVar.Inverse.TestAdjoint.isTrue
-    %CtrlVar.ReadInitialMeshFileName='UniformMesh';
-    CtrlVar.ReadInitialMeshFileName='AdaptMeshFile10k';  % Irregular mesh
-else
-    CtrlVar.ReadInitialMeshFileName='AdaptMeshFile10k';
-end
-
+CtrlVar.ReadInitialMeshFileName='AdaptMeshFile10k'; 
 CtrlVar.SaveInitialMeshFileName='NewMeshFile.mat';
 
 
 
 CtrlVar.MeshSize=10e3;
 CtrlVar.MeshSize=50e3;
-%CtrlVar.MeshSize=20e3;
+CtrlVar.MeshSize=25e3;
 %CtrlVar.MeshSize=2.5e3;
 CtrlVar.MeshSizeMin=0.1*CtrlVar.MeshSize;    % min element size
 CtrlVar.MeshSizeMax=CtrlVar.MeshSize;
 
-CtrlVar.GmshGeoFileAdditionalInputLines{1}='Periodic Line {1,2} = {3,4};';
+% CtrlVar.GmshGeoFileAdditionalInputLines{1}='Periodic Line {1,2} = {3,4};';
 CtrlVar.AdaptMesh=0;
 CtrlVar.SaveAdaptMeshFileName='AdaptMeshFile';
 

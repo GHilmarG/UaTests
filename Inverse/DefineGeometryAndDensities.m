@@ -73,7 +73,7 @@ switch lower(UserVar.RunType)
         B=b ;
         s=hmean+b;
 
-        alpha=0.01;
+   
 
     case 'iceshelf'
 
@@ -83,7 +83,7 @@ switch lower(UserVar.RunType)
         B=S*0-1e10;
         s=hmean+b;
 
-        alpha=0 ;
+   
 
     case 'icestream+iceshelf'
 
@@ -104,8 +104,6 @@ switch lower(UserVar.RunType)
         S=B*0;
         s=hmean+b;
 
-        alpha=0 ;
-
         [b,s,h,GF]=Calc_bs_From_hBS(CtrlVar,MUA,s-b,S,B,900,1030);
 
 
@@ -113,16 +111,14 @@ switch lower(UserVar.RunType)
     case 'valley'
 
 
-        [s,b,B,S]=Valley(UserVar,CtrlVar,MUA,false) ;
-
-        alpha=0;
+        [s,b,B,S]=Valley(UserVar,CtrlVar,MUA,F,false) ;
 
 
 end
 
-if UserVar.Inverse.CreateSyntData==2 && UserVar.Inverse.SynthData.Pert=="-B-"
+if UserVar.Inverse.CreateSyntData==2 && contains(UserVar.Inverse.SynthData.Pert,"-B-")
 
-    fprintf(' Creating B pertubation for the generation of synthetic measurements.\n')
+    fprintf(' Creating true B for the generation of synthetic measurements.\n')
 
 
     x=MUA.coordinates(:,1) ;
@@ -153,7 +149,7 @@ if UserVar.Inverse.CreateSyntData==2 && UserVar.Inverse.SynthData.Pert=="-B-"
         case 'valley'
 
 
-            [s,b,B,S]=Valley(UserVar,CtrlVar,MUA,true) ;
+            [s,b,B,S]=Valley(UserVar,CtrlVar,MUA,F,true) ;
 
 
 
