@@ -23,7 +23,7 @@ CtrlVar.Parallel.uvAssembly.spmd.isOn=true;          % assembly in parallel usin
 CtrlVar.Parallel.BuildWorkers=true;
 CtrlVar.Parallel.isTest=false;                        % Runs both with and without parallel approach, and prints out some information on relative performance. 
 
-CtrlVar.PhaseFieldFracture.Video=true;
+CtrlVar.PhaseFieldFracture.Video=false;
 
 RunInfo=UaRunInfo;
 BCs=BoundaryConditions;
