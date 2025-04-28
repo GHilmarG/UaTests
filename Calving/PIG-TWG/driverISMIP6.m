@@ -71,6 +71,8 @@ if nargin==0 | isempty(RunString)
  
   %  RunString="ES2.5km-uvh-Tri3-SlidWeertman-Duvh-MRZERO-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; % 2025, 2030   % HPHO 2025/12/20
   % RunString="ES30km-uvh-Tri3-SlidWeertman-Duvh-MRZERO-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; %              % HPHO 2025/12/20
+ 
+   
 
 end
 
@@ -104,6 +106,9 @@ UserVar.RunEndYear=2500;
 UserVar.Assimilation.is=false;       % This is a flag to bypass the assimilation/relaxation phase. 
                                      % This will only work if the assimilation/relaxation has already 
                                      % been performed previously and all the related files exists
+                                     %
+                                     % When starting a new experiment, this should be set to true, for the 
+                                     % initial sequence of inversions to be conduced
 
 
 UserVar.Inverse.Iterations=500;

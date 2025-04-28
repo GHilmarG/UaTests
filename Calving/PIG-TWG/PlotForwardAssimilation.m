@@ -1,4 +1,33 @@
 
+
+
+%%
+%
+% Plots various results from runs in separate figures and creates video files in separate files
+%
+%
+% Plots generated:
+%
+% Thickness change with respect to start
+% Rate of thickness change
+% Rate of thickness change
+% Basal melt rates
+% Velocities
+% Velocity changes
+%
+% Also see:
+%
+%   SomePlotsThwaitesIceShelf.m 
+%
+%   driverReadPlotSequenceOfResultFiles2.m
+%
+%   PlotForwardComparision.m  
+%
+%   PlotVAFoverTimeForSeveralRuns..
+%
+%%
+
+
 %                       -side of a perfect square of equal area-
 % 30km = 14km                        9.806 km
 % 20km = 9.3km                       6.559 km
@@ -64,10 +93,10 @@ RunString="ES5km-uvh-Tri3-SlidWeertman-Duvh-MRZERO-P-BCVel-kH10000-TM0k2-Alim-Cl
 
  
  RunString="ES2.5km-uvh-Tri3-SlidWeertman-Duvh-MRlASE3-abMask0A-IOR-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; % 2035, 2061, 2080  (running)
-% RunString="ES5km-uvh-Tri3-SlidWeertman-Duvh-MRlASE3-abMask0A-IOR-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; % year 2459  % 2469 (collapse)
+ RunString="ES5km-uvh-Tri3-SlidWeertman-Duvh-MRlASE3-abMask0A-IOR-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; % year 2459  % 2469 (collapse)
 
  RunString="ES10km-uvh-Tri3-SlidWeertman-Duvh-MRlASE3-abMask0A-IOR-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; % 2349, 2417 (collapse)
- RunString="ES20km-uvh-Tri3-SlidWeertman-Duvh-MRlASE3-abMask0A-IOR-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-";  % 2155, 2161 (what is this run doing?) 
+ % RunString="ES20km-uvh-Tri3-SlidWeertman-Duvh-MRlASE3-abMask0A-IOR-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-";  % 2155, 2161 (what is this run doing?) 
 
 % RunString="ES2.5km-uv-h-Tri3-SlidWeertman-Duvh-MRlASE3-abMask0A-IOR-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; % 2174 
 % RunString="ES5km-uv-h-Tri3-SlidWeertman-Duvh-MRlASE3-abMask0A-IOR-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; % no files
@@ -87,7 +116,7 @@ RunString="ES5km-uvh-Tri3-SlidWeertman-Duvh-MRZERO-P-BCVel-kH10000-TM0k2-Alim-Cl
 
 %% MRIM6HadGEM2-abMask0A-P-BCVel  (here the "strict" melt mask is applied, ie melt does not go directly to the grounding line)  
 
-%  RunString="ES2.5km-uvh-Tri3-SlidWeertman-Duvh-MRIM6HadGEM2-abMask0A-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; % 2057, 2091, 2108
+%  RunString="ES2.5km-uvh-Tri3-SlidWeertman-Duvh-MRIM6HadGEM2-abMask0A-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; % 2057, 2091, 2108, 2203
 % RunString="ES5km-uvh-Tri3-SlidWeertman-Duvh-MRIM6HadGEM2-abMask0A-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; % 2103, 2143,
 % RunString="ES10km-uvh-Tri3-SlidWeertman-Duvh-MRIM6HadGEM2-abMask0A-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; % 2035, 2117, 2214, 2301 (done)
 % RunString="ES20km-uvh-Tri3-SlidWeertman-Duvh-MRIM6HadGEM2-abMask0A-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; % 2144, 2300, no collapse
@@ -130,9 +159,17 @@ SearchString=replaceBetween(UserVar.RunType,"-FR","-","*");
 SearchString=replace(SearchString,"2.5","2k5");
 SearchString=replace(SearchString,"ES","");  % for some reason the output files were named with ES missing
 
- SearchString="00-FR*"+"-"+SearchString;  % every year
-% SearchString="000-FR*"+"-"+SearchString;  % every decade
-% SearchString="0000-FR*"+"-"+SearchString;  % every century
+% Search for output files as some time interval
+TimeInterval=10 ;
+
+switch TimeInterval
+    case 1
+        SearchString="00-FR*"+"-"+SearchString;  % every year
+    case 10
+        SearchString="000-FR*"+"-"+SearchString;  % every decade
+    case 100
+        SearchString="0000-FR*"+"-"+SearchString;  % every century
+end
 
 % SearchString="*"+SearchString; 
 % SearchString=replace(SearchString,"**","*") ;
@@ -150,7 +187,7 @@ end
 YearLast=str2double( extractBefore(ResultFiles(end).name,"-"))/100  ; 
 fprintf("%s: last file at year=%g \t created=%s \n",SearchString,YearLast,ResultFiles(end).date)
 
-return
+% return  % set a return here if only interested in seeing the year of last output file for this run
 
 
 xGL0=nan ; yGL0=nan  ;
@@ -168,10 +205,10 @@ Fh=[] ; Fu=[] ; Fv=[]; F=UaFields ;
 
 tMax=inf;
 CreateReferenceFile=true; 
-VideoDhDt=VideoWriter(UserVar.VideoFileDirectory+UserVar.RunType+"DhDt.avi"); open(VideoDhDt)
-VideoDVel=VideoWriter(UserVar.VideoFileDirectory+UserVar.RunType+"VelocityChanges.avi"); open(VideoDVel)
-VideoVel=VideoWriter(UserVar.VideoFileDirectory+UserVar.RunType+"Velocities.avi"); open(VideoVel)
-Videoab=VideoWriter(UserVar.VideoFileDirectory+UserVar.RunType+"ab.avi"); open(Videoab)
+VideoDhDt=VideoWriter(UserVar.VideoFileDirectory+UserVar.RunType+"DhDt.mp4","MPEG-4");              open(VideoDhDt)
+VideoDVel=VideoWriter(UserVar.VideoFileDirectory+UserVar.RunType+"VelocityChanges.mp4","MPEG-4");   open(VideoDVel)
+VideoVel=VideoWriter(UserVar.VideoFileDirectory+UserVar.RunType+"Velocities.mp4","MPEG-4");         open(VideoVel)
+Videoab=VideoWriter(UserVar.VideoFileDirectory+UserVar.RunType+"ab.mp4","MPEG-4");                  open(Videoab)
 
 for ifile=1:numel(ResultFiles)
 
@@ -180,7 +217,18 @@ for ifile=1:numel(ResultFiles)
     FvPrevious=Fv;
 
     fprintf("%s \n ",ResultFiles(ifile).name)
-    load(ResultFiles(ifile).folder+"\"+ResultFiles(ifile).name,"CtrlVar","MUA","F")
+
+    try
+        FileName=ResultFiles(ifile).folder+"\"+ResultFiles(ifile).name ;
+        load(FileName,"CtrlVar","MUA","F")
+
+    catch
+        
+        fprintf("could not load %s \n",FileName)
+        continue
+
+    end
+
 
     [Emin,Emax,Emean,Emedian]=PrintInfoAboutElementsSizes(CtrlVar,MUA,LengthMeasure="-side of a perfect square of equal area-",print=false);
     MeltParameterisation=extractBetween(UserVar.RunType,"Duvh-","-P");
@@ -368,7 +416,7 @@ close(VideoDhDt)
 close(VideoDVel)
 close(VideoVel)
 close(Videoab)
-
+fprintf("Videos saved in %s \n",UserVar.VideoFileDirectory)
 %%
 
 for iloc=1:nloc

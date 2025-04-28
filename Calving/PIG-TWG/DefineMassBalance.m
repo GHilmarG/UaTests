@@ -386,7 +386,7 @@ end
 ab(~OceanNodes)=0;
 dabdh(~OceanNodes)=0;
 
-dabdh=dabdh*0; % testing impact of uv-h convergence
+% dabdh=dabdh*0; % testing impact of uv-h convergence
 
 %% Basal melting due to frictional heating
 

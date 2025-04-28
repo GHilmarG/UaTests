@@ -1,38 +1,62 @@
 
 %%
-
-RunString{1}="ES10km-uv-h-Tri3-SlidWeertman-Duvh-MRIM6HadGEM2-abMask0-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-";
-RunString{2}="ES10km-uvh-Tri3-SlidWeertman-Duvh-MRIM6HadGEM2-abMask0-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-";
-
-RunString{1}="ES5km-uv-h-Tri3-SlidWeertman-Duvh-MRIM6HadGEM2-abMask0-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-";
-RunString{2}="ES5km-uvh-Tri3-SlidWeertman-Duvh-MRIM6HadGEM2-abMask0-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-";
-Titles=["ES5km-uv-h-" ; "ES5km-uvh-" ] ;
-
-RunString{1}="ES5km-uvh-Tri3-SlidWeertman-Duvh-MRlASE3-abMask0A-IOR-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-";  % 2463 (no collapes)
-RunString{2}="ES10km-uvh-Tri3-SlidWeertman-Duvh-MRlASE3-abMask0A-IOR-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-";  % 2338 (collapse)
-Titles=["uvh-implicit, Element size 1.65km" ; "uvh-implicit, Element size 3.28km" ] ;
-
-TitleText=extractBetween(RunString{1},"-Duvh-","-P-");
+%
+% Creates plots with three velocity panels, comparing two runs, all shown side by side at same times.
+%
+%%
 
 
-RunString{1}="ES5km-uvh-Tri3-SlidWeertman-Duvh-MRlASE3-abMask0A-IOR-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-";  % year 2459  (no collapse)
-RunString{2}="ES10km-uvh-Tri3-SlidWeertman-Duvh-MRlASE3-abMask0A-IOR-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-";  % year 2459 (collapse)
-Titles=["uvh-implicit, Element size 1.65km" ; "uvh-implicit, Element size 3.28km" ] ;
+RunType="Weertman-MRIM6HadGEM2-abMask0A-P-BCVel";
+RunType="Weertman-Duvh-MRlASE3-abMask0A-IOR-P-BCVel";
+RunType="Weertman-Duvh-MRZERO-P-BCVel";
 
-RunString{2}="ES2.5km-uvh-Tri3-SlidWeertman-Duvh-MRlASE3-abMask0A-IOR-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-";  % 
-Titles=["uvh-implicit, Element size 1.65km" ; "uvh-implicit, Element size 0.82 km" ] ;
+ES=["0.82 km","1.64 km","3.28","6.56 km","9.80 km"] ; 
+
+iCompare=[1 ; 2] ;
+dT=5 ; % 
+%dT=100 ;
+
+switch RunType
+
+    case "Weertman-MRIM6HadGEM2-abMask0A-P-BCVel"
+
+        RunString(1)="ES2.5km-uvh-Tri3-SlidWeertman-Duvh-MRIM6HadGEM2-abMask0A-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; % 2203
+        RunString(2)="ES5km-uvh-Tri3-SlidWeertman-Duvh-MRIM6HadGEM2-abMask0A-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; % 2203
+        RunString(3)="ES10km-uvh-Tri3-SlidWeertman-Duvh-MRIM6HadGEM2-abMask0A-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; % 2203
+        RunString(4)="ES20km-uvh-Tri3-SlidWeertman-Duvh-MRIM6HadGEM2-abMask0A-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; % 2203
+        RunString(5)="ES30km-uvh-Tri3-SlidWeertman-Duvh-MRIM6HadGEM2-abMask0A-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; % 2203
 
 
-RunString{1}="ES20km-uvh-DV1-Tri3-SlidWeertman-Duvh-MRIM6HadGEM2-abMask0A-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-" ; 
-RunString{2}="ES20km-uvh-DV1-TH1-Tri3-SlidWeertman-Duvh-MRIM6HadGEM2-abMask0A-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-" ; 
-Titles=["uvh-implicit, dev, 9.3km" ; "uvh-implicit, dev, theta=1, 9.3 km" ] ;
+    case "Weertman-Duvh-MRlASE3-abMask0A-IOR-P-BCVel"
 
-RunString{2}="ES20km-uvh-DV0-Tri3-SlidWeertman-Duvh-MRIM6HadGEM2-abMask0A-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-" ; 
-Titles=["uvh-implicit, dev, 9.3km" ; "uvh-implicit, ~dev, 9.3 km" ] ;
+        RunString(1)="ES2.5km-uvh-Tri3-SlidWeertman-Duvh-MRlASE3-abMask0A-IOR-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; %
+        RunString(2)="ES5km-uvh-Tri3-SlidWeertman-Duvh-MRlASE3-abMask0A-IOR-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; %
+        RunString(3)="ES10km-uvh-Tri3-SlidWeertman-Duvh-MRlASE3-abMask0A-IOR-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; %
+        RunString(4)="ES20km-uvh-Tri3-SlidWeertman-Duvh-MRlASE3-abMask0A-IOR-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; %
+        RunString(5)="ES30km-uvh-Tri3-SlidWeertman-Duvh-MRlASE3-abMask0A-IOR-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; %
+
+    case "Weertman-Duvh-MRZERO-P-BCVel"
+
+
+        RunString(1)="ES2.5km-uvh-Tri3-SlidWeertman-Duvh-MRZERO-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-" ; % 2500
+        RunString(2)="ES5km-uvh-Tri3-SlidWeertman-Duvh-MRZERO-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"   ; % 2500#
+        RunString(3)="ES10km-uvh-Tri3-SlidWeertman-Duvh-MRZERO-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"   ; % 2500
+        RunString(4)="ES20km-uvh-Tri3-SlidWeertman-Duvh-MRZERO-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"   ; % 2500
+        RunString(5)="ES30km-uvh-Tri3-SlidWeertman-Duvh-MRZERO-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"   ; % 2500
+
+    otherwise
+
+        error(" case not found")
+
+end
+
+Titles=["Element size "+ES(iCompare(1)); "Element size "+ES(iCompare(2))];
+TitleText="("+extractBetween(RunString(iCompare(1)),"-Duvh-","-P-")+")"; 
+
+
 
 %                       -side of a perfect square of equal area-
 % 30km = 14km                        9.806 km
-
 % 20km = 9.3km                       6.559 km
 % 10km = 4.6km                       3.28  km
 %  5km = 2.3km                       1.64  km
@@ -40,7 +64,7 @@ Titles=["uvh-implicit, dev, 9.3km" ; "uvh-implicit, ~dev, 9.3 km" ] ;
 
 CtrlVar=Ua2D_DefaultParameters();
 
-UserVar.RunType=RunString{1} ;
+UserVar.RunType=RunString(iCompare(1)) ;
 
 UserVar=FileDirectories(UserVar) ;
 UserVar.GeometryInterpolant="create the name of inverse restart file from User.RunType";
@@ -48,34 +72,36 @@ UserVar.InverseRestartFile="create the name of inverse restart file from User.Ru
 
 [CtrlVar,UserVar]=ParseRunTypeString(CtrlVar,UserVar) ;
 
-SearchString=cell(2,1) ;
+SearchString=strings(5,1) ;
 ResultFiles=strings(2,1000) ; % 1000 might be OK
 dirOutput=cell(2,1);
 
-dT=25; time=2020-dT; timeMax=2500; iTime=0; iFile=0;
 
-dT=5; time=2020-dT; timeMax=2040; iTime=0; iFile=0;
+
+time=2020; timeMax=2500; iTime=0; iFile=0;
+
+
 
 while time <= timeMax
 
-    iTime=iTime+1;
-    time=time+dT;
+    %iTime=iTime+1;
+   
     TimeString=sprintf("%07i",100*time);
 
     for iRuns=1:2
 
-        SearchString{iRuns}=replaceBetween(RunString{iRuns},"-FR","-","*");
-        SearchString{iRuns}=replace(SearchString{iRuns},"2.5","2k5");
-        SearchString{iRuns}=replace(SearchString{iRuns},"ES","");  % for some reason the output files were named with ES missing
+        SearchString(iCompare(iRuns))=replaceBetween(RunString(iCompare(iRuns)),"-FR","-","*");
+        SearchString(iCompare(iRuns))=replace(SearchString(iCompare(iRuns)),"2.5","2k5");
+        SearchString(iCompare(iRuns))=replace(SearchString(iCompare(iRuns)),"ES","");  % for some reason the output files were named with ES missing
 
         % SearchString="*"+SearchString;
         % SearchString=replace(SearchString,"**","*") ;
 
         % SearchString{iRuns}="000-FR*"+"-"+SearchString{iRuns};
+        fprintf("Searching for files from year %i \n",time)
+        SS=TimeString+"-FR*-"+SearchString(iCompare(iRuns))+".mat" ; 
 
-        SS=TimeString+"-FR*-"+SearchString{iRuns}+".mat" ; 
-
-        dirOutput{iRuns}=dir(UserVar.ResultsFileDirectory+SS);
+        dirOutput{iRuns}=dir(UserVar.ResultsFileDirectory+SS); % this works, but the problem is that this becomes slow if there is a large number of files in the directory 
     end
 
     if ~isempty(dirOutput{1}) && ~isempty(dirOutput{2})
@@ -86,11 +112,15 @@ while time <= timeMax
         ResultFiles(1,iFile)=dirOutput{1}.name ;
         ResultFiles(2,iFile)=dirOutput{2}.name ;
 
-        % ResultFiles(iRuns,iTime)=dir(UserVar.ResultsFileDirectory+"*"+SearchString{iRuns}+".mat");
+
 
     end
+     
+    time=time+dT;
 
 end
+
+time=time-dT ; 
 
 nFile=iFile; 
 
@@ -105,10 +135,14 @@ end
 
 
 %%
-hVector=nan(10,100) ;
-uVector=nan(10,100);
-vVector=nan(10,100);
-tVector=nan(10,100) ;
+
+%hVector=nan(10,100) ;
+%uVector=nan(10,100);
+%vVector=nan(10,100);
+
+tVector=nan(1000,2) ;
+VAFvector=nan(1000,2);
+AreaVector=nan(1000,2);
 TextVector=strings(10,1) ;
 Location(1,:)=[-1585e3 -240e3 ]  ; TextVector(1)="PIG 20km upstream of GL" ;
 Location(2,:)=[-1595e3 -271e3 ]  ; TextVector(2)="PIG about 20km downstream of GL" ;
@@ -133,8 +167,10 @@ CreateReferenceFile=true;
 
 % VideoDhDt=VideoWriter(UserVar.VideoFileDirectory+UserVar.RunType+"DhDt.avi"); open(VideoDhDt)
 
-VideoVel=VideoWriter(UserVar.VideoFileDirectory+UserVar.RunType+"Velocities.avi"); open(VideoVel)
-
+VideoVel=VideoWriter(UserVar.VideoFileDirectory+UserVar.RunType+"Velocities.mp4","MPEG-4");
+VideoVel.FrameRate=5;
+open(VideoVel)
+%VideoVel.FrameRate=5;
 
 
 
@@ -145,10 +181,10 @@ for iFile=1:nFile
     
       
 
-     % Was in the process of making sure the files are actually from same time, need to rethink my approach, and start again
-     % possibly best just to create a search string anew
-
+  
     %% Reading in files from those two runs
+    CouldLoadData=true;
+    
     for iRuns=1:2
 
         
@@ -159,14 +195,29 @@ for iFile=1:nFile
 
         fprintf("%s \n ",ResultFiles(iRuns,iFile)); 
 
-        Vars=load(UserVar.ResultsFileDirectory+ResultFiles(iRuns,iFile)); 
+        FileName=UserVar.ResultsFileDirectory+ResultFiles(iRuns,iFile);
+
+        try
+            Vars=load(FileName);
+        catch
+            fprintf("could not load %s \n",FileName)
+            CouldLoadData=false;
+            break
+        end
         % Vars=load(ResultFiles{iRuns}(ifile).folder+"\"+ResultFiles{iRuns}(ifile).name) ; % ,"CtrlVar","MUA","F")
+
+        
+        [VAF,IceVolume,GroundedArea]=CalcVAF(Vars.CtrlVar,Vars.MUA,Vars.F.h,Vars.F.B,Vars.F.S,Vars.F.rho,Vars.F.rhow,Vars.F.GF);
+        tVector(iFile,iRuns)=Vars.F.time;
+        VAFvector(iFile,iRuns)=VAF.Total;
+        AreaVector(iFile,iRuns)=GroundedArea.Total ; 
+
 
         F{iRuns}=Vars.F;
         MUA{iRuns}=Vars.MUA;
         CtrlVar{iRuns}=Vars.CtrlVar;
 
-   
+
         MeltParameterisation=extractBetween(UserVar.RunType,"Duvh-","-P");
 
 
@@ -177,10 +228,16 @@ for iFile=1:nFile
 
     end
 
+    if ~CouldLoadData
+        continue
+    end
+
     fprintf("File 1 at time %f \n",F{1}.time)
     fprintf("File 2 at time %f \n",F{2}.time)
 
-    Tile=tiledlayout(1,3) ;
+   
+
+    Tile=tiledlayout(2,2) ;
 
     nexttile
     speed=sqrt(F{1}.ub.*F{1}.ub+F{1}.vb.*F{1}.vb);
@@ -190,14 +247,18 @@ for iFile=1:nFile
     UaPlots(CtrlVar{1},MUA{1},F{1},[F{1}.ub F{1}.vb],CreateNewFigure=false)
     
     [Emin,Emax,Emean,Emedian]=PrintInfoAboutElementsSizes(CtrlVar{1},MUA{1},LengthMeasure="-side of a perfect square of equal area-",print=false);
-    Ti=title(Titles(1)); Ti.Color="blue"; Ti.FontSize=14;
+    Ti=title(Titles(1)); Ti.Color="blue"; Ti.FontSize=16;
+    subtitle("")
+    PlotLatLonGrid(); axis off ; ScaleBar
     nexttile
 
     % speed=sqrt(F{2}.ub.*F{2}.ub+F{2}.vb.*F{2}.vb);
     % MaxSpeedPlot=ceil(max(speed/1000))*1000 ;
     CtrlVar{2}.QuiverColorSpeedLimits=[0 MaxSpeedPlot] ;
     UaPlots(CtrlVar{2},MUA{2},F{2},[F{2}.ub F{2}.vb],CreateNewFigure=false)
-    Ti=title(Titles(2)); Ti.Color="blue"; Ti.FontSize=14;
+    Ti=title(Titles(2)); Ti.Color="blue"; Ti.FontSize=16;
+    subtitle("")
+    PlotLatLonGrid(); axis off ; ScaleBar
     nexttile
 
 
@@ -224,15 +285,57 @@ for iFile=1:nFile
     PlotGroundingLines(CtrlVar{2},MUA{2},F{2}.GF.node,[],[],[],"r-");
    
 
-    Ti=title("$\Delta \mathbf{v}$",Interpreter="latex"); Ti.Color="blue"; Ti.FontSize=14;
+    Ti=title("$\Delta \mathbf{v}$",Interpreter="latex"); Ti.Color="blue"; Ti.FontSize=16;
+    subtitle("")
+    PlotLatLonGrid(); axis off ; ScaleBar
 
-    CurrFig=gcf; CurrFig.Position=[100 500 2300 800];
+    nexttile
+
+    %%
+    SLR1=-(VAFvector(:,1)-VAFvector(1,1))/362.5e10;
+    SLR2=-(VAFvector(:,2)-VAFvector(1,2))/362.5e10;
+    yyaxis left
+    plot(tVector(:,1),SLR1,"-ob",LineWidth=2,DisplayName=ES(iCompare(1)))
+    hold on
+    plot(tVector(:,2),SLR2,"-xb",LineWidt=1,DisplayName=ES(iCompare(2)))
+    yMax=max(ceil(max([SLR1;SLR2])/10)*10,10) ;
+    ylim([0 yMax])
+    ylabel(" Sea Level Rise (cm)",FontSize=14) ;
+    yyaxis right
+
+    AreadOfGreatBritain=209331; % sq km
+    dArea1=(AreaVector(:,1)-AreaVector(1,1))/1e6/AreadOfGreatBritain;
+    dArea2=(AreaVector(:,2)-AreaVector(1,1))/1e6/AreadOfGreatBritain;
+
+  
+
+    plot(tVector(:,1),dArea1,"-or",LineWidth=2,DisplayName=ES(iCompare(1)))
+    hold on
+    plot(tVector(:,2),dArea2,"-xr",LineWidth=1,DisplayName=ES(iCompare(2)))
+    yMin=min(floor(min([dArea1;dArea2])*10)/10,-0.1); ylim([yMin 0])
+    
+    ylabel(" Change in Grounded Area (Area of GB)",FontSize=14) ;
+
+
+
+    xlabel("time (yr)")
+
+    lg=legend(Location="west");
+    lg.NumColumns=2;
+    title(lg,"Resolution")
+    lg.FontSize=14;
+    lg.BackgroundAlpha=0.75;
+    %%
+
+    CurrFig=gcf; CurrFig.Position=[100 50 1400 1300];
 
     
     Tile.Title.String=sprintf("time=%-7.1f (yr)      %s",F{1}.time,TitleText);
-    Tile.Title.FontSize=16; Tile.Title.Color="blue";
+    Tile.Title.FontSize=20; Tile.Title.Color="blue";
+    Tile.TileSpacing="tight"; 
+    Tile.Padding="compact" ; 
     % Tile.Subtitle.String=sprintf("time=%f3.1 Element size=%g",F{1}.time,Emedian);
-
+     set(gcf,'Color','white')
     frame=getframe(gcf) ;  writeVideo(VideoVel,frame);
 
 
@@ -241,5 +344,6 @@ end
 
 % close(VideoDhDt)
 close(VideoVel)
-
+fprintf("Vido saved in directory %s \n",VideoVel.Path)
+fprintf("Vido file %s \n",VideoVel.Filename)
 %%

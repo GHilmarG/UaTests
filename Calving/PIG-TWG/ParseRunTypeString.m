@@ -15,14 +15,56 @@ function [CtrlVar,UserVar]=ParseRunTypeString(CtrlVar,UserVar)
 % various model options and set CtrlVar fields accordingly
 %
 %
+% FR :  forward run
+% IR :  inverse run 
+%
+% -uvh-  : implicit uvh run
+% -uv-h- : semi-implicit uv-h run
+% -EW-   : Element Size
+% -Tri?- : Element with ? numbher of nodes
+%
+% -Duvh- : Automated deactivation of elements downstream of calving fronts
+% -SW??  : Level set Strip Width of ?? km, otherwise by default 50km.
+%
+% -P-   : Level set is Prescribed
+% -C-   : Level set is evolved, with various further options possible
+%
+% -TM??- : min ice thickness, for example -TM0k2- implies a min thickness of 0.2 meters  
+%
+% -MRIM  : Melt Rate parameterisation based on IsMip
+%
+% -SMB??  : Surface Mass Balance
+%
+% -BM3-   : user bed-machine 3 data
 %
 %
+% -DV0-   : do NOT use development version -DV1-   : do use development version
+%
+% abMask0    :  apply melt over nodes either currently or initially afloat, within the assimilation/relaxation period
+%
+% abMask0M   :  apply ADDITIONAL high melt over nodes that initially were afloat, but now have become grounded, ONLY within
+%               the assimilation/relaxation period
+%
+% abMask0A   :  apply ADDITIONAL high melt over nodes that initially were afloat, but now have become grounded, ALWAYS (i.e.
+%               throughout the run period)
+%
+% -IOR-       : InsideOut nodes with respect to grounding line calculated in a 'relaxed' manner, i.e. all nodes where 
+%               GF.node  <0.5 are afloat, for the purpose of applying basal melt rates
+%               
+%
+%   if contains(UserVar.RunType,"-IOR-")
+%         [~,OceanNodes] = LakeOrOcean3(CtrlVar,MUA,F.GF,[],"Relaxed") ;
+%     else
+%         [~,OceanNodes] = LakeOrOcean3(CtrlVar,MUA,F.GF,[],"Strict") ;
+%     end
+% 
+% 
+% 
 %%
 
 %%
 %
-% rename --no-act --verbose InverseRestartFile IR InverseR*.mat
-% rename --no-act --verbose R-Weertman R-SlidWeertman *.mat
+% rename --no-act --verbose InverseRestartFile IR InverseR*.mat rename --no-act --verbose R-Weertman R-SlidWeertman *.mat
 %
 %%
 
@@ -260,7 +302,7 @@ end
 if contains(UserVar.RunType,"-uvdhdt-")
     CtrlVar.Inverse.Measurements="-uv-dhdt-" ;  % {'-uv-,'-uv-dhdt-','-dhdt-'}
 else
-    CtrlVar.Inverse.Measurements="-uv-" ;  % {'-uv-,'-uv-dhdt-','-dhdt-'}
+    CtrlVar.Inverse.Measurements="-uv-" ;  % {'-uv-,'-uv-dhdt-','-dhdt-'}  %check if this is not in conflict with -uv-h- semi-implicit option
 end
 
 
@@ -563,7 +605,7 @@ else
     fprintf("CtrlVar.NameOfRestartFiletoWrite:   \t %s \n \n \n",CtrlVar.NameOfRestartFiletoWrite)
 end
 
-[ isfile(UserVar.GeometryInterpolant) , isfile(UserVar.InverseRestartFile) , isfile(UserVar.FAFile) , isfile(UserVar.FCFile)]
+%[ isfile(UserVar.GeometryInterpolant) , isfile(UserVar.InverseRestartFile) , isfile(UserVar.FAFile) , isfile(UserVar.FCFile)]
 
 if  CtrlVar.InverseRun && ~isnan(UserVar.from)
 

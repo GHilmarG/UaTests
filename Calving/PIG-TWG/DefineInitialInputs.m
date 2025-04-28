@@ -257,7 +257,7 @@ CtrlVar.ThicknessConstraintsItMax=0  ; % only update active-set, then move to ne
 if contains(UserVar.RunType,"-Alim-")
     CtrlVar.AGlenmin=AGlenVersusTemp(-20) ;
 end
-CtrlVar.Cmin=1e-8; % This is based on having done some inversions for C for m=3 where no such contraint was used
+CtrlVar.Cmin=1e-8; % This is based on having done some inversions for C for m=3 where no such constraint was used
 % and finding that only inverted values where
 % velocity data was available, where higher than this.
 
@@ -384,7 +384,7 @@ if contains(UserVar.RunType,"-FR")  && contains(UserVar.RunType,"-uv-h-")
 
 end
 
-% development version?  Using the development version is by default set to tru
+% development version?  Using the development version is by default set to true
 % this can be disabled by adding "-DV0-" to the run-string
 if contains(UserVar.RunType,"-DV0-") 
 
@@ -399,10 +399,21 @@ end
 if contains(UserVar.RunType,"-TH1-") 
 
     CtrlVar.theta=1;
-    
 
 else
 
     CtrlVar.theta=0.5;
 
 end
+
+
+if contains(UserVar.RunType,"-SUPGtaus-") 
+
+    CtrlVar.theta=1;
+
+else
+
+    CtrlVar.theta=0.5;
+
+end
+
