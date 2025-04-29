@@ -1,20 +1,20 @@
 
 %%
 %
-% Creates plots with three velocity panels, comparing two runs, all shown side by side at same times.
+% Creates plots with four velocity panels, comparing two runs, all shown side by side at same times.
 %
 %%
 
 
 RunType="Weertman-MRIM6HadGEM2-abMask0A-P-BCVel";
-RunType="Weertman-Duvh-MRlASE3-abMask0A-IOR-P-BCVel";
-RunType="Weertman-Duvh-MRZERO-P-BCVel";
+% RunType="Weertman-Duvh-MRlASE3-abMask0A-IOR-P-BCVel";
+% RunType="Weertman-Duvh-MRZERO-P-BCVel";
 
 ES=["0.82 km","1.64 km","3.28","6.56 km","9.80 km"] ; 
 
 iCompare=[1 ; 2] ;
-dT=5 ; % 
-%dT=100 ;
+dT=100 ; % 
+dT=2 ;
 
 switch RunType
 
@@ -80,6 +80,8 @@ dirOutput=cell(2,1);
 
 time=2020; timeMax=2500; iTime=0; iFile=0;
 
+SLR1mm=nan;
+SLR2mm=nan;
 
 
 while time <= timeMax
@@ -292,13 +294,24 @@ for iFile=1:nFile
     nexttile
 
     %%
-    SLR1=-(VAFvector(:,1)-VAFvector(1,1))/362.5e10;
-    SLR2=-(VAFvector(:,2)-VAFvector(1,2))/362.5e10;
+
+  
+
+    SLR1mm=-(VAFvector(:,1)-VAFvector(1,1))/362.5e9;
+    SLR2mm=-(VAFvector(:,2)-VAFvector(1,2))/362.5e9;
+
+    RateOfSeaLevelRise1=SLR1mm*0+nan;
+    RateOfSeaLevelRise2=SLR2mm*0+nan;
+
+    RateOfSeaLevelRise1(2:end)=(SLR1mm(2:end)-SLR1mm(1:end-1))./(tVector(2:end,1)-tVector(1:end-1,1));
+    RateOfSeaLevelRise2(2:end)=(SLR2mm(2:end)-SLR2mm(1:end-1))./(tVector(2:end,1)-tVector(1:end-1,1));
+
+
     yyaxis left
-    plot(tVector(:,1),SLR1,"-ob",LineWidth=2,DisplayName=ES(iCompare(1)))
+    plot(tVector(:,1),SLR1mm/10,"-ob",LineWidth=2,DisplayName=ES(iCompare(1)))
     hold on
-    plot(tVector(:,2),SLR2,"-xb",LineWidt=1,DisplayName=ES(iCompare(2)))
-    yMax=max(ceil(max([SLR1;SLR2])/10)*10,10) ;
+    plot(tVector(:,2),SLR2mm/10,"-xb",LineWidt=1,DisplayName=ES(iCompare(2)))
+    yMax=max(ceil(max([SLR1mm;SLR2mm])/10/10)*10,10) ; % first /10 is to get cm instead of mm
     ylim([0 yMax])
     ylabel(" Sea Level Rise (cm)",FontSize=14) ;
     yyaxis right
@@ -307,14 +320,16 @@ for iFile=1:nFile
     dArea1=(AreaVector(:,1)-AreaVector(1,1))/1e6/AreadOfGreatBritain;
     dArea2=(AreaVector(:,2)-AreaVector(1,1))/1e6/AreadOfGreatBritain;
 
-  
-
-    plot(tVector(:,1),dArea1,"-or",LineWidth=2,DisplayName=ES(iCompare(1)))
-    hold on
-    plot(tVector(:,2),dArea2,"-xr",LineWidth=1,DisplayName=ES(iCompare(2)))
-    yMin=min(floor(min([dArea1;dArea2])*10)/10,-0.1); ylim([yMin 0])
     
-    ylabel(" Change in Grounded Area (Area of GB)",FontSize=14) ;
+
+    plot(tVector(:,1),RateOfSeaLevelRise1,"-or",LineWidth=2,DisplayName=ES(iCompare(1)))
+    hold on
+    plot(tVector(:,2),RateOfSeaLevelRise2,"-xr",LineWidth=1,DisplayName=ES(iCompare(2)))
+    yMax=max(ceil(max([RateOfSeaLevelRise1;RateOfSeaLevelRise2])),1) ; 
+    ylim([0 yMax])
+    % yMin=min(floor(min([dArea1;dArea2])*10)/10,-0.1); ylim([yMin 0])
+    
+    ylabel("Rate of Sea Level Rise (mm/yr) ",FontSize=14) ;
 
 
 

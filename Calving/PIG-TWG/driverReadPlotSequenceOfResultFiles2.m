@@ -24,7 +24,7 @@ if NewRuns
 
     % RunType="Weertman-MRIM6HadGEM2-abMask0A-P-BCVel";
     RunType="Weertman-Duvh-MRlASE3-abMask0A-IOR-P-BCVel";
-
+    iRunType=2; 
     % RunType="Weertman-Duvh-MRZERO-P-BCVel";
 
     switch RunType
@@ -63,7 +63,7 @@ if NewRuns
 
 
 
-    UserVar.RunType=RunString(1) ;
+    UserVar.RunType=RunString(iRunType) ;
     UserVar=FileDirectories(UserVar) ;
     %cd(UserVar.ResultsFileDirectory)
     DFD=UserVar.ResultsFileDirectory;
@@ -89,7 +89,7 @@ else
 
 end
 
-TimeStep=5;
+TimeStep=2;
 TimeInterval=[0 inf] ;
 xyBoundary=nan;
 
