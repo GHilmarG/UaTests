@@ -1,4 +1,4 @@
-%% Comparision plots
+%% Comparison plots
 
 WorkDir=pwd; 
 
@@ -305,7 +305,7 @@ for J=1:numel(TimeVector)
         
         FigureName="HeightAboveFlotationDiff"+TimeString+Region;
         exportgraphics(figVAF,FigureDirectory+FigureName+".pdf")
-        savefig(figVAF,FigureDirectory+FigureName+".fig","compact")
+        savefig(figVAF,FigureDirectory+FigureName+".fig")
 
     end
 
@@ -382,7 +382,7 @@ for J=1:numel(TimeVector)
     end
 
 
-    % show changes in height above floation for each run, from start of run.
+    % show changes in height above flotation for each run, from start of run.
 
     FigVAF1=FindOrCreateFigure("VAF1") ;
 

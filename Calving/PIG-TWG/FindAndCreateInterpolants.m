@@ -10,12 +10,16 @@ arguments
     options.SaveFiles logical = true  ; % if true, save new interpolants and inverse restart files
 end
 
+
+
+
+
 if CtrlVar.InverseRun
 
     % inverse run using forward run results from t=1. This implies using the geometry from t=1 instead of Bedmachine2  geometry.
     % UserVar.RunType="-IRt1-ES20km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-GeoBed2-SMB_RACHMO2k3_2km-";
 
-    if UserVar.to == 0
+    if isnan(UserVar.from)
 
         % This is the initial inverse run. It will use the Bedmachine geometry
 
@@ -55,10 +59,10 @@ if CtrlVar.InverseRun
             FC=scatteredInterpolant(F.x,F.y,F.C);
             FA=scatteredInterpolant(F.x,F.y,F.AGlen);
 
-            if options.SaveFiles
-                fprintf("Saving FA interpolant in: %s \n",UserVar.FAFile)
-                fprintf("Saving FC interpolant in: %s \n",UserVar.FCFile)
 
+            fprintf("Saving FA interpolant in: %s \n",UserVar.FAFile)
+            fprintf("Saving FC interpolant in: %s \n",UserVar.FCFile)
+            if options.SaveFiles
                 save(UserVar.FAFile,"FA")
                 save(UserVar.FCFile,"FC")
 
@@ -74,8 +78,9 @@ if CtrlVar.InverseRun
             Frho=scatteredInterpolant(F.x,F.y,F.rho);
             rhow=F.rhow;
 
+            fprintf("Saving new geometrical interpolants for this inverse run in %s \n",UserVar.GeometryInterpolant)
             if options.SaveFiles
-                fprintf("Saving new geometrical interpolants for this inverse run in %s \n",UserVar.GeometryInterpolant)
+                
                 save(UserVar.GeometryInterpolant,'FB','Fh','Frho','Fs','Fb','rhow')
             end
 
@@ -92,7 +97,7 @@ if CtrlVar.InverseRun
             fprintf("is found. \n ")
 
             % Have to consider the possibility that after this inverse restart file was generated a further transient run was
-            % conduced and the geometry should therefore be updated based on the results of this more recent transient run. So I
+            % conducted and the geometry should therefore be updated based on the results of this more recent transient run. So I
             % load the inverse restart file and replace F.s, F.n , F.B F.S and F.h in that file with (possibly) the more recent
             % results from a transient run for the time at which this restart run should start from
 
@@ -107,8 +112,9 @@ if CtrlVar.InverseRun
 
             [F.b,F.s,F.h,GF]=Calc_bs_From_hBS(CtrlVar,MUA,F.h,F.S,F.B,F.rho,F.rhow);
 
+             fprintf("Saving an updated restart file for inverse restart run with new geometry based on previous forward transient run. \n")
             if options.SaveFiles
-                fprintf("Saving an updated restart file for inverse restart run with new geometry based on previous forward transient run. \n")
+               
                 save(UserVar.InverseRestartFile,...
                     'CtrlVarInRestartFile','UserVarInRestartFile','MUA','BCs','F','GF','l','RunInfo',...
                     'InvStartValues','Priors','Meas','BCsAdjoint','InvFinalValues');
@@ -117,11 +123,15 @@ if CtrlVar.InverseRun
         end
 
     end
+end
 
-elseif CtrlVar.TimeDependentRun
+if CtrlVar.TimeDependentRun
 
 
-    % The FA and FC interpolants must be based on previous restart run
+    % The FA and FC interpolants must be based on previous inverse run that produced an inverse restart file
+    %
+    % I check if there are available FA and FC interpolants, but still use the inverse restart file if it is newer
+    %
     FAdir=dir(UserVar.FAFile);
     FCdir=dir(UserVar.FCFile);
     IRdir=dir(UserVar.InverseRestartFile);
@@ -135,25 +145,26 @@ elseif CtrlVar.TimeDependentRun
         FC=scatteredInterpolant(F.x,F.y,F.C);
         FA=scatteredInterpolant(F.x,F.y,F.AGlen);
 
-        if options.SaveFiles
-            fprintf("FindAndCreateInterpolants: New FA and FC interpolants created and saved.\n")
-            fprintf("FA interpolant: %s \n",UserVar.FAFile)
-            fprintf("FC interpolant: %s \n",UserVar.FCFile)
 
+        fprintf("FindAndCreateInterpolants: New FA and FC interpolants created and saved.\n")
+        fprintf("FA interpolant: %s \n",UserVar.FAFile)
+        fprintf("FC interpolant: %s \n",UserVar.FCFile)
+
+        if options.SaveFiles
             save(UserVar.FAFile,"FA")
             save(UserVar.FCFile,"FC")
         end
 
     else
 
-        fprintf("FindAndCreateInterpolants: Existing files with A and C interpolants found:")
-        fprintf("FA: %s ",UserVar.FAFile)
-        fprintf("FC: %s ",UserVar.FCFile)
+        fprintf("FindAndCreateInterpolants: Existing files with A and C interpolants found:\n")
+        fprintf("FA: %s \n",UserVar.FAFile)
+        fprintf("FC: %s \n",UserVar.FCFile)
 
     end
 
 
-    if UserVar.from ~= 0
+    if UserVar.from ~= UserVar.Assimilation.tStart
 
         % Since this is a forward run, following an inverse run, the geometrical interpolants should already exist.
 

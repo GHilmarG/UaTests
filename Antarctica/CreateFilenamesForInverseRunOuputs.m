@@ -66,10 +66,10 @@ filename=replace(filename,'--','-');
 filename=replace(filename,'logAGlen','logA');
 
 
-InverseRestartFile="IR"+filename ;
-InverseCFile="C"+filename ;
-InverseAFile="A"+filename ;
-InversePriorsFile="Priors"+filename ;
+InverseRestartFile="IR"+filename+".mat"; 
+InverseCFile="C"+filename+".mat"; 
+InverseAFile="A"+filename+".mat" ;
+InversePriorsFile="Priors"+filename+".mat" ;
 
 
 

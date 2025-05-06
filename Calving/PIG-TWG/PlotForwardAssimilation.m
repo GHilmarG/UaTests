@@ -1,51 +1,200 @@
 
 
+
+%%
+%
+% Plots various results from runs in separate figures and creates video files in separate files
+%
+%
+% Plots generated:
+%
+% Thickness change with respect to start
+% Rate of thickness change
+% Rate of thickness change
+% Basal melt rates
+% Velocities
+% Velocity changes
+%
+% Also see:
+%
+%   SomePlotsThwaitesIceShelf.m 
+%
+%   driverReadPlotSequenceOfResultFiles2.m
+%
+%   PlotForwardComparision.m  
+%
+%   PlotVAFoverTimeForSeveralRuns..
+%
+%%
+
+
+%                       -side of a perfect square of equal area-
+% 30km = 14km                        9.806 km
+% 20km = 9.3km                       6.559 km
+% 10km = 4.6km                       3.28  km
+%  5km = 2.3km                       1.64  km
+% 2.5km = 1.16km                     0.821 km
+
+
 %%
 
 
 
-UserVar.RunType="-IR-ES20km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-GeoBed2-SMB_RACHMO2k3_2km-";
-UserVar.RunType="-FR0to1-ES10km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-GeoBed2-SMB_RACHMO2k3_2km-";
-UserVar.RunType="-FR0to1-ES30km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-GeoBed2-SMB_RACHMO2k3_2km-";
-UserVar.RunType="-FR0to1-ES20km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-GeoBed2-SMB_RACHMO2k3_2km-";
 
-UserVar.RunType="-FR0to1-ES20km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-GeoBed2-SMB_RACHMO2k3_2km-";
+RunString="ES5km-Tri3-SlidWeertman-Duvh-MRlASE3-abMask0-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; 
+RunString="ES5km-Tri3-SlidWeertman-Duvh-MRlASE2-abMask0-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; 
+RunString="ES5km-Tri3-SlidWeertman-Duvh-MRlASE1-abMask0-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; 
+
+RunString="ES10km-Tri3-SlidWeertman-Duvh-MRlASE3-abMask0-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; 
+
+RunString="ES2.5km-uv-h-Tri3-SlidWeertman-Duvh-MRlASE1-abMask0-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; 
+
+RunString="ES20km-uv-h-Tri3-SlidWeertman-Duvh-MRIM6HadGEM2-abMask0-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; 
+
+RunString="ES10km-uv-h-Tri3-SlidWeertman-Duvh-MRIM6HadGEM2-abMask0M-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; 
+RunString="ES10km-uvh-Tri3-SlidWeertman-Duvh-MRIM6HadGEM2-abMask0M-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; 
 
 
-UserVar.RunType="-FR4to5-30km-Tri3-SlidWeertman-Duvh-MRlASE1-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-GeoBed2-SMB_RACHMO2k3_2km-";
-UserVar.RunType="-FR4to5-10km-Tri3-SlidWeertman-Duvh-MRlASE1-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-GeoBed2-SMB_RACHMO2k3_2km-";
-UserVar.RunType="-FR4to5-5km-Tri3-SlidWeertman-Duvh-MRlASE1-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-GeoBed2-SMB_RACHMO2k3_2km-";
+RunString="ES5km-uv-h-Tri3-SlidWeertman-Duvh-MRlASE3-abMask0A-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-";
+RunString="ES5km-uv-h-Tri3-SlidWeertman-Duvh-MRlASE3-abMask0A-IOR-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-";
 
 
-UserVar.RunType="ES5km-Tri3-SlidWeertman-Duvh-MRlASE1-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-";
-UserVar.RunType="ES5km-Tri3-SlidWeertman-Duvh-MRlASE2-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-";
 
-UserVar.RunType="ES5km-Tri3-SlidWeertman-Duvh-MRlASE1-abMask0-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-";
-%UserVar.RunType="ES5km-Tri3-SlidWeertman-Duvh-MRlASE2-abMask0-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-";
+RunString="ES5km-uv-h-Tri3-SlidWeertman-Duvh-MRZERO-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-";  
 
-% UserVar.RunType="ES10km-Tri3-SlidWeertman-Duvh-MRlASE2-abMask0-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-";
+
+
+
+
+
+
+%%  MRZERO-P-BCVel
+
+RunString="ES2.5km-uvh-Tri3-SlidWeertman-Duvh-MRZERO-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; % 2025, 2030
+RunString="ES5km-uvh-Tri3-SlidWeertman-Duvh-MRZERO-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; % 2500
+
+% RunString="ES2.5km-uv-h-Tri3-SlidWeertman-Duvh-MRZERO-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; % no files
+
+
+
+% RunString="ES5km-uv-h-Tri3-SlidWeertman-Duvh-MRZERO-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; % 2316
+
+% RunString="ES10km-uvh-Tri3-SlidWeertman-Duvh-MRZERO-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; % 2500
+% RunString="ES10km-uv-h-Tri3-SlidWeertman-Duvh-MRZERO-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; % 2324
+
+
+% RunString="ES20km-uvh-Tri3-SlidWeertman-Duvh-MRZERO-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; %2500
+% RunString="ES20km-uv-h-Tri3-SlidWeertman-Duvh-MRZERO-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; % no files
+
+% RunString="ES30km-uvh-Tri3-SlidWeertman-Duvh-MRZERO-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; % no files
+% RunString="ES30km-uv-h-Tri3-SlidWeertman-Duvh-MRZERO-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; % 2020
+
+%% MRlASE3-abMask0A-IOR-P-BCVel
+
+ 
+ RunString="ES2.5km-uvh-Tri3-SlidWeertman-Duvh-MRlASE3-abMask0A-IOR-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; % 2035, 2061, 2080  (running)
+ RunString="ES5km-uvh-Tri3-SlidWeertman-Duvh-MRlASE3-abMask0A-IOR-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; % year 2459  % 2469 (collapse)
+
+ RunString="ES10km-uvh-Tri3-SlidWeertman-Duvh-MRlASE3-abMask0A-IOR-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; % 2349, 2417 (collapse)
+ % RunString="ES20km-uvh-Tri3-SlidWeertman-Duvh-MRlASE3-abMask0A-IOR-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-";  % 2155, 2161 (what is this run doing?) 
+
+% RunString="ES2.5km-uv-h-Tri3-SlidWeertman-Duvh-MRlASE3-abMask0A-IOR-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; % 2174 
+% RunString="ES5km-uv-h-Tri3-SlidWeertman-Duvh-MRlASE3-abMask0A-IOR-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; % no files
+% RunString="ES10km-uv-h-Tri3-SlidWeertman-Duvh-MRlASE3-abMask0A-IOR-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-";  % no files
+% RunString="ES20km-uv-h-Tri3-SlidWeertman-Duvh-MRlASE3-abMask0A-IOR-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-";  % no files
+
+%% MRlASE3-abMask0A-P-BCVel
+
+% RunString="ES5km-uv-h-Tri3-SlidWeertman-Duvh-MRlASE3-abMask0A-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-";   % till 2200, should be extended
+% RunString="ES5km-uvh-Tri3-SlidWeertman-Duvh-MRlASE3-abMask0A-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-";   % til 2020 ? ( 
+
+% RunString="ES10km-uv-h-Tri3-SlidWeertman-Duvh-MRlASE3-abMask0A-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-";   % no files
+% RunString="ES20km-uv-h-Tri3-SlidWeertman-Duvh-MRlASE3-abMask0A-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-";   % no files
+
+% RunString="ES5km-uvh-Tri3-SlidWeertman-Duvh-MRlASE1-abMask0A-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-";   % no files
+% RunString="ES5km-uvh-Tri3-SlidWeertman-Duvh-MRlASE2-abMask0A-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-";   % no files
+
+%% MRIM6HadGEM2-abMask0A-P-BCVel  (here the "strict" melt mask is applied, ie melt does not go directly to the grounding line)  
+
+%  RunString="ES2.5km-uvh-Tri3-SlidWeertman-Duvh-MRIM6HadGEM2-abMask0A-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; % 2057, 2091, 2108, 2203
+% RunString="ES5km-uvh-Tri3-SlidWeertman-Duvh-MRIM6HadGEM2-abMask0A-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; % 2103, 2143,
+% RunString="ES10km-uvh-Tri3-SlidWeertman-Duvh-MRIM6HadGEM2-abMask0A-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; % 2035, 2117, 2214, 2301 (done)
+% RunString="ES20km-uvh-Tri3-SlidWeertman-Duvh-MRIM6HadGEM2-abMask0A-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; % 2144, 2300, no collapse
+% RunString="ES30km-uvh-Tri3-SlidWeertman-Duvh-MRIM6HadGEM2-abMask0A-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; % 2301 (done)
+
+% RunString="ES5km-uv-h-Tri3-SlidWeertman-Duvh-MRIM6HadGEM2-abMask0A-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; % 2078
+% RunString="ES10km-uv-h-Tri3-SlidWeertman-Duvh-MRIM6HadGEM2-abMask0A-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; % 2100
+
+
+
+
+%% runs that have reached t=2400 :
+% 0240000-FR2020to2500-5km-uvh-Tri3-SlidWeertman-Duvh-MRlASE3-abMask0A-IOR-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-
+% 0240000-FR2020to2500-20km-uvh-Tri3-SlidWeertman-Duvh-MRZERO-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-
+% 0240000-FR2020to2500-5km-uvh-Tri3-SlidWeertman-Duvh-MRZERO-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-]
+% 0240000-FR2020to2500-10km-uvh-Tri3-SlidWeertman-Duvh-MRZERO-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-
+
+
 
 CtrlVar=Ua2D_DefaultParameters();
 
+
+UserVar.RunType=RunString ;
 
 UserVar=FileDirectories(UserVar) ;
 UserVar.GeometryInterpolant="create the name of inverse restart file from User.RunType";
 UserVar.InverseRestartFile="create the name of inverse restart file from User.RunType";
 
+UserVar.Assimilation.tStart=2015;       % typically RunStartYear = Assimilation.tStart
+UserVar.Assimilation.tEnd=2020;
+
+UserVar.RunStartYear=UserVar.Assimilation.tEnd ;          
+UserVar.RunEndYear=2500;         
+
+
 [CtrlVar,UserVar]=ParseRunTypeString(CtrlVar,UserVar) ;
 
 
 SearchString=replaceBetween(UserVar.RunType,"-FR","-","*");
+SearchString=replace(SearchString,"2.5","2k5");
 SearchString=replace(SearchString,"ES","");  % for some reason the output files were named with ES missing
+
+% Search for output files as some time interval
+TimeInterval=10 ;
+
+switch TimeInterval
+    case 1
+        SearchString="00-FR*"+"-"+SearchString;  % every year
+    case 10
+        SearchString="000-FR*"+"-"+SearchString;  % every decade
+    case 100
+        SearchString="0000-FR*"+"-"+SearchString;  % every century
+end
+
 % SearchString="*"+SearchString; 
 % SearchString=replace(SearchString,"**","*") ;
 ResultFiles=dir(UserVar.ResultsFileDirectory+"*"+SearchString+".mat"); 
 
+if isempty(ResultFiles)
 
-hVector=nan(10,100) ;
-uVector=nan(10,100);
-vVector=nan(10,100);
-tVector=nan(10,100) ;
+    fprintf("No output files found. \n ")
+    return
+
+end
+
+
+
+YearLast=str2double( extractBefore(ResultFiles(end).name,"-"))/100  ; 
+fprintf("%s: last file at year=%g \t created=%s \n",SearchString,YearLast,ResultFiles(end).date)
+
+% return  % set a return here if only interested in seeing the year of last output file for this run
+
+
+xGL0=nan ; yGL0=nan  ;
+hVector=nan(10,1000) ;
+uVector=nan(10,1000);
+vVector=nan(10,1000);
+tVector=nan(10,1000) ;
 TextVector=strings(10,1) ;
 Location(1,:)=[-1585e3 -240e3 ]  ; TextVector(1)="PIG 20km upstream of GL" ;
 Location(2,:)=[-1595e3 -271e3 ]  ; TextVector(2)="PIG about 20km downstream of GL" ;
@@ -55,9 +204,11 @@ nloc=size(Location,1) ;
 Fh=[] ; Fu=[] ; Fv=[]; F=UaFields ; 
 
 tMax=inf;
-
-VideoDhDt=VideoWriter(UserVar.VideoFileDirectory+UserVar.RunType+".avi");
-open(VideoDhDt)
+CreateReferenceFile=true; 
+VideoDhDt=VideoWriter(UserVar.VideoFileDirectory+UserVar.RunType+"DhDt.mp4","MPEG-4");              open(VideoDhDt)
+VideoDVel=VideoWriter(UserVar.VideoFileDirectory+UserVar.RunType+"VelocityChanges.mp4","MPEG-4");   open(VideoDVel)
+VideoVel=VideoWriter(UserVar.VideoFileDirectory+UserVar.RunType+"Velocities.mp4","MPEG-4");         open(VideoVel)
+Videoab=VideoWriter(UserVar.VideoFileDirectory+UserVar.RunType+"ab.mp4","MPEG-4");                  open(Videoab)
 
 for ifile=1:numel(ResultFiles)
 
@@ -66,7 +217,18 @@ for ifile=1:numel(ResultFiles)
     FvPrevious=Fv;
 
     fprintf("%s \n ",ResultFiles(ifile).name)
-    load(ResultFiles(ifile).folder+"\"+ResultFiles(ifile).name,"CtrlVar","MUA","F")
+
+    try
+        FileName=ResultFiles(ifile).folder+"\"+ResultFiles(ifile).name ;
+        load(FileName,"CtrlVar","MUA","F")
+
+    catch
+        
+        fprintf("could not load %s \n",FileName)
+        continue
+
+    end
+
 
     [Emin,Emax,Emean,Emedian]=PrintInfoAboutElementsSizes(CtrlVar,MUA,LengthMeasure="-side of a perfect square of equal area-",print=false);
     MeltParameterisation=extractBetween(UserVar.RunType,"Duvh-","-P");
@@ -92,24 +254,52 @@ for ifile=1:numel(ResultFiles)
         CtrlVar.QuiverSameVelocityScalingsAsBefore=false;
     end
 
-    CtrlVar.QuiverColorSpeedLimits=[0 5000] ; CtrlVar.VelPlotIntervalSpacing="log10" ; CtrlVar.QuiverColorPowRange=3;
-    [cbar,xGL,yGL,xCF,yCF,CtrlVar]=UaPlots(CtrlVar,MUA,F,"-uv-",FigureTitle="velocity") ;
+    speed=sqrt(F.ub.*F.ub+F.vb.*F.vb);
+    MaxSpeedPlot=ceil(max(speed/1000))*1000 ;
+    CtrlVar.QuiverColorSpeedLimits=[0 MaxSpeedPlot] ;
 
-    if ifile==1
+    CtrlVar.VelPlotIntervalSpacing="log10" ; CtrlVar.QuiverColorPowRange=3;
+    vFig = FindOrCreateFigure("velocity",[50 100  1200 1200]) ; clf(vFig)  ;
+    vFig.Position=[50 100  1200 1200] ;
+    speed=sqrt(F.ub.*F.ub+F.vb.*F.vb) ;
+    mspeed=ceil(max(speed)/1000)*1000;
+    mspeed=max(mspeed,6000);
+    CtrlVar.QuiverColorSpeedLimits=[0 mspeed] ;
 
-        Fh0=Fh; Fu0=Fu ; Fv0=Fv;
-        F0=F; % keep a copy of F from first solution
-        MUA0=MUA;
-        xGL0=xGL ; yGL0=yGL  ;
-        RunIDCompare=RunID;
+    [cbar,xGL,yGL,xCF,yCF,CtrlVar]=UaPlots(CtrlVar,MUA,F,"-uv-",FigureTitle="velocity",CreateNewFigure=false) ;
+
+    if ~isnan(xGL0)
+        plot(xGL0/CtrlVar.PlotXYscale,yGL0/CtrlVar.PlotXYscale,"k",LineWidth=1.5)
+    end
+    Fig=gcf; Fig.Position=[50 100  1200 1200] ;
+    FigTitle=sprintf("Velocity at t=%4.2f (yr)",F.time);
+    Ti=title(FigTitle,Interpreter="latex");
+    SuTi=subtitle(sprintf("Median element size %3.1f km. Melt: %s",Emedian/1000,MeltParameterisation),Interpreter="latex");
+    Ti.Color="blue"; Ti.FontSize=14;
+    SuTi.Color="blue"; SuTi.FontSize=12;
+    frame=getframe(gcf) ;  writeVideo(VideoVel,frame);
+
+    if CreateReferenceFile  % this is just to avoid the first output file containing velocities equal to zero
+
+        if any(abs(F.ub)>0)
+
+            CreateReferenceFile=false ;
+            Fh0=Fh; Fu0=Fu ; Fv0=Fv;
+            F0=F; % keep a copy of F from first solution
+            MUA0=MUA;
+            xGL0=xGL ; yGL0=yGL  ;
+            RunIDCompare=RunID;
 
 
-        UaPlots(CtrlVar,MUA,F,F.s,FigureTitle="Inital Surface")
-        hold on
-        axis([-1722.86513409962         -1479.58176245211          -410.98275862069         -149.399310344828])
-        plot(Location(:,1)/1000,Location(:,2)/1000,"or",MarkerFaceColor="r")
+            UaPlots(CtrlVar,MUA,F,F.s,FigureTitle="Inital Surface")
+            hold on
+            axis([-1722.86513409962         -1479.58176245211          -410.98275862069         -149.399310344828])
+            plot(Location(:,1)/1000,Location(:,2)/1000,"or",MarkerFaceColor="r")
 
-        PlotLatLonGrid();
+            PlotLatLonGrid();
+
+        end
+
     else
 
         CtrlVar.QuiverSameVelocityScalingsAsBefore=false;
@@ -130,20 +320,27 @@ for ifile=1:numel(ResultFiles)
         hPrevious=FhPrevious(F.x,F.y);
 
 
-        F.ub=F.ub-ub0 ; F.vb=F.vb-vb0 ;
+        dub=F.ub-ub0 ; dvb=F.vb-vb0 ;
     
+
         CtrlVar.QuiverColorSpeedLimits=[0 2000] ; CtrlVar.VelPlotIntervalSpacing="log10" ; CtrlVar.QuiverColorPowRange=3;
         FigTitle=sprintf("Velocity changes at %s compared to %s",RunID,RunIDCompare) ;
-        [cbar,xGL,yGL,xCF,yCF,CtrlVar]=UaPlots(CtrlVar,MUA,F,"-uv-",FigureTitle="VelChanges",GetRidOfValuesDownStreamOfCalvingFronts=true) ;
-        hold on ; 
+        dvFig=FindOrCreateFigure("VelChanges",[50 100  1200 1200]); clf(dvFig);
+        dvFig.Position=[50 100  1200 1200] ;
+        [cbar,xGL,yGL,xCF,yCF,CtrlVar]=UaPlots(CtrlVar,MUA,F,[dub dvb],FigureTitle="VelChanges",GetRidOfValuesDownStreamOfCalvingFronts=true,CreateNewFigure=false) ;
+        Fig=gcf; Fig.Position=[50 100  1200 1200] ;
+        hold on ;
         plot(xGL0/CtrlVar.PlotXYscale,yGL0/CtrlVar.PlotXYscale,"k",LineWidth=1.5)
         title(FigTitle)
         subtitle(sprintf("t=%3.1f",CtrlVar.time),interpreter="latex")
+        frame=getframe(gcf) ;  writeVideo(VideoDVel,frame);
 
         dh0=F.h-h0 ;
         
         FigTitle=sprintf("thickness change at %s compared to  %s",RunID,RunIDCompare) ;
-        UaPlots(CtrlVar,MUA,F,dh0,FigureTitle="thickness changes",GetRidOfValuesDownStreamOfCalvingFronts=true) ;
+        dhFig=FindOrCreateFigure("thickness changes",[50 100  1200 1200]); clf(dhFig);
+        dhFig.Position=[50 100  1200 1200] ;
+        UaPlots(CtrlVar,MUA,F,dh0,FigureTitle="thickness changes",GetRidOfValuesDownStreamOfCalvingFronts=true,CreateNewFigure=false) ;
         hold on ; plot(xGL0/CtrlVar.PlotXYscale,yGL0/CtrlVar.PlotXYscale,"k",LineWidth=1.5)
         clim([-100 100])
         title(FigTitle)
@@ -164,7 +361,7 @@ for ifile=1:numel(ResultFiles)
             [cbar,xGL,yGL]=UaPlots(CtrlVar,MUA,F,dhdtPrevious,GetRidOfValuesDownStreamOfCalvingFronts=true,CreateNewFigure=false) ;
             hold on ; plot(xGL/CtrlVar.PlotXYscale,yGL/CtrlVar.PlotXYscale,"k",LineWidth=1)
             hold on ; plot(xGL0/CtrlVar.PlotXYscale,yGL0/CtrlVar.PlotXYscale,"k",LineWidth=1.5)
-            clim([-30 30])
+            clim([-10 2])
             Ti=title(FigTitle,Interpreter="latex");
             SuTi=subtitle(sprintf("Median element size %3.1f km. Melt: %s",Emedian/1000,MeltParameterisation),Interpreter="latex");
             Ti.Color="blue"; Ti.FontSize=16;
@@ -172,7 +369,8 @@ for ifile=1:numel(ResultFiles)
             
             title(cbar,["dh/dt","(m/yr)"],interpreter="latex")
             %subtitle(sprintf("t=%g",CtrlVar.time),interpreter="latex")
-            colormap(othercolor("Mtemperaturemap",1028))
+            %colormap(othercolor("Mtemperaturemap",1028))
+            ModifyColormap();
             PlotLatLonGrid();
 
             frame=getframe(gcf) ;
@@ -180,17 +378,45 @@ for ifile=1:numel(ResultFiles)
 
         end
 
+        abFig=FindOrCreateFigure("ab",[50 100  1200 1200])  ; clf(abFig)  ;
+        abFig.Position=[50 100  1200 1200] ;
+        FigTitle=sprintf("Basal melt rate t=%4.2f (yr)",F.time);
+
+        ab=-F.ab ; ab(ab<eps)=nan ; 
+        [cbar,xGL,yGL]=UaPlots(CtrlVar,MUA,F,ab,GetRidOfValuesDownStreamOfCalvingFronts=true,CreateNewFigure=false) ;
+        set(gca,'ColorScale','log')
+        hold on ; plot(xGL/CtrlVar.PlotXYscale,yGL/CtrlVar.PlotXYscale,"k",LineWidth=1)
+        hold on ; plot(xGL0/CtrlVar.PlotXYscale,yGL0/CtrlVar.PlotXYscale,"k",LineWidth=1.5)
+        
+        % clim([-150 0]) ; ModifyColormap(GrayLevelRange=0.2);
+        Ti=title(FigTitle,Interpreter="latex");
+        SuTi=subtitle(sprintf("Median element size %3.1f km. Melt: %s",Emedian/1000,MeltParameterisation),Interpreter="latex");
+        Ti.Color="blue"; Ti.FontSize=16;
+        SuTi.Color="blue"; SuTi.FontSize=14;
+
+        title(cbar,["$-a_b$","(m/yr)"],interpreter="latex")
+        set(gca,'ColorScale','log') ; clim([0.1 150]) ; colormap(othercolor("Greys7",1028))
+        PlotLatLonGrid();
+        %subtitle(sprintf("t=%g",CtrlVar.time),interpreter="latex")
+        
+        % PlotLatLonGrid();
+        % clim([-150 0]) ; ModifyColormap(GrayLevelRange=0.2);
+        frame=getframe(gcf) ;
+        writeVideo(Videoab,frame);
 
     end
 
     if F.time >= tMax
         break
     end
-
+    drawnow
 end
 
 close(VideoDhDt)
-
+close(VideoDVel)
+close(VideoVel)
+close(Videoab)
+fprintf("Videos saved in %s \n",UserVar.VideoFileDirectory)
 %%
 
 for iloc=1:nloc
@@ -236,6 +462,36 @@ title("Mean rate of thickness change between 2000 and 2010")
 subtitle("based on Schroder 2019 and Susheel")
 title(cbar,["dh/dt","(m/yr)"],interpreter="latex")
 clim([-5 5])
-PlotLatLonGrid() ; 
+PlotLatLonGrid() ;
+
+
+%% Calculated dh/dt at end of run
+
+fFig=FindOrCreateFigure("Final rate of thickness change",[50 100  1200 1200])  ; clf(fFig)  ;
+fFig.Position=[50 100  1200 1200] ;
+
+FigTitle=sprintf("Rate of thickness change from t=%4.2f to  t=%4.2f (yr)",timePrevious,F.time);
+
+
+
+dhdtFinal=dhdtPrevious ;
+
+dhdtFinal(MUA.Boundary.Nodes)=0; 
+L=2e3 ; [UserVar,dhdtFinal]=HelmholtzEquation([],CtrlVar,MUA,1,L^2,dhdtFinal,0); 
+
+[cbar,xGL,yGL]=UaPlots(CtrlVar,MUA,F,dhdtFinal,GetRidOfValuesDownStreamOfCalvingFronts=false,CreateNewFigure=false) ;
+hold on ; plot(xGL/CtrlVar.PlotXYscale,yGL/CtrlVar.PlotXYscale,"k",LineWidth=1)
+hold on ; plot(xGL0/CtrlVar.PlotXYscale,yGL0/CtrlVar.PlotXYscale,"k",LineWidth=1.5)
+clim([-5 5])
+Ti=title(FigTitle,Interpreter="latex");
+SuTi=subtitle(sprintf("Median element size %3.1f km. Melt: %s",Emedian/1000,MeltParameterisation),Interpreter="latex");
+Ti.Color="blue"; Ti.FontSize=16;
+SuTi.Color="blue"; SuTi.FontSize=14;
+
+title(cbar,["dh/dt","(m/yr)"],interpreter="latex")
+%subtitle(sprintf("t=%g",CtrlVar.time),interpreter="latex")
+colormap(othercolor("Mtemperaturemap",1028))
+PlotLatLonGrid();
+
 
 %%

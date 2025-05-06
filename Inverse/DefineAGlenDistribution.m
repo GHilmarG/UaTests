@@ -1,4 +1,9 @@
-function  [UserVar,AGlen,n]=DefineAGlenDistribution(UserVar,CtrlVar,MUA,time,s,b,h,S,B,rho,rhow,GF)
+
+
+
+%function  [UserVar,AGlen,n]=DefineAGlenDistribution(UserVar,CtrlVar,MUA,time,s,b,h,S,B,rho,rhow,GF)
+function  [UserVar,AGlen,n]=DefineAGlenDistribution(UserVar,CtrlVar,MUA,F)
+
 
 n=3 ;
 
@@ -23,8 +28,8 @@ if UserVar.Inverse.CreateSyntData==2 && contains(UserVar.Inverse.SynthData.Pert,
         %case 'iceshelf'
             
             
-            x=MUA.coordinates(:,1) ;
-            y=MUA.coordinates(:,2);
+            x=F.x;
+            y=F.y;
             
             if CtrlVar.AGlenisElementBased
                 x=mean(reshape(x(MUA.connectivity,1),MUA.Nele,MUA.nod),2);

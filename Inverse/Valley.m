@@ -1,24 +1,28 @@
-function [s,b,B,S]=Valley(UserVar,CtrlVar,MUA,pert)
 
-narginchk(4,4)
 
-x=MUA.coordinates(:,1);
-y=MUA.coordinates(:,2);
+
+
+function [s,b,B,S]=Valley(UserVar,CtrlVar,MUA,F,pert)
+
+narginchk(5,5)
+
+
+
 s0=10000 ;
-lx=max(x)-min(x) ;
-ly=max(y)-min(y);
+lx=max(F.x)-min(F.x) ;
+ly=max(F.y)-min(F.y);
 beta=s0/lx;
-s=s0-(x-min(x))*beta ;
+s=s0-(F.x-min(F.x))*beta ;
 
 
-if pert
+if pert  % This is really the true bed, i.e. the bed for which the synthetic measurements are created for 
     
     h0=500 ; 
-    xc=min(x)+(max(x)-min(x))/2 ;  
-    yc=min(y)+(max(y)-min(y))/2 ;
+    xc=min(F.x)+(max(F.x)-min(F.x))/2 ;  
+    yc=min(F.y)+(max(F.y)-min(F.y))/2 ;
     wx=lx/10 ; wy=ly/30 ;
     
-    h=h0- ( ((x-xc)/wx).^4 +  (( y-yc)/wy).^4 ) ;
+    h=h0- ( ((F.x-xc)/wx).^4 +  (( F.y-yc)/wy).^4 ) ;
     
     
     % add a ridge
@@ -33,9 +37,9 @@ else
     %  
     %  h =  
     %
-    xc=min(x)+lx/2 ; yc=min(y)+ly/2 ; 
+    xc=min(F.x)+lx/2 ; yc=min(F.y)+ly/2 ; 
     h0=500 ; hmin=10 ; 
-    h=h0*cos(2*pi*(x-xc)/lx/2).*cos(2*pi*(y-yc)/ly/2)+hmin;
+    h=h0*cos(2*pi*(F.x-xc)/lx/2).*cos(2*pi*(F.y-yc)/ly/2)+hmin;
     %h=500;
     %figure ; PlotMeshScalarVariable(CtrlVar,MUA,h) ;
 end
@@ -46,10 +50,12 @@ s=s+vShift ;
 
 b=s-h;
 B=b;
-S=x*0 ;
+S=F.x*0 ;
 
-[~,rho,rhow,g]=DefineDensities(UserVar,CtrlVar,MUA,CtrlVar.time,s,b,h,S,B);
-[b,s,h,GF]=Calc_bs_From_hBS(CtrlVar,MUA,h,S,B,rho,rhow);
+[~,~,~,~,~,rho,rhow]=DefineGeometryAndDensities(UserVar,CtrlVar,MUA,[],"-rho-");
+
+
+[b,s]=Calc_bs_From_hBS(CtrlVar,MUA,h,S,B,rho,rhow);
 
 
 

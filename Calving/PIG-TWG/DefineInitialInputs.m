@@ -2,48 +2,23 @@
 
 function [UserVar,CtrlVar,MeshBoundaryCoordinates]=DefineInitialInputs(UserVar,CtrlVar)
 
+%                       -side of a perfect square of equal area-
+% 30km = 14km                        9.806 km
+% 20km = 9.3km                       6.559 km
+% 10km = 4.6km                       3.28  km
+%  5km = 2.3km                       1.64  km
+% 2.5km = 1.16km                     0.821 km
+
 
 %%
 
 if ~isfield(UserVar,"RunType") || isempty(UserVar.RunType)
 
-
-    % initial inverse run using ITS120 velocities and Bedmachine2 geometry.
-    UserVar.RunType="-IR-ES20km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-GeoBed2-SMB_RACHMO2k3_2km-";
-
-    % forward run from t=0 to t=1, using inversion products FA and FC from t=0, which implies using the initial inversion
-    UserVar.RunType="-FR0to1-ES20km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-GeoBed2-SMB_RACHMO2k3_2km-";
-
-    % inverse run using forward run results from t=1. This implies using the geometry from t=1 instead of Bedmachine2  geometry.
-    UserVar.RunType="-IR0to1-ES20km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-GeoBed2-SMB_RACHMO2k3_2km-";
-
-    % forward restart run continuing from t=1 and using inversion products from t=1,
-    UserVar.RunType="-FR1to2-ES20km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-GeoBed2-SMB_RACHMO2k3_2km-";
-
-    % inverse run using forward run results from t=2. This implies using the geometry from t=2 instead of Bedmachine2  geometry.
-    UserVar.RunType="-IR1to2-ES20km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-GeoBed2-SMB_RACHMO2k3_2km-";
-
-    % forward restart run continuing from t=2 and using inversion products from t=2,
-    UserVar.RunType="-FR2to3-ES20km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-GeoBed2-SMB_RACHMO2k3_2km-";
-
-    % inverse run using forward run results from t=3. This implies using the geometry from t=3 instead of Bedmachine2  geometry.
-    UserVar.RunType="-IR2to3-ES20km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-GeoBed2-SMB_RACHMO2k3_2km-";
-
-    % forward restart run continuing from t=3 and using inversion products from t=3,
-    UserVar.RunType="-FR3to4-ES20km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-GeoBed2-SMB_RACHMO2k3_2km-";
-
-    % inverse run using forward run results from t=4. This implies using the geometry from t=4 instead of Bedmachine2  geometry.
-    UserVar.RunType="-IR3to4-ES20km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-GeoBed2-SMB_RACHMO2k3_2km-";
-
-    % forward restart run continuing from t=4 and using inversion products from t=4,
-    UserVar.RunType="-FR4to5-ES20km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-GeoBed2-SMB_RACHMO2k3_2km-";
-
-    UserVar.RunType="-FR0to1-ES10km-Tri3-SlidWeertman-Duvh-MRZERO-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-GeoBed2-SMB_RACHMO2k3_2km-";
-    UserVar.RunType="-FR0to1-ES5km-Tri3-SlidWeertman-Duvh-MRZERO-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-GeoBed2-SMB_RACHMO2k3_2km-";
-
+    error(" input needed ")
+    
 end
 
-% Create_AC_ScatteredInterpolants([],UserVar)
+
 %%
 
 UserVar=FileDirectories(UserVar) ;
@@ -53,14 +28,14 @@ UserVar.DefineOutputs="-ubvb-LSF-h-dhdt-speed-save-AC-";
 CtrlVar.LimitRangeInUpdateFtimeDerivatives=true ;
 %% Parse UserVar
 
-[CtrlVar,UserVar]=ParseRunTypeString(CtrlVar,UserVar) ; 
+[CtrlVar,UserVar]=ParseRunTypeString(CtrlVar,UserVar) ;
 
 %%
 
-[CtrlVar,UserVar]=FindAndCreateInterpolants(CtrlVar,UserVar) ; 
+[CtrlVar,UserVar]=FindAndCreateInterpolants(CtrlVar,UserVar) ;
 
 %% Parallel options
-CtrlVar.Parallel.uvhAssembly.spmd.isOn=true; 
+CtrlVar.Parallel.uvhAssembly.spmd.isOn=true;
 CtrlVar.Parallel.uvAssembly.spmd.isOn=true;
 CtrlVar.Parallel.Distribute=false;
 CtrlVar.Parallel.isTest=false;
@@ -70,7 +45,8 @@ CtrlVar.Parallel.isTest=false;
 %
 % You can get these files on OneDrive using the link:
 %
-%   https://livenorthumbriaac-my.sharepoint.com/:f:/g/personal/hilmar_gudmundsson_northumbria_ac_uk/EgrEImnkQuJNmf1GEB80VbwB1hgKNnRMscUitVpBrghjRg?e=yMZEOs
+%   https://livenorthumbriaac-my.sharepoint.co
+% m/:f:/g/personal/hilmar_gudmundsson_northumbria_ac_uk/EgrEImnkQuJNmf1GEB80VbwB1hgKNnRMscUitVpBrghjRg?e=yMZEOs
 %
 % Put the OneDrive folder `Interpolants' into you directory so that it can be reached as ../Interpolants with respect to you rundirectory.
 %
@@ -98,19 +74,24 @@ end
 %% Times, time steps, output interval
 
 % time and TotalTime already extracted from UserVar.RunType
-CtrlVar.DefineOutputsDt=0.1;
-CtrlVar.dt=1e-5;   
-CtrlVar.ATSdtMax=0.1;
-CtrlVar.ATSdtMin=1e-5;  
+CtrlVar.DefineOutputsDt=0.5;
+CtrlVar.dt=1e-3;
+CtrlVar.ATSdtMax=0.01;
+CtrlVar.ATSdtMin=1e-5;
 CtrlVar.ATSTargetIterations=6;
 
+
+
 CtrlVar.ExplicitEstimationMethod="-no extrapolation-";
+
+%%
+
 
 %%  Level-set parameters
 
 CtrlVar.LevelSetInitialisationInterval=100 ;
-CtrlVar.LevelSetMethodMassBalanceFeedbackCoeffLin=-10;  % This is the constant a1, it has units 1/time.
-CtrlVar.LevelSetMethodMassBalanceFeedbackCoeffCubic=0;
+CtrlVar.LevelSetMethodMassBalanceFeedbackCoeffCubic=CtrlVar.ThicknessBarrierMassBalanceFeedbackCoeffCubic ;
+CtrlVar.LevelSetMethodMassBalanceFeedbackCoeffLin=CtrlVar.ThicknessBarrierMassBalanceFeedbackCoeffLin ;
 CtrlVar.LevelSetInfoLevel=1 ;
 CtrlVar.LevelSetInitialisationMethod="-geo-" ;
 CtrlVar.LevelSetReinitializePDist=true ;
@@ -121,7 +102,7 @@ CtrlVar.DevelopmentVersion=false;
 CtrlVar.LevelSetFABmu.Scale="-u-cl-" ; % "-constant-";
 CtrlVar.LevelSetFABmu.Value=0.1;
 CtrlVar.CalvingLaw.Evaluation="-int-";
-CtrlVar.LevelSetMethodSolveOnAStrip=1; 
+CtrlVar.LevelSetMethodSolveOnAStrip=1;
 
 
 
@@ -140,41 +121,42 @@ if CtrlVar.InverseRun
     UserVar.DefineOutputs="-"; %
 
 
-    
+
     CtrlVar.Inverse.InfoLevel=1;
     CtrlVar.InfoLevelNonLinIt=0;  CtrlVar.InfoLevel=0;
-   
+
 
     UserVar.Slipperiness.ReadFromFile=1;
     UserVar.AGlen.ReadFromFile=1;
 
     CtrlVar.ReadInitialMesh=1;
+
     CtrlVar.AdaptMesh=0;
 
 
-    CtrlVar.Inverse.Iterations=2;
+    CtrlVar.Inverse.Iterations=UserVar.Inverse.Iterations;
 
-    CtrlVar.Inverse.OptimalityTolerance=0.01; 
+    CtrlVar.Inverse.OptimalityTolerance=0.01;
     CtrlVar.Inverse.StepTolerance=0.001;
 
     CtrlVar.Inverse.InvertFor="-logA-logC-" ; % {'C','logC','AGlen','logAGlen'}
     CtrlVar.Inverse.Regularize.Field=CtrlVar.Inverse.InvertFor;
     CtrlVar.Inverse.DataMisfit.GradientCalculation="-adjoint-" ; % "-FixpointC-"; "adjoint";
-    
+
     CtrlVar.NameOfFileForSavingSlipperinessEstimate= UserVar.CFile;
     CtrlVar.NameOfFileForSavingAGlenEstimate= UserVar.AFile;
 
-    CtrlVar.Inverse.NameOfRestartOutputFile=UserVar.InverseRestartFile;
+   
 
 elseif  CtrlVar.TimeDependentRun
 
     CtrlVar.InverseRun=0;
     CtrlVar.TimeDependentRun=1;
-    
+
     CtrlVar.InfoLevelNonLinIt=1;
     UserVar.Slipperiness.ReadFromFile=1;
     UserVar.AGlen.ReadFromFile=1;
-  
+
     CtrlVar.AdaptMesh=0;
     CtrlVar.TotalNumberOfForwardRunSteps=inf;
     %CtrlVar.LevelSetMethod=0;
@@ -183,7 +165,7 @@ elseif contains(UserVar.RunType,"Forward-Diagnostic")
 
     CtrlVar.InverseRun=0;
     CtrlVar.TimeDependentRun=0;
-    
+
     CtrlVar.InfoLevelNonLinIt=1;
     UserVar.Slipperiness.ReadFromFile=1;
     UserVar.AGlen.ReadFromFile=1;
@@ -194,12 +176,12 @@ elseif contains(UserVar.RunType,"GenerateMesh")
 
     CtrlVar.TimeDependentRun=0;  % {0|1} if true (i.e. set to 1) then the run is a forward transient one, if not
     CtrlVar.InverseRun=0;
-    
+
     CtrlVar.ReadInitialMesh=0;
     CtrlVar.MeshGenerator="mesh2d" ; % "mesh2d" ; % 'mesh2d';
 
     CtrlVar.OnlyMeshDomainAndThenStop=0;
-    CtrlVar.AdaptMeshAndThenStop=1; 
+    CtrlVar.AdaptMeshAndThenStop=1;
 
     UserVar.Slipperiness.ReadFromFile=1;
     UserVar.AGlen.ReadFromFile=1;
@@ -208,21 +190,21 @@ elseif contains(UserVar.RunType,"GenerateMesh")
     if contains(UserVar.RunType,"-AM-")
         CtrlVar.AdaptMesh=1;
         CtrlVar.AdaptMeshMaxIterations=5;
-        CtrlVar.MeshRefinementMethod='explicit:global'; 
+        CtrlVar.MeshRefinementMethod='explicit:global';
     else
         CtrlVar.AdaptMesh=0;
     end
 
 
-     CtrlVar.MeshAdapt.CFrange=[5*CtrlVar.MeshSize   CtrlVar.MeshSize/2 ; ...
-                                2*CtrlVar.MeshSize   CtrlVar.MeshSize/5 ; ...
-                                 CtrlVar.MeshSize   CtrlVar.MeshSize/10 ];
-  
-    
+    CtrlVar.MeshAdapt.CFrange=[5*CtrlVar.MeshSize   CtrlVar.MeshSize/2 ; ...
+        2*CtrlVar.MeshSize   CtrlVar.MeshSize/5 ; ...
+        CtrlVar.MeshSize   CtrlVar.MeshSize/10 ];
+
+
 
     CtrlVar.AdaptMeshInitial=1  ;       % remesh in first iteration (Itime=1)  even if mod(Itime,CtrlVar.AdaptMeshRunStepInterval)~=0.
-    
-    
+
+
     CtrlVar.InfoLevelAdaptiveMeshing=1;
 
 
@@ -275,11 +257,11 @@ CtrlVar.ThicknessConstraintsItMax=0  ; % only update active-set, then move to ne
 if contains(UserVar.RunType,"-Alim-")
     CtrlVar.AGlenmin=AGlenVersusTemp(-20) ;
 end
-CtrlVar.Cmin=1e-8; % This is based on having done some inversions for C for m=3 where no such contraint was used
-                   % and finding that only inverted values where
-                   % velocity data was available, where higher than this.
-               
-     
+CtrlVar.Cmin=1e-8; % This is based on having done some inversions for C for m=3 where no such constraint was used
+% and finding that only inverted values where
+% velocity data was available, where higher than this.
+
+
 %%
 if batchStartupOptionUsed
     CtrlVar.doplots=0;   % disable plotting if running as batch
@@ -305,7 +287,7 @@ end
 
 
 
-%% Make this automatically a restart run if corresponding restart files already exists
+%% If an inverse rund, make it a restart run if corresponding restart files already exists
 
 
 
@@ -321,20 +303,31 @@ if CtrlVar.InverseRun
     end
 else
 
-    if isfield(UserVar.Assimilation,"tEnd") && CtrlVar.time <= UserVar.Assimilation.tEnd
+    if isfield(UserVar.Assimilation,"tEnd") && CtrlVar.time < UserVar.Assimilation.tEnd
 
         fprintf("The start model time (t=%f)  of this forward run is within the assimilation period (from t=%f to t=%f) \n",CtrlVar.time,UserVar.Assimilation.tStart,UserVar.Assimilation.tEnd)
         fprintf(" Therefore this can not be a forward restart run.\n")
         CtrlVar.Restart=0;
 
-    elseif isfile(CtrlVar.NameOfRestartFiletoRead)
-        CtrlVar.Restart=1;
-        fprintf("Forward restart file found. Starting a restart run. \n")
-        fprintf("Forward restart file to read %s :\n",CtrlVar.NameOfRestartFiletoRead)
     else
-        CtrlVar.Restart=0;
-        fprintf("No FORWARD restart file found. Starting a new FORWARD run. \n")
+
+        fprintf("The start model time (t=%f)  of this forward run is after the assimilation period (from t=%f to t=%f) \n",CtrlVar.time,UserVar.Assimilation.tStart,UserVar.Assimilation.tEnd)
+        fprintf("This will now be a restart run, provided a restart file is found.\n")
+
+        if isfile(CtrlVar.NameOfRestartFiletoRead)
+
+
+            CtrlVar.Restart=1;
+            fprintf("Forward restart file found. Starting a restart run. \n")
+            fprintf("Forward restart file to read %s :\n",CtrlVar.NameOfRestartFiletoRead)
+
+        else
+            CtrlVar.Restart=0;
+            fprintf("No FORWARD restart file found. Starting a new FORWARD run. \n")
+        end
     end
+
+
 end
 
 if ~CtrlVar.InverseRun
@@ -351,7 +344,7 @@ if contains(UserVar.RunType,"GenerateMesh")
     CtrlVar.Restart=0;
     CtrlVar.ReadInitialMesh=0;
 elseif CtrlVar.Restart
-    CtrlVar.ReadInitialMesh=1;
+    CtrlVar.ReadInitialMesh=0;
 else
     CtrlVar.ReadInitialMesh=1;
 end
@@ -360,7 +353,67 @@ end
 CtrlVar.WriteRestartFileInterval=20;
 
 
-CtrlVar.UpdateBoundaryConditionsAtEachTimeStep=true;    
+CtrlVar.UpdateBoundaryConditionsAtEachTimeStep=true;
 
+%% Thickness Constraints
+CtrlVar.ThickMin=0.2 ;
+
+CtrlVar.ThicknessConstraints=1;
 CtrlVar.ThicknessConstraintsInfoLevel=1;
+
 CtrlVar.MinNumberOfNewlyIntroducedActiveThicknessConstraints=0;
+
+if contains(UserVar.RunType,"-uv-h-")
+    CtrlVar.ThicknessConstraintsItMax=2;
+else
+    CtrlVar.ThicknessConstraintsItMax=0;
+end
+
+CtrlVar.ThicknessBarrier=0;
+CtrlVar.ThicknessBarrierMassBalanceFeedbackCoeffCubic=-0 ; CtrlVar.ThicknessBarrierMassBalanceFeedbackCoeffLin=-1000;
+
+CtrlVar.LevelSetMethodAutomaticallyApplyMassBalanceFeedback=0;
+CtrlVar.LevelSetMethodThicknessConstraints=1;
+CtrlVar.LevelSetMethodMassBalanceFeedbackCoeffCubic=-0      ; CtrlVar.LevelSetMethodMassBalanceFeedbackCoeffLin=-1000;
+
+
+%%
+
+if contains(UserVar.RunType,"-FR")  && contains(UserVar.RunType,"-uv-h-")
+     CtrlVar.InfoLevelNonLinIt=1 ; 
+
+end
+
+% development version?  Using the development version is by default set to true
+% this can be disabled by adding "-DV0-" to the run-string
+if contains(UserVar.RunType,"-DV0-") 
+
+    CtrlVar.DevelopmentVersion=false; 
+
+else
+
+    CtrlVar.DevelopmentVersion=true ; % Internal variable, always set to 0 
+
+end
+
+if contains(UserVar.RunType,"-TH1-") 
+
+    CtrlVar.theta=1;
+
+else
+
+    CtrlVar.theta=0.5;
+
+end
+
+
+if contains(UserVar.RunType,"-SUPGtaus-") 
+
+    CtrlVar.theta=1;
+
+else
+
+    CtrlVar.theta=0.5;
+
+end
+
