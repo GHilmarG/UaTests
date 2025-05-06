@@ -18,6 +18,7 @@ UserVar.Test.Norm.expValue=10640.6286124885 ;   % Z840 08/03/2023
 UserVar.Test.Norm.expValue=10611.8139655146 ;   % HP C20503924 24/06/2023
 UserVar.Test.Norm.expValue=10641.1110794829 ;   % C17777347 - Office HP, 02/10/2023
 UserVar.Test.Norm.expValue=10611.8139655146 ;   % DESKTOP-BU2IHIR, 16/03/2024
+UserVar.Test.Norm.expValue=10535.6586158362 ;   % HP WO 06/05/2025
 
 % DegreeDiagnostic=[  3 10597.8479167837 ... 
 %                     4 10612.526235275 ...

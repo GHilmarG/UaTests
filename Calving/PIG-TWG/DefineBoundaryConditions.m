@@ -43,17 +43,22 @@ else
 end
 
 
-%% Check if there are any nodes were velocies are oriented into the domain
-% Only select those nodes which are afloat.
-%
-% Also need to not included any nodes that have velocity or thickness constraints
-% applied already.
+if contains(UserVar.RunType,"-BCIO-")
 
-InfluxNodes=InfluxOutfluxNodes(CtrlVar,MUA,F,plot=true,afloat=true,MinSpeed=100) ;   % Find boundary nodes with velcity pointing into the domain that are afloat
-InNodes=setdiff(InfluxNodes,[BCs.ubFixedNode;BCs.vbFixedNode]);                      % exclude nodes for which vel BCs have been applied to
-BCs.hFixedNode=InNodes ; BCs.hFixedValue=BCs.hFixedNode*0+CtrlVar.ThickMin ;
+    %% Check if there are any nodes were velocities are oriented into the domain
+    % Only select those nodes which are afloat.
+    %
+    % Also need to not included any nodes that have velocity or thickness constraints
+    % applied already.
+
+    InfluxNodes=InfluxOutfluxNodes(CtrlVar,MUA,F,plot=false,afloat=true,MinSpeed=100) ;   % Find boundary nodes with velocity pointing into the domain that are afloat
+    InNodes=setdiff(InfluxNodes,[BCs.ubFixedNode;BCs.vbFixedNode]);                      % exclude nodes for which vel BCs have been applied to
+    BCs.hFixedNode=InNodes ; BCs.hFixedValue=BCs.hFixedNode*0+CtrlVar.ThickMin ;
+
+end
 
 % PlotBoundaryConditions(CtrlVar,MUA,BCs) ;
+
 
 
 
