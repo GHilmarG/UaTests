@@ -417,3 +417,22 @@ else
 
 end
 
+
+CtrlVar.ManuallyDeactivateElements=true; % rhubarb
+CtrlVar.IncludeMelangeModelPhysics=true; % rhubarb
+CtrlVar.LocateAndDeleteDetachedIslandsAndRegionsConnectedByOneNodeOnly=true;  % rhubarb
+
+CtrlVar.ActiveSet.ExcludeNodesOfBoundaryElements=true;
+CtrlVar.AdaptMeshRunStepInterval=10 ;
+
+CtrlVar.ThicknessBarrierMassBalanceFeedbackCoeffLin=0; 
+CtrlVar.ThicknessBarrierMassBalanceFeedbackCoeffQuad=-1;  
+CtrlVar.ThicknessBarrierMassBalanceFeedbackCoeffCubic=-0; 
+
+CtrlVar.CtrlVar.ThicknessBarrierMassBalanceFeedbackCoeffLog=0; 
+
+CtrlVar.ThicknessConstraints=false;  
+CtrlVar.ThicknessBarrier=false ;   % this is the log barrier term
+CtrlVar.ThicknessPenalty=false;    % this is a lin/quad/cubic penalty term
+end
+
