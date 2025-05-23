@@ -90,8 +90,8 @@ CtrlVar.ExplicitEstimationMethod="-no extrapolation-";
 %%  Level-set parameters
 
 CtrlVar.LevelSetInitialisationInterval=100 ;
-CtrlVar.LevelSetMethodMassBalanceFeedbackCoeffCubic=CtrlVar.ThicknessBarrierMassBalanceFeedbackCoeffCubic ;
-CtrlVar.LevelSetMethodMassBalanceFeedbackCoeffLin=CtrlVar.ThicknessBarrierMassBalanceFeedbackCoeffLin ;
+CtrlVar.LevelSetMethodMassBalanceFeedbackCoeffCubic=CtrlVar.ThicknessPenaltyMassBalanceFeedbackCoeffCubic ;
+CtrlVar.LevelSetMethodMassBalanceFeedbackCoeffLin=CtrlVar.ThicknessPenaltyMassBalanceFeedbackCoeffLin ;
 CtrlVar.LevelSetInfoLevel=1 ;
 CtrlVar.LevelSetInitialisationMethod="-geo-" ;
 CtrlVar.LevelSetReinitializePDist=true ;
@@ -369,8 +369,8 @@ else
     CtrlVar.ThicknessConstraintsItMax=0;
 end
 
-CtrlVar.ThicknessBarrier=0;
-CtrlVar.ThicknessBarrierMassBalanceFeedbackCoeffCubic=-0 ; CtrlVar.ThicknessBarrierMassBalanceFeedbackCoeffLin=-1000;
+CtrlVar.ThicknessPenalty=0;
+CtrlVar.ThicknessPenaltyMassBalanceFeedbackCoeffCubic=-0 ; CtrlVar.ThicknessPenaltyMassBalanceFeedbackCoeffLin=-1000;
 
 CtrlVar.LevelSetMethodAutomaticallyApplyMassBalanceFeedback=0;
 CtrlVar.LevelSetMethodThicknessConstraints=1;
@@ -417,7 +417,7 @@ else
 
 end
 
-
+%% rhubarb 
 CtrlVar.ManuallyDeactivateElements=true; % rhubarb
 CtrlVar.IncludeMelangeModelPhysics=true; % rhubarb
 CtrlVar.LocateAndDeleteDetachedIslandsAndRegionsConnectedByOneNodeOnly=true;  % rhubarb
@@ -425,14 +425,18 @@ CtrlVar.LocateAndDeleteDetachedIslandsAndRegionsConnectedByOneNodeOnly=true;  % 
 CtrlVar.ActiveSet.ExcludeNodesOfBoundaryElements=true;
 CtrlVar.AdaptMeshRunStepInterval=10 ;
 
-CtrlVar.ThicknessBarrierMassBalanceFeedbackCoeffLin=0; 
-CtrlVar.ThicknessBarrierMassBalanceFeedbackCoeffQuad=-1;  
-CtrlVar.ThicknessBarrierMassBalanceFeedbackCoeffCubic=-0; 
+CtrlVar.ThicknessPenaltyMassBalanceFeedbackCoeffLin=0; 
+CtrlVar.ThicknessPenaltyMassBalanceFeedbackCoeffQuad=1e5;  
+CtrlVar.ThicknessPenaltyMassBalanceFeedbackCoeffCubic=0; 
 
 CtrlVar.CtrlVar.ThicknessBarrierMassBalanceFeedbackCoeffLog=0; 
 
-CtrlVar.ThicknessConstraints=false;  
-CtrlVar.ThicknessBarrier=false ;   % this is the log barrier term
-CtrlVar.ThicknessPenalty=false;    % this is a lin/quad/cubic penalty term
+CtrlVar.ThicknessConstraints=true;  CtrlVar.ThicknessConstraintsItMax=10; CtrlVar.MaxNumberOfNewlyIntroducedActiveThicknessConstraints=20;  CtrlVar.MaxNumberOfNewlyInactivatedThicknessConstraints=2;
+CtrlVar.ThicknessBarrier=0;         CtrlVar.ThicknessBarrierMassBalanceFeedbackCoeffLog=0.001;  
+CtrlVar.ThicknessPenalty=1;         CtrlVar.ThicknessBarrierMassBalanceFeedbackCoeffLin=0 ; CtrlVar.ThicknessBarrierMassBalanceFeedbackCoeffQuad=1e5; CtrlVar.ThicknessBarrierMassBalanceFeedbackCoeffCubic=0 ;
+
+
+
+
 end
 
