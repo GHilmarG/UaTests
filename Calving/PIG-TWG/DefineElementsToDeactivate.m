@@ -1,6 +1,9 @@
 
 
 
+
+
+
 function [UserVar,ElementsToBeDeactivated]=DefineElementsToDeactivate(UserVar,RunInfo,CtrlVar,MUA,F,BCs,ElementsToBeDeactivated)
 
 %%  Manually deactivate elements within a mesh.
@@ -63,6 +66,7 @@ function [UserVar,ElementsToBeDeactivated]=DefineElementsToDeactivate(UserVar,Ru
 % Find all nodes for which the deactivation criterion is not fulfilled. Then find all elements containing one or more of
 % those nodes. These elements should not be deactivated. And then select the remaining elements for deactivation. 
 
+
 AboveMinThickNodes = find(F.h > 2*CtrlVar.ThickMin) ; 
 
 % Additionally, do not deactivate elements with nodes that are part of boundary conditions.
@@ -74,23 +78,33 @@ MinThickElements=AllElementsContainingGivenNodes(MUA.connectivity,AboveMinThickN
 NewElementsToBeDeactivated=~MinThickElements ;
 
 % Here I am assuming this is a logical list
-ElementsToBeDeactivated=ElementsToBeDeactivated | NewElementsToBeDeactivated ; 
+if islogical(ElementsToBeDeactivated)
+    ElementsToBeDeactivated=ElementsToBeDeactivated | NewElementsToBeDeactivated ;
+else
+    ElementsToBeDeactivated=NewElementsToBeDeactivated ;
+end
+
 
 
 UaPlots(CtrlVar,MUA,F,F.h,GetRidOfValuesDownStreamOfCalvingFronts=false,FigureTitle="Deactive elements"); 
 set(gca,'ColorScale','log') 
 clim([CtrlVar.ThickMin/10 , CtrlVar.ThickMin*10])
 hold on 
-PlotMuaMesh(CtrlVar,MUA);
-hold on
-PlotMuaMesh(CtrlVar,MUA,ElementsToBeDeactivated,color="r",LineWidth=2)
 
-I=F.h<= CtrlVar.ThickMin;
-plot(F.x(I)/CtrlVar.PlotXYscale,F.y(I)/CtrlVar.PlotXYscale,"yo",MarkerFaceColor="y")
+PlotMuaMesh(CtrlVar,MUA,nan,DisplayName="Mesh")
+hold on
+PlotMuaMesh(CtrlVar,MUA,ElementsToBeDeactivated,color="r",LineWidth=2,DisplayName="Elements to be deactivated")
+
+I=F.h== CtrlVar.ThickMin;
+plot(F.x(I)/CtrlVar.PlotXYscale,F.y(I)/CtrlVar.PlotXYscale,MarkerFaceColor="y",Marker="pentagram",MarkerEdgeColor="y",LineStyle="none",DisplayName="Nodes at thick min")
+
+I=F.h <  CtrlVar.ThickMin;
+plot(F.x(I)/CtrlVar.PlotXYscale,F.y(I)/CtrlVar.PlotXYscale,MarkerFaceColor="g",Marker="pentagram",MarkerEdgeColor="g",LineStyle="none",DisplayName="Nodes below thick min")
 
 nEleDeactivated=numel(find(ElementsToBeDeactivated)); 
-title(sprintf("%i elements to be deactivated shown in red",nEleDeactivated))
 
+title(sprintf("%i elements to be deactivated shown in red",nEleDeactivated))
+legend
 
 
 end

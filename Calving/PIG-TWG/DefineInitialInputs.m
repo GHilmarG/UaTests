@@ -422,7 +422,7 @@ CtrlVar.ManuallyDeactivateElements=true; % rhubarb
 CtrlVar.IncludeMelangeModelPhysics=true; % rhubarb
 CtrlVar.LocateAndDeleteDetachedIslandsAndRegionsConnectedByOneNodeOnly=true;  % rhubarb
 
-CtrlVar.ActiveSet.ExcludeNodesOfBoundaryElements=true;
+CtrlVar.ActiveSet.ExcludeNodesOfBoundaryElements=false;
 CtrlVar.AdaptMeshRunStepInterval=10 ;
 
 CtrlVar.ThicknessPenaltyMassBalanceFeedbackCoeffLin=0; 
@@ -431,9 +431,9 @@ CtrlVar.ThicknessPenaltyMassBalanceFeedbackCoeffCubic=0;
 
 CtrlVar.CtrlVar.ThicknessBarrierMassBalanceFeedbackCoeffLog=0; 
 
-CtrlVar.ThicknessConstraints=true;  CtrlVar.ThicknessConstraintsItMax=10; CtrlVar.MaxNumberOfNewlyIntroducedActiveThicknessConstraints=20;  CtrlVar.MaxNumberOfNewlyInactivatedThicknessConstraints=2;
+CtrlVar.ThicknessConstraints=true;  CtrlVar.ThicknessConstraintsItMax=10; CtrlVar.MaxNumberOfNewlyIntroducedActiveThicknessConstraints=20; 
 CtrlVar.ThicknessBarrier=0;         CtrlVar.ThicknessBarrierMassBalanceFeedbackCoeffLog=0.001;  
-CtrlVar.ThicknessPenalty=1;         CtrlVar.ThicknessBarrierMassBalanceFeedbackCoeffLin=0 ; CtrlVar.ThicknessBarrierMassBalanceFeedbackCoeffQuad=1e5; CtrlVar.ThicknessBarrierMassBalanceFeedbackCoeffCubic=0 ;
+CtrlVar.ThicknessPenalty=1;         CtrlVar.ThicknessBarrierMassBalanceFeedbackCoeffLin=0 ; CtrlVar.ThicknessBarrierMassBalanceFeedbackCoeffQuad=1e6; CtrlVar.ThicknessBarrierMassBalanceFeedbackCoeffCubic=0 ;
 
 
 
