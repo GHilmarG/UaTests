@@ -57,11 +57,70 @@ function  BCs=DefineBoundaryConditions(UserVar,CtrlVar,MUA,F,BCs)
 % 
 %%
 
+if isfield(CtrlVar,"BCs")  &&  CtrlVar.BCs=="-phi-" 
 
-switch  CtrlVar.BCs
+
+        switch UserVar.Experiment
+
+            case "single notch"
+
+             
+
+                l=CtrlVar.PhaseFieldFracture.l ;
+                Iy0=find(abs(F.y)<(l/2) & F.x > 50e3 );
+                BCs.hFixedNode=Iy0 ;  
+                BCs.hFixedValue=Iy0*0+1 ;
 
 
-    case "-uv-"
+            case "double notch"
+
+
+                l=CtrlVar.PhaseFieldFracture.l ;
+                
+                yr=20e3;
+                yl=-20e3 ;
+
+                Iy0=(abs(F.y-yr)<(l/2) & F.x <-50e3 )  | (abs(F.y-yl)<(l/2) & F.x >50e3 ) ;
+
+                Iy0=find(Iy0) ;
+
+
+
+                BCs.hFixedNode=Iy0 ;
+                BCs.hFixedValue=Iy0*0+1 ;
+
+            case "ice shelf single notch"
+
+
+                l=CtrlVar.PhaseFieldFracture.l ;
+                Iy0=(abs(F.x-80e3 ) < (l/2) )  & (F.y<-60e3);
+
+                Iy0=find(Iy0) ;
+
+
+
+                BCs.hFixedNode=Iy0 ;
+                BCs.hFixedValue=Iy0*0+1 ;
+
+            case "ice shelf stream flow"
+
+                  BCs.hFixedNode=[];
+                BCs.hFixedValue=[];
+
+            case "ice shelf constricted" 
+
+                  BCs.hFixedNode=[];
+                BCs.hFixedValue=[];
+
+
+            otherwise
+
+                error("case not found")
+
+
+        end
+else
+
 
         tolerance=1;
         V=5000 ; % This is the +/- v velocity applied at upper and lower boundaries
@@ -137,73 +196,11 @@ switch  CtrlVar.BCs
 
 
             % BCs.ubFixedNode=1 ;  BCs.ubFixedValue=BCs.ubFixedNode*0;
+            
         end
 
-    case "-phi-"
+   
 
-
-        switch UserVar.Experiment
-
-            case "single notch"
-
-             
-
-                l=CtrlVar.PhaseFieldFracture.l ;
-                Iy0=find(abs(F.y)<(l/2) & F.x > 50e3 );
-                BCs.hFixedNode=Iy0 ;  
-                BCs.hFixedValue=Iy0*0+1 ;
-
-
-            case "double notch"
-
-
-                l=CtrlVar.PhaseFieldFracture.l ;
-                
-                yr=20e3;
-                yl=-20e3 ;
-
-                Iy0=(abs(F.y-yr)<(l/2) & F.x <-50e3 )  | (abs(F.y-yl)<(l/2) & F.x >50e3 ) ;
-
-                Iy0=find(Iy0) ;
-
-
-
-                BCs.hFixedNode=Iy0 ;
-                BCs.hFixedValue=Iy0*0+1 ;
-
-            case "ice shelf single notch"
-
-
-                l=CtrlVar.PhaseFieldFracture.l ;
-                Iy0=(abs(F.x-80e3 ) < (l/2) )  & (F.y<-60e3);
-
-                Iy0=find(Iy0) ;
-
-
-
-                BCs.hFixedNode=Iy0 ;
-                BCs.hFixedValue=Iy0*0+1 ;
-
-            case "ice shelf stream flow"
-
-                  BCs.hFixedNode=[];
-                BCs.hFixedValue=[];
-
-            case "ice shelf constricted" 
-
-                  BCs.hFixedNode=[];
-                BCs.hFixedValue=[];
-
-
-            otherwise
-
-                error("case not found")
-
-
-        end
-    otherwise
-
-        error("case not found")
 
 end
 
