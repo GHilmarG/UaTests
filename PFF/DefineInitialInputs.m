@@ -2,17 +2,70 @@
 
 function [UserVar,CtrlVar,MeshBoundaryCoordinates]=DefineInitialInputs(UserVar,CtrlVar)
 
-%% UserVar
 
-% Driver 7:
-UserVar.Experiment="ice shelf constricted"; 
-UserVar.Geometry="constricted";  UserVar.VideoFileName="constricted";
+iDriver=1 ;
 
+switch iDriver
+
+
+    case 7
+
+        UserVar.Experiment="ice shelf constricted";
+        UserVar.Geometry="constricted";  UserVar.VideoFileName="constricted";
+
+    case 6
+
+        UserVar.Experiment="ice shelf stream flow";
+        CtrlVar.BCs="-uv-" ;
+
+    case 5
+
+        DriverFivePFF(); 
+
+        return
+        %% driver 5
+        %
+        % This is an interesting case regarding the comparision between density,
+        % and/or thickness reductions, and element deactivation. This dose not use
+        % the phase field solver, just the normal uv diagnostic sovler. Run this
+        % example direclty as "DriverFive"
+
+    case 4
+
+        DriverFourPFF();
+        return
+        %
+        % also a uv experiment, run directly
+       
+    case 3
+
+        UserVar.Experiment="ice shelf single notch";
+        UserVar.TestCase="PFF";
+        CtrlVar.BCs="-uv-" ;
+       
+    case 2
+
+        UserVar.Experiment="double notch";
+
+    case 1
+
+        UserVar.Experiment="single notch";
+        UserVar.Geometry="square";  UserVar.VideoFileName="square";
+
+        UserVar.Geometry="wide quadrilateral" ;  UserVar.VideoFileName="DriverOne-Wide";
+
+
+    otherwise
+
+        error("Case not found")
+
+end
+%%
 
 CtrlVar.PhaseFieldFracture.Video=false;
 
 %% Run type
-CtrlVar.ForwardTimeIntegration="-phi-" ; 
+CtrlVar.ForwardTimeIntegration="-phi-" ;
 
 
 %% Parallel options
@@ -22,14 +75,14 @@ CtrlVar.Parallel.Distribute=false;
 CtrlVar.Parallel.isTest=false;
 
 %% Mesh
-CtrlVar.MeshSizeMax=1000e3;
-CtrlVar.MeshSizeMin=1e3;
-CtrlVar.MeshSize=5e3;
-CtrlVar.TriNodes=3;
-xmin=-100e3 ; xmax=100e3 ; ymin=-100e3 ; ymax=100e3;
-lx=xmax-xmin;
-ly=ymax-ymin;
-MeshBoundaryCoordinates=[xmin ymin ; xmax ymin ; xmax ymax ;  (xmin+0.55*lx) ymax ; (xmin+0.55*lx) (ymax-0.25*ly) ; (xmin+0.45*lx) (ymax-0.25*ly) ;  (xmin+0.45*lx) ymax ;    xmin ymax];
+
+ [CtrlVar,MeshBoundaryCoordinates]=CreateMeshBoundaryCoordinates(UserVar,CtrlVar);
+
+
+
+
+%%
+
 CtrlVar.MeshBoundaryCoordinates=MeshBoundaryCoordinates;
 
 
