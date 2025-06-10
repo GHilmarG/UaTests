@@ -3,7 +3,7 @@
 function [UserVar,CtrlVar,MeshBoundaryCoordinates]=DefineInitialInputs(UserVar,CtrlVar)
 
 
-iDriver=1 ;
+iDriver=7 ;
 
 switch iDriver
 
@@ -25,10 +25,10 @@ switch iDriver
         return
         %% driver 5
         %
-        % This is an interesting case regarding the comparision between density,
+        % This is an interesting case regarding the comparison between density,
         % and/or thickness reductions, and element deactivation. This dose not use
-        % the phase field solver, just the normal uv diagnostic sovler. Run this
-        % example direclty as "DriverFive"
+        % the phase field solver, just the normal uv diagnostic solver. Run this
+        % example directly as "DriverFive"
 
     case 4
 
@@ -76,12 +76,7 @@ CtrlVar.Parallel.isTest=false;
 
 %% Mesh
 
- [CtrlVar,MeshBoundaryCoordinates]=CreateMeshBoundaryCoordinates(UserVar,CtrlVar);
-
-
-
-
-%%
+[CtrlVar,MeshBoundaryCoordinates]=CreateMeshBoundaryCoordinates(UserVar,CtrlVar);
 
 CtrlVar.MeshBoundaryCoordinates=MeshBoundaryCoordinates;
 
@@ -90,13 +85,13 @@ CtrlVar.MeshBoundaryCoordinates=MeshBoundaryCoordinates;
 CtrlVar.PlotXYscale=1000;
 
 %%  Phase field fracture
-CtrlVar.PhaseFieldFracture.Gc=1e5;  
+CtrlVar.PhaseFieldFracture.Gc=1e5;
 CtrlVar.PhaseFieldFracture.l=10e3;
 CtrlVar.PhaseFieldFracture.k=1e-3; % regularization parameter
 CtrlVar.PhaseFieldFracture.UpdateRatio=0.5;
-CtrlVar.PhaseFieldFracture.MaxMeshRefinements=5;   % max number of mesh refinements per phi solve where phi is not updated 
+CtrlVar.PhaseFieldFracture.MaxMeshRefinements=5;   % max number of mesh refinements per phi solve where phi is not updated
 CtrlVar.PhaseFieldFracture.MaxUpdates=100;           % number of updates in phi and Psi
-CtrlVar.PhaseFieldFracture.RiftsAre="-thin ice above inviscid water-"; 
+CtrlVar.PhaseFieldFracture.RiftsAre="-thin ice above inviscid water-";
 CtrlVar.PhaseFieldFracture.isDefineF=false;
 
 
