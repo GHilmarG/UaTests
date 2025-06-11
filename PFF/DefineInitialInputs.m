@@ -3,7 +3,7 @@
 function [UserVar,CtrlVar,MeshBoundaryCoordinates]=DefineInitialInputs(UserVar,CtrlVar)
 
 
-iDriver=7 ;
+iDriver=1 ;
 
 switch iDriver
 
@@ -52,7 +52,8 @@ switch iDriver
         UserVar.Experiment="single notch";
         UserVar.Geometry="square";  UserVar.VideoFileName="square";
 
-        UserVar.Geometry="wide quadrilateral" ;  UserVar.VideoFileName="DriverOne-Wide";
+        UserVar.Geometry="wide quadrilateral" ;  
+        UserVar.VideoFileName="DriverOne-Wide";
 
 
     otherwise
@@ -62,7 +63,7 @@ switch iDriver
 end
 %%
 
-CtrlVar.PhaseFieldFracture.Video=false;
+
 
 %% Run type
 CtrlVar.ForwardTimeIntegration="-phi-" ;
@@ -88,17 +89,23 @@ CtrlVar.PlotXYscale=1000;
 CtrlVar.PhaseFieldFracture.Formulation="-elastic-";
 
 if CtrlVar.PhaseFieldFracture.Formulation=="-elastic-"
-    CtrlVar.PhaseFieldFracture.Gc=1;
+    CtrlVar.PhaseFieldFracture.Gc=1e15;
+    CtrlVar.PhaseFieldFracture.l=5e3;
 else
     CtrlVar.PhaseFieldFracture.Gc=1e5;
+    CtrlVar.PhaseFieldFracture.l=10e3;
 end
-CtrlVar.PhaseFieldFracture.l=10e3;
+
 CtrlVar.PhaseFieldFracture.k=1e-3; % regularization parameter
 CtrlVar.PhaseFieldFracture.UpdateRatio=0.5;
 CtrlVar.PhaseFieldFracture.MaxMeshRefinements=5;   % max number of mesh refinements per phi solve where phi is not updated
 CtrlVar.PhaseFieldFracture.MaxUpdates=100;           % number of updates in phi and Psi
 CtrlVar.PhaseFieldFracture.RiftsAre="-thin ice above inviscid water-";
 CtrlVar.PhaseFieldFracture.isDefineF=false;
+
+
+ CtrlVar.PhaseFieldFracture.Video=true; 
+
 
 
 

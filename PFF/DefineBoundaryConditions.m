@@ -123,7 +123,7 @@ else
 
 
         tolerance=1;
-        V=5000 ; % This is the +/- v velocity applied at upper and lower boundaries
+     
 
 
         xmax=max(F.x) ; ymax=max(F.y) ; xmin=min(F.x) ;  ymin=min(F.y) ;
@@ -191,15 +191,24 @@ else
         else
 
 
+
+
+
+            if CtrlVar.PhaseFieldFracture.Formulation=="-elastic-"
+                V=1e7 ;  
+            else
+                V=5000;
+            end
+
             BCs.ubFixedNode=[UpperEdgeNodes; LowerEdgeNodes ; LeftEdgeNodes] ;  BCs.ubFixedValue=BCs.ubFixedNode*0;
             BCs.vbFixedNode=[UpperEdgeNodes ; LowerEdgeNodes] ; BCs.vbFixedValue=[UpperEdgeNodes*0+V; LowerEdgeNodes*0-V];
 
 
             % BCs.ubFixedNode=1 ;  BCs.ubFixedValue=BCs.ubFixedNode*0;
-            
+
         end
 
-   
+
 
 
 end
