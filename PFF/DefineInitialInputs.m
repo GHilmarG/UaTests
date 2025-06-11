@@ -85,7 +85,13 @@ CtrlVar.MeshBoundaryCoordinates=MeshBoundaryCoordinates;
 CtrlVar.PlotXYscale=1000;
 
 %%  Phase field fracture
-CtrlVar.PhaseFieldFracture.Gc=1e5;
+CtrlVar.PhaseFieldFracture.Formulation="-elastic-";
+
+if CtrlVar.PhaseFieldFracture.Formulation=="-elastic-"
+    CtrlVar.PhaseFieldFracture.Gc=1;
+else
+    CtrlVar.PhaseFieldFracture.Gc=1e5;
+end
 CtrlVar.PhaseFieldFracture.l=10e3;
 CtrlVar.PhaseFieldFracture.k=1e-3; % regularization parameter
 CtrlVar.PhaseFieldFracture.UpdateRatio=0.5;
