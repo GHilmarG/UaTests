@@ -119,10 +119,10 @@ MeshBoundaryCoordinates=[xu yr ; xu yl ; xd yl ; xd yr];
 
 %% Rhubarb
 
-CtrlVar.AdaptMesh=0; 
+CtrlVar.AdaptMesh=1; 
 CtrlVar.TotalNumberOfForwardRunSteps=inf;
 CtrlVar.StartTime=0;
-CtrlVar.EndTime=5000;
+CtrlVar.EndTime=5100;
 CtrlVar.Restart=1;          
 CtrlVar.DefineOutputsDt=10;
 CtrlVar.ATSdtMax=10;
