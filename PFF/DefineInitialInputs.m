@@ -2,8 +2,26 @@
 
 function [UserVar,CtrlVar,MeshBoundaryCoordinates]=DefineInitialInputs(UserVar,CtrlVar)
 
+%%  Phase field fracture parameters (defaults, might be overwritten below)
+CtrlVar.PhaseFieldFracture.Formulation="-elastic-";
 
-iDriver=1 ;
+if CtrlVar.PhaseFieldFracture.Formulation=="-elastic-"
+    CtrlVar.PhaseFieldFracture.Gc=1e15;
+    CtrlVar.PhaseFieldFracture.l=5e3;
+else
+    CtrlVar.PhaseFieldFracture.Gc=1e5;
+    CtrlVar.PhaseFieldFracture.l=10e3;
+end
+
+CtrlVar.PhaseFieldFracture.k=1e-3; % regularization parameter
+CtrlVar.PhaseFieldFracture.UpdateRatio=0.5;
+CtrlVar.PhaseFieldFracture.MaxMeshRefinements=5;   % max number of mesh refinements per phi solve where phi is not updated
+CtrlVar.PhaseFieldFracture.MaxUpdates=100;           % number of updates in phi and Psi
+CtrlVar.PhaseFieldFracture.RiftsAre="-thin ice above inviscid water-";
+CtrlVar.PhaseFieldFracture.isDefineF=false;
+
+%%
+iDriver=2 ;
 
 switch iDriver
 
@@ -47,6 +65,12 @@ switch iDriver
 
         UserVar.Experiment="double notch";
 
+        % good:
+        CtrlVar.PhaseFieldFracture.Gc=1e15;
+        CtrlVar.PhaseFieldFracture.l=1e3;
+        
+        CtrlVar.PhaseFieldFracture.MaxMeshRefinements=25; 
+
     case 1
 
         UserVar.Experiment="single notch";
@@ -81,30 +105,19 @@ CtrlVar.Parallel.isTest=false;
 
 CtrlVar.MeshBoundaryCoordinates=MeshBoundaryCoordinates;
 
+CtrlVar.MeshSize= 2*CtrlVar.PhaseFieldFracture.l ;                       % over-all desired element size (however if gmsh is used without adaptive meshing
+                                             % only CtrlVar.MeshSizeMin and CtrlVar.MeshSizeMax are used)
+                                             % 
+CtrlVar.MeshSizeMin=0.1*CtrlVar.MeshSize;    % min element size
+CtrlVar.MeshSizeMax=CtrlVar.MeshSize;        % max element size
 
 %% Plots
 CtrlVar.PlotXYscale=1000;
 
-%%  Phase field fracture
-CtrlVar.PhaseFieldFracture.Formulation="-elastic-";
 
-if CtrlVar.PhaseFieldFracture.Formulation=="-elastic-"
-    CtrlVar.PhaseFieldFracture.Gc=1e15;
-    CtrlVar.PhaseFieldFracture.l=5e3;
-else
-    CtrlVar.PhaseFieldFracture.Gc=1e5;
-    CtrlVar.PhaseFieldFracture.l=10e3;
-end
+%% Video
 
-CtrlVar.PhaseFieldFracture.k=1e-3; % regularization parameter
-CtrlVar.PhaseFieldFracture.UpdateRatio=0.5;
-CtrlVar.PhaseFieldFracture.MaxMeshRefinements=5;   % max number of mesh refinements per phi solve where phi is not updated
-CtrlVar.PhaseFieldFracture.MaxUpdates=100;           % number of updates in phi and Psi
-CtrlVar.PhaseFieldFracture.RiftsAre="-thin ice above inviscid water-";
-CtrlVar.PhaseFieldFracture.isDefineF=false;
-
-
- CtrlVar.PhaseFieldFracture.Video=true; 
+ CtrlVar.PhaseFieldFracture.Video=false; 
 
 
 

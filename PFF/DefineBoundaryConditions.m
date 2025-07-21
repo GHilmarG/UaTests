@@ -70,7 +70,7 @@ if isfield(CtrlVar,"BCs")  &&  CtrlVar.BCs=="-phi-"
                 Iy0=find(abs(F.y)<(l/2) & F.x > 50e3 );
                 BCs.hFixedNode=Iy0 ;  
                 BCs.hFixedValue=Iy0*0+1 ;
-
+   
 
             case "double notch"
 
@@ -80,7 +80,7 @@ if isfield(CtrlVar,"BCs")  &&  CtrlVar.BCs=="-phi-"
                 yr=20e3;
                 yl=-20e3 ;
 
-                Iy0=(abs(F.y-yr)<(l/2) & F.x <-50e3 )  | (abs(F.y-yl)<(l/2) & F.x >50e3 ) ;
+                Iy0=(abs(F.y-yr)<(3*l) & F.x <-50e3 )  | (abs(F.y-yl)<(3*l) & F.x >50e3 ) ;
 
                 Iy0=find(Iy0) ;
 
@@ -119,7 +119,7 @@ if isfield(CtrlVar,"BCs")  &&  CtrlVar.BCs=="-phi-"
 
 
         end
-else
+else  % displacement/velocity boundary conditions
 
 
         tolerance=1;
@@ -143,6 +143,13 @@ else
             
             BCs.ubFixedNode=I ; BCs.ubFixedValue=BCs.ubFixedNode*0;
             BCs.vbFixedNode=I ; BCs.vbFixedValue=BCs.vbFixedNode*0;
+        elseif UserVar.Experiment=="double notch"
+
+                V=1e7 ;  
+
+
+            BCs.ubFixedNode=[UpperEdgeNodes; LowerEdgeNodes ; LeftEdgeNodes  ; RightEdgeNodes] ;  BCs.ubFixedValue=BCs.ubFixedNode*0;
+            BCs.vbFixedNode=[UpperEdgeNodes ; LowerEdgeNodes ] ; BCs.vbFixedValue=[UpperEdgeNodes*0+V; LowerEdgeNodes*0-V];
 
         elseif UserVar.Experiment=="1D ice shelf"
 
