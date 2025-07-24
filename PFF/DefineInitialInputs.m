@@ -66,10 +66,17 @@ switch iDriver
         UserVar.Experiment="double notch";
 
         % good:
-        CtrlVar.PhaseFieldFracture.Gc=1e15;
+        CtrlVar.PhaseFieldFracture.Gc=1e15; % propagates
+        CtrlVar.PhaseFieldFracture.Gc=1e16; % propagates
+        %CtrlVar.PhaseFieldFracture.Gc=1e17; % no propagation
+
         CtrlVar.PhaseFieldFracture.l=1e3;
-        
-        CtrlVar.PhaseFieldFracture.MaxMeshRefinements=25; 
+
+        UserVar.VideoFileName=sprintf("-Gc%g-lc%g",CtrlVar.PhaseFieldFracture.Gc, CtrlVar.PhaseFieldFracture.l);
+
+        CtrlVar.AdaptMesh=1;
+        CtrlVar.MeshRefinementMethod='explicit:local:newest vertex bisection';
+
 
     case 1
 
@@ -105,7 +112,7 @@ CtrlVar.Parallel.isTest=false;
 
 CtrlVar.MeshBoundaryCoordinates=MeshBoundaryCoordinates;
 
-CtrlVar.MeshSize= 2*CtrlVar.PhaseFieldFracture.l ;                       % over-all desired element size (however if gmsh is used without adaptive meshing
+CtrlVar.MeshSize= 10*CtrlVar.PhaseFieldFracture.l ;                       % over-all desired element size (however if gmsh is used without adaptive meshing
                                              % only CtrlVar.MeshSizeMin and CtrlVar.MeshSizeMax are used)
                                              % 
 CtrlVar.MeshSizeMin=0.1*CtrlVar.MeshSize;    % min element size
@@ -117,7 +124,7 @@ CtrlVar.PlotXYscale=1000;
 
 %% Video
 
- CtrlVar.PhaseFieldFracture.Video=false; 
+ CtrlVar.PhaseFieldFracture.Video=true; % video file name is FigureName+UserVar.Experiment+UserVar.VideoFileName;
 
 
 
