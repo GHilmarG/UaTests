@@ -90,8 +90,8 @@ CtrlVar.ExplicitEstimationMethod="-no extrapolation-";
 %%  Level-set parameters
 
 CtrlVar.LevelSetInitialisationInterval=100 ;
-CtrlVar.LevelSetMethodMassBalanceFeedbackCoeffCubic=CtrlVar.ThicknessBarrierMassBalanceFeedbackCoeffCubic ;
-CtrlVar.LevelSetMethodMassBalanceFeedbackCoeffLin=CtrlVar.ThicknessBarrierMassBalanceFeedbackCoeffLin ;
+CtrlVar.LevelSetMethodMassBalanceFeedbackCoeffCubic=CtrlVar.ThicknessPenaltyMassBalanceFeedbackCoeffCubic ;
+CtrlVar.LevelSetMethodMassBalanceFeedbackCoeffLin=CtrlVar.ThicknessPenaltyMassBalanceFeedbackCoeffLin ;
 CtrlVar.LevelSetInfoLevel=1 ;
 CtrlVar.LevelSetInitialisationMethod="-geo-" ;
 CtrlVar.LevelSetReinitializePDist=true ;
@@ -369,8 +369,8 @@ else
     CtrlVar.ThicknessConstraintsItMax=0;
 end
 
-CtrlVar.ThicknessBarrier=0;
-CtrlVar.ThicknessBarrierMassBalanceFeedbackCoeffCubic=-0 ; CtrlVar.ThicknessBarrierMassBalanceFeedbackCoeffLin=-1000;
+CtrlVar.ThicknessPenalty=0;
+CtrlVar.ThicknessPenaltyMassBalanceFeedbackCoeffCubic=-0 ; CtrlVar.ThicknessPenaltyMassBalanceFeedbackCoeffLin=-1000;
 
 CtrlVar.LevelSetMethodAutomaticallyApplyMassBalanceFeedback=0;
 CtrlVar.LevelSetMethodThicknessConstraints=1;
@@ -414,6 +414,27 @@ if contains(UserVar.RunType,"-SUPGtaus-")
 else
 
     CtrlVar.theta=0.5;
+
+end
+
+%% rhubarb 
+CtrlVar.ManuallyDeactivateElements=true; % rhubarb
+CtrlVar.IncludeMelangeModelPhysics=true; % rhubarb
+CtrlVar.LocateAndDeleteDetachedIslandsAndRegionsConnectedByOneNodeOnly=true;  % rhubarb
+
+CtrlVar.ActiveSet.ExcludeNodesOfBoundaryElements=false;
+CtrlVar.AdaptMeshRunStepInterval=100 ;
+
+
+
+CtrlVar.CtrlVar.ThicknessBarrierMassBalanceFeedbackCoeffLog=0; 
+
+CtrlVar.ThicknessConstraints=false;  CtrlVar.ThicknessConstraintsItMax=10; CtrlVar.MaxNumberOfNewlyIntroducedActiveThicknessConstraints=20; 
+CtrlVar.ThicknessBarrier=0;         CtrlVar.ThicknessBarrierMassBalanceFeedbackCoeffLog=0.001;  
+CtrlVar.ThicknessPenalty=1;         CtrlVar.ThicknessBarrierMassBalanceFeedbackCoeffLin=0 ; CtrlVar.ThicknessBarrierMassBalanceFeedbackCoeffQuad=1e10; CtrlVar.ThicknessBarrierMassBalanceFeedbackCoeffCubic=1e10 ;
+
+CtrlVar.ThicknessConstraintsItMax=0;
+
 
 end
 

@@ -57,14 +57,73 @@ function  BCs=DefineBoundaryConditions(UserVar,CtrlVar,MUA,F,BCs)
 % 
 %%
 
+if isfield(CtrlVar,"BCs")  &&  CtrlVar.BCs=="-phi-" 
 
-switch  CtrlVar.BCs
+
+        switch UserVar.Experiment
+
+            case "single notch"
+
+             
+
+                l=CtrlVar.PhaseFieldFracture.l ;
+                Iy0=find(abs(F.y)<(l/2) & F.x > 50e3 );
+                BCs.hFixedNode=Iy0 ;  
+                BCs.hFixedValue=Iy0*0+1 ;
+   
+
+            case "double notch"
 
 
-    case "-uv-"
+                l=CtrlVar.PhaseFieldFracture.l ;
+                
+                yr=20e3;
+                yl=-20e3 ;
+
+                Iy0=(abs(F.y-yr)<(3*l) & F.x <-50e3 )  | (abs(F.y-yl)<(3*l) & F.x >50e3 ) ;
+
+                Iy0=find(Iy0) ;
+
+
+
+                BCs.hFixedNode=Iy0 ;
+                BCs.hFixedValue=Iy0*0+1 ;
+
+            case "ice shelf single notch"
+
+
+                l=CtrlVar.PhaseFieldFracture.l ;
+                Iy0=(abs(F.x-80e3 ) < (l/2) )  & (F.y<-60e3);
+
+                Iy0=find(Iy0) ;
+
+
+
+                BCs.hFixedNode=Iy0 ;
+                BCs.hFixedValue=Iy0*0+1 ;
+
+            case "ice shelf stream flow"
+
+                  BCs.hFixedNode=[];
+                BCs.hFixedValue=[];
+
+            case "ice shelf constricted" 
+
+                  BCs.hFixedNode=[];
+                BCs.hFixedValue=[];
+
+
+            otherwise
+
+                error("case not found")
+
+
+        end
+else  % displacement/velocity boundary conditions
+
 
         tolerance=1;
-        V=5000 ; % This is the +/- v velocity applied at upper and lower boundaries
+     
 
 
         xmax=max(F.x) ; ymax=max(F.y) ; xmin=min(F.x) ;  ymin=min(F.y) ;
@@ -84,6 +143,13 @@ switch  CtrlVar.BCs
             
             BCs.ubFixedNode=I ; BCs.ubFixedValue=BCs.ubFixedNode*0;
             BCs.vbFixedNode=I ; BCs.vbFixedValue=BCs.vbFixedNode*0;
+        elseif UserVar.Experiment=="double notch"
+
+                V=1e7 ;  
+
+
+            BCs.ubFixedNode=[UpperEdgeNodes; LowerEdgeNodes ; LeftEdgeNodes  ; RightEdgeNodes] ;  BCs.ubFixedValue=BCs.ubFixedNode*0;
+            BCs.vbFixedNode=[UpperEdgeNodes ; LowerEdgeNodes ] ; BCs.vbFixedValue=[UpperEdgeNodes*0+V; LowerEdgeNodes*0-V];
 
         elseif UserVar.Experiment=="1D ice shelf"
 
@@ -132,78 +198,25 @@ switch  CtrlVar.BCs
         else
 
 
+
+
+
+            if CtrlVar.PhaseFieldFracture.Formulation=="-elastic-"
+                V=1e7 ;  
+            else
+                V=5000;
+            end
+
             BCs.ubFixedNode=[UpperEdgeNodes; LowerEdgeNodes ; LeftEdgeNodes] ;  BCs.ubFixedValue=BCs.ubFixedNode*0;
             BCs.vbFixedNode=[UpperEdgeNodes ; LowerEdgeNodes] ; BCs.vbFixedValue=[UpperEdgeNodes*0+V; LowerEdgeNodes*0-V];
 
 
             % BCs.ubFixedNode=1 ;  BCs.ubFixedValue=BCs.ubFixedNode*0;
-        end
-
-    case "-phi-"
-
-
-        switch UserVar.Experiment
-
-            case "single notch"
-
-             
-
-                l=CtrlVar.PhaseFieldFracture.l ;
-                Iy0=find(abs(F.y)<(l/2) & F.x > 50e3 );
-                BCs.hFixedNode=Iy0 ;  
-                BCs.hFixedValue=Iy0*0+1 ;
-
-
-            case "double notch"
-
-
-                l=CtrlVar.PhaseFieldFracture.l ;
-                
-                yr=20e3;
-                yl=-20e3 ;
-
-                Iy0=(abs(F.y-yr)<(l/2) & F.x <-50e3 )  | (abs(F.y-yl)<(l/2) & F.x >50e3 ) ;
-
-                Iy0=find(Iy0) ;
-
-
-
-                BCs.hFixedNode=Iy0 ;
-                BCs.hFixedValue=Iy0*0+1 ;
-
-            case "ice shelf single notch"
-
-
-                l=CtrlVar.PhaseFieldFracture.l ;
-                Iy0=(abs(F.x-80e3 ) < (l/2) )  & (F.y<-60e3);
-
-                Iy0=find(Iy0) ;
-
-
-
-                BCs.hFixedNode=Iy0 ;
-                BCs.hFixedValue=Iy0*0+1 ;
-
-            case "ice shelf stream flow"
-
-                  BCs.hFixedNode=[];
-                BCs.hFixedValue=[];
-
-            case "ice shelf constricted" 
-
-                  BCs.hFixedNode=[];
-                BCs.hFixedValue=[];
-
-
-            otherwise
-
-                error("case not found")
-
 
         end
-    otherwise
 
-        error("case not found")
+
+
 
 end
 

@@ -14,7 +14,8 @@ CtrlVar.Experiment=['MismipPlus-',UserVar.MisExperiment];
 %
 CtrlVar.TimeDependentRun=1; 
 CtrlVar.TotalNumberOfForwardRunSteps=10;
-CtrlVar.TotalTime=100;
+CtrlVar.StartTime=0;
+CtrlVar.EndTime=1;
 CtrlVar.Restart=0;  
 CtrlVar.InfoLevelNonLinIt=1;  CtrlVar.InfoLevelBackTrack=0;
 CtrlVar.NRitmax=500;            % maximum number of NR iteration
@@ -115,5 +116,14 @@ CtrlVar.ThicknessConstraintsItMax=5  ;
 xd=640e3; xu=0e3 ; yr=0 ; yl=80e3 ;  
 MeshBoundaryCoordinates=[xu yr ; xu yl ; xd yl ; xd yr];
 
- 
+
+%% Rhubarb
+
+CtrlVar.AdaptMesh=1; 
+CtrlVar.TotalNumberOfForwardRunSteps=inf;
+CtrlVar.StartTime=0;
+CtrlVar.EndTime=5100;
+CtrlVar.Restart=1;          
+CtrlVar.DefineOutputsDt=10;
+CtrlVar.ATSdtMax=10;
 end
