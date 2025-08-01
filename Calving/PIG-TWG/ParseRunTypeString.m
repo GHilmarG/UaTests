@@ -21,7 +21,7 @@ function [CtrlVar,UserVar]=ParseRunTypeString(CtrlVar,UserVar)
 % -uvh-  : implicit uvh run
 % -uv-h- : semi-implicit uv-h run
 % -EW-   : Element Size
-% -Tri?- : Element with ? numbher of nodes
+% -Tri?- : Element with ? number of nodes
 %
 % -Duvh- : Automated deactivation of elements downstream of calving fronts
 % -SW??  : Level set Strip Width of ?? km, otherwise by default 50km.
@@ -31,14 +31,13 @@ function [CtrlVar,UserVar]=ParseRunTypeString(CtrlVar,UserVar)
 %
 % -TM??- : min ice thickness, for example -TM0k2- implies a min thickness of 0.2 meters  
 %
-% -MRIM  : Melt Rate parameterisation based on IsMip
+% Melt rate parameterizations: 
 %
-% -SMB??  : Surface Mass Balance
+% -MRIM6  : Melt Rate parameterisation based on ISMIP6 forcings
 %
-% -BM3-   : user bed-machine 3 data
+% -MRZERO  : ab is set to zero
 %
-%
-% -DV0-   : do NOT use development version -DV1-   : do use development version
+% -MR?    : Draft dependent parameterizations, as defined in DraftDependentMeltParameterisations.m
 %
 % abMask0    :  apply melt over nodes either currently or initially afloat, within the assimilation/relaxation period
 %
@@ -60,6 +59,17 @@ function [CtrlVar,UserVar]=ParseRunTypeString(CtrlVar,UserVar)
 % 
 % 
 % 
+%
+%
+% -SMB??  : Surface Mass Balance
+%
+% -BM3-   : user bed-machine 3 data
+%
+% -BCIO-  : check if any boundary velocities are oriented into the domain 
+%
+% -DV0-   : do NOT use development version -DV1-   : do use development version
+%
+
 %%
 
 %%

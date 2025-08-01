@@ -287,7 +287,7 @@ end
 
 
 
-%% If an inverse rund, make it a restart run if corresponding restart files already exists
+%% If an inverse run, make it a restart run if corresponding restart files already exists
 
 
 
