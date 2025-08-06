@@ -9,7 +9,16 @@ function [UserVar,CtrlVar,MeshBoundaryCoordinates]=DefineInitialInputs(UserVar,C
 %  5km = 2.3km                       1.64  km
 % 2.5km = 1.16km                     0.821 km
 
-
+%% Beside DefineInitialInputs.m, when submitting and plotting runs, these are the key files I use:
+% 
+%   DefineRunString.m
+%
+%   driverISMIP6.m
+%
+%   PlotForwardAssimilation.m
+%
+%   driverReadPlotSequenceOfResultsFiles2.m
+%
 %%
 
 if ~isfield(UserVar,"RunType") || isempty(UserVar.RunType)
@@ -76,7 +85,7 @@ end
 % time and TotalTime already extracted from UserVar.RunType
 CtrlVar.DefineOutputsDt=0.5;
 CtrlVar.dt=1e-3;
-CtrlVar.ATSdtMax=0.01;
+CtrlVar.ATSdtMax=0.1;
 CtrlVar.ATSdtMin=1e-5;
 CtrlVar.ATSTargetIterations=6;
 
@@ -248,10 +257,6 @@ MeshBoundaryCoordinates=CreateMeshBoundaryCoordinatesForPIGandTWG(UserVar,CtrlVa
 
 
 
-%% Thickness constraints
-CtrlVar.ThicknessConstraints=1;
-CtrlVar.ResetThicknessToMinThickness=0;
-CtrlVar.ThicknessConstraintsItMax=0  ; % only update active-set, then move to next time step
 
 %% A C constraints
 if contains(UserVar.RunType,"-Alim-")
@@ -357,24 +362,37 @@ CtrlVar.UpdateBoundaryConditionsAtEachTimeStep=true;
 
 %% Thickness Constraints
 CtrlVar.ThickMin=0.2 ;
-
 CtrlVar.ThicknessConstraints=1;
-CtrlVar.ThicknessConstraintsInfoLevel=1;
+CtrlVar.InfoLevelThickMin=1; 
+CtrlVar.ResetThicknessToMinThickness=0;
+CtrlVar.ThicknessConstraintsItMax=5  ; % only update active-set, then move to next time step
 
-CtrlVar.MinNumberOfNewlyIntroducedActiveThicknessConstraints=0;
 
 if contains(UserVar.RunType,"-uv-h-")
     CtrlVar.ThicknessConstraintsItMax=2;
 else
     CtrlVar.ThicknessConstraintsItMax=0;
 end
+CtrlVar.ThicknessPenalty=1;                                         % set to 1 for using thickness penalty term. This creates an
+% additional mass-balance term, ab,  on the form:
+%         ab =  a1*(h-hmin)+a3*(hint-hmin).^3)
+% that is added, and applied at integration points where  h<hmin.
+% The "Thickness Penalty" option can be used in combination with the "Thickness Constraints" option, and this may possibly
+% improve convergence and may reduce the number of active-set updates required.
 
-CtrlVar.ThicknessPenalty=0;
-CtrlVar.ThicknessPenaltyMassBalanceFeedbackCoeffCubic=-0 ; CtrlVar.ThicknessPenaltyMassBalanceFeedbackCoeffLin=-1000;
+CtrlVar.ThicknessPenaltyMassBalanceFeedbackCoeffLin=0;           
+CtrlVar.ThicknessPenaltyMassBalanceFeedbackCoeffQuad=1e5;        
+CtrlVar.ThicknessPenaltyMassBalanceFeedbackCoeffCubic=0;         
+% The term is only applied at integration points where h < hmin. Therefore if a1<0 and a3<0, the resulting ab is greater than
+% zero, and mass is added.
+CtrlVar.LevelSetMinIceThickness=CtrlVar.ThickMin;
 
-CtrlVar.LevelSetMethodAutomaticallyApplyMassBalanceFeedback=0;
-CtrlVar.LevelSetMethodThicknessConstraints=1;
-CtrlVar.LevelSetMethodMassBalanceFeedbackCoeffCubic=-0      ; CtrlVar.LevelSetMethodMassBalanceFeedbackCoeffLin=-1000;
+CtrlVar.LevelSetMethodAutomaticallyApplyMassBalanceFeedback=1;
+% abLSF =LM.* ( a1*(hint-hmin)+a3*(hint-hmin).^3) ;      % The additional mass-balance term applied where the level-set
+% function (phi) is negative, i.e. LM = \phi < 0  ;
+CtrlVar.LevelSetMethodMassBalanceFeedbackCoeffLin=1000; 
+CtrlVar.LevelSetMethodMassBalanceFeedbackCoeffCubic=0;  
+
 
 
 %%
@@ -423,17 +441,7 @@ CtrlVar.IncludeMelangeModelPhysics=true; % rhubarb
 CtrlVar.LocateAndDeleteDetachedIslandsAndRegionsConnectedByOneNodeOnly=true;  % rhubarb
 
 CtrlVar.ActiveSet.ExcludeNodesOfBoundaryElements=false;
-CtrlVar.AdaptMeshRunStepInterval=100 ;
 
-
-
-CtrlVar.CtrlVar.ThicknessBarrierMassBalanceFeedbackCoeffLog=0; 
-
-CtrlVar.ThicknessConstraints=false;  CtrlVar.ThicknessConstraintsItMax=10; CtrlVar.MaxNumberOfNewlyIntroducedActiveThicknessConstraints=20; 
-CtrlVar.ThicknessBarrier=0;         CtrlVar.ThicknessBarrierMassBalanceFeedbackCoeffLog=0.001;  
-CtrlVar.ThicknessPenalty=1;         CtrlVar.ThicknessBarrierMassBalanceFeedbackCoeffLin=0 ; CtrlVar.ThicknessBarrierMassBalanceFeedbackCoeffQuad=1e10; CtrlVar.ThicknessBarrierMassBalanceFeedbackCoeffCubic=1e10 ;
-
-CtrlVar.ThicknessConstraintsItMax=0;
 
 
 end

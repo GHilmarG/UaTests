@@ -4,73 +4,7 @@
 
 function [CtrlVar,UserVar]=ParseRunTypeString(CtrlVar,UserVar)
 
-%%
-%
-% extracts from:
-%
-%   UserVar.RunType
-%
-%
-%
-% various model options and set CtrlVar fields accordingly
-%
-%
-% FR :  forward run
-% IR :  inverse run 
-%
-% -uvh-  : implicit uvh run
-% -uv-h- : semi-implicit uv-h run
-% -EW-   : Element Size
-% -Tri?- : Element with ? number of nodes
-%
-% -Duvh- : Automated deactivation of elements downstream of calving fronts
-% -SW??  : Level set Strip Width of ?? km, otherwise by default 50km.
-%
-% -P-   : Level set is Prescribed
-% -C-   : Level set is evolved, with various further options possible
-%
-% -TM??- : min ice thickness, for example -TM0k2- implies a min thickness of 0.2 meters  
-%
-% Melt rate parameterizations: 
-%
-% -MRIM6  : Melt Rate parameterisation based on ISMIP6 forcings
-%
-% -MRZERO  : ab is set to zero
-%
-% -MR?    : Draft dependent parameterizations, as defined in DraftDependentMeltParameterisations.m
-%
-% abMask0    :  apply melt over nodes either currently or initially afloat, within the assimilation/relaxation period
-%
-% abMask0M   :  apply ADDITIONAL high melt over nodes that initially were afloat, but now have become grounded, ONLY within
-%               the assimilation/relaxation period
-%
-% abMask0A   :  apply ADDITIONAL high melt over nodes that initially were afloat, but now have become grounded, ALWAYS (i.e.
-%               throughout the run period)
-%
-% -IOR-       : InsideOut nodes with respect to grounding line calculated in a 'relaxed' manner, i.e. all nodes where 
-%               GF.node  <0.5 are afloat, for the purpose of applying basal melt rates
-%               
-%
-%   if contains(UserVar.RunType,"-IOR-")
-%         [~,OceanNodes] = LakeOrOcean3(CtrlVar,MUA,F.GF,[],"Relaxed") ;
-%     else
-%         [~,OceanNodes] = LakeOrOcean3(CtrlVar,MUA,F.GF,[],"Strict") ;
-%     end
-% 
-% 
-% 
-%
-%
-% -SMB??  : Surface Mass Balance
-%
-% -BM3-   : user bed-machine 3 data
-%
-% -BCIO-  : check if any boundary velocities are oriented into the domain 
-%
-% -DV0-   : do NOT use development version -DV1-   : do use development version
-%
 
-%%
 
 %%
 %

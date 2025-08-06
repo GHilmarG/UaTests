@@ -77,18 +77,18 @@ AboveMinThickNodes= unique([AboveMinThickNodes;BCs.ubFixedNode;BCs.vbFixedNode;B
 MinThickElements=AllElementsContainingGivenNodes(MUA.connectivity,AboveMinThickNodes) ;
 NewElementsToBeDeactivated=~MinThickElements ;
 
-% Here I am assuming this is a logical list
+
 if islogical(ElementsToBeDeactivated)
     ElementsToBeDeactivated=ElementsToBeDeactivated | NewElementsToBeDeactivated ;
 else
-    ElementsToBeDeactivated=NewElementsToBeDeactivated ;
+    ElementsToBeDeactivated=unique([NewElementsToBeDeactivated;NewElementsToBeDeactivated]) ;
 end
 
 
-
-UaPlots(CtrlVar,MUA,F,F.h,GetRidOfValuesDownStreamOfCalvingFronts=false,FigureTitle="Deactive elements"); 
+cbar=UaPlots(CtrlVar,MUA,F,F.h,GetRidOfValuesDownStreamOfCalvingFronts=false,FigureTitle="Deactive elements"); 
 set(gca,'ColorScale','log') 
 clim([CtrlVar.ThickMin/10 , CtrlVar.ThickMin*10])
+title(cbar,"$h$",interpreter="latex")
 hold on 
 
 PlotMuaMesh(CtrlVar,MUA,nan,DisplayName="Mesh")
@@ -104,7 +104,7 @@ plot(F.x(I)/CtrlVar.PlotXYscale,F.y(I)/CtrlVar.PlotXYscale,MarkerFaceColor="g",M
 nEleDeactivated=numel(find(ElementsToBeDeactivated)); 
 
 title(sprintf("%i elements to be deactivated shown in red",nEleDeactivated))
-legend
-
+lg=legend;
+lg.String{1}="ice thickness";
 
 end
