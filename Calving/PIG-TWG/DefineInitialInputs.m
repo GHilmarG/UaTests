@@ -11,13 +11,15 @@ function [UserVar,CtrlVar,MeshBoundaryCoordinates]=DefineInitialInputs(UserVar,C
 
 %% Beside DefineInitialInputs.m, when submitting and plotting runs, these are the key files I use:
 % 
-%   DefineRunString.m
+%   DefineRunString.m                 % the RunString variable defines key aspects of the numerical runs/experiments
 %
-%   driverISMIP6.m
+%   driverISMIP6.m                    % To run the experiment 
 %
-%   PlotForwardAssimilation.m
+%   PlotForwardAssimilation.m         % Produces several plots of outputs over time
 %
-%   driverReadPlotSequenceOfResultsFiles2.m
+%   driverReadPlotSequenceOfResultsFiles2.m   % Creates a plot of elevation changes, sea-level rise, and a longitudinal  profile up Thwaites 
+%
+%   PlotForwardComparision.m           % Compares output of two runs, produces velocity plots and velocity differences and sea-level rise over time
 %
 %%
 
@@ -44,8 +46,8 @@ CtrlVar.LimitRangeInUpdateFtimeDerivatives=true ;
 [CtrlVar,UserVar]=FindAndCreateInterpolants(CtrlVar,UserVar) ;
 
 %% Parallel options
-CtrlVar.Parallel.uvhAssembly.spmd.isOn=true;
-CtrlVar.Parallel.uvAssembly.spmd.isOn=true;
+CtrlVar.Parallel.uvhAssembly.spmd.isOn=false;
+CtrlVar.Parallel.uvAssembly.spmd.isOn=false;
 CtrlVar.Parallel.Distribute=false;
 CtrlVar.Parallel.isTest=false;
 %% Data input files

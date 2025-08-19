@@ -10,13 +10,23 @@ RunType="Weertman-MRIM6HadGEM2-abMask0A-P-BCVel";
 % RunType="Weertman-Duvh-MRlASE3-abMask0A-IOR-P-BCVel";
 % RunType="Weertman-Duvh-MRZERO-P-BCVel";
 
+RunType="Reversibility-MRlASE3" ; 
+
 ES=["0.82 km","1.64 km","3.28","6.56 km","9.80 km"] ; 
 
 iCompare=[1 ; 2] ;
 dT=100 ; % 
-dT=2 ;
-
+%dT=2 ;
+Titles=[]; 
 switch RunType
+
+    case "Reversibility-MRlASE3"
+
+        RunString(1)="ES10km-uvh-Tri3-SlidWeertman-Duvh-MRlASE3-abMask0A-IOR-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-";    
+        RunString(2)="ES10km-uvh-Tri3-SlidWeertman-Duvh-MRlASE3-abMask0A-IOR-Rgl50-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-";    
+
+       Titles=["3.25km"; "3.35km/Rgl50"];
+
 
     case "Weertman-MRIM6HadGEM2-abMask0A-P-BCVel"
 
@@ -50,8 +60,17 @@ switch RunType
 
 end
 
-Titles=["Element size "+ES(iCompare(1)); "Element size "+ES(iCompare(2))];
-TitleText="("+extractBetween(RunString(iCompare(1)),"-Duvh-","-P-")+")"; 
+ES1=str2double(extractBetween(RunString(1),"ES","km"));
+ES2=str2double(extractBetween(RunString(2),"ES","km"));
+
+ES1=ElementSizeCorrection(ES1);
+ES2=ElementSizeCorrection(ES2);
+
+if isempty(Titles)  % create default figure titles of not already specified
+    Titles=["Element size "+ES1+"km"; "Element size "+ES2+"km"];
+end
+
+TitleText="("+extractBetween(RunString(iCompare(1)),"-Duvh-","-P-")+")";
 
 
 
@@ -308,9 +327,9 @@ for iFile=1:nFile
 
 
     yyaxis left
-    plot(tVector(:,1),SLR1mm/10,"-ob",LineWidth=2,DisplayName=ES(iCompare(1)))
+    plot(tVector(:,1),SLR1mm/10,"-ob",LineWidth=2,DisplayName=Titles(1))
     hold on
-    plot(tVector(:,2),SLR2mm/10,"-xb",LineWidt=1,DisplayName=ES(iCompare(2)))
+    plot(tVector(:,2),SLR2mm/10,"-xb",LineWidt=1,DisplayName=Titles(2))
     yMax=max(ceil(max([SLR1mm;SLR2mm])/10/10)*10,10) ; % first /10 is to get cm instead of mm
     ylim([0 yMax])
     ylabel(" Sea Level Rise (cm)",FontSize=14) ;
@@ -322,9 +341,9 @@ for iFile=1:nFile
 
     
 
-    plot(tVector(:,1),RateOfSeaLevelRise1,"-or",LineWidth=2,DisplayName=ES(iCompare(1)))
+    plot(tVector(:,1),RateOfSeaLevelRise1,"-or",LineWidth=2,DisplayName=Titles(1))
     hold on
-    plot(tVector(:,2),RateOfSeaLevelRise2,"-xr",LineWidth=1,DisplayName=ES(iCompare(2)))
+    plot(tVector(:,2),RateOfSeaLevelRise2,"-xr",LineWidth=1,DisplayName=Titles(2))
     yMax=max(ceil(max([RateOfSeaLevelRise1;RateOfSeaLevelRise2])),1) ; 
     ylim([0 yMax])
     % yMin=min(floor(min([dArea1;dArea2])*10)/10,-0.1); ylim([yMin 0])

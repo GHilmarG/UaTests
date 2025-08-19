@@ -563,6 +563,17 @@ elseif CtrlVar.TimeDependentRun
 
 end
 
+%% Reversibility experiment? 
+%
+% If reversibility experiment, find old results files and create a restart file from those result files.
+%
+% Get rid of the "-R*- part in the names of all other input files, (although these should not be needed anyhow)
+
+%
+%
+%%
+
+
 if ~nargout   % A trick to suppress any function output if no output requested. No need to suppress output using ;
     clearvars CtrlVar
 end

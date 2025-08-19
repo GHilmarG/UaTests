@@ -25,40 +25,48 @@ UserVar.GeometryInterpolant="create the name of inverse restart file from User.R
 %% Keep his
 %
 % Assimilation/relaxation: from t=UserVar.Assimilation.tStart to t=UserVar.Assimilation.tEnd
-% 
-% After assimilation/relaxation is when the actual run starts. So this run goes from        
+%
+% After assimilation/relaxation is when the actual run starts. So this run goes from
 %
 %   t=UserVar.Assimilation.tEnd to t=UserVar.RunEndYear
 %
 
-% During the actual run, there are no 
+% During the actual run, there are no
 %
 %
-UserVar.Assimilation.tStart=2015;                  
+UserVar.Assimilation.tStart=2015;
 UserVar.Assimilation.tEnd=2020;
 
-UserVar.RunStartYear=UserVar.Assimilation.tEnd ;    % I don't really need this RunStartYear variable, 
-                                                    % and I always must make sure that the RunStartYear 
-                                                    % is that of the end of the assimilation/period
+UserVar.RunStartYear=UserVar.Assimilation.tEnd ;    % I don't really need this RunStartYear variable,
+% and I always must make sure that the RunStartYear
+% is that of the end of the assimilation/period
 
 UserVar.RunEndYear=2500;
 
 
 
 UserVar.Assimilation.is=true;        % This is a flag to bypass the assimilation/relaxation phase done from tStart to tEnd (i.e. here from year 2015 to 2020)
-                                     % This will only work if the assimilation/relaxation has already been performed previously and all the related files exists.
-                                     %
-                                     % To bypass the (transient) initialization phase, set this flag to false.
-                                     %
-                                     % When starting a new experiment, this should be set to true.
+% This will only work if the assimilation/relaxation has already been performed previously and all the related files exists.
+%
+% To bypass the (transient) initialization phase, set this flag to false.
+%
+% When starting a new experiment, this should be set to true.
 
-UserVar.Inverse.Iterations=500;      % This is the number if inversion iteration in each re-initialization step. The very first inversion was done using 
+UserVar.Inverse.Iterations=500;      % This is the number if inversion iteration in each re-initialization step. (The very first inversion was done using
+% repeatedly and for a larger number of iterations.)
 
 
-InverseRunAtStart=false ;  % This can be set to false, if there is an inverse restart file available for the VERY FIRST PHASE of the assimilation 
-                           % (Here this is the typical case, i.e. set to false, as long inversion was done initially for the start time=2015).
-                           %
-                           % Must the true if starting a brand new experiment.
+InverseRunAtStart=false ;  % This can be set to false, if there is an inverse restart file available for the VERY FIRST PHASE of the assimilation
+% (Here this is the typical case, i.e. set to false, as long inversion was done initially for the start time=2015).
+%
+% Must the true if starting a brand new experiment.
+
+if contains(RunString,"-R")  % this is a reversibility experiment
+
+    UserVar.Assimilation.is=false;
+    InverseRunAtStart=false  ;
+end
+
 %% -]
 %%
 
@@ -66,7 +74,7 @@ InverseRunAtStart=false ;  % This can be set to false, if there is an inverse re
 %     UserVar.Assimilation.tStart=UserVar.Assimilation.tStart;
 %     UserVar.Assimilation.tEnd=UserVar.Assimilation.tEnd;
 % end
-% 
+%
 
 
 
@@ -100,7 +108,7 @@ if UserVar.Assimilation.is
         UserVar.RunType=sprintf("-FR%ito%i-",from,to)+RunString ;
 
         Ua(UserVar) ;       % This FORWARD run will go t=from to t=to,
-        
+
 
         %CtrlVar.Restart=1; CtrlVar.ForwardTimeIntegration="-uv-h-" ; Ua(UserVar,CtrlVar) ; % if want to force restart
 
@@ -119,9 +127,9 @@ end
 %
 % However, if RunStartYear is set to a value greater or equal to the end of the relaxation period, the run starts at
 % the time of the RunStartYear. This assumes that the relaxation phase has already been done, and does not need to tbe done
-% again. 
+% again.
 
-from=UserVar.RunStartYear  ; 
+from=UserVar.RunStartYear  ;
 to=UserVar.RunEndYear;
 
 if UserVar.RunStartYear~=UserVar.Assimilation.tEnd
@@ -130,7 +138,7 @@ end
 
 
 UserVar.RunType=sprintf("-FR%ito%i-",from,to)+RunString ;
- 
+
 Ua(UserVar) ;       % This FORWARD run will go t=from to t=to,
 
 
