@@ -3,7 +3,7 @@ function [UserVar,CtrlVar,MeshBoundaryCoordinates]=DefineInitialInputs(UserVar,C
 
 
 CtrlVar.Experiment='TestingAgainstTransferFunctions';
-CtrlVar.FlowApproximation="SSTREAM-rho" ; % "SSTREAM" ; % "SSTREAM" ; % 'Hybrid' ;  % 'SSTREAM'|'SSHEET'|'Hybrid'
+CtrlVar.FlowApproximation="SSTREAM" ; % "SSTREAM" ; % "SSTREAM" ; % 'Hybrid' ;  % 'SSTREAM'|'SSHEET'|'Hybrid'
 CtrlVar.TimeDependentRun=1;
 CtrlVar.alpha=0.05;   % slope of the coordinate system
 
@@ -14,16 +14,18 @@ MeshBoundaryCoordinates=flipud([xu yr ; xd yr ; xd yl ; xu yl]);
 CtrlVar.GmshGeoFileAdditionalInputLines{1}='Periodic Line {1,2} = {3,4};';  % these lines are added to the gmsh .geo input file each time such a file is created
 CtrlVar.OnlyMeshDomainAndThenStop=0;
 
-CtrlVar.TriNodes=6;   % [3,6,10]
-CtrlVar.MeshSize=5e3;
+CtrlVar.TriNodes=3;   % [3,6,10]
+CtrlVar.MeshSize=10e3;
 CtrlVar.MeshSizeMin=0.01*CtrlVar.MeshSize;
 CtrlVar.MeshSizeMax=CtrlVar.MeshSize;
 CtrlVar.GmshMeshingAlgorithm=8;
 
 %%
 CtrlVar.Restart=0;
-CtrlVar.time=0 ;
-CtrlVar.dt=0.1; CtrlVar.AdaptiveTimeStepping=0 ;
+CtrlVar.StartTime=0 ;
+CtrlVar.EndTime=10 ;
+CtrlVar.dt=0.1; 
+CtrlVar.AdaptiveTimeStepping=0 ;
 CtrlVar.TotalNumberOfForwardRunSteps=100;
 
 CtrlVar.ThicknessConstraints=0;
@@ -63,9 +65,10 @@ CtrlVar.ExplicitMeshRefinementCriteria(I).Use=true;
 
 %% Perturbations
 
+UserVar.hmean=1000;
 UserVar.ampl_c=0.0;   UserVar.sigma_cx=(xd-xu)/20; UserVar.sigma_cy=Inf;        %  UserVar.C0=...
-UserVar.ampl_b=0.0;   UserVar.sigma_bx=(xd-xu)/20; UserVar.sigma_by=(xd-xu)/0;  % UserVar.h0=...
-UserVar.ampl_rho=0.75; UserVar.sigma_rhox=(xd-xu)/10; UserVar.sigma_rhoy=(xd-xu)/10;  % UserVar.h0=...
+UserVar.ampl_b=0.1;   UserVar.sigma_bx=(xd-xu)/20; UserVar.sigma_by=(xd-xu)/0;  % UserVar.h0=...
+UserVar.ampl_rho=0.0; UserVar.sigma_rhox=(xd-xu)/10; UserVar.sigma_rhoy=(xd-xu)/10;  % UserVar.h0=...
 
 
 

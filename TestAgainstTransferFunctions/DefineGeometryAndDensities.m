@@ -10,7 +10,7 @@ drho=UserVar.ampl_rho*rhomean*exp(-F.x.^2./UserVar.sigma_rhox^2-F.y.^2./UserVar.
 drho=drho-mean(drho(:)) ;
 rho=rho+drho; 
 
-hmean=1000;
+hmean=UserVar.hmean;
 
 B=zeros(MUA.Nnodes,1);
 S=B*0-1e10;

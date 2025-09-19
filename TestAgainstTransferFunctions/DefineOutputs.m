@@ -1,8 +1,9 @@
 function  UserVar=DefineOutputs(UserVar,CtrlVar,MUA,BCs,F,l,GF,InvStartValues,InvFinalValues,Priors,Meas,BCsAdjoint,RunInfo)
 
 
+persistent iCounter Diagnostics
 
-time=CtrlVar.time; 
+
 
          
 
@@ -69,100 +70,75 @@ if contains(plots,'-flowline-')
     
 end
 
+ds=F.s-sAna;
+du=F.ub-uAna;
+dv=F.vb-vAna;
+MUA.M=MassMatrix2D1dof(MUA);
+
+hmean=UserVar.hmean;
 
 
+sNumericalNorm=sqrt((((F.s-hmean)'*MUA.M* (F.s-hmean))))/MUA.Area; 
+sAnalyticalNorm=sqrt((((sAna-hmean)'*MUA.M* (sAna-hmean))))/MUA.Area; 
 
+sError= sqrt(((ds'*MUA.M* ds)))/MUA.Area; 
+uError= sqrt(((du'*MUA.M* du)))/MUA.Area; 
+vError= sqrt(((dv'*MUA.M* dv)))/MUA.Area; 
 
-
-
-
-% only do these additonal plots at end of run
-
-
-if ~strcmp(CtrlVar.DefineOutputsInfostring,'Last call') ; return ; end
-
-
-
-if contains(plots,'-stresses-')
-    %%
-    [tbx,tby,tb] = CalcBasalTraction(CtrlVar,UserVar,MUA,F) ;
-    
-    [txzb,tyzb]=CalcNodalStrainRatesAndStresses(CtrlVar,UserVar,MUA,F);
-    FindOrCreateFigure("-stresses-")
-    PlotMeshScalarVariable(CtrlVar,MUA,tb) ;
-    title(' tb ') ; cbar=colorbar; title(cbar, '(kPa)');
-    hold on
-    [xGL,yGL,GLgeo]=PlotGroundingLines(CtrlVar,MUA,GF,GLgeo,xGL,yGL,'r');
-    
-    
-    FindOrCreateFigure("-txzb-")
-    PlotMeshScalarVariable(CtrlVar,MUA,txzb) ;
-    title(' txzb ') ; cbar=colorbar; title(cbar, '(kPa)');
-    hold on
-    [xGL,yGL,GLgeo]=PlotGroundingLines(CtrlVar,MUA,GF,GLgeo,xGL,yGL,'r');
-    
+if isempty(Diagnostics)
+    Diagnostics.time=nan(10000,1);
+    Diagnostics.sNumerical=nan(10000,1);
+    Diagnostics.sAnalytical=nan(10000,1);
+    Diagnostics.sError=nan(10000,1);
+    iCounter=0;
 end
 
+iCounter=iCounter+1;
+Diagnostics.time(iCounter)=F.time; 
+Diagnostics.sNumerical(iCounter)=sNumericalNorm; 
+Diagnostics.sAnalytical(iCounter)=sAnalyticalNorm; 
+Diagnostics.sError(iCounter)=sError; 
 
 
-if contains(plots,'-ubvb-')
-    % plotting horizontal velocities
-    FindOrCreateFigure("-ubvb-")
-    N=1;
-    speed=sqrt(ub.*ub+vb.*vb);
-    CtrlVar.MinSpeedWhenPlottingVelArrows=0; CtrlVar.MaxPlottedSpeed=max(speed); %CtrlVar.VelPlotIntervalSpacing='log10';
-    %CtrlVar.VelColorMap='hot';
-    CtrlVar.RelativeVelArrowSize=10;
-    QuiverColorGHG(x(1:N:end),y(1:N:end),ub(1:N:end),vb(1:N:end),CtrlVar);
-    hold on
-    title(sprintf('(ub,vb) t=%-g ',time)) ; xlabel('xps (km)') ; ylabel('yps (km)')
-    axis equal tight
-    
-end
+FindOrCreateFigure("diagnostics")
+plot(Diagnostics.time,Diagnostics.sNumerical,"-or",DisplayName="Numerical")
+hold on 
+plot(Diagnostics.time,Diagnostics.sAnalytical,"-xb",DisplayName="Analytical")
+plot(Diagnostics.time,Diagnostics.sError,"-sm",DisplayName="Error")
+xlabel("time (yr)")
+title("Norm of surface perturbances")
+lg=legend;
 
-if contains(plots,'-udvd-')
-    % plotting horizontal velocities
-    FindOrCreateFigure("-udvd-")
-    N=1;
-    speed=sqrt(ud.*ud+vd.*vd);
-    CtrlVar.MinSpeedWhenPlottingVelArrows=0; CtrlVar.MaxPlottedSpeed=max(speed); %CtrlVar.VelPlotIntervalSpacing='log10';
-    CtrlVar.RelativeVelArrowSize=10;
-    %CtrlVar.VelColorMap='hot';
-    QuiverColorGHG(x(1:N:end),y(1:N:end),ud(1:N:end),vd(1:N:end),CtrlVar);
-    hold on
-    title(sprintf('(ud,vd) t=%-g ',time)) ; xlabel('xps (km)') ; ylabel('yps (km)')
-    axis equal tight
-    
-    dsdx=tan(0.1);
-    hmean=mean(s-b);
-    taud=mean(rho*g*dsdx*hmean);
-    udAnalytical=2*mean(AGlen)*taud.^mean(n)*hmean./mean(n+1); 
-    
-end
 
-if contains(plots,'-e-')
-    % plotting effectiv strain rates
-    
-    % first get effective strain rates, e :
-    [etaInt,xint,yint,exx,eyy,exy,Eint,e,txx,tyy,txy]=calcStrainRatesEtaInt(CtrlVar,MUA,u,v,AGlen,n);
-    % all these variables are are element variables defined on integration points
-    % therfore if plotting on nodes, must first project these onto nodes
-    eNod=ProjectFintOntoNodes(MUA,e);
-    
-    FindOrCreateFigure("-effective strain rate-")
-    [FigHandle,ColorbarHandel,tri]=PlotNodalBasedQuantities(MUA.connectivity,MUA.coordinates,eNod,CtrlVar)    ;
-    title(sprintf('e t=%-g ',time)) ; xlabel('x (km)') ; ylabel('y (km)')
-    
-end
+%%
 
-if contains(plots,'-ub-')
-    
-    FindOrCreateFigure("-ud-")
-    [FigHandle,ColorbarHandel,tri]=PlotNodalBasedQuantities(MUA.connectivity,MUA.coordinates,ub,CtrlVar)    ;
-    title(sprintf('ub t=%-g ',time)) ; xlabel('x (km)') ; ylabel('y (km)')
-    
-end
+UaPlots(CtrlVar,MUA,F,F.B,FigureTitle="bedrock")
+title("bedrock")
 
+UaPlots(CtrlVar,MUA,F,F.C,FigureTitle="C")
+title("basal slipperiness")
+
+UaPlots(CtrlVar,MUA,F,"-uv-",FigureTitle="numerical velocities")
+title("numerical velocities ")
+
+
+UaPlots(CtrlVar,MUA,F,[uAna vAna],FigureTitle="analytical velocities")
+title("numerical velocities ")
+
+UaPlots(CtrlVar,MUA,F,[F.ub-uAna F.vb-vAna],FigureTitle="numerical - analytical velocities")
+title("numerical - analytical velocities ")
+
+FindOrCreateFigure("s diff")
+ts=tiledlayout(3,1) ;
+nexttile
+UaPlots(CtrlVar,MUA,F,F.s-UserVar.hmean,CreateNewFigure=false) ; 
+title("Surface perturbations (numerical)")
+nexttile
+UaPlots(CtrlVar,MUA,F,sAna-UserVar.hmean,CreateNewFigure=false) ; 
+title("Surface perturbations (analytical)")
+nexttile
+UaPlots(CtrlVar,MUA,F,F.s-sAna,CreateNewFigure=false) ; 
+title("numerical surface - analytical surface ")
 
 
 
