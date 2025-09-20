@@ -1,14 +1,16 @@
+
+
+
+
+
 function [sAna,uAna,vAna,wAna]=TransferFunctionsGauss(UserVar,CtrlVar,MUA,F)
 
 %%
 
 
 
-xMUA=MUA.coordinates(:,1) ; yMUA=MUA.coordinates(:,2) ;
-
-
-Nfft=1024;
-xgrid=linspace(min(xMUA),max(xMUA),Nfft); ygrid=linspace(min(yMUA),max(yMUA),Nfft);
+Nfft=2048;
+xgrid=linspace(min(F.x),max(F.x),Nfft); ygrid=linspace(min(F.x),max(F.y),Nfft);
 
 [X,Y]=ndgrid(xgrid,ygrid);
 
@@ -23,6 +25,7 @@ h0=FEintegrate2D(CtrlVar,MUA,F.h)   ;  h0=sum(h0)/MUA.Area;
 C0=FEintegrate2D(CtrlVar,MUA,F.C)   ;  C0=sum(C0)/MUA.Area; 
 rho0=FEintegrate2D(CtrlVar,MUA,F.rho) ;  rho0=sum(rho0)/MUA.Area; 
 
+h0=UserVar.hmean;
 
 m=mean(F.m);
 g=F.g;
@@ -74,10 +77,10 @@ uAnalytical=uAnalytical+u0 ;
 
 % interpolate analytical values onto the numerical FE mesh
 
-Fs = griddedInterpolant(X,Y,sAnalytical) ; sAna = Fs(xMUA,yMUA); 
-Fu = griddedInterpolant(X,Y,uAnalytical) ; uAna = Fu(xMUA,yMUA); 
-Fv = griddedInterpolant(X,Y,vAnalytical) ; vAna = Fv(xMUA,yMUA); 
-Fw = griddedInterpolant(X,Y,wAnalytical) ; wAna = Fw(xMUA,yMUA); 
+Fs = griddedInterpolant(X,Y,sAnalytical) ; sAna = Fs(F.x,F.y); 
+Fu = griddedInterpolant(X,Y,uAnalytical) ; uAna = Fu(F.x,F.y); 
+Fv = griddedInterpolant(X,Y,vAnalytical) ; vAna = Fv(F.x,F.y); 
+Fw = griddedInterpolant(X,Y,wAnalytical) ; wAna = Fw(F.x,F.y); 
 
 
 %%

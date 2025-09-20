@@ -11,12 +11,8 @@ plots='-ubvb-e-save-';
 plots='-sbB-udvd-ubvb-ub-';
 plots='-ubvb-stresses-';
 plots='-flowline-';
+plots="";
 
-
-x=MUA.coordinates(:,1);  y=MUA.coordinates(:,2);
-GLgeo=[];
-xGL=[];
-yGL=[];
 
 if contains(plots,'-save-')
 
@@ -42,10 +38,11 @@ end
 %% Transfer
 
 
+ [sAna,uAna,vAna,wAna]=TransferFunctionsGauss(UserVar,CtrlVar,MUA,F) ;
 
 if contains(plots,'-flowline-')
-    
-    [sAna,uAna,vAna,wAna]=TransferFunctionsGauss(UserVar,CtrlVar,MUA,F) ;
+    % this plot is most useful if the perturbations only vary in x direction
+   
     
     FindOrCreateFigure("-s-ub-")
     hold off
@@ -80,16 +77,30 @@ hmean=UserVar.hmean;
 
 sNumericalNorm=sqrt((((F.s-hmean)'*MUA.M* (F.s-hmean))))/MUA.Area; 
 sAnalyticalNorm=sqrt((((sAna-hmean)'*MUA.M* (sAna-hmean))))/MUA.Area; 
-
 sError= sqrt(((ds'*MUA.M* ds)))/MUA.Area; 
-uError= sqrt(((du'*MUA.M* du)))/MUA.Area; 
-vError= sqrt(((dv'*MUA.M* dv)))/MUA.Area; 
 
+
+SpeedNumerical=sqrt(F.ub.*F.ub+F.vb.*F.vb) ;
+SpeedAnalytical=sqrt(uAna.*uAna+vAna.*vAna) ;
+SpeedError=sqrt(du.*du+dv.*dv); 
+
+SpeedNumericalNorm=sqrt(((SpeedNumerical'*MUA.M* SpeedNumerical)))/MUA.Area; 
+SpeedAnalyticalNorm=sqrt(((SpeedAnalytical'*MUA.M* SpeedAnalytical)))/MUA.Area; 
+
+SpeedErrorNorm=sqrt(((SpeedError'*MUA.M* SpeedError)))/MUA.Area; 
+
+
+
+% collect some information about the overall agreement between analytical and numerical solution and store this in a
+% persistent variable to allow for plot as function of times being created in the course of the run.
 if isempty(Diagnostics)
     Diagnostics.time=nan(10000,1);
     Diagnostics.sNumerical=nan(10000,1);
     Diagnostics.sAnalytical=nan(10000,1);
     Diagnostics.sError=nan(10000,1);
+    Diagnostics.SpeedNumerical=nan(10000,1);
+    Diagnostics.SpeedAnalytical=nan(10000,1);
+    Diagnostics.SpeedError=nan(10000,1);
     iCounter=0;
 end
 
@@ -99,37 +110,54 @@ Diagnostics.sNumerical(iCounter)=sNumericalNorm;
 Diagnostics.sAnalytical(iCounter)=sAnalyticalNorm; 
 Diagnostics.sError(iCounter)=sError; 
 
+Diagnostics.SpeedNumerical(iCounter)=SpeedNumericalNorm; 
+Diagnostics.SpeedAnalytical(iCounter)=SpeedAnalyticalNorm; 
+Diagnostics.SpeedError(iCounter)=SpeedErrorNorm; 
 
-FindOrCreateFigure("diagnostics")
-plot(Diagnostics.time,Diagnostics.sNumerical,"-or",DisplayName="Numerical")
+FindOrCreateFigure("Surface topography Norms")
+plot(Diagnostics.time,Diagnostics.sNumerical,"-or",DisplayName="Numerical surface topography")
 hold on 
-plot(Diagnostics.time,Diagnostics.sAnalytical,"-xb",DisplayName="Analytical")
-plot(Diagnostics.time,Diagnostics.sError,"-sm",DisplayName="Error")
+plot(Diagnostics.time,Diagnostics.sAnalytical,"-xb",DisplayName="Analytical surface topography")
+plot(Diagnostics.time,Diagnostics.sError,"-sm",DisplayName="Error in topography")
 xlabel("time (yr)")
 title("Norm of surface perturbances")
-lg=legend;
+lg=legend(Location="northwest");
 
-
+%%
+FindOrCreateFigure("Speed Norms")
+plot(Diagnostics.time,Diagnostics.SpeedNumerical,"-or",DisplayName="Numerical speed")
+hold on 
+plot(Diagnostics.time,Diagnostics.SpeedAnalytical,"-xb",DisplayName="Analytical speed")
+plot(Diagnostics.time,Diagnostics.SpeedError,"-sm",DisplayName="Error in speed")
+xlabel("time (yr)")
+title("Norms of speed")
+lg=legend(Location="northwest");
 %%
 
 UaPlots(CtrlVar,MUA,F,F.B,FigureTitle="bedrock")
 title("bedrock")
-
 UaPlots(CtrlVar,MUA,F,F.C,FigureTitle="C")
 title("basal slipperiness")
 
-UaPlots(CtrlVar,MUA,F,"-uv-",FigureTitle="numerical velocities")
+% uv velocities
+FindOrCreateFigure("uv diff")
+tuv=tiledlayout(1,3) ;
+nexttile
+UaPlots(CtrlVar,MUA,F,"-uv-",CreateNewFigure=false);
 title("numerical velocities ")
 
+nexttile
+UaPlots(CtrlVar,MUA,F,[uAna vAna],CreateNewFigure=false);
+title("analytical velocities ")
 
-UaPlots(CtrlVar,MUA,F,[uAna vAna],FigureTitle="analytical velocities")
-title("numerical velocities ")
-
-UaPlots(CtrlVar,MUA,F,[F.ub-uAna F.vb-vAna],FigureTitle="numerical - analytical velocities")
+nexttile
+UaPlots(CtrlVar,MUA,F,[F.ub-uAna F.vb-vAna],CreateNewFigure=false) ;
 title("numerical - analytical velocities ")
+tuv.Padding="tight" ; tuv.TileSpacing="compact" ; 
 
+% surface perturbations 
 FindOrCreateFigure("s diff")
-ts=tiledlayout(3,1) ;
+ts=tiledlayout(1,3) ;
 nexttile
 UaPlots(CtrlVar,MUA,F,F.s-UserVar.hmean,CreateNewFigure=false) ; 
 title("Surface perturbations (numerical)")
@@ -139,7 +167,7 @@ title("Surface perturbations (analytical)")
 nexttile
 UaPlots(CtrlVar,MUA,F,F.s-sAna,CreateNewFigure=false) ; 
 title("numerical surface - analytical surface ")
-
+ts.Padding="tight" ; ts.TileSpacing="compact" ; 
 
 
 

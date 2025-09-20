@@ -1,13 +1,14 @@
 
+
 function [UserVar,CtrlVar,MeshBoundaryCoordinates]=DefineInitialInputs(UserVar,CtrlVar)
 
 
 CtrlVar.Experiment='TestingAgainstTransferFunctions';
-CtrlVar.FlowApproximation="SSTREAM" ; % "SSTREAM" ; % "SSTREAM" ; % 'Hybrid' ;  % 'SSTREAM'|'SSHEET'|'Hybrid'
+CtrlVar.FlowApproximation="SSTREAM" ; 
 CtrlVar.TimeDependentRun=1;
 CtrlVar.alpha=0.05;   % slope of the coordinate system
 
-xd=50e3; xu=-50e3 ; yl=20e3 ; yr=-20e3;
+xd=50e3; xu=-50e3 ; yl=50e3 ; yr=-50e3;
 
 
 MeshBoundaryCoordinates=flipud([xu yr ; xd yr ; xd yl ; xu yl]);
@@ -15,7 +16,9 @@ CtrlVar.GmshGeoFileAdditionalInputLines{1}='Periodic Line {1,2} = {3,4};';  % th
 CtrlVar.OnlyMeshDomainAndThenStop=0;
 
 CtrlVar.TriNodes=3;   % [3,6,10]
-CtrlVar.MeshSize=10e3;
+CtrlVar.MeshSize=5e3;
+
+
 CtrlVar.MeshSizeMin=0.01*CtrlVar.MeshSize;
 CtrlVar.MeshSizeMax=CtrlVar.MeshSize;
 CtrlVar.GmshMeshingAlgorithm=8;
@@ -66,9 +69,9 @@ CtrlVar.ExplicitMeshRefinementCriteria(I).Use=true;
 %% Perturbations
 
 UserVar.hmean=1000;
-UserVar.ampl_c=0.0;   UserVar.sigma_cx=(xd-xu)/20; UserVar.sigma_cy=Inf;        %  UserVar.C0=...
-UserVar.ampl_b=0.1;   UserVar.sigma_bx=(xd-xu)/20; UserVar.sigma_by=(xd-xu)/0;  % UserVar.h0=...
-UserVar.ampl_rho=0.0; UserVar.sigma_rhox=(xd-xu)/10; UserVar.sigma_rhoy=(xd-xu)/10;  % UserVar.h0=...
+UserVar.ampl_c=0.0;   UserVar.sigma_cx=(xd-xu)/20; UserVar.sigma_cy=Inf;              % fractional perturbation in basal slipperiness, C
+UserVar.ampl_b=0.1;   UserVar.sigma_bx=(xd-xu)/20; UserVar.sigma_by=(xd-xu)/20;       % perturbation in bedrock, measured as fraction of unperturbed ice thickness) 
+UserVar.ampl_rho=0.0; UserVar.sigma_rhox=(xd-xu)/10; UserVar.sigma_rhoy=(xd-xu)/10;   % perturbation in rho (comparison not fully implemented)
 
 
 

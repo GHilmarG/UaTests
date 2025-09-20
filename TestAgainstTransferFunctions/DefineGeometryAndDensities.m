@@ -16,7 +16,8 @@ B=zeros(MUA.Nnodes,1);
 S=B*0-1e10;
 
 dB=UserVar.ampl_b*hmean*exp(-F.x.^2./UserVar.sigma_bx^2-F.y.^2./UserVar.sigma_by^2);
-dB=dB-mean(dB(:)) ;
+dB=dB-mean(dB(:)) ;  % this ensures that the mean of the perturbation is 0. 
+                     % (This could be done better by calculating the mean as an integral of dB divided by total area.) 
 
 
 
