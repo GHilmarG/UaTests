@@ -15,7 +15,7 @@ MeshBoundaryCoordinates=flipud([xu yr ; xd yr ; xd yl ; xu yl]);
 CtrlVar.GmshGeoFileAdditionalInputLines{1}='Periodic Line {1,2} = {3,4};';  % these lines are added to the gmsh .geo input file each time such a file is created
 CtrlVar.OnlyMeshDomainAndThenStop=0;
 
-CtrlVar.TriNodes=3;   % [3,6,10]
+CtrlVar.TriNodes=6;   % [3,6,10]
 CtrlVar.MeshSize=5e3;
 
 

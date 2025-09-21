@@ -4,7 +4,29 @@ function  UserVar=DefineOutputs(UserVar,CtrlVar,MUA,BCs,F,l,GF,InvStartValues,In
 persistent iCounter Diagnostics
 
 
-
+%%
+%
+% The $\mathcal{L}^2$ inner product is defined as: 
+% 
+% $$(u,v)_{\mathcal{L}^2}:= \frac{1}{\mathcal{A}} \int f(x,y) \, g(x,y) \; dx \,  dy $$
+% 
+% where
+%
+%
+% $$\mathcal{A} := \int  \; dx \,  dy $$
+%
+%
+% The norm of the variation in surface elevation $s$ is defined as
+%
+% $$ \| \Delta s \| := \sqrt{ (s-\bar{s},s-\bar{s})_{\mathcal{L}^2} } $$
+% 
+% The norm of the difference between numerically-modeled, $s_n$, and analytically-calculated, $s_a$, surface elevations
+% is similarly:
+%
+% $$ \| s_n - s_a  \| := \sqrt{ (s_n-s_a, s_n-s_n)_{\mathcal{L}^2} } $$
+%
+%
+%%
          
 
 plots='-ubvb-e-save-';
@@ -73,6 +95,7 @@ dv=F.vb-vAna;
 MUA.M=MassMatrix2D1dof(MUA);
 
 hmean=UserVar.hmean;
+
 
 
 sNumericalNorm=sqrt((((F.s-hmean)'*MUA.M* (F.s-hmean))))/MUA.Area; 
@@ -170,5 +193,13 @@ title("numerical surface - analytical surface ")
 ts.Padding="tight" ; ts.TileSpacing="compact" ; 
 
 
+% simple xy plot of analytical versus modeled surface elevations 
+figure(1000) ; 
+hold off ; 
+plot(F.s,sAna,".b") ; 
+axis equal ; tt=axis ; 
+hold on ; 
+axis([tt(1) tt(2) tt(1) tt(2)]) ; 
+plot([tt(1) tt(2)],[tt(1) tt(2)]) ;
 
 end
