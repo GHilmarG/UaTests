@@ -27,7 +27,7 @@ persistent iCounter Diagnostics
 %
 %
 %%
-         
+
 
 plots='-ubvb-e-save-';
 plots='-sbB-udvd-ubvb-ub-';
@@ -35,25 +35,19 @@ plots='-ubvb-stresses-';
 plots='-flowline-';
 plots="";
 
+if F.solution=="-none-"
+    iCounter=[]; 
+    Diagnostics=[] ; 
+    return
+end
 
-if contains(plots,'-save-')
+if CtrlVar.DefineOutputsInfostring=="Last call"
 
-    % save data in files with running names
-    % check if folder 'ResultsFiles' exists, if not create
-
-    if strcmp(CtrlVar.DefineOutputsInfostring,'First call ') && exist('ResultsFiles','dir')~=7 
-        mkdir('ResultsFiles') ;
-    end
     
-    if strcmp(CtrlVar.DefineOutputsInfostring,'Last call')==0
-        %FileName=['ResultsFiles/',sprintf('%07i',round(100*time)),'-TransPlots-',CtrlVar.Experiment]; good for transient runs
-        
-        FileName=['ResultsFiles/',sprintf('%07i',CtrlVar.DefineOutputsCounter),'-TransPlots-',CtrlVar.Experiment];
-        
-        fprintf(' Saving data in %s \n',FileName)
-        save(FileName,"CtrlVar","MUA","F")
-        
-    end
+    OutputString=replace(UserVar.Experiment,".","k");
+    save(OutputString+".mat","Diagnostics")
+
+
 end
 
 
@@ -94,21 +88,21 @@ du=F.ub-uAna;
 dv=F.vb-vAna;
 MUA.M=MassMatrix2D1dof(MUA);
 
-hmean=UserVar.hmean;
+h0=UserVar.h0;
 
 
 
-sNumericalNorm=sqrt((((F.s-hmean)'*MUA.M* (F.s-hmean))))/MUA.Area; 
-sAnalyticalNorm=sqrt((((sAna-hmean)'*MUA.M* (sAna-hmean))))/MUA.Area; 
+dsNumericalNorm=sqrt((((F.s-h0)'*MUA.M* (F.s-h0))))/MUA.Area; 
+dsAnalyticalNorm=sqrt((((sAna-h0)'*MUA.M* (sAna-h0))))/MUA.Area; 
 sError= sqrt(((ds'*MUA.M* ds)))/MUA.Area; 
 
 
-SpeedNumerical=sqrt(F.ub.*F.ub+F.vb.*F.vb) ;
-SpeedAnalytical=sqrt(uAna.*uAna+vAna.*vAna) ;
+dSpeedNumerical=sqrt((F.ub-UserVar.ub0).*(F.ub-UserVar.ub0)+F.vb.*F.vb) ;
+dSpeedAnalytical=sqrt((uAna-UserVar.ub0).*(uAna-UserVar.ub0)+vAna.*vAna) ;
 SpeedError=sqrt(du.*du+dv.*dv); 
 
-SpeedNumericalNorm=sqrt(((SpeedNumerical'*MUA.M* SpeedNumerical)))/MUA.Area; 
-SpeedAnalyticalNorm=sqrt(((SpeedAnalytical'*MUA.M* SpeedAnalytical)))/MUA.Area; 
+SpeedNumericalNorm=sqrt(((dSpeedNumerical'*MUA.M* dSpeedNumerical)))/MUA.Area; 
+SpeedAnalyticalNorm=sqrt(((dSpeedAnalytical'*MUA.M* dSpeedAnalytical)))/MUA.Area; 
 
 SpeedErrorNorm=sqrt(((SpeedError'*MUA.M* SpeedError)))/MUA.Area; 
 
@@ -129,8 +123,8 @@ end
 
 iCounter=iCounter+1;
 Diagnostics.time(iCounter)=F.time; 
-Diagnostics.sNumerical(iCounter)=sNumericalNorm; 
-Diagnostics.sAnalytical(iCounter)=sAnalyticalNorm; 
+Diagnostics.sNumerical(iCounter)=dsNumericalNorm; 
+Diagnostics.sAnalytical(iCounter)=dsAnalyticalNorm; 
 Diagnostics.sError(iCounter)=sError; 
 
 Diagnostics.SpeedNumerical(iCounter)=SpeedNumericalNorm; 
@@ -144,17 +138,17 @@ plot(Diagnostics.time,Diagnostics.sAnalytical,"-xb",DisplayName="Analytical surf
 plot(Diagnostics.time,Diagnostics.sError,"-sm",DisplayName="Error in topography")
 xlabel("time (yr)")
 title("Norm of surface perturbances")
-lg=legend(Location="northwest");
+lg=legend(Location="northwest",Interpreter="latex");
 
 %%
-FindOrCreateFigure("Speed Norms")
-plot(Diagnostics.time,Diagnostics.SpeedNumerical,"-or",DisplayName="Numerical speed")
+FindOrCreateFigure("Norm of speed variations around mean speed")
+plot(Diagnostics.time,Diagnostics.SpeedNumerical,"-or",DisplayName="Numerical speed variations")
 hold on 
-plot(Diagnostics.time,Diagnostics.SpeedAnalytical,"-xb",DisplayName="Analytical speed")
-plot(Diagnostics.time,Diagnostics.SpeedError,"-sm",DisplayName="Error in speed")
+plot(Diagnostics.time,Diagnostics.SpeedAnalytical,"-xb",DisplayName="Analytical speed variations")
+plot(Diagnostics.time,Diagnostics.SpeedError,"-sm",DisplayName="$\|\mathrm{numerical-analytical}\|$")
 xlabel("time (yr)")
 title("Norms of speed")
-lg=legend(Location="northwest");
+lg=legend(Location="northwest",Interpreter="latex");
 %%
 
 UaPlots(CtrlVar,MUA,F,F.B,FigureTitle="bedrock")
@@ -162,7 +156,7 @@ title("bedrock")
 UaPlots(CtrlVar,MUA,F,F.C,FigureTitle="C")
 title("basal slipperiness")
 
-% uv velocities
+%% uv velocities
 FindOrCreateFigure("uv diff")
 tuv=tiledlayout(1,3) ;
 nexttile
@@ -178,22 +172,24 @@ UaPlots(CtrlVar,MUA,F,[F.ub-uAna F.vb-vAna],CreateNewFigure=false) ;
 title("numerical - analytical velocities ")
 tuv.Padding="tight" ; tuv.TileSpacing="compact" ; 
 
-% surface perturbations 
+%% surface perturbations 
 FindOrCreateFigure("s diff")
 ts=tiledlayout(1,3) ;
 nexttile
-UaPlots(CtrlVar,MUA,F,F.s-UserVar.hmean,CreateNewFigure=false) ; 
+UaPlots(CtrlVar,MUA,F,F.s-UserVar.h0,CreateNewFigure=false) ; 
 title("Surface perturbations (numerical)")
+CL=clim;
 nexttile
-UaPlots(CtrlVar,MUA,F,sAna-UserVar.hmean,CreateNewFigure=false) ; 
+UaPlots(CtrlVar,MUA,F,sAna-UserVar.h0,CreateNewFigure=false) ; 
 title("Surface perturbations (analytical)")
+clim(CL)
 nexttile
 UaPlots(CtrlVar,MUA,F,F.s-sAna,CreateNewFigure=false) ; 
 title("numerical surface - analytical surface ")
 ts.Padding="tight" ; ts.TileSpacing="compact" ; 
+CM=cmocean('balanced',25,'pivot',0) ; colormap(CM);
 
-
-% simple xy plot of analytical versus modeled surface elevations 
+%% simple xy plot of analytical versus modeled surface elevations 
 figure(1000) ; 
 hold off ; 
 plot(F.s,sAna,".b") ; 
@@ -201,5 +197,15 @@ axis equal ; tt=axis ;
 hold on ; 
 axis([tt(1) tt(2) tt(1) tt(2)]) ; 
 plot([tt(1) tt(2)],[tt(1) tt(2)]) ;
+ylabel("analytical surface topography (m)")
+xlabel("numerical surface topography (m)")
+title("analytical versus numerical topography")
+%%
+%dtcritical=CalcCFLdt2D(UserVar,RunInfo,CtrlVar,MUA,F) ; 
+
+
+dtCFL=CalcCFLdt2D(UserVar,RunInfo,CtrlVar,MUA,F);
+
+fprintf("The time step used is dt=%f \t the CFL limit is %f \n",CtrlVar.dt,dtCFL)
 
 end

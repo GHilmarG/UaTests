@@ -9,30 +9,24 @@ function [sAna,uAna,vAna,wAna]=TransferFunctionsGauss(UserVar,CtrlVar,MUA,F)
 
 
 
-Nfft=2048;
+Nfft=2048; % This is also a 'numerical' variable, make sure it is sufficiently large. 
 xgrid=linspace(min(F.x),max(F.x),Nfft); ygrid=linspace(min(F.x),max(F.y),Nfft);
 
 [X,Y]=ndgrid(xgrid,ygrid);
 
 
-
-
 nx=length(xgrid) ; ny=length(ygrid) ; dx=xgrid(2)-xgrid(1);dy=ygrid(2)-ygrid(1);
 
 alpha=CtrlVar.alpha ; 
-% h0=mean(F.h); C0=mean(F.C); 
-h0=FEintegrate2D(CtrlVar,MUA,F.h)   ;  h0=sum(h0)/MUA.Area; 
-C0=FEintegrate2D(CtrlVar,MUA,F.C)   ;  C0=sum(C0)/MUA.Area; 
-rho0=FEintegrate2D(CtrlVar,MUA,F.rho) ;  rho0=sum(rho0)/MUA.Area; 
 
-h0=UserVar.hmean;
-
-m=mean(F.m);
-g=F.g;
-eta=1/(2*mean(F.AGlen));
+h0=UserVar.h0;
+C0=UserVar.C0; 
+m=UserVar.m;
+g=UserVar.g;
+eta=1/(2*UserVar.AGlen);
+rho0=UserVar.rho0;
 time=F.time;
-taud=rho0*g*sin(alpha)*h0 ; 
-u0=C0*taud^m;
+u0=UserVar.ub0;
 
 
 % Define perturbations
