@@ -6,7 +6,7 @@ function [UserVar,CtrlVar,MeshBoundaryCoordinates]=DefineInitialInputs(UserVar,C
 
 %% Some key model parameters are defined by this string: 
 
-UserVar.Experiment="NumAna-Nod3-MS25k-dt1-DSx50k-DSy50k-alpha0.05-TI-uv-h-IT-" ; 
+UserVar.Experiment="NumAna-Nod3-MS1k-dt0.5-DSx50k-DSy50k-alpha0.05-TI-uvh-IT-" ; 
 
 % MS :  element size (km)
 % dt :  dt,
@@ -23,7 +23,7 @@ UserVar.Experiment="NumAna-Nod3-MS25k-dt1-DSx50k-DSy50k-alpha0.05-TI-uv-h-IT-" ;
 CtrlVar.alpha=str2double(extractBetween(UserVar.Experiment,"-alpha","-")) ;   % slope of the coordinate system
 
 %% Mesh
-CtrlVar.Experiment='TestingAgainstTransferFunctions';
+CtrlVar.Experiment=UserVar.Experiment;
 CtrlVar.FlowApproximation="SSTREAM" ; 
 
 %% Mesh

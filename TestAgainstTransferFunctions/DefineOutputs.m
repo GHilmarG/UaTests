@@ -41,14 +41,7 @@ if F.solution=="-none-"
     return
 end
 
-if CtrlVar.DefineOutputsInfostring=="Last call"
 
-    
-    OutputString=replace(UserVar.Experiment,".","k");
-    save(OutputString+".mat","Diagnostics")
-
-
-end
 
 
 %% Transfer
@@ -56,36 +49,11 @@ end
 
  [sAna,uAna,vAna,wAna]=TransferFunctionsGauss(UserVar,CtrlVar,MUA,F) ;
 
-if contains(plots,'-flowline-')
-    % this plot is most useful if the perturbations only vary in x direction
-   
-    
-    FindOrCreateFigure("-s-ub-")
-    hold off
-    yyaxis left
-    plot(F.x/1000,F.s,"ob")
-    hold on
-    plot(F.x/1000,sAna,".b")
-    ylabel("$s(x,t)$ (m)","interpreter","latex") ;
-    ylim([900 1100])
-    yyaxis right
-    hold off
-    plot(F.x/1000,F.ub,"or")
-    hold on
-    plot(F.x/1000,uAna,".r")
-    ylim([900 1100])
-    ylabel("$u_b(x,t)$ (m)","interpreter","latex") ;
-    xlabel("$x$ (km)","interpreter","latex") ;
-    title(sprintf("upper surface and basal velocity at t=%f",F.time),"interpreter","latex")
-    legend("$s$ (numerical)","$s$ (analytical)","$u_b$ (numerical)","$u_b$ (analytical)",...
-        "interpreter","latex","location","southeast")
-    hold off
-    
-end
 
-ds=F.s-sAna;
-du=F.ub-uAna;
-dv=F.vb-vAna;
+
+dsNS=F.s-sAna;
+duNS=F.ub-uAna;
+dvNS=F.vb-vAna;
 MUA.M=MassMatrix2D1dof(MUA);
 
 h0=UserVar.h0;
@@ -94,12 +62,12 @@ h0=UserVar.h0;
 
 dsNumericalNorm=sqrt((((F.s-h0)'*MUA.M* (F.s-h0))))/sqrt(MUA.Area); 
 dsAnalyticalNorm=sqrt((((sAna-h0)'*MUA.M* (sAna-h0))))/sqrt(MUA.Area); 
-sError= sqrt(((ds'*MUA.M* ds)))/sqrt(MUA.Area); 
+sError= sqrt(((dsNS'*MUA.M* dsNS)))/sqrt(MUA.Area); 
 
 
 dSpeedNumerical=sqrt((F.ub-UserVar.ub0).*(F.ub-UserVar.ub0)+F.vb.*F.vb) ;
 dSpeedAnalytical=sqrt((uAna-UserVar.ub0).*(uAna-UserVar.ub0)+vAna.*vAna) ;
-SpeedError=sqrt(du.*du+dv.*dv); 
+SpeedError=sqrt(duNS.*duNS+dvNS.*dvNS); 
 
 SpeedNumericalNorm=sqrt(((dSpeedNumerical'*MUA.M* dSpeedNumerical)))/sqrt(MUA.Area); 
 SpeedAnalyticalNorm=sqrt(((dSpeedAnalytical'*MUA.M* dSpeedAnalytical)))/sqrt(MUA.Area); 
@@ -131,15 +99,87 @@ Diagnostics.SpeedNumerical(iCounter)=SpeedNumericalNorm;
 Diagnostics.SpeedAnalytical(iCounter)=SpeedAnalyticalNorm; 
 Diagnostics.SpeedError(iCounter)=SpeedErrorNorm; 
 
-FindOrCreateFigure("Surface topography Norms")
+
+
+
+
+
+
+%%
+
+
+if CtrlVar.DefineOutputsInfostring=="Last call"
+
+    
+    OutputString=replace(UserVar.Experiment,".","k");
+    save(OutputString+".mat","Diagnostics")
+
+
+end
+
+
+if CtrlVar.DefineOutputsInfostring~="Last call"
+
+    return
+
+end
+
+if contains(plots,'-flowline-')
+    % this plot is most useful if the perturbations only vary in x direction
+   
+    
+    FindOrCreateFigure("-s-ub-")
+    hold off
+    yyaxis left
+    plot(F.x/1000,F.s,"ob")
+    hold on
+    plot(F.x/1000,sAna,".b")
+    ylabel("$s(x,t)$ (m)","interpreter","latex") ;
+    ylim([900 1100])
+    yyaxis right
+    hold off
+    plot(F.x/1000,F.ub,"or")
+    hold on
+    plot(F.x/1000,uAna,".r")
+    ylim([900 1100])
+    ylabel("$u_b(x,t)$ (m)","interpreter","latex") ;
+    xlabel("$x$ (km)","interpreter","latex") ;
+    title(sprintf("upper surface and basal velocity at t=%f",F.time),"interpreter","latex")
+    legend("$s$ (numerical)","$s$ (analytical)","$u_b$ (numerical)","$u_b$ (analytical)",...
+        "interpreter","latex","location","southeast")
+    hold off
+    
+end
+
+
+
+
+
+%%
+
+
+
+
+sFig=FindOrCreateFigure("Surface topography Norms");
 plot(Diagnostics.time,Diagnostics.sNumerical,"-or",DisplayName="$\|s(x,y)-\bar{s(x,y)}\|$ Numerical")
 hold on 
 plot(Diagnostics.time,Diagnostics.sAnalytical,"-xb",DisplayName="$\|s(x,y)-\bar{s(x,y)}\|$ Analytical")
 plot(Diagnostics.time,Diagnostics.sError,"-sm",DisplayName="$\|s_{\mathrm{Numerical}}(x,y)-s(x,y)_{\mathrm{Analytical}}\|")
 xlabel("time (yr)")
 title("Norm of surface perturbances")
+subtitle(UserVar.Experiment);
 lg=legend(Location="northwest",Interpreter="latex",FontSize=14);
-text(0.05,0.75,"$ \| f(x,y) - g(x,y)  \| := \sqrt{ \frac{\int (f(x,y)-g(x,y))^2 \; dx \, dy }{\int dx \, dy }}$",Units="normalized",Interpreter="latex",FontSize=14)
+te=text(0.05,0.75,"$ \| f(x,y) - g(x,y)  \| := \sqrt{ \frac{\int (f(x,y)-g(x,y))^2 \; dx \, dy }{\int dx \, dy }}$",Units="normalized",Interpreter="latex",FontSize=14);
+te.Position=[0.7 0.3]; 
+if CtrlVar.DefineOutputsInfostring=="Last call"
+
+    
+    OutputString="s"+replace(UserVar.Experiment,".","k");
+    savefig(sFig,OutputString+".fig")
+
+
+end
+
 %%
 FindOrCreateFigure("Norm of speed variations around mean speed")
 plot(Diagnostics.time,Diagnostics.SpeedNumerical,"-or",DisplayName="Numerical speed variations")
@@ -148,6 +188,7 @@ plot(Diagnostics.time,Diagnostics.SpeedAnalytical,"-xb",DisplayName="Analytical 
 plot(Diagnostics.time,Diagnostics.SpeedError,"-sm",DisplayName="$\|\mathrm{numerical-analytical}\|$")
 xlabel("time (yr)")
 title("Norms of speed")
+subtitle(UserVar.Experiment);
 lg=legend(Location="northwest",Interpreter="latex");
 %%
 

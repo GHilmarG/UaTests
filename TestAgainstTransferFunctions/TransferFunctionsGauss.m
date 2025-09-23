@@ -70,7 +70,9 @@ uAnalytical=uAnalytical+u0 ;
 
 
 % interpolate analytical values onto the numerical FE mesh
-
+%
+% Note: While the analytical solutions do not depend on the numerical mesh, this projection creates an output that is only evaluated at the mesh. 
+%
 Fs = griddedInterpolant(X,Y,sAnalytical) ; sAna = Fs(F.x,F.y); 
 Fu = griddedInterpolant(X,Y,uAnalytical) ; uAna = Fu(F.x,F.y); 
 Fv = griddedInterpolant(X,Y,vAnalytical) ; vAna = Fv(F.x,F.y); 
