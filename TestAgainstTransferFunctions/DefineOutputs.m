@@ -92,19 +92,19 @@ h0=UserVar.h0;
 
 
 
-dsNumericalNorm=sqrt((((F.s-h0)'*MUA.M* (F.s-h0))))/MUA.Area; 
-dsAnalyticalNorm=sqrt((((sAna-h0)'*MUA.M* (sAna-h0))))/MUA.Area; 
-sError= sqrt(((ds'*MUA.M* ds)))/MUA.Area; 
+dsNumericalNorm=sqrt((((F.s-h0)'*MUA.M* (F.s-h0))))/sqrt(MUA.Area); 
+dsAnalyticalNorm=sqrt((((sAna-h0)'*MUA.M* (sAna-h0))))/sqrt(MUA.Area); 
+sError= sqrt(((ds'*MUA.M* ds)))/sqrt(MUA.Area); 
 
 
 dSpeedNumerical=sqrt((F.ub-UserVar.ub0).*(F.ub-UserVar.ub0)+F.vb.*F.vb) ;
 dSpeedAnalytical=sqrt((uAna-UserVar.ub0).*(uAna-UserVar.ub0)+vAna.*vAna) ;
 SpeedError=sqrt(du.*du+dv.*dv); 
 
-SpeedNumericalNorm=sqrt(((dSpeedNumerical'*MUA.M* dSpeedNumerical)))/MUA.Area; 
-SpeedAnalyticalNorm=sqrt(((dSpeedAnalytical'*MUA.M* dSpeedAnalytical)))/MUA.Area; 
+SpeedNumericalNorm=sqrt(((dSpeedNumerical'*MUA.M* dSpeedNumerical)))/sqrt(MUA.Area); 
+SpeedAnalyticalNorm=sqrt(((dSpeedAnalytical'*MUA.M* dSpeedAnalytical)))/sqrt(MUA.Area); 
 
-SpeedErrorNorm=sqrt(((SpeedError'*MUA.M* SpeedError)))/MUA.Area; 
+SpeedErrorNorm=sqrt(((SpeedError'*MUA.M* SpeedError)))/sqrt(MUA.Area); 
 
 
 
@@ -132,14 +132,14 @@ Diagnostics.SpeedAnalytical(iCounter)=SpeedAnalyticalNorm;
 Diagnostics.SpeedError(iCounter)=SpeedErrorNorm; 
 
 FindOrCreateFigure("Surface topography Norms")
-plot(Diagnostics.time,Diagnostics.sNumerical,"-or",DisplayName="Numerical surface topography")
+plot(Diagnostics.time,Diagnostics.sNumerical,"-or",DisplayName="$\|s(x,y)-\bar{s(x,y)}\|$ Numerical")
 hold on 
-plot(Diagnostics.time,Diagnostics.sAnalytical,"-xb",DisplayName="Analytical surface topography")
-plot(Diagnostics.time,Diagnostics.sError,"-sm",DisplayName="Error in topography")
+plot(Diagnostics.time,Diagnostics.sAnalytical,"-xb",DisplayName="$\|s(x,y)-\bar{s(x,y)}\|$ Analytical")
+plot(Diagnostics.time,Diagnostics.sError,"-sm",DisplayName="$\|s_{\mathrm{Numerical}}(x,y)-s(x,y)_{\mathrm{Analytical}}\|")
 xlabel("time (yr)")
 title("Norm of surface perturbances")
-lg=legend(Location="northwest",Interpreter="latex");
-
+lg=legend(Location="northwest",Interpreter="latex",FontSize=14);
+text(0.05,0.75,"$ \| f(x,y) - g(x,y)  \| := \sqrt{ \frac{\int (f(x,y)-g(x,y))^2 \; dx \, dy }{\int dx \, dy }}$",Units="normalized",Interpreter="latex",FontSize=14)
 %%
 FindOrCreateFigure("Norm of speed variations around mean speed")
 plot(Diagnostics.time,Diagnostics.SpeedNumerical,"-or",DisplayName="Numerical speed variations")
