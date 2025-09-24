@@ -19,7 +19,7 @@ function [UserVar,CtrlVar,MeshBoundaryCoordinates]=DefineInitialInputs(UserVar,C
 
 %% Some key model parameters are defined by this string: 
 
-UserVar.Experiment="NumAna-Nod3-MS1k-dt2-DSx50k-DSy50k-alpha0.05-TI-uvh-IT-theta0.5-" ; 
+UserVar.Experiment="NumAna-Nod3-MS1k-dt10-DSx50k-DSy50k-alpha0.05-TI-uvh-IT-theta0.5-" ; 
 
 % MS :  element size (km)
 % dt :  dt,
@@ -35,7 +35,7 @@ UserVar.Experiment="NumAna-Nod3-MS1k-dt2-DSx50k-DSy50k-alpha0.05-TI-uvh-IT-theta
 
 %%
 %
-% For theta=1/2 the solution is as far as I have tested, always stable.
+% For theta=1/2 the solution is as far as I have tested, always stable. 
 % For theta=0, the solution is unstable for dt > 0.35 years, or there about
 %
 % The CDT number, u dt/dx, is about 0.8 years
