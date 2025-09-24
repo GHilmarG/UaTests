@@ -19,7 +19,8 @@ function [UserVar,CtrlVar,MeshBoundaryCoordinates]=DefineInitialInputs(UserVar,C
 
 %% Some key model parameters are defined by this string: 
 
-UserVar.Experiment="NumAna-Nod3-MS1k-dt10-DSx50k-DSy50k-alpha0.05-TI-uvh-IT-theta0.5-" ; 
+UserVar.Experiment="NumAna-Nod3-MS1k-dt0.5-DSx50k-DSy50k-alpha0.05-TI-uv-h-IT-theta0.5-uv2hIt1-" ; 
+
 
 % MS :  element size (km)
 % dt :  dt,
@@ -33,10 +34,26 @@ UserVar.Experiment="NumAna-Nod3-MS1k-dt10-DSx50k-DSy50k-alpha0.05-TI-uvh-IT-thet
 %
 %%
 
-%%
+%% Convergence and stability check summary:
 %
-% For theta=1/2 the solution is as far as I have tested, always stable. 
-% For theta=0, the solution is unstable for dt > 0.35 years, or there about
+% For theta=1/2 the -uvh- solution is as far as I have tested, always stable, but eventually the time step is limited by the convergence
+% of the NR iteration. One can easily solve a problem with dt=5 years, or even larger where the CRD number is about 0.8 years.
+% Thus, clearly exceeding the CDT limit.
+% 
+% For theta=0, the -uvh- solution is unstable for dt > 0.35 years, or there about
+%
+% Note: the -uvh- system is always non-linear, even for n=m=1 as it contains products of velocity and
+% thickness. 
+%
+% The outer iteration in the -uv-h- solve converges at best linearly, but sub-linearly if large number (>10) iterations are
+% needed. For example, solving -uv-h- with dt=5 and theta=1/2 requires 95 outer iterations to converge within 1e-5, and is about
+% 10 times slower than the -uvh- solver for the same problem. 
+%
+% For dt=1 the -uv-h- solve is about 2 to 3 times slower for CtrlVar.uv2h.uvTolerance=1e-5;
+%
+% However, if the number of outer -uv-h- iterations is forced to be equal to 1, in which case there is no check that the next uv
+% solution agrees with the guessed uv solution used to calculate the next h solution, the -uv-h- solver is easily 3 times faster.
+% This ratio is likely to be problem size dependent. 
 %
 % The CDT number, u dt/dx, is about 0.8 years
 %%
@@ -68,6 +85,26 @@ CtrlVar.MeshSize=str2double(extractBetween(UserVar.Experiment,"-MS","k-"))*1000 
 CtrlVar.MeshSizeMin=0.01*CtrlVar.MeshSize;
 CtrlVar.MeshSizeMax=CtrlVar.MeshSize;
 CtrlVar.GmshMeshingAlgorithm=8;
+
+%% Numerical convergence criteria: 
+
+% the -uvh- tolerances are the default ones. 
+
+CtrlVar.uv2h.uvTolerance=1e-5; % this is the tolerance in the change of the uv solution 
+                               % when solving the transient problem semi-implicitly, 
+                               % ie. when using CtrlVar.ForwardTimeIntegration="-uv-h-" 
+                               %
+                               % This is the norm of the changes in the velocity solve (actually the square of the norm).
+
+                               
+CtrlVar.uv2h.MaxIterations=str2double(extractBetween(UserVar.Experiment,"-uv2hIt","-")); 
+                               % The maximum number of (outer) iterations in the semi-implicit -uv-h- solver
+                               % The  -uv-h- solver solves for uv and h repeatedly. The iterations required for the uv solve and the h solver are referred
+                               % to as "inner" iterations, and the repeated solve of uv and h as the outer iteration. 
+
+
+                               
+CtrlVar.Compare_uvh_uv2h_CPUtimes=false; % can be used to compare CPU times between -uv-h- and -uvh- solutions
 
 %% time stepping and run duration
 

@@ -89,16 +89,26 @@ if isempty(Diagnostics)
     iCounter=0;
 end
 
-iCounter=iCounter+1;
-Diagnostics.time(iCounter)=F.time; 
-Diagnostics.sNumerical(iCounter)=dsNumericalNorm; 
-Diagnostics.sAnalytical(iCounter)=dsAnalyticalNorm; 
-Diagnostics.sError(iCounter)=sError; 
+if CtrlVar.DefineOutputsInfostring~="Last call"
+    iCounter=iCounter+1;
+    Diagnostics.time(iCounter)=F.time;
+    Diagnostics.sNumerical(iCounter)=dsNumericalNorm;
+    Diagnostics.sAnalytical(iCounter)=dsAnalyticalNorm;
+    Diagnostics.sError(iCounter)=sError;
 
-Diagnostics.SpeedNumerical(iCounter)=SpeedNumericalNorm; 
-Diagnostics.SpeedAnalytical(iCounter)=SpeedAnalyticalNorm; 
-Diagnostics.SpeedError(iCounter)=SpeedErrorNorm; 
-
+    Diagnostics.SpeedNumerical(iCounter)=SpeedNumericalNorm;
+    Diagnostics.SpeedAnalytical(iCounter)=SpeedAnalyticalNorm;
+    Diagnostics.SpeedError(iCounter)=SpeedErrorNorm;
+else
+    I=isnan(Diagnostics.time);
+    Diagnostics.time(I)=[];
+    Diagnostics.sNumerical(I)=[];
+    Diagnostics.sAnalytical(I)=[];
+    Diagnostics.sError(I)=[];
+    Diagnostics.SpeedAnalytical(I)=[];
+    Diagnostics.SpeedNumerical(I)=[];
+    Diagnostics.SpeedError(I)=[];
+end
 
 
 
@@ -108,14 +118,6 @@ Diagnostics.SpeedError(iCounter)=SpeedErrorNorm;
 %%
 
 
-if CtrlVar.DefineOutputsInfostring=="Last call"
-
-    
-    FigureFileName=replace(UserVar.Experiment,".","k");
-    save(FigureFileName+".mat","Diagnostics")
-
-
-end
 
 
 if CtrlVar.DefineOutputsInfostring~="Last call"
@@ -157,7 +159,7 @@ end
 
 %%
 
-
+sErrorTimeIntegrated=trapz(Diagnostics.time,Diagnostics.sError); 
 
 
 sFig=FindOrCreateFigure("Surface topography Norms");
@@ -166,20 +168,16 @@ hold on
 plot(Diagnostics.time,Diagnostics.sAnalytical,"-xb",DisplayName="$\|s(x,y)-\bar{s(x,y)}\|$ Analytical")
 plot(Diagnostics.time,Diagnostics.sError,"-sm",DisplayName="$\|s_{\mathrm{Numerical}}(x,y)-s(x,y)_{\mathrm{Analytical}}\|")
 xlabel("time (yr)")
-title("Norm of surface perturbances")
+ylabel("Norms (m)")
+title(sprintf("Norm of surface perturbances (%f)",sErrorTimeIntegrated))
 subtitle(UserVar.Experiment);
 lg=legend(Location="northwest",Interpreter="latex",FontSize=14);
-te=text(0.05,0.75,"$ \| f(x,y) - g(x,y)  \| := \sqrt{ \frac{\int (f(x,y)-g(x,y))^2 \; dx \, dy }{\int dx \, dy }}$",Units="normalized",Interpreter="latex",FontSize=14);
-te.Position=[0.7 0.3]; 
-if CtrlVar.DefineOutputsInfostring=="Last call"
-
-    
-    FigureFileName="s"+replace(UserVar.Experiment,".","k")+".fig"; 
-    fprintf("saving figure %s \n",FigureFileName)
-    savefig(sFig,FigureFileName)
+te=text(0.05,0.75,"$ \| f(x,y) - g(x,y)  \| := \sqrt{ \frac{\int (f(x,y)-g(x,y))^2 \; dx \, dy }{\int dx \, dy }}$",...
+    Units="normalized",Interpreter="latex",FontSize=14,...
+    HorizontalAlignment="right");
+te.Position=[0.9 0.3]; 
 
 
-end
 
 %%
 FindOrCreateFigure("Norm of speed variations around mean speed")
@@ -249,5 +247,23 @@ title("analytical versus numerical topography")
 dtCFL=CalcCFLdt2D(UserVar,RunInfo,CtrlVar,MUA,F);
 
 fprintf("The time step used is dt=%f \t the CFL limit is %f \n",CtrlVar.dt,dtCFL)
+
+
+if CtrlVar.DefineOutputsInfostring=="Last call"
+
+    
+    ResultsFileName=replace(UserVar.Experiment,".","k");
+
+ 
+    save(ResultsFileName+".mat","Diagnostics")
+
+    
+    FigureFileName="s"+replace(UserVar.Experiment,".","k")+".fig"; 
+    fprintf("saving figure %s \n",FigureFileName)
+    savefig(sFig,FigureFileName)
+
+
+end
+
 
 end
