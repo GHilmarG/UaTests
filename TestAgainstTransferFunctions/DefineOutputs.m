@@ -111,8 +111,8 @@ Diagnostics.SpeedError(iCounter)=SpeedErrorNorm;
 if CtrlVar.DefineOutputsInfostring=="Last call"
 
     
-    OutputString=replace(UserVar.Experiment,".","k");
-    save(OutputString+".mat","Diagnostics")
+    FigureFileName=replace(UserVar.Experiment,".","k");
+    save(FigureFileName+".mat","Diagnostics")
 
 
 end
@@ -174,8 +174,9 @@ te.Position=[0.7 0.3];
 if CtrlVar.DefineOutputsInfostring=="Last call"
 
     
-    OutputString="s"+replace(UserVar.Experiment,".","k");
-    savefig(sFig,OutputString+".fig")
+    FigureFileName="s"+replace(UserVar.Experiment,".","k")+".fig"; 
+    fprintf("saving figure %s \n",FigureFileName)
+    savefig(sFig,FigureFileName)
 
 
 end

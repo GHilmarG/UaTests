@@ -3,18 +3,43 @@
 function [UserVar,CtrlVar,MeshBoundaryCoordinates]=DefineInitialInputs(UserVar,CtrlVar)
 
 
+%% Testing against analytical transfer functions
+%
+%
+% Here a flow down a uniformly inclined slab with some small perturbations in bedrock and slipperiness are compared against
+% analytical solutions, valid provided the perturbations are small.
+% 
+% For simplicity here the perturbations are Gaussian perturbations, although the theory works for any small amplitude
+% perturbations.
+%
+% The domain is periodic, and periodic boundary conditions are applied using nodal ties. 
+%
+%
+%%
 
 %% Some key model parameters are defined by this string: 
 
-UserVar.Experiment="NumAna-Nod3-MS1k-dt0.5-DSx50k-DSy50k-alpha0.05-TI-uvh-IT-" ; 
+UserVar.Experiment="NumAna-Nod3-MS1k-dt2-DSx50k-DSy50k-alpha0.05-TI-uvh-IT-theta0.5-" ; 
 
 % MS :  element size (km)
 % dt :  dt,
 % DSx : (half) domain size in x direction (km)
 % DSy : (half) domain size in y direction (km)
- 
+%
+% theta : theta=0   ->  forward Euler
+%         theta=1   ->  backward Euler
+%         theta=1/2 ->  Crank-Nicolson (the default Ua method)
+%
+%
+%%
 
-% Some key numerical parameters
+%%
+%
+% For theta=1/2 the solution is as far as I have tested, always stable.
+% For theta=0, the solution is unstable for dt > 0.35 years, or there about
+%
+% The CDT number, u dt/dx, is about 0.8 years
+%%
 
 
 
@@ -48,6 +73,10 @@ CtrlVar.GmshMeshingAlgorithm=8;
 
 
 CtrlVar.ForwardTimeIntegration=extractBetween(UserVar.Experiment,"-TI","IT-") ; 
+
+
+CtrlVar.theta=str2double(extractBetween(UserVar.Experiment,"-theta","-")); 
+CtrlVar.htheta=str2double(extractBetween(UserVar.Experiment,"-theta","-")); 
 
 CtrlVar.TimeDependentRun=1;
 CtrlVar.Restart=0;
