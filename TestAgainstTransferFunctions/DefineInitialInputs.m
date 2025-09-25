@@ -19,8 +19,9 @@ function [UserVar,CtrlVar,MeshBoundaryCoordinates]=DefineInitialInputs(UserVar,C
 
 %% Some key model parameters are defined by this string: 
 
-UserVar.Experiment="NumAna-Nod3-MS1k-dt0.5-DSx50k-DSy50k-alpha0.05-TI-uv-h-IT-theta0.5-uv2hIt1-" ; 
-
+if isempty(UserVar)
+    UserVar.Experiment="NumAna-Nod3-MS5k-dt0.1-DSx50k-DSy50k-alpha0.05-TI-uv-h-IT-theta0.5-uv2hIt1-" ;
+end
 
 % MS :  element size (km)
 % dt :  dt,

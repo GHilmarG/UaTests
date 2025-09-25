@@ -161,6 +161,24 @@ end
 
 sErrorTimeIntegrated=trapz(Diagnostics.time,Diagnostics.sError); 
 
+%% Table
+
+Theta=CtrlVar.theta;
+dt=CtrlVar.dt;
+Nod=CtrlVar.TriNodes;
+MeshSize=CtrlVar.MeshSize; 
+TimeIntegration=CtrlVar.ForwardTimeIntegration; 
+dC=UserVar.ampl_c;
+db=UserVar.ampl_b;
+uv2hMaxIterations=CtrlVar.uv2h.MaxIterations;
+uv2hTolerance=CtrlVar.uv2h.uvTolerance;
+
+T=table(sErrorTimeIntegrated,dt,Theta,Nod,MeshSize,TimeIntegration,dC,db,uv2hMaxIterations,uv2hTolerance); 
+TableFileName="Table.csv";
+writetable(T, TableFileName, 'WriteMode', 'append');
+
+%%
+
 
 sFig=FindOrCreateFigure("Surface topography Norms");
 plot(Diagnostics.time,Diagnostics.sNumerical,"-or",DisplayName="$\|s(x,y)-\bar{s(x,y)}\|$ Numerical")
