@@ -6,7 +6,7 @@ LocalClusterThreaded = parcluster("localThread");
 
 for i=1:10
     
-    MeshSizeString="MS"+num2str(i*1000/3)+"k" ;
+    MeshSizeString="MS"+num2str(i*1000/7)+"k" ;
 
 
 

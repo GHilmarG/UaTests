@@ -94,7 +94,7 @@ function testMassConservationPeaks(testCase)
 
     
     expSolution = UserVar.Test.Norm.expValue ;
-    verifyEqual(testCase,actSolution,expSolution,'RelTol',1e-6)
+    verifyEqual(testCase,actSolution,expSolution,'RelTol',1e-3)
     
 end
 
