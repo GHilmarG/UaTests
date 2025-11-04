@@ -14,7 +14,8 @@ CtrlVar.Experiment=['MismipPlus-',UserVar.MisExperiment];
 %
 CtrlVar.TimeDependentRun=1; 
 CtrlVar.TotalNumberOfForwardRunSteps=10;
-CtrlVar.TotalTime=100;
+CtrlVar.StartTime=0;
+CtrlVar.EndTime=1;
 CtrlVar.Restart=0;  
 CtrlVar.InfoLevelNonLinIt=1;  CtrlVar.InfoLevelBackTrack=0;
 CtrlVar.NRitmax=500;            % maximum number of NR iteration
@@ -81,8 +82,8 @@ CtrlVar.MeshSizeMin=0.01*CtrlVar.MeshSize;     % min element size
 CtrlVar.MaxNumberOfElements=250e3;           % max number of elements. If #elements larger then CtrlMeshSize/min/max are changed
 
 CtrlVar.AdaptMesh=1;         
-CtrlVar.AdaptMeshMaxIterations=10;  % Number of adapt mesh iterations within each run-step.
-CtrlVar.AdaptMeshMaxIterations=2;  % Number of adapt mesh iterations within each run-step.
+CtrlVar.AdaptMeshMaxIterations=20;  % Number of adapt mesh iterations within each run-step.
+% CtrlVar.AdaptMeshMaxIterations=2;  % Number of adapt mesh iterations within each run-step.
 CtrlVar.MeshRefinementMethod='explicit:local:newest vertex bisection';    % can have any of these values:
                                                    % 'explicit:global' 
                                                    % 'explicit:local'
@@ -93,12 +94,12 @@ CtrlVar.SaveAdaptMeshFileName='AdaptMesh.mat';
 
 
 
-CtrlVar.AdaptMeshInitial=1 ;       % if true, then a remeshing will always be performed at the inital step
+CtrlVar.AdaptMeshInitial=1 ;       % if true, then a re-meshing will always be performed at the initial step
 CtrlVar.AdaptMeshAndThenStop=0;    % if true, then mesh will be adapted but no further calculations performed
-                                   % usefull, for example, when trying out different remeshing options (then use CtrlVar.doRemeshPlots=1 to get plots)
+                                   % useful, for example, when trying out different re-meshing options (then use CtrlVar.doRemeshPlots=1 to get plots)
 
 
-CtrlVar.AdaptMeshRunStepInterval=1;  % number of run-steps between mesh adaptation
+CtrlVar.AdaptMeshRunStepInterval=inf;  % number of run-steps between mesh adaptation
 
 CtrlVar.MeshAdapt.GLrange=[20000 5000 ; 10000 500 ];
 
@@ -115,5 +116,14 @@ CtrlVar.ThicknessConstraintsItMax=5  ;
 xd=640e3; xu=0e3 ; yr=0 ; yl=80e3 ;  
 MeshBoundaryCoordinates=[xu yr ; xu yl ; xd yl ; xd yr];
 
- 
+
+%% Rhubarb
+
+CtrlVar.AdaptMesh=1; 
+CtrlVar.TotalNumberOfForwardRunSteps=inf;
+CtrlVar.StartTime=0;
+CtrlVar.EndTime=5100;
+CtrlVar.Restart=1;          
+CtrlVar.DefineOutputsDt=10;
+CtrlVar.ATSdtMax=10;
 end

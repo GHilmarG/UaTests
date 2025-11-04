@@ -90,7 +90,7 @@ switch TestCase
         LSF=zeros(MUA.Nnodes,1)-1 ; 
         x=MUA.coordinates(:,1); y=MUA.coordinates(:,2); 
 
-        [inside,on] = inpoly2([x y],P1);
+        [inside,on] = UaInpoly2([x y],P1);
 
 
 

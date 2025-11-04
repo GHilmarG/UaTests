@@ -1,17 +1,22 @@
-function [UserVar,EleSizeDesired,ElementsToBeRefined,ElementsToBeCoarsened]=...
-            DefineDesiredEleSize(UserVar,CtrlVar,MUA,x,y,EleSizeDesired,ElementsToBeRefined,ElementsToBeCoarsened,s,b,S,B,rho,rhow,ub,vb,ud,vd,GF,NodalErrorIndicators)
-        
+
+
+
+
+
+
+function [UserVar,RunInfo,F,l,EleSizeDesired,ElementsToBeRefined,ElementsToBeCoarsened]=...
+    DefineDesiredEleSize(UserVar,RunInfo,CtrlVar,MUA,BCs,F,l,x,y,EleSizeDesired,ElementsToBeRefined,ElementsToBeCoarsened,NodalErrorIndicators)
+
 
 %%
-% Define desired sizes of elements or specify which elements to refine or
-% coarsen.
+% Define desired sizes of elements or specify which elements to refine or coarsen.
 %
 %   [UserVar,EleSizeDesired,ElementsToBeRefined,ElementsToBeCoarsened]=...
 %            DefineDesiredEleSize(UserVar,CtrlVar,MUA,x,y,EleSizeDesired,ElementsToBeRefined,ElementsToBeCoarsened,s,b,S,B,rho,rhow,ub,vb,ud,vd,GF,NodalErrorIndicators)
 %
 % Only used in combination with adaptive meshing.
 %
-% You need to set 
+% You need to set
 %
 %   CtrlVar.AdaptMesh=1;  
 %
@@ -45,7 +50,7 @@ function [UserVar,EleSizeDesired,ElementsToBeRefined,ElementsToBeCoarsened]=...
 % used. These options must be set accordingly in Ua2D_InitialUserInput.
 %
 % 
-% *Example:* To set desired ele sized to 1000 within a given boundary (this boundary
+% *Example:* To set desired element size to 1000 within a given boundary (this boundary
 % must of course be within the overall boundary of the computational
 % domain):
 %

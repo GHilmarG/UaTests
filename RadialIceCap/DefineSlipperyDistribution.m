@@ -24,12 +24,16 @@ function  [UserVar,C,m,q,muk]=DefineSlipperyDistribution(UserVar,CtrlVar,MUA,F)
     %
     %%
     
-    
+
     m=1;
-    C0=0;
-    
+    if CtrlVar.FlowApproximation=="SSHEET"
+        C0=0;
+    elseif CtrlVar.FlowApproximation=="SSTREAM" 
+        C0=1e4;  
+    end
+
     C=C0+zeros(MUA.Nnodes,1);
-    
+
     
     q=1 ;      % only needed for Budd sliding law
     muk=0.5 ;  % required for Coulomb friction type sliding law as well as Budd, minCW (Tsai), rCW  (Umbi) and rpCW (Cornford).

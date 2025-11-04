@@ -20,8 +20,8 @@ Meas.usCov=sparse(1:MUA.Nnodes,1:MUA.Nnodes,Error.^2,MUA.Nnodes,MUA.Nnodes);
 Meas.vsCov=sparse(1:MUA.Nnodes,1:MUA.Nnodes,Error.^2,MUA.Nnodes,MUA.Nnodes);
 
 
-% And here I set all erros along the boundary to a high value. I do this as a simple way of partially dealing with mismatch
-% between the coverage of the velocity data and the boundary that I use. It would be better to carfully look at how the
+% And here I set all errors along the boundary to a high value. I do this as a simple way of partially dealing with mismatch
+% between the coverage of the velocity data and the boundary that I use. It would be better to carefully look at how the
 % velocity data coverage and the computational domain that I use match up.
 
 Nodes=MUA.Boundary.Nodes;
@@ -60,7 +60,7 @@ else
 
     Priors.n=F.n;
 
-    % use measured speed to help finding a resonable prior
+    % use measured speed to help finding a reasonable prior
     MeasuredSpeed=sqrt(Meas.us.*Meas.us+Meas.vs.*Meas.vs);
     SpeedMin=10;
     SpeedMax=1000;

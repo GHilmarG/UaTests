@@ -7,6 +7,10 @@ end
 
 OutputFile=sprintf('./ResultsFiles/%010i-%s',round(100*CtrlVar.time),UserVar.OutputFile);
 
+if ~isfolder("ResultsFiles")
+    mkdir("ResultsFiles")
+end
+
 fprintf('UaOutputs: Saving data in %s \n',OutputFile)
 save(OutputFile,'CtrlVar','UserVar','MUA','F','GF','RunInfo')
 
@@ -42,17 +46,14 @@ if CtrlVar.DefineOutputsInfostring=="Last call" && contains(UserVar.Plots,"-Crea
     hold on ;  [xGL,yGL,GLgeo]=PlotGroundingLines(CtrlVar,MUA,GF,GLgeo,xGL,yGL,'r');
     xlabel('xps (km)') ; ylabel('yps (km)')
     
-    FigC=FindOrCreateFigure('log(C)') ;
-    [~,cbar]=PlotMeshScalarVariable(CtrlVar,MUA,log10(F.C)) ;
-    hold on
-    [xGL,yGL,GLgeo]=PlotGroundingLines(CtrlVar,MUA,GF,GLgeo,xGL,yGL,'r');
+    
+    cbar=UaPlots(CtrlVar,MUA,F,F.C,FigureTitle="C") ;
+    set(gca,'ColorScale','log') 
     title("log(C)",'interpreter','latex')
     title(cbar,sprintf("$\\mathrm{m\\,kPa^{-%i} \\,yr^{-1}}$",F.n(1)),'interpreter','latex')
     
-    FigA=FindOrCreateFigure('log(A)') ;
-    [~,cbar]=PlotMeshScalarVariable(CtrlVar,MUA,log10(F.AGlen)) ;
-    hold on ;
-    [xGL,yGL,GLgeo]=PlotGroundingLines(CtrlVar,MUA,GF,GLgeo,xGL,yGL,'r');
+    cbar=UaPlots(CtrlVar,MUA,F,F.AGlen,FigureTitle="A") ;
+    set(gca,'ColorScale','log')
     title("log(A)",'interpreter','latex')
     title(cbar,sprintf("$\\mathrm{kPa^{-%i} \\,yr^{-1}}$",F.n(1)),'interpreter','latex')
     xlabel('xps (km)') ; ylabel('yps (km)')

@@ -40,17 +40,36 @@ function  [UserVar,s,b,S,B,rho,rhow,g]=DefineGeometryAndDensities(UserVar,CtrlVa
 %
 %%
 
+switch UserVar.Experiment
 
-B=MismBed(F.x,F.y);
+    case "ice shelf stream flow"
+        h=700;
+    case "ice shelf constricted"
+        h=700;
+    case "ice shelf single notch"
+        h=1000;
+    otherwise
+        h=300;
+end
 
-S=B*0;
-b=B;
-h0=300;
-s=b+h0;
+n=MUA.Nnodes;
 
-rho=917+zeros(MUA.Nnodes,1) ;
+% 
+% if nargin>3
+%     h=hIce;
+% end
+% 
+
+h=zeros(n,1)+h;
+S=zeros(n,1);
+B=zeros(n,1)-1e10;
+rho=zeros(n,1)+920;
 rhow=1030;
 g=9.81/1000;
+
+
+[b,s]=Calc_bs_From_hBS(CtrlVar,MUA,h,S,B,rho,rhow);
+
 
 
 

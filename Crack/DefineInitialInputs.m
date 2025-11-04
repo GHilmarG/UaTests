@@ -5,7 +5,8 @@ function [UserVar,CtrlVar,MeshBoundaryCoordinates]=DefineInitialInputs(UserVar,C
 CtrlVar.Experiment='Crack';
 CtrlVar.TimeDependentRun=1;
 CtrlVar.Restart=0;
-CtrlVar.time=0 ; 
+CtrlVar.StartTime=0 ; 
+CtrlVar.EndTime=inf ;
 CtrlVar.dt=1e-5; 
 CtrlVar.TotalNumberOfForwardRunSteps=1;
 

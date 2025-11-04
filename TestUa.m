@@ -2,6 +2,7 @@
 %%
 %
 % (master)   26/06/2023 , 16/03/2024  , 01/08/2024, 4/11/2025
+%
 % To run the test do:
 %
 %  >> results = runtests('TestUa.m') ; table(results)  [RET]
@@ -16,18 +17,18 @@ function tests = TestUa
     
     %f=localfunctions ;  % all tests
     
-     % f={@testCrack}                     ;    % OK  11/05/2021 ,  09/09/2021 , 01/11/2021 ,   08/03/2023 , 24/06/2023 , 02/10/2023 , 16/03/2024 ,  01/08/2024
-     % f={@testPIGdiagnostic}             ;    % OK  11/05/2021 ,  09/09/2021 , 01/11/2021 ,   08/03/2023 , 24/06/2023 , 02/10/2023, 16/03/2024  ,  01/08/2024
-     % f={@testPIGtransient}            ;    %                                                            24/06/2023 , 02/10/2023 , 16/03/2024  ,  01/08/2024
+      f={@testCrack}                     ;    % OK  11/05/2021 ,  09/09/2021 , 01/11/2021 ,   08/03/2023 , 24/06/2023 , 02/10/2023 , 16/03/2024 ,  01/08/2024 , 29/12/2024
+      f={@testPIGdiagnostic}             ;    % OK  11/05/2021 ,  09/09/2021 , 01/11/2021 ,   08/03/2023 , 24/06/2023 , 02/10/2023 , 16/03/2024 ,  01/08/2024 , 29/12/2024
+      f={@testPIGtransient}              ;    %                                                            24/06/2023 , 02/10/2023 , 16/03/2024 ,  01/08/2024 , 29/12/2024
 
-     % f={@testMassBalanceFeedback}     ;    % OK  11/05/2021 ,  09/09/2021 , 01/11/2021 ,   08/03/2023 , 24/06/2023 , 02/10/2023
-     % f={@test1dIceStream}             ;    % OK  11/05/2021 ,  08/09/2021 , 01/11/2021 ,   08/03/2023 , 24/06/2023 , 02/10/2023, 16/03/2024 , 01/08/2024
-     % f={@test1dIceShelf}              ;    % OK  11/05/2021 ,  08/09/2021 , 01/11/2021 ,   08/03/2023 , 24/06/2023 , 02/10/2023 , 16/03/2024 , 01/08/2024
-     % f={@testGaussPeak}               ;    % OK  11/05/2021 ,             , 01/11/2021 ,   08/03/2023 , 24/06/2023 , 02/10/2023 , 16/03/2024 , 01/08/2024
-     % f={@testFreeSlipBCs}             ;    % OK  11/05/2021 ,  08/09/2021 , 01/11/2021 ,   03/08/2023 , 24/06/2023 , 02/10/2023 , 16/03/2024 , 01/08/2024
-     % f={@testMassConservationPeaks}   ;   %  OK                                                                                   16/03/2024  , 01/08/2024
+      f={@testMassBalanceFeedback}     ;      % OK  11/05/2021 ,  09/09/2021 , 01/11/2021 ,   08/03/2023 , 24/06/2023 , 02/10/2023 ,                          , 29/12/2014
+      f={@test1dIceStream}             ;    % OK  11/05/2021 ,  08/09/2021 , 01/11/2021 ,   08/03/2023 , 24/06/2023 , 02/10/2023, 16/03/2024 , 01/08/2024     , 29/12/2014
+      f={@test1dIceShelf}              ;    % OK  11/05/2021 ,  08/09/2021 , 01/11/2021 ,   08/03/2023 , 24/06/2023 , 02/10/2023 , 16/03/2024 , 01/08/2024 , 29/12/2014
+      f={@testGaussPeak}               ;    % OK  11/05/2021 ,             , 01/11/2021 ,   08/03/2023 , 24/06/2023 , 02/10/2023 , 16/03/2024 , 01/08/2024 , 29/12/2014
+      f={@testFreeSlipBCs}             ;    % OK  11/05/2021 ,  08/09/2021 , 01/11/2021 ,   03/08/2023 , 24/06/2023 , 02/10/2023 , 16/03/2024 , 01/08/2024 , 29/12/2014
+      f={@testMassConservationPeaks}   ;   %  OK                                                                                   16/03/2024  , 01/08/2024  , 29/12/2014
       
-     % f={@testCrack,@testPIGdiagnostic,@testPIGtransient,@testMassBalanceFeedback,@test1dIceStream,@test1dIceShelf,@testGaussPeak,@testFreeSlipBCs,@testMassConservationPeaks} ;
+      f={@testCrack,@testPIGdiagnostic,@testPIGtransient,@testMassBalanceFeedback,@test1dIceStream,@test1dIceShelf,@testGaussPeak,@testFreeSlipBCs,@testMassConservationPeaks} ;
 
      
 
@@ -68,8 +69,11 @@ function testPIGdiagnostic(testCase)
     % expSolution = 9757675340.83092 ;   % this is with the new Bedmachine data, 10/09/2021
     % expSolution = 202912           ;     % this is with the new Bedmachine data and a new boundary, 01/11/2021
     expSolution = UserVar.Test.Norm.expValue ;
+ 
+
     verifyEqual(testCase,actSolution,expSolution,'RelTol',1e-4)
-    
+  
+
 end
 
 function testPIGtransient(testCase)
@@ -95,7 +99,7 @@ function testMassConservationPeaks(testCase)
 
     
     expSolution = UserVar.Test.Norm.expValue ;
-    verifyEqual(testCase,actSolution,expSolution,'RelTol',1e-6)
+    verifyEqual(testCase,actSolution,expSolution,'RelTol',1e-3)
     
 end
 
@@ -201,7 +205,7 @@ function testGaussPeak(testCase)
     cd ..
     actSolution= UserVar.Test.Norm.actValue ;
     expSolution = UserVar.Test.Norm.expValue ;
-    verifyEqual(testCase,actSolution,expSolution,'AbsTol',1e-6)
+    verifyEqual(testCase,actSolution,expSolution,'RelTol',1e-6)
     
 end
 

@@ -25,26 +25,27 @@ if UserVar.ReadSlipperinessFromFile==0
     ub=10 ; tau=80 ; % units meters, year , kPa
     C0=ub/tau^m;
     C=C0;
-    
-    
+
+
 else
-    
-    
+
+
     if isempty(FC)
-        
+
         fprintf('DefineSlipperyDistribution: loading file: %-s ',UserVar.CFileName)
         load(UserVar.CFileName,'C','m','xC','yC')
         fprintf(' done \n')
         FC=scatteredInterpolant(xC,yC,C);
-        
-    else
-        m=UserVar.m ;
-        C=FC(MUA.coordinates(:,1),MUA.coordinates(:,2)) ; 
+
     end
     
- 
-  
-    
-    
+    m=UserVar.m ;
+    C=FC(MUA.coordinates(:,1),MUA.coordinates(:,2)) ;
+
+
+
+
+
+
 end
-    
+

@@ -1,6 +1,6 @@
 function [UserVar,C,m,q,muk,V0]=DefineSlipperyDistribution(UserVar,CtrlVar,MUA,F)
 
-persistent FC
+persistent FC FCFile
 
 
 q=3 ; 
@@ -61,9 +61,12 @@ if ~UserVar.Slipperiness.ReadFromFile
     
 else
     
-    
-    if isempty(FC)
+    % is is possible that the FC interpolant is still in memory from a previous 
+    % case, but that the name of the FC file may have changed
+    if isempty(FC) || isempty(FCFile)  || (FCFile~=UserVar.FCFile)
         
+        FCFile=UserVar.FCFile; 
+
         if isfile(UserVar.FCFile)  || isfile(UserVar.FCFile+".mat")
             fprintf('DefineSlipperyDistribution: loading file: %-s \n',UserVar.FCFile)
             load(UserVar.FCFile,'FC')
@@ -81,14 +84,15 @@ else
     C=FC(MUA.coordinates(:,1),MUA.coordinates(:,2));
     m=3;
     
-   if contains(UserVar.RunType,"-Clim-")
-    
-       CminFloating=1e-2; 
-       I=F.GF.node<0.5 & C < CminFloating ; 
-
-       C(I)=CminFloating;
-        
-   end
+   % Testing
+   % if contains(UserVar.RunType,"-Clim-")
+   % 
+   %     CminFloating=1e-2; 
+   %     I=F.GF.node<0.5 & C < CminFloating ; 
+   % 
+   %     C(I)=CminFloating;
+   % 
+   % end
 
 
     
