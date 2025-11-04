@@ -49,7 +49,7 @@ end
 
 if contains(FieldsToBeDefined,'b')  || contains(FieldsToBeDefined,'s')
     % Make sure ice thickness outside of the glaciated areas is set to the current min ice thickness
-    io=inpoly2([F.x F.y],UserVar.BedMachineBoundary);
+    io=UaInpoly2([F.x F.y],UserVar.BedMachineBoundary);
     NodesOutsideBoundary=~io ;
     s(NodesOutsideBoundary)=CtrlVar.ThickMin ;  b(NodesOutsideBoundary)=0 ;
 
