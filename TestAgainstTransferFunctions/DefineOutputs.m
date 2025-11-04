@@ -271,7 +271,6 @@ if CtrlVar.DefineOutputsInfostring=="Last call"
 
     
     ResultsFileName=replace(UserVar.Experiment,".","k");
-
  
     save(ResultsFileName+".mat","Diagnostics")
 

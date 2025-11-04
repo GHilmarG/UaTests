@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 sErrorTimeIntegrated,dt,Theta,Nod,MeshSize,TimeIntegration,dC,db
 0.508119117217024,2,0.5,3,1000,-uv-h-,0,0.01
 0.632900536089093,2,0.5,3,5000,-uv-h-,0,0.01
@@ -33,3 +34,9 @@ sErrorTimeIntegrated,dt,Theta,Nod,MeshSize,TimeIntegration,dC,db
 0.0111166740599887,0.1,0.5,3,142857.1,-uvh-,0,0.01,1,1e-05
 0.0111166740599887,0.1,0.5,3,1000000,-uvh-,0,0.01,1,1e-05
 0.0111166740599887,0.1,0.5,3,285714.3,-uvh-,0,0.01,1,1e-05
+=======
+sErrorTimeIntegrated,dt,Theta,Nod,MeshSize,TimeIntegration,dC,db,uv2hMaxIterations,uv2hTolerance
+0.0282736764702867,0.1,0.5,3,333.33,-uv-h-,0,0.01,1,1e-05
+0.0454764038430628,0.1,0.5,3,1000,-uv-h-,0,0.01,1,1e-05
+0.0433320184996784,0.1,0.5,3,666.67,-uv-h-,0,0.01,1,1e-05
+>>>>>>> 5926bf5 (WO)

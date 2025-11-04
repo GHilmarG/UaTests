@@ -120,9 +120,12 @@ CtrlVar.TimeDependentRun=1;
 CtrlVar.Restart=0;
 CtrlVar.StartTime=0 ;
 CtrlVar.EndTime=10 ;
-CtrlVar.dt= str2double(extractBetween(UserVar.Experiment,"-dt","-")) ; 
+CtrlVar.dt= str2double(extractBetween(UserVar.Experiment,"-dt","-")) ;  
+CtrlVar.dt=(CtrlVar.EndTime-CtrlVar.StartTime)/round((CtrlVar.EndTime-CtrlVar.StartTime)/CtrlVar.dt) ;  % make sure total time dt is numerically as close as possible to be an integer multiple of dt
+
 
 CtrlVar.AdaptiveTimeStepping=0 ;
+CtrlVar.NeverChangePrescribedTimeStep=true ;
 CtrlVar.TotalNumberOfForwardRunSteps=inf;
 
 %%
