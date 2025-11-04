@@ -42,7 +42,6 @@ else
     BCs.vbFixedValue=BCs.vbFixedNode*0;
 end
 
-
 if contains(UserVar.RunType,"-BCIO-")
 
     %% Check if there are any nodes were velocities are oriented into the domain
@@ -58,7 +57,6 @@ if contains(UserVar.RunType,"-BCIO-")
 end
 
 % PlotBoundaryConditions(CtrlVar,MUA,BCs) ;
-
 
 
 

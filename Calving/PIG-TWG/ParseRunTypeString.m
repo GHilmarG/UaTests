@@ -4,63 +4,7 @@
 
 function [CtrlVar,UserVar]=ParseRunTypeString(CtrlVar,UserVar)
 
-%%
-%
-% extracts from:
-%
-%   UserVar.RunType
-%
-%
-%
-% various model options and set CtrlVar fields accordingly
-%
-%
-% FR :  forward run
-% IR :  inverse run 
-%
-% -uvh-  : implicit uvh run
-% -uv-h- : semi-implicit uv-h run
-% -EW-   : Element Size
-% -Tri?- : Element with ? numbher of nodes
-%
-% -Duvh- : Automated deactivation of elements downstream of calving fronts
-% -SW??  : Level set Strip Width of ?? km, otherwise by default 50km.
-%
-% -P-   : Level set is Prescribed
-% -C-   : Level set is evolved, with various further options possible
-%
-% -TM??- : min ice thickness, for example -TM0k2- implies a min thickness of 0.2 meters  
-%
-% -MRIM  : Melt Rate parameterisation based on IsMip
-%
-% -SMB??  : Surface Mass Balance
-%
-% -BM3-   : user bed-machine 3 data
-%
-%
-% -DV0-   : do NOT use development version -DV1-   : do use development version
-%
-% abMask0    :  apply melt over nodes either currently or initially afloat, within the assimilation/relaxation period
-%
-% abMask0M   :  apply ADDITIONAL high melt over nodes that initially were afloat, but now have become grounded, ONLY within
-%               the assimilation/relaxation period
-%
-% abMask0A   :  apply ADDITIONAL high melt over nodes that initially were afloat, but now have become grounded, ALWAYS (i.e.
-%               throughout the run period)
-%
-% -IOR-       : InsideOut nodes with respect to grounding line calculated in a 'relaxed' manner, i.e. all nodes where 
-%               GF.node  <0.5 are afloat, for the purpose of applying basal melt rates
-%               
-%
-%   if contains(UserVar.RunType,"-IOR-")
-%         [~,OceanNodes] = LakeOrOcean3(CtrlVar,MUA,F.GF,[],"Relaxed") ;
-%     else
-%         [~,OceanNodes] = LakeOrOcean3(CtrlVar,MUA,F.GF,[],"Strict") ;
-%     end
-% 
-% 
-% 
-%%
+
 
 %%
 %
@@ -618,6 +562,17 @@ elseif CtrlVar.TimeDependentRun
     fprintf("This forward run will use geometry interpolants in: %s \n",UserVar.GeometryInterpolant)
 
 end
+
+%% Reversibility experiment? 
+%
+% If reversibility experiment, find old results files and create a restart file from those result files.
+%
+% Get rid of the "-R*- part in the names of all other input files, (although these should not be needed anyhow)
+
+%
+%
+%%
+
 
 if ~nargout   % A trick to suppress any function output if no output requested. No need to suppress output using ;
     clearvars CtrlVar

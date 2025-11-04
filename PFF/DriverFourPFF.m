@@ -43,17 +43,20 @@ CtrlVar.PlotXYscale=1000;
 CtrlVar.WhenPlottingMesh_PlotMeshBoundaryCoordinatesToo=0;
 % Note; When creating this mesh using Úa, only the following
 % three lines are required in the Ua2D_InitialUserInput.m
+CtrlVar.PhaseFieldFracture.Video=true;
 
+
+%%
 CtrlVar.MeshSizeMax=1000e3;
 CtrlVar.MeshSize=5e3; 
 CtrlVar.MeshSizeMin=0.1e3 ; 
 CtrlVar.TriNodes=3;
 CtrlVar.ThickMin=1e-6; 
 
-CtrlVar.QuadratureRuleDegree=[] ;
 
 
-CtrlVar.PhaseFieldFracture.Video=true;
+
+
 
 
 xmin=0e3 ; xmax=100e3 ; ymin=-100e3 ; ymax=100e3;

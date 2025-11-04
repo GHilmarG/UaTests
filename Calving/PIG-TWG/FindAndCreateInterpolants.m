@@ -48,9 +48,10 @@ if CtrlVar.InverseRun
 
             fprintf("An output file with results from a forward transient run at t=%i is found: \n",UserVar.to)
             fprintf("%s\n",FileName)
-            fprintf("This output file will be used to define the new geometry (sbSB) of this inverse run.\n ")
-            fprintf("This output file will be also be used to define new FA and FC interpolants.\n ")
-
+            if options.SaveFiles
+                fprintf("This output file will be used to define the new geometry (sbSB) of this inverse run.\n ")
+                fprintf("This output file will be also be used to define new FA and FC interpolants.\n ")
+            end
 
             % If no corresponding inverse restart file exists, FA and FC interpolants are created from transient run at t=to
 
@@ -59,28 +60,28 @@ if CtrlVar.InverseRun
             FC=scatteredInterpolant(F.x,F.y,F.C);
             FA=scatteredInterpolant(F.x,F.y,F.AGlen);
 
-
-            fprintf("Saving FA interpolant in: %s \n",UserVar.FAFile)
-            fprintf("Saving FC interpolant in: %s \n",UserVar.FCFile)
-            if options.SaveFiles
-                save(UserVar.FAFile,"FA")
-                save(UserVar.FCFile,"FC")
-
-            end
-
-
             fprintf("Creating new geometrical interpolants for this inverse run from %s \n",FileName)
             FB=scatteredInterpolant(F.x,F.y,F.B);
             Fh=scatteredInterpolant(F.x,F.y,F.h);
             Fs=scatteredInterpolant(F.x,F.y,F.s);
             Fb=scatteredInterpolant(F.x,F.y,F.b);
-
             Frho=scatteredInterpolant(F.x,F.y,F.rho);
-            rhow=F.rhow;
-
-            fprintf("Saving new geometrical interpolants for this inverse run in %s \n",UserVar.GeometryInterpolant)
+            
             if options.SaveFiles
-                
+
+                fprintf("Saving FA interpolant in: %s \n",UserVar.FAFile)
+                fprintf("Saving FC interpolant in: %s \n",UserVar.FCFile)
+
+                save(UserVar.FAFile,"FA")
+                save(UserVar.FCFile,"FC")
+
+
+               
+                rhow=F.rhow;
+
+
+
+                fprintf("Saving new geometrical interpolants for this inverse run in %s \n",UserVar.GeometryInterpolant)
                 save(UserVar.GeometryInterpolant,'FB','Fh','Frho','Fs','Fb','rhow')
             end
 
@@ -112,9 +113,9 @@ if CtrlVar.InverseRun
 
             [F.b,F.s,F.h,GF]=Calc_bs_From_hBS(CtrlVar,MUA,F.h,F.S,F.B,F.rho,F.rhow);
 
-             fprintf("Saving an updated restart file for inverse restart run with new geometry based on previous forward transient run. \n")
+             
             if options.SaveFiles
-               
+               fprintf("Saving an updated restart file for inverse restart run with new geometry based on previous forward transient run. \n")
                 save(UserVar.InverseRestartFile,...
                     'CtrlVarInRestartFile','UserVarInRestartFile','MUA','BCs','F','GF','l','RunInfo',...
                     'InvStartValues','Priors','Meas','BCsAdjoint','InvFinalValues');
@@ -145,12 +146,12 @@ if CtrlVar.TimeDependentRun
         FC=scatteredInterpolant(F.x,F.y,F.C);
         FA=scatteredInterpolant(F.x,F.y,F.AGlen);
 
-
-        fprintf("FindAndCreateInterpolants: New FA and FC interpolants created and saved.\n")
-        fprintf("FA interpolant: %s \n",UserVar.FAFile)
-        fprintf("FC interpolant: %s \n",UserVar.FCFile)
-
         if options.SaveFiles
+            fprintf("FindAndCreateInterpolants: New FA and FC interpolants created and saved.\n")
+            fprintf("FA interpolant: %s \n",UserVar.FAFile)
+            fprintf("FC interpolant: %s \n",UserVar.FCFile)
+
+
             save(UserVar.FAFile,"FA")
             save(UserVar.FCFile,"FC")
         end

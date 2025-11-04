@@ -2,79 +2,18 @@
 
 
 
+
 function driverISMIP6(RunString)
 
 % Driver for repeated inversions over time. This is done to reduce initial transients
 %
 
 if nargin==0 | isempty(RunString)
-   
-   RunString="ES10km-uv-h-Tri3-SlidWeertman-Duvh-MRIM6HadGEM2-abMask0-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; 
-   RunString="ES10km-uvh-Tri3-SlidWeertman-Duvh-MRIM6HadGEM2-abMask0-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; 
-
-   RunString="ES20km-uv-h-Tri3-SlidWeertman-Duvh-MRIM6HadGEM2-abMask0-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; 
-
-   RunString="ES10km-uv-h-Tri3-SlidWeertman-Duvh-MRIM6HadGEM2-abMask0M-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; 
-   RunString="ES10km-uvh-Tri3-SlidWeertman-Duvh-MRIM6HadGEM2-abMask0M-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; 
-
-   RunString="ES10km-uv-h-Tri3-SlidWeertman-Duvh-MRIM6HadGEM2-abMask0A-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; 
-   RunString="ES10km-uvh-Tri3-SlidWeertman-Duvh-MRIM6HadGEM2-abMask0A-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; 
-
-   RunString="ES5km-uv-h-Tri3-SlidWeertman-Duvh-MRlASE3-abMask0A-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; 
-
-   RunString="ES30km-uv-h-Tri3-SlidWeertman-Duvh-MRlASE3-abMask0A-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; 
-
-
-   RunString="ES30km-uv-h-Tri3-SlidWeertman-Duvh-MRlASE3-abMask0A-IOR-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; 
-   RunString="ES5km-uv-h-Tri3-SlidWeertman-Duvh-MRlASE3-abMask0A-IOR-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; 
-    
-   RunString="ES30km-uv-h-Tri3-SlidWeertman-Duvh-MRZERO-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; 
-
-   RunString="ES5km-uv-h-Tri3-SlidWeertman-Duvh-MRlASE3-abMask0A-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; 
-   % RunString="ES2.5km-uv-h-Tri3-SlidWeertman-Duvh-MRlASE3-abMask0A-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; 
-
-   RunString="ES5km-uvh-Tri3-SlidWeertman-Duvh-MRlASE3-abMask0A-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; 
-   RunString="ES5km-uvh-Tri3-SlidWeertman-Duvh-MRlASE3-abMask0A-IOR-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; 
-             
-   % RunString="ES2.5km-uv-h-Tri3-SlidWeertman-Duvh-MRlASE3-abMask0A-IOR-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; 
-
-   RunString="ES5km-uv-h-Tri3-SlidWeertman-Duvh-MRZERO-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; 
-   
-   
-   RunString="ES30km-uvh-Tri3-SlidWeertman-Duvh-MRZERO-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; % no files
-   RunString="ES30km-uv-h-Tri3-SlidWeertman-Duvh-MRZERO-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; % 2020
-   RunString="ES20km-uv-h-Tri3-SlidWeertman-Duvh-MRZERO-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; % no files
- 
- 
-   % RunString="ES2.5km-uvh-Tri3-SlidWeertman-Duvh-MRZERO-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; % 2025, 2030, 2091, % HPHO 2025/12/20
-
-   % RunString="ES30km-uvh-Tri3-SlidWeertman-Duvh-MRZERO-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-";                % HPHO 2025/12/20
-   % 
-   % RunString="ES20km-uvh-Tri3-SlidWeertman-Duvh-MRlASE3-abMask0A-IOR-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-";  % DellWO
-   % RunString="ES10km-uvh-Tri3-SlidWeertman-Duvh-MRlASE3-abMask0A-IOR-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-";  % DellWO
-   % RunString="ES5km-uvh-Tri3-SlidWeertman-Duvh-MRlASE3-abMask0A-IOR-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-";  % DellWO
-   % RunString="ES2.5km-uvh-Tri3-SlidWeertman-Duvh-MRlASE3-abMask0A-IOR-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-";  % DellWO
-   % 
-   % RunString="ES20km-uvh-DV0-Tri3-SlidWeertman-Duvh-MRIM6HadGEM2-abMask0A-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; % HPHO 2025/12/20
-   % RunString="ES20km-uvh-DV1-Tri3-SlidWeertman-Duvh-MRIM6HadGEM2-abMask0A-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; % HPHO 2025/12/20
-   % 
-   % RunString="ES20km-uvh-DV0-TH1-Tri3-SlidWeertman-Duvh-MRIM6HadGEM2-abMask0A-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; % HPHO 2025/12/20
-   % RunString="ES20km-uvh-DV1-TH1-Tri3-SlidWeertman-Duvh-MRIM6HadGEM2-abMask0A-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; % HPHO 2025/12/20
 
 
 
-  % RunString="ES30km-uvh-Tri3-SlidWeertman-Duvh-MRIM6HadGEM2-abMask0A-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-";  % HPHO 2024/12/20
-  % RunString="ES20km-uvh-Tri3-SlidWeertman-Duvh-MRIM6HadGEM2-abMask0A-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-";  % HPHO 2024/12/20
-  % RunString="ES10km-uvh-Tri3-SlidWeertman-Duvh-MRIM6HadGEM2-abMask0A-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-";  % HPHO 2024/12/20
-  
-   RunString="ES2.5km-uvh-Tri3-SlidWeertman-Duvh-MRIM6HadGEM2-abMask0A-P-BCVel-BCIO-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; % HPHO 2024/12/20,2025/02/27
-  % RunString="ES10km-uvh-Tri3-SlidWeertman-Duvh-MRIM6HadGEM2-abMask0A-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-";   % HPHO 2024/12/20
-  % RunString="ES5km-uvh-Tri3-SlidWeertman-Duvh-MRIM6HadGEM2-abMask0A-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-";   % HPHO 2024/12/20
+    RunString=DefineRunString();
 
-  %  RunString="ES2.5km-uvh-Tri3-SlidWeertman-Duvh-MRZERO-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; % 2025, 2030   % HPHO 2025/12/20
-  % RunString="ES30km-uvh-Tri3-SlidWeertman-Duvh-MRZERO-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; %              % HPHO 2025/12/20
- 
-   
 
 end
 
@@ -86,37 +25,48 @@ UserVar.GeometryInterpolant="create the name of inverse restart file from User.R
 %% Keep his
 %
 % Assimilation/relaxation: from t=UserVar.Assimilation.tStart to t=UserVar.Assimilation.tEnd
-% 
-% After assimilation/relaxation is when the actual run starts. So this run goes from        
+%
+% After assimilation/relaxation is when the actual run starts. So this run goes from
 %
 %   t=UserVar.Assimilation.tEnd to t=UserVar.RunEndYear
 %
-% During the actual run, there are no 
+
+% During the actual run, there are no
 %
 %
-UserVar.Assimilation.tStart=2015;                   % typically RunStartYear = Assimilation.tEnd
+UserVar.Assimilation.tStart=2015;
 UserVar.Assimilation.tEnd=2020;
 
-UserVar.RunStartYear=UserVar.Assimilation.tEnd ;    % I don't really need this RunStartYear variable, 
-                                                    % and I always must make sure that the RunStartYear 
-                                                    % is that of the end of the assimilation/period
+UserVar.RunStartYear=UserVar.Assimilation.tEnd ;    % I don't really need this RunStartYear variable,
+% and I always must make sure that the RunStartYear
+% is that of the end of the assimilation/period
 
 UserVar.RunEndYear=2500;
 
 
 
-UserVar.Assimilation.is=false;       % This is a flag to bypass the assimilation/relaxation phase. 
-                                     % This will only work if the assimilation/relaxation has already 
-                                     % been performed previously and all the related files exists
-                                     %
-                                     % When starting a new experiment, this should be set to true, for the 
-                                     % initial sequence of inversions to be conduced
+UserVar.Assimilation.is=true;        % This is a flag to bypass the assimilation/relaxation phase done from tStart to tEnd (i.e. here from year 2015 to 2020)
+% This will only work if the assimilation/relaxation has already been performed previously and all the related files exists.
+%
+% To bypass the (transient) initialization phase, set this flag to false.
+%
+% When starting a new experiment, this should be set to true.
+
+UserVar.Inverse.Iterations=500;      % This is the number if inversion iteration in each re-initialization step. (The very first inversion was done using
+% repeatedly and for a larger number of iterations.)
 
 
-UserVar.Inverse.Iterations=500;
+InverseRunAtStart=false ;  % This can be set to false, if there is an inverse restart file available for the VERY FIRST PHASE of the assimilation
+% (Here this is the typical case, i.e. set to false, as long inversion was done initially for the start time=2015).
+%
+% Must the true if starting a brand new experiment.
 
+if contains(RunString,"-R")  % this is a reversibility experiment
 
-InverseRunAtStart=true ;
+    UserVar.Assimilation.is=false;
+    InverseRunAtStart=false  ;
+end
+
 %% -]
 %%
 
@@ -124,7 +74,7 @@ InverseRunAtStart=true ;
 %     UserVar.Assimilation.tStart=UserVar.Assimilation.tStart;
 %     UserVar.Assimilation.tEnd=UserVar.Assimilation.tEnd;
 % end
-% 
+%
 
 
 
@@ -158,7 +108,7 @@ if UserVar.Assimilation.is
         UserVar.RunType=sprintf("-FR%ito%i-",from,to)+RunString ;
 
         Ua(UserVar) ;       % This FORWARD run will go t=from to t=to,
-        
+
 
         %CtrlVar.Restart=1; CtrlVar.ForwardTimeIntegration="-uv-h-" ; Ua(UserVar,CtrlVar) ; % if want to force restart
 
@@ -177,9 +127,9 @@ end
 %
 % However, if RunStartYear is set to a value greater or equal to the end of the relaxation period, the run starts at
 % the time of the RunStartYear. This assumes that the relaxation phase has already been done, and does not need to tbe done
-% again. 
+% again.
 
-from=UserVar.RunStartYear  ; 
+from=UserVar.RunStartYear  ;
 to=UserVar.RunEndYear;
 
 if UserVar.RunStartYear~=UserVar.Assimilation.tEnd

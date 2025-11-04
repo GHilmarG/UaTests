@@ -57,8 +57,8 @@ F.m=zeros(n,1)+3;
 % 
 % 
 % 
-% F.AGlen0=F.AGlen; 
-% F.rho0=F.rho; 
+F.AGlen0=F.AGlen; 
+F.rho0=F.rho; 
 
 
 switch UserVar.Experiment

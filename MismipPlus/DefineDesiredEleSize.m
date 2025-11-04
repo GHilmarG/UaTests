@@ -108,7 +108,7 @@ function [UserVar,RunInfo,F,l,EleSizeDesired,ElementsToBeRefined,ElementsToBeCoa
 % 
 %%
 
-if F.solution ~= "-uv-"
+if F.solution ~= "-uv-" &&  F.solution ~= "-uvh-"
 
 
     [UserVar,RunInfo,F,l]= uv(UserVar,RunInfo,CtrlVar,MUA,BCs,F,l);
@@ -146,13 +146,13 @@ UaPlots(CtrlVar,MUA,F,R,PlotUnderMesh=true,FigureTitle="ElementErrorEstimator");
 title(sprintf("max(R)=%g",max(R)))
 
 
-figMesh=FindOrCreateFigure("Elements two be refined") ; clf(figMesh) 
+figMesh=FindOrCreateFigure("Elements to be refined") ; clf(figMesh) 
 CtrlVar.MarkElements=false;
 PlotMuaMesh(CtrlVar,MUA);  hold on ; 
 CtrlVar.MarkElements=true;
 PlotMuaMesh(CtrlVar,MUA,ElementsToBeRefined,"r")
 
-FindOrCreateFigure("Elements two be coarsened")
+FindOrCreateFigure("Elements to be coarsened")
 CtrlVar.MarkElements=false;
 PlotMuaMesh(CtrlVar,MUA);  hold on ;  
 CtrlVar.MarkElements=true;

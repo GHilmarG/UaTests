@@ -7,7 +7,7 @@ figure ; PlotMeshScalarVariable(CtrlVarInRestartFile,MUA,log10(F.AGlen));
 
 UserVar=UserVarInRestartFile;
 
-io=inpoly2([F.x F.y],UserVar.BedMachineBoundary);
+io=UaInpoly2([F.x F.y],UserVar.BedMachineBoundary);
 NodesOutsideBoundary=~io ;
 
 
