@@ -28,7 +28,7 @@ function tests = TestUa
       f={@testFreeSlipBCs}             ;    % OK  11/05/2021 ,  08/09/2021 , 01/11/2021 ,   03/08/2023 , 24/06/2023 , 02/10/2023 , 16/03/2024 , 01/08/2024 , 29/12/2014
       f={@testMassConservationPeaks}   ;   %  OK                                                                                   16/03/2024  , 01/08/2024  , 29/12/2014
       
-     % f={@testCrack,@testPIGdiagnostic,@testPIGtransient,@testMassBalanceFeedback,@test1dIceStream,@test1dIceShelf,@testGaussPeak,@testFreeSlipBCs,@testMassConservationPeaks} ;
+      f={@testCrack,@testPIGdiagnostic,@testPIGtransient,@testMassBalanceFeedback,@test1dIceStream,@test1dIceShelf,@testGaussPeak,@testFreeSlipBCs,@testMassConservationPeaks} ;
 
      
 
@@ -64,16 +64,13 @@ function testPIGdiagnostic(testCase)
     UserVar.RunType='Forward-Diagnostic'; 
     UserVar=Ua(UserVar) ;
     cd ..
-<<<<<<< HEAD
     actSolution= UserVar.Test.Norm.actValue ;
     % expSolution = 95982.7181182457;  % this was with the old bedmap2 data
     % expSolution = 9757675340.83092 ;   % this is with the new Bedmachine data, 10/09/2021
     % expSolution = 202912           ;     % this is with the new Bedmachine data and a new boundary, 01/11/2021
     expSolution = UserVar.Test.Norm.expValue ;
-=======
-    actSolution= UserVar.Test.Norm.actValue 
-    expSolution = UserVar.Test.Norm.expValue 
->>>>>>> alpha
+ 
+
     verifyEqual(testCase,actSolution,expSolution,'RelTol',1e-4)
   
 
