@@ -17,6 +17,7 @@ CtrlVar.AdaptiveTimeStepping=1 ;
 
 CtrlVar.ThicknessConstraints=0;
 
+CtrlVar.DefineOutputsDt=0.1;
 
 %% Solver
 CtrlVar.InfoLevelNonLinIt=1;
