@@ -87,6 +87,4 @@ CtrlVar.PlotXYscale=1000;     % used to scale x and y axis of some of the figure
 CtrlVar.NameOfRestartFiletoWrite="Ua2D_RestartFile"+CtrlVar.ForwardTimeIntegration+".mat";
 CtrlVar.NameOfRestartFiletoRead='Ua2D_Restartfile.mat';
 
-
-
 end
