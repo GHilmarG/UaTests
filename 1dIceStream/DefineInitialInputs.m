@@ -84,8 +84,7 @@ CtrlVar.PlotXYscale=1000;     % used to scale x and y axis of some of the figure
 
 %%
 
-CtrlVar.NameOfRestartFiletoWrite=sprintf("Ua2D_Restartfile-%i-%s-%s-.mat",...
-    CtrlVar.Implicituvh,CtrlVar.uvhImplicitTimeSteppingMethod,CtrlVar.uvhSemiImplicitTimeSteppingMethod);
+CtrlVar.NameOfRestartFiletoWrite="Ua2D_RestartFile"+CtrlVar.ForwardTimeIntegration+".mat";
 CtrlVar.NameOfRestartFiletoRead='Ua2D_Restartfile.mat';
 
 
