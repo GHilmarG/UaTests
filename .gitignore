@@ -2,22 +2,25 @@
 *.exe
 *.sh
 *Tag
-*.mat
 *.txt
-*.sh
+*.png
+*.geo
+*.html
+*.avs
+*.msh
+*.asv
+*.mat
+*.fig
 *.avi
+*.log
 *.geo
 *.msh
-*.pos
-*.asv
 *.pdf
-*.fig
-*.png
-*.jpg
-*.html
-*.log
-*.aux
-*.blg
+
+resources/
+
+
+
 
 
 
