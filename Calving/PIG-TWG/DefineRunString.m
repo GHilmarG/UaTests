@@ -45,6 +45,9 @@ function RunString=DefineRunString()
 % abMask0A   :  apply ADDITIONAL high melt over nodes that initially were afloat, but now have become grounded, ALWAYS (i.e.
 %               throughout the run period)
 %
+% -MSW???L???a???-  % adds a melt perturbation within the square of width W and length L and amplitude a
+%
+%
 % -IOR-       : InsideOut nodes with respect to grounding line calculated in a 'relaxed' manner, i.e. all nodes where 
 %               GF.node  <0.5 are afloat, for the purpose of applying basal melt rates
 %               
@@ -160,6 +163,24 @@ RunString="ES10km-uvh-Tri3-SlidWeertman-Duvh-MRlASE3-abMask0A-IOR-Rt2050-P-BCVel
 
 % RunString="ES5km-uv-h-Tri3-SlidWeertman-Duvh-MRIM6HadGEM2-abMask0A-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; % 2078
 % RunString="ES10km-uv-h-Tri3-SlidWeertman-Duvh-MRIM6HadGEM2-abMask0A-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; % 2100
+
+%% Melt square
+
+RunString="ES10km-uvh-Tri3-SlidWeertman-Duvh-MRlASE3-abMask0A-IOR-MSW50L200a500-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-";    
+
+%%
+MeltSquareString=extractBetween(RunString,"-MS","-",Boundaries="inclusive")   
+
+if isempty(MeltSquareString)
+    UserVar.isMeltSquare=false;
+else
+    UserVar.isMeltSquare=true;
+    UserVar.MeltSquareWidth=str2double(extractBetween(MeltSquareString,"W","L",Boundaries="exclusive"));
+    UserVar.MeltSquarLength=str2double(extractBetween(MeltSquareString,"L","a",Boundaries="exclusive"));
+    UserVar.MeltSquarMelt=str2double(extractBetween(MeltSquareString,"a","-",Boundaries="exclusive"));
+end
+
+end
 
 
 end
