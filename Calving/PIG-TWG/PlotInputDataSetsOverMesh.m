@@ -30,7 +30,8 @@ subtitle("")
 title(cbar,"(m a.s.l.)")
 
 cbar=UaPlots(CtrlVar,MUA,F,F.b,FigureTitle="b");
-CM=cmocean('-balanced',25,'pivot',0) ; colormap(CM);
+
+
 title("Lower ice surface")
 subtitle("")
 title(cbar,"(m a.s.l.)")
