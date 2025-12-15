@@ -434,6 +434,30 @@ if contains(UserVar.RunType,"-Rgl")
 
 end
 
+%% Melt perturbation over a square
+
+
+if UserVar.isMeltSquare  && F.time> UserVar.Assimilation.tEnd
+
+    MeltSquareString=extractBetween(UserVar.RunType,"-MS","-",Boundaries="inclusive");
+    UserVar.MeltSquareWidth=str2double(extractBetween(MeltSquareString,"W","L",Boundaries="exclusive"));
+    UserVar.MeltSquareLength=str2double(extractBetween(MeltSquareString,"L","a",Boundaries="exclusive"));
+    UserVar.MeltSquareMelt=str2double(extractBetween(MeltSquareString,"a","-",Boundaries="exclusive"));
+
+    Origin=nan;
+    Direction=nan;
+    Width=UserVar.MeltSquareWidth*1000;
+    Length=UserVar.MeltSquareLength*1000;
+    Square=CreateSquare(Origin,Direction,Width,Length) ; 
+    [isInside,isOnBounday]=InsideOutside([F.x F.y],Square) ; 
+    as(isInside)=as(isInside)-UserVar.MeltSquareMelt; 
+
+end
+
+
+
+
+%%
 %% only apply basal melt strictly below/outside of grounding lines over nodes connected to the ocean
 ab(~OceanNodes)=0;
 dabdh(~OceanNodes)=0;

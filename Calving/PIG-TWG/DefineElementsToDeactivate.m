@@ -63,6 +63,24 @@ function [UserVar,ElementsToBeDeactivated]=DefineElementsToDeactivate(UserVar,Ru
 %
 %%
 
+
+persistent TimeOfLastDeactivation ElementsLastDeactivated
+
+
+if isempty(TimeOfLastDeactivation)
+    TimeOfLastDeactivation=-inf;
+end
+
+if F.time < (TimeOfLastDeactivation+10) % Only deactivate every 10 years
+
+    if ~isempty(ElementsLastDeactivated)
+        ElementsToBeDeactivated=ElementsLastDeactivated ;
+    end
+    return
+end
+
+TimeOfLastDeactivation=F.time;
+
 % Find all nodes for which the deactivation criterion is not fulfilled. Then find all elements containing one or more of
 % those nodes. These elements should not be deactivated. And then select the remaining elements for deactivation. 
 
@@ -85,6 +103,12 @@ else
 end
 
 
+ElementsLastDeactivated=ElementsToBeDeactivated;
+
+
+return
+
+%% Plot
 cbar=UaPlots(CtrlVar,MUA,F,F.h,GetRidOfValuesDownStreamOfCalvingFronts=false,FigureTitle="Deactive elements"); 
 set(gca,'ColorScale','log') 
 clim([CtrlVar.ThickMin/10 , CtrlVar.ThickMin*10])
