@@ -6,6 +6,8 @@ UserVar=FileDirectories([]);
 load(UserVar.MeshFileDirectory+"MeshFile5km-PIG-TWG.mat","MUA") ;
 load(UserVar.Interpolants+"BedMachineAntarctica-v3-GriddedInterpolants.mat","Fs","FB","Fb","Frho")  
 
+load("ase_basin_masks.mat","x_crosson_dotson","y_crosson_dotson","x_thwaites","y_thwaites","x_pig","y_pig") 
+
 %%
 F=UaFields();
 F.x=MUA.coordinates(:,1); 
@@ -42,7 +44,11 @@ CM=cmocean('-balanced',25,'pivot',0) ; colormap(CM);
 title("Upper ice surface")
 subtitle("")
 title(cbar,"(m a.s.l.)")
-hold on ; PlotCalvingFronts([],"ITS-LIVE",[],"b");
+hold on ; 
+PlotCalvingFronts([],"ITS-LIVE",[],"b");
+plot(x_thwaites/1000,y_thwaites/1000,".r")
+plot(x_pig/1000,y_pig/1000,".r")
+plot(x_crosson_dotson/1000,y_crosson_dotson/1000,".r")
 
 
 cbar=UaPlots(CtrlVar,MUA,F,F.b-F.B,FigureTitle="b-B");
@@ -58,44 +64,7 @@ axis([-1730 -1400 -725 -200])
 
 %%
 
-Line=[-1587315.52795031         -483507.453416149 ; ...
-    -1304771.42857143         -325331.055900621 ] ;
 
-Line=Line/1000;
-
-FindOrCreateFigure("B")
-hold on ; 
-plot([Line(1,1) Line(2,1)],[Line(1,2) Line(2,2)],LineStyle="-",Color="k",LineWidth=3)
-
-Vector=[Line(2,1)-Line(1,1)  Line(2,2)-Line(1,2)];
-Vector=Vector/norm(Vector);
-
-Along=Vector;
-Normal=[Vector(2) -Vector(1)] ;
-
-Width=50e3 ;
-Length=200e3;
-
-Origin=[-1587315.52795031         -483507.453416149] ;
-
-p1=Origin-Width*Normal; 
-p2=Origin+Width*Normal; 
-p3=Origin+Length*Vector+Width*Normal; 
-p4=Origin+Length*Vector-Width*Normal; 
-
-Square=[p1 ; p2 ; p3 ; p4 ; p1];
-
-hold on ;
-plot(p1(1)/1000,p1(2)/1000,"ok")
-plot(p2(1)/1000,p2(2)/1000,"ok")
-plot(p3(1)/1000,p3(2)/1000,"ok")
-plot(p4(1)/1000,p4(2)/1000,"ok")
-
-plot(Square(:,1)/1000,Square(:,2)/1000,color="k",LineStyle="--",LineWidth=2)
-
-
-
-%%
 
 
 %%

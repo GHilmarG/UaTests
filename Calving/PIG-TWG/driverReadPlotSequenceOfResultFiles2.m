@@ -18,7 +18,7 @@
 NewRuns=true ;
 UseDefineRunString=true;  % use DefineRunString.m to define the UserVar.RunString
 
-TimeStep=1;
+TimeStep=10;
 TimeInterval=[0 inf] ;
 xyBoundary=nan;
 
@@ -117,12 +117,16 @@ Width=UserVar.MeltSquareWidth*1000;
 Length=UserVar.MeltSquareLength*1000;
 Square=CreateSquare(Origin,Direction,Width,Length) ;
 
+% load("ase_basin_masks.mat","x_crosson_dotson","y_crosson_dotson","x_thwaites","y_thwaites","x_pig","y_pig") ;
+% xyBoundary=[x_thwaites(:) y_thwaites(:)] ;
+PlotTypeString="-s-VAF-dSLRdt-";
+PlotTypeString="-dhdt-VAF-dSLRdt-";
+% PlotTypeString="-collect-";
 
-
-ReadPlotSequenceOfResultFiles2(FileNameSubstring=SearchString,...
+DataCollect=ReadPlotSequenceOfResultFiles2(FileNameSubstring=SearchString,...
     DataFileDirectory=DFD,...
     PlotTimestep=TimeStep,...
-    PlotType="-s-VAF-dSLRdt-",...
+    PlotType=PlotTypeString,...
     VAFBoundary=xyBoundary,...
     PlotPolygon=Square,...
     PlotTimeInterval=TimeInterval) ;
