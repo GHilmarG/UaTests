@@ -77,7 +77,7 @@ for iRunString=1:n
 
     SLC=-1000*(DataCollect{iRunString}.VAF-DataCollect{iRunString}.VAF(1))/AreaOfOcean;  % units mm
 
-    UserVar.RunString(iRunString)=replace(UserVar.RunString(iRunString),"2k5","2.5")
+    UserVar.RunString(iRunString)=replace(UserVar.RunString(iRunString),"2k5","2.5");
     MS=str2double(extractBetween(UserVar.RunString(iRunString),"ES","km-"));
     MS=MS/3.049 ;
     DN=sprintf("Mesh size %2.1f km",MS) ;
@@ -89,4 +89,105 @@ ylabel("Sea level rise (mm)")
 xlabel("year")
 legend(Location="best")
 title("Sea level contribution for Thwaites catchment")
+%% Table
+
+TableSLR=[]; 
+for iRunString=1:n
+
+    time=DataCollect{iRunString}.time ;
+    VAF=DataCollect{iRunString}.VAF ;
+    IceVolume=DataCollect{iRunString}.IceVolume;
+    GroundedArea=DataCollect{iRunString}.GroundedArea;
+
+
+    I=~isnan(time);
+    time=time(I);
+    VAF=VAF(I);
+    IceVolume=IceVolume(I);
+    GroundedArea=GroundedArea(I);
+    SLC=SLC(I);
+    UserVar.RunString(iRunString)=replace(UserVar.RunString(iRunString),"2k5","2.5");
+    MS=str2double(extractBetween(UserVar.RunString(iRunString),"ES","km-"));
+    MS=MS/3.049 ;
+
+     nDataPoints=length(time);
+
+    Experiment=strings(nDataPoints,1)+"Thwaites" ; 
+    MeshSize=zeros(nDataPoints,1)+MS;
+
+    T=table(Experiment,MeshSize,time,SLC,VAF,IceVolume,GroundedArea);
+    TableSLR=[TableSLR;T] ; 
+end
+
+%% netcdf
+
+
+%% Table
+
+TableSLR=[]; 
+for iRunString=1:n
+
+    time=DataCollect{iRunString}.time ;
+    VAF=DataCollect{iRunString}.VAF ;
+    IceVolume=DataCollect{iRunString}.IceVolume;
+    GroundedArea=DataCollect{iRunString}.GroundedArea;
+
+
+    I=~isnan(time);
+
+    time_thw=time(I);
+    vaf_thw=VAF(I);
+    icevolume_thw=IceVolume(I);
+    groundedarea_thw=GroundedArea(I);
+    SLC=SLC(I);
+    UserVar.RunString(iRunString)=replace(UserVar.RunString(iRunString),"2k5","2.5");
+    MS=str2double(extractBetween(UserVar.RunString(iRunString),"ES","km-"));
+    MS=MS/3.049 ;
+
+    nDataPoints=length(time);
+
+    Experiment=strings(nDataPoints,1)+"Thwaites" ;
+    MeshSize=zeros(nDataPoints,1)+MS;
+
+
+    % SLC/VAF for TG
+    % outname='Scalars_TG_UNN_Ua_1ka_CF2010.nc';
+    outname="Scalars_TG_UNN_Ua_1ka_CF2010_"+"MeshSize"+num2str(MS)+"km.nc";
+    ncid=netcdf.create(outname,'NC_SHARE');
+
+    dim=netcdf.defDim(ncid,'coordinates',length(time_thw));
+
+    varid=netcdf.getConstant('GLOBAL');
+    netcdf.putAtt(ncid,varid,'Conventions','CF-1.7');
+    netcdf.putAtt(ncid,varid,'info','Model Ua, Geography and Environmental Sciences, Northumbria University, Newcastle Upon Tyne, UK');
+    netcdf.putAtt(ncid,varid,'Contact','hilmar.gudmundsson@northumbria.ac.uk');
+
+    tid=netcdf.defVar(ncid,'time','float',dim);
+    netcdf.putAtt(ncid,tid,'units','a');
+    netcdf.putAtt(ncid,tid,'standard_name','time');
+
+    vafid=netcdf.defVar(ncid,'vaf','float',dim);
+    netcdf.putAtt(ncid,vafid,'standard_name','ice volume above flotation');
+    netcdf.putAtt(ncid,vafid,'units','m^3');
+
+    ivid=netcdf.defVar(ncid,'iv','float',dim);
+    netcdf.putAtt(ncid,ivid,'standard_name','ice volume in total');
+    netcdf.putAtt(ncid,ivid,'units','m^3');
+
+    gafid=netcdf.defVar(ncid,'ga','float',dim);
+    netcdf.putAtt(ncid,gafid,'standard_name','grounded area with ice');
+    netcdf.putAtt(ncid,gafid,'units','m^2');
+
+    netcdf.endDef(ncid);
+    netcdf.putVar(ncid,tid,time_thw);
+    netcdf.putVar(ncid,vafid,vaf_thw);
+    netcdf.putVar(ncid,ivid,icevolume_thw);
+    netcdf.putVar(ncid,gafid,groundedarea_thw);
+
+    netcdf.close(ncid);
+
+
+
+end
+
 %%
