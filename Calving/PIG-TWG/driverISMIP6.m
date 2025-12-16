@@ -50,6 +50,10 @@ UserVar.Assimilation.is=true;        % This is a flag to do (true) or to bypass 
 % To bypass the (transient) initialization phase, set this flag to false.
 %
 % When starting a brand new new experiment, this should be set to true, i.e. UserVar.Assimilation.is=true;   
+%
+% Bypassing (false) can be used to restart the run from last available restart file. The restart-run option is automatically set
+% to true if a restart file is found.
+%
 
 UserVar.Inverse.Iterations=200;      % This is the number if inversion iteration in each re-initialization step. (The very first inversion was done using
 % repeatedly and for a larger number of iterations.)
