@@ -3,13 +3,6 @@
 %
 % driver for ReadPlotSequenceOfResultsFiles2.m
 %
-% Creates a plot with three panels, showing:
-%
-%   Surface Elevation Changes,
-%   Sea Level Rise and rate of sea level rise
-%   A longitudinal profile of geometry
-%
-%
 %
 %%
 OriginalDirectory=pwd;
