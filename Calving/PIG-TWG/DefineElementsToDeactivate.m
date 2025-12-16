@@ -92,8 +92,8 @@ AboveMinThickNodes = find(F.h > 2*CtrlVar.ThickMin) ;
 % Include all, but without duplicates 
 AboveMinThickNodes= unique([AboveMinThickNodes;BCs.ubFixedNode;BCs.vbFixedNode;BCs.hFixedNode]); 
 
-MinThickElements=AllElementsContainingGivenNodes(MUA.connectivity,AboveMinThickNodes) ;
-NewElementsToBeDeactivated=~MinThickElements ;
+AboveMinThickElements=AllElementsContainingGivenNodes(MUA.connectivity,AboveMinThickNodes) ;
+NewElementsToBeDeactivated=~AboveMinThickElements ;
 
 
 if islogical(ElementsToBeDeactivated)

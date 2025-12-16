@@ -45,6 +45,16 @@ title(cbar,"(m a.s.l.)")
 hold on ; PlotCalvingFronts([],"ITS-LIVE",[],"b");
 
 
+cbar=UaPlots(CtrlVar,MUA,F,F.b-F.B,FigureTitle="b-B");
+CM=cmocean('-balanced',25,'pivot',0) ; colormap(CM);
+title("Lower ice surface - Ocean floor")
+subtitle("")
+title(cbar,"(m)")
+hold on ; PlotCalvingFronts([],"ITS-LIVE",[],"b");
+clim([0 1000]) 
+axis([-1730 -1400 -725 -200])
+
+
 
 %%
 
