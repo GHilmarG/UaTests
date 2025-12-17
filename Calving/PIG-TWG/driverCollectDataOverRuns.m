@@ -3,30 +3,31 @@
 %
 % driver for ReadPlotSequenceOfResultsFiles2.m
 %
-% Creates a plot with three panels, showing:
-%
-%   Surface Elevation Changes,
-%   Sea Level Rise and rate of sea level rise
-%   A longitudinal profile of geometry
-%
-%
 %
 %%
 OriginalDirectory=pwd;
-
+UserVar=[];
 UserVar=FileDirectories(UserVar) ;
 DFD=UserVar.ResultsFileDirectory;
 
 
-UserVar.RunString(1)="ES30km-uvh-Tri3-SlidWeertman-Duvh-MRZERO-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-";  % 2500
-UserVar.RunString(2)="ES20km-uvh-Tri3-SlidWeertman-Duvh-MRZERO-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-";  % 2500
-UserVar.RunString(3)="ES10km-uvh-Tri3-SlidWeertman-Duvh-MRZERO-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-";  % 2500
-UserVar.RunString(4)="ES5km-uvh-Tri3-SlidWeertman-Duvh-MRZERO-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-";  % 2500
-UserVar.RunString(5)="ES2k5km-uvh-Tri3-SlidWeertman-Duvh-MRZERO-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-";  % 2500
+%UserVar.RunString(5)="ES30km-uvh-Tri3-SlidWeertman-Duvh-MRZERO-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-";  % 2500
+%UserVar.RunString(4)="ES20km-uvh-Tri3-SlidWeertman-Duvh-MRZERO-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-";  % 2500
+%UserVar.RunString(3)="ES10km-uvh-Tri3-SlidWeertman-Duvh-MRZERO-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-";  % 2500
+%UserVar.RunString(2)="ES5km-uvh-Tri3-SlidWeertman-Duvh-MRZERO-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-";  % 2500
+% UserVar.RunString(1)="ES2k5km-uvh-Tri3-SlidWeertman-Duvh-MRZERO-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-";  % 2500
+
+UserVar.RunString(1)="ES5km-uvh-Tri3-SlidWeertman-Duvh-MRZERO-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-";  % 2500
 
 n= numel(UserVar.RunString); 
 
 DataCollect=cell(n,1);
+
+CathmentArea="Thwaites";
+%CathmentArea="PIG";
+
+PlotTypeString="-collect-";
+TimeStep=1;
 
 for iRunString=1:n
 
@@ -36,17 +37,25 @@ for iRunString=1:n
     SearchString="-"+SearchString; % I need this to make a distinction between 5km and 2.5km
     SearchString=replace(SearchString,"--","-");
 
-    TimeStep=10;
+    
     TimeInterval=[0 inf] ;
 
     CtrlVar.Parallel.uvAssembly.spmd.isOn=false ;
     CtrlVar.Parallel.uvhAssembly.spmd.isOn=false ;
 
     load("ase_basin_masks.mat","x_crosson_dotson","y_crosson_dotson","x_thwaites","y_thwaites","x_pig","y_pig") ;
-    xyBoundary=[x_thwaites(:) y_thwaites(:)] ;
-    PlotTypeString="-collect-";
-    Square=nan;
 
+    switch CathmentArea
+        case "Thwaites"
+            xyBoundary=[x_thwaites(:) y_thwaites(:)] ;
+        case "PIG"
+            xyBoundary=[x_pig(:) y_pig(:)] ;
+        otherwise
+            error("case not found")
+    end
+
+    Square=nan;
+    
     DataCollect{iRunString}=ReadPlotSequenceOfResultFiles2(FileNameSubstring=SearchString,...
         DataFileDirectory=DFD,...
         PlotTimestep=TimeStep,...
@@ -88,7 +97,10 @@ end
 ylabel("Sea level rise (mm)")
 xlabel("year")
 legend(Location="best")
-title("Sea level contribution for Thwaites catchment")
+title("Sea level contribution for "+CathmentArea+" catchment")
+
+savefig(figSLR,"SeaLevelRise_5km_"+CathmentArea)
+
 %% Table
 
 TableSLR=[]; 
@@ -112,19 +124,21 @@ for iRunString=1:n
 
      nDataPoints=length(time);
 
-    Experiment=strings(nDataPoints,1)+"Thwaites" ; 
+    Experiment=strings(nDataPoints,1)+CathmentArea;
     MeshSize=zeros(nDataPoints,1)+MS;
 
     T=table(Experiment,MeshSize,time,SLC,VAF,IceVolume,GroundedArea);
     TableSLR=[TableSLR;T] ; 
 end
 
+save(CathmentArea+"Table_5km.mat","TableSLR")
+
 %% netcdf
 
 
 %% Table
 
-TableSLR=[]; 
+
 for iRunString=1:n
 
     time=DataCollect{iRunString}.time ;
@@ -146,13 +160,12 @@ for iRunString=1:n
 
     nDataPoints=length(time);
 
-    Experiment=strings(nDataPoints,1)+"Thwaites" ;
     MeshSize=zeros(nDataPoints,1)+MS;
 
 
     % SLC/VAF for TG
     % outname='Scalars_TG_UNN_Ua_1ka_CF2010.nc';
-    outname="Scalars_TG_UNN_Ua_1ka_CF2010_"+"MeshSize"+num2str(MS)+"km.nc";
+    outname=CathmentArea+"_UNN_Ua_Hilmar_"+"MeshSize"+num2str(MS)+"km.nc";
     ncid=netcdf.create(outname,'NC_SHARE');
 
     dim=netcdf.defDim(ncid,'coordinates',length(time_thw));
