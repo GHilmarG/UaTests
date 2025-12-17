@@ -18,7 +18,7 @@
 NewRuns=true ;
 UseDefineRunString=true;  % use DefineRunString.m to define the UserVar.RunString
 
-TimeStep=10;
+TimeStep=1;
 TimeInterval=[0 inf] ;
 xyBoundary=nan;
 

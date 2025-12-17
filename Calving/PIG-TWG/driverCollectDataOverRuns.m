@@ -6,7 +6,7 @@
 %
 %%
 OriginalDirectory=pwd;
-
+UserVar=[];
 UserVar=FileDirectories(UserVar) ;
 DFD=UserVar.ResultsFileDirectory;
 
@@ -21,6 +21,12 @@ n= numel(UserVar.RunString);
 
 DataCollect=cell(n,1);
 
+CathmentArea="Thwaites";
+%CathmentArea="PIG";
+
+PlotTypeString="-collect-";
+TimeStep=1;
+
 for iRunString=1:n
 
     SearchString=replaceBetween(UserVar.RunString(iRunString),"-FR","-","*");
@@ -29,17 +35,25 @@ for iRunString=1:n
     SearchString="-"+SearchString; % I need this to make a distinction between 5km and 2.5km
     SearchString=replace(SearchString,"--","-");
 
-    TimeStep=10;
+    
     TimeInterval=[0 inf] ;
 
     CtrlVar.Parallel.uvAssembly.spmd.isOn=false ;
     CtrlVar.Parallel.uvhAssembly.spmd.isOn=false ;
 
     load("ase_basin_masks.mat","x_crosson_dotson","y_crosson_dotson","x_thwaites","y_thwaites","x_pig","y_pig") ;
-    xyBoundary=[x_thwaites(:) y_thwaites(:)] ;
-    PlotTypeString="-collect-";
-    Square=nan;
 
+    switch CathmentArea
+        case "Thwaites"
+            xyBoundary=[x_thwaites(:) y_thwaites(:)] ;
+        case "PIG"
+            xyBoundary=[x_pig(:) y_pig(:)] ;
+        otherwise
+            error("case not found")
+    end
+
+    Square=nan;
+    
     DataCollect{iRunString}=ReadPlotSequenceOfResultFiles2(FileNameSubstring=SearchString,...
         DataFileDirectory=DFD,...
         PlotTimestep=TimeStep,...
@@ -81,7 +95,10 @@ end
 ylabel("Sea level rise (mm)")
 xlabel("year")
 legend(Location="best")
-title("Sea level contribution for Thwaites catchment")
+title("Sea level contribution for "+CathmentArea+" catchment")
+
+savefig(figSLR,"SeaLevelRise_"+CathmentArea)
+
 %% Table
 
 TableSLR=[]; 
@@ -105,19 +122,21 @@ for iRunString=1:n
 
      nDataPoints=length(time);
 
-    Experiment=strings(nDataPoints,1)+"Thwaites" ; 
+    Experiment=strings(nDataPoints,1)+CathmentArea;
     MeshSize=zeros(nDataPoints,1)+MS;
 
     T=table(Experiment,MeshSize,time,SLC,VAF,IceVolume,GroundedArea);
     TableSLR=[TableSLR;T] ; 
 end
 
+save(CathmentArea+"Table.mat","TableSLR")
+
 %% netcdf
 
 
 %% Table
 
-TableSLR=[]; 
+
 for iRunString=1:n
 
     time=DataCollect{iRunString}.time ;
@@ -139,13 +158,12 @@ for iRunString=1:n
 
     nDataPoints=length(time);
 
-    Experiment=strings(nDataPoints,1)+"Thwaites" ;
     MeshSize=zeros(nDataPoints,1)+MS;
 
 
     % SLC/VAF for TG
     % outname='Scalars_TG_UNN_Ua_1ka_CF2010.nc';
-    outname="Scalars_TG_UNN_Ua_1ka_CF2010_"+"MeshSize"+num2str(MS)+"km.nc";
+    outname=CathmentArea+"_UNN_Ua_Hilmar_"+"MeshSize"+num2str(MS)+"km.nc";
     ncid=netcdf.create(outname,'NC_SHARE');
 
     dim=netcdf.defDim(ncid,'coordinates',length(time_thw));
