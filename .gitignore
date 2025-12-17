@@ -16,7 +16,12 @@
 *.geo
 *.msh
 *.pdf
-
+*.aux
+*.bbl
+*.blg
+*.nc
+*.kmz
+*.pos
 resources/
 
 
