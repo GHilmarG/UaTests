@@ -152,7 +152,7 @@ PlotMuaMesh(CtrlVar,MUA);  hold on ;
 CtrlVar.MarkElements=true;
 PlotMuaMesh(CtrlVar,MUA,ElementsToBeRefined,"r")
 
-FindOrCreateFigure("Elements two be coarsened")
+FindOrCreateFigure("Elements to be coarsened")
 CtrlVar.MarkElements=false;
 PlotMuaMesh(CtrlVar,MUA);  hold on ;  
 CtrlVar.MarkElements=true;

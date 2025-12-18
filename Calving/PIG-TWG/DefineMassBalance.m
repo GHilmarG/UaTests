@@ -6,7 +6,7 @@
 
 function [UserVar,as,ab,dasdh,dabdh]=DefineMassBalance(UserVar,CtrlVar,MUA,F)
 
-persistent Fdh2000to2018 dhdtMeasured CurrentRunStepNumber Fas FOceanNodes0 gamma0 Fdeltbasin Ftf OceanNodes0FileSaved
+persistent Fdh2000to2018 dhdtMeasured CurrentRunStepNumber Fas FOceanNodes0 gamma0 Fdeltbasin Ftf OceanNodes0FileSaved ResetMeltRate
 
 % as=zeros(MUA.Nnodes,1) ;
 ab=zeros(MUA.Nnodes,1) ;
@@ -15,6 +15,10 @@ dabdh=zeros(MUA.Nnodes,1) ;
 
 if isempty(OceanNodes0FileSaved)
     OceanNodes0FileSaved=false;
+end
+
+if isempty(ResetMeltRate)
+    ResetMeltRate=false;
 end
 
 %% Surface mass balance
@@ -381,13 +385,82 @@ else
 
 end
 
-% only apply basal melt strictly below/outside of grounding lines over nodes connected to the ocean
 
+
+
+
+if contains(UserVar.RunType,"-Rgl")
+    %% Reversibility option: Reset melt to zero, for example, if grounding line moves upstream of a given distance along the Thwaites longitudinal profile
+
+    if ResetMeltRate
+        fprintf("Melt rates set to zero!!! \n")
+        ab=ab*0;
+        dabdh=dabdh*0;
+    else
+
+        glDistance=str2double(extractBetween(UserVar.RunType,"-Rgl","-"))*1000 ;
+
+        x1=-1600e3 ; x2=-1100e3 ;
+        y1=-450e3; y2=-220e3 ;
+
+        xgl=-1558e3; ygl=-430.5e3 ; % This is the position of the grounding line along the profile at start
+
+        % phi=atan2(y2-y1,x2-x1) ;
+        % along=(F.x-xgl)*cos(phi)+(F.y-ygl)*sin(phi);
+        % trans=-(F.x-xgl)*sin(phi)+(F.y-ygl)*cos(phi);
+
+        xProfile=linspace(x1,x2,1000);  yProfile=linspace(y1,y2,1000);
+
+        Fb=scatteredInterpolant(F.x,F.y,F.b);
+        FB=Fb; FB.Values=F.B; 
+
+        bProfile=Fb(xProfile,yProfile);
+        BProfile=FB(xProfile,yProfile);
+
+        ProfileOffset=sqrt( (xgl-xProfile(1)).^2 + (ygl-yProfile(1)).^2 ) ;
+        Profile=sqrt( (xProfile-xProfile(1)).^2 + (yProfile-yProfile(1)).^2 )-ProfileOffset;
+
+        % Find grounding-line position along profile
+        % min distance value for which b and B are equal
+        GLmin=min(Profile(abs(bProfile-BProfile)<1)) ;
+        if ~isempty(GLmin)
+            fprintf("Grounding line position along Thwaites profile at %f km.\n",GLmin/1000)
+            if GLmin>glDistance
+                ResetMeltRate=true;
+
+            end
+        end
+    end
+
+end
+
+%% Melt perturbation over a square
+
+
+if UserVar.isMeltSquare  && F.time> UserVar.Assimilation.tEnd
+
+    MeltSquareString=extractBetween(UserVar.RunType,"-MS","-",Boundaries="inclusive");
+    UserVar.MeltSquareWidth=str2double(extractBetween(MeltSquareString,"W","L",Boundaries="exclusive"));
+    UserVar.MeltSquareLength=str2double(extractBetween(MeltSquareString,"L","a",Boundaries="exclusive"));
+    UserVar.MeltSquareMelt=str2double(extractBetween(MeltSquareString,"a","-",Boundaries="exclusive"));
+
+    Origin=nan;
+    Direction=nan;
+    Width=UserVar.MeltSquareWidth*1000;
+    Length=UserVar.MeltSquareLength*1000;
+    Square=CreateSquare(Origin,Direction,Width,Length) ; 
+    [isInside,isOnBounday]=InsideOutside([F.x F.y],Square) ; 
+    as(isInside)=as(isInside)-UserVar.MeltSquareMelt; 
+
+end
+
+
+
+
+%%
+%% only apply basal melt strictly below/outside of grounding lines over nodes connected to the ocean
 ab(~OceanNodes)=0;
 dabdh(~OceanNodes)=0;
-
-% dabdh=dabdh*0; % testing impact of uv-h convergence
-
 %% Basal melting due to frictional heating
 
 

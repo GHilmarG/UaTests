@@ -63,6 +63,24 @@ function [UserVar,ElementsToBeDeactivated]=DefineElementsToDeactivate(UserVar,Ru
 %
 %%
 
+
+persistent TimeOfLastDeactivation ElementsLastDeactivated
+
+
+if isempty(TimeOfLastDeactivation)
+    TimeOfLastDeactivation=-inf;
+end
+
+if F.time < (TimeOfLastDeactivation+10) % Only deactivate every 10 years
+
+    if ~isempty(ElementsLastDeactivated)
+        ElementsToBeDeactivated=ElementsLastDeactivated ;
+    end
+    return
+end
+
+TimeOfLastDeactivation=F.time;
+
 % Find all nodes for which the deactivation criterion is not fulfilled. Then find all elements containing one or more of
 % those nodes. These elements should not be deactivated. And then select the remaining elements for deactivation. 
 
@@ -74,21 +92,27 @@ AboveMinThickNodes = find(F.h > 2*CtrlVar.ThickMin) ;
 % Include all, but without duplicates 
 AboveMinThickNodes= unique([AboveMinThickNodes;BCs.ubFixedNode;BCs.vbFixedNode;BCs.hFixedNode]); 
 
-MinThickElements=AllElementsContainingGivenNodes(MUA.connectivity,AboveMinThickNodes) ;
-NewElementsToBeDeactivated=~MinThickElements ;
+AboveMinThickElements=AllElementsContainingGivenNodes(MUA.connectivity,AboveMinThickNodes) ;
+NewElementsToBeDeactivated=~AboveMinThickElements ;
 
-% Here I am assuming this is a logical list
+
 if islogical(ElementsToBeDeactivated)
     ElementsToBeDeactivated=ElementsToBeDeactivated | NewElementsToBeDeactivated ;
 else
-    ElementsToBeDeactivated=NewElementsToBeDeactivated ;
+    ElementsToBeDeactivated=unique([NewElementsToBeDeactivated;NewElementsToBeDeactivated]) ;
 end
 
 
+ElementsLastDeactivated=ElementsToBeDeactivated;
 
-UaPlots(CtrlVar,MUA,F,F.h,GetRidOfValuesDownStreamOfCalvingFronts=false,FigureTitle="Deactive elements"); 
+
+return
+
+%% Plot
+cbar=UaPlots(CtrlVar,MUA,F,F.h,GetRidOfValuesDownStreamOfCalvingFronts=false,FigureTitle="Deactive elements"); 
 set(gca,'ColorScale','log') 
 clim([CtrlVar.ThickMin/10 , CtrlVar.ThickMin*10])
+title(cbar,"$h$",interpreter="latex")
 hold on 
 
 PlotMuaMesh(CtrlVar,MUA,nan,DisplayName="Mesh")
@@ -104,7 +128,7 @@ plot(F.x(I)/CtrlVar.PlotXYscale,F.y(I)/CtrlVar.PlotXYscale,MarkerFaceColor="g",M
 nEleDeactivated=numel(find(ElementsToBeDeactivated)); 
 
 title(sprintf("%i elements to be deactivated shown in red",nEleDeactivated))
-legend
-
+lg=legend;
+lg.String{1}="ice thickness";
 
 end

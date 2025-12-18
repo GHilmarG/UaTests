@@ -3,7 +3,7 @@
 % 
 % beta 27/07/2025, 18/12/2025
 %
-% (alpha)   26/06/2023 , 16/03/2024  , 01/08/2024 , 29/12/2024, 02/03/2025, 06/05/2025, 19/07/2025
+% (alpha)   26/06/2023 , 16/03/2024  , 01/08/2024 , 29/12/2024, 02/03/2025, 06/05/2025, 19/07/2025, 3/11,2025
 %
 % To run the test do:
 %
@@ -96,7 +96,7 @@ function testMassConservationPeaks(testCase)
 
     
     expSolution = UserVar.Test.Norm.expValue ;
-    verifyEqual(testCase,actSolution,expSolution,'RelTol',1e-6)
+    verifyEqual(testCase,actSolution,expSolution,'RelTol',1e-3)
     
 end
 

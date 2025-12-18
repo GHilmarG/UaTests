@@ -4,63 +4,7 @@
 
 function [CtrlVar,UserVar]=ParseRunTypeString(CtrlVar,UserVar)
 
-%%
-%
-% extracts from:
-%
-%   UserVar.RunType
-%
-%
-%
-% various model options and set CtrlVar fields accordingly
-%
-%
-% FR :  forward run
-% IR :  inverse run 
-%
-% -uvh-  : implicit uvh run
-% -uv-h- : semi-implicit uv-h run
-% -EW-   : Element Size
-% -Tri?- : Element with ? numbher of nodes
-%
-% -Duvh- : Automated deactivation of elements downstream of calving fronts
-% -SW??  : Level set Strip Width of ?? km, otherwise by default 50km.
-%
-% -P-   : Level set is Prescribed
-% -C-   : Level set is evolved, with various further options possible
-%
-% -TM??- : min ice thickness, for example -TM0k2- implies a min thickness of 0.2 meters  
-%
-% -MRIM  : Melt Rate parameterisation based on IsMip
-%
-% -SMB??  : Surface Mass Balance
-%
-% -BM3-   : user bed-machine 3 data
-%
-%
-% -DV0-   : do NOT use development version -DV1-   : do use development version
-%
-% abMask0    :  apply melt over nodes either currently or initially afloat, within the assimilation/relaxation period
-%
-% abMask0M   :  apply ADDITIONAL high melt over nodes that initially were afloat, but now have become grounded, ONLY within
-%               the assimilation/relaxation period
-%
-% abMask0A   :  apply ADDITIONAL high melt over nodes that initially were afloat, but now have become grounded, ALWAYS (i.e.
-%               throughout the run period)
-%
-% -IOR-       : InsideOut nodes with respect to grounding line calculated in a 'relaxed' manner, i.e. all nodes where 
-%               GF.node  <0.5 are afloat, for the purpose of applying basal melt rates
-%               
-%
-%   if contains(UserVar.RunType,"-IOR-")
-%         [~,OceanNodes] = LakeOrOcean3(CtrlVar,MUA,F.GF,[],"Relaxed") ;
-%     else
-%         [~,OceanNodes] = LakeOrOcean3(CtrlVar,MUA,F.GF,[],"Strict") ;
-%     end
-% 
-% 
-% 
-%%
+
 
 %%
 %
@@ -97,6 +41,9 @@ if contains(UserVar.RunType,"-FR")
 elseif contains(UserVar.RunType,"-IR")
     CtrlVar.TimeDependentRun=0;
     CtrlVar.InverseRun=1;
+else
+    CtrlVar.InverseRun=0;
+    CtrlVar.TimeDependentRun=0;
 end
 
 %%  ; % "-uvh-" , "-uv-h-" , "-uv-" , "-h-" ;
@@ -238,6 +185,20 @@ else
     CtrlVar.LevelSetMethod=0;
 
 end
+
+
+%% Melt
+
+MeltSquareString=extractBetween(UserVar.RunType,"-MS","-",Boundaries="inclusive")  ;
+if isempty(MeltSquareString)
+    UserVar.isMeltSquare=false;
+else
+    UserVar.isMeltSquare=true;
+    UserVar.MeltSquareWidth=str2double(extractBetween(MeltSquareString,"W","L",Boundaries="exclusive"));
+    UserVar.MeltSquareLength=str2double(extractBetween(MeltSquareString,"L","a",Boundaries="exclusive"));
+    UserVar.MeltSquareMelt=str2double(extractBetween(MeltSquareString,"a","-",Boundaries="exclusive"));
+end
+
 
 %% Minimum ice thickness, also used for level set min ice thickness downstream of calving fronts
 
@@ -461,67 +422,71 @@ else
 
 end
 
-if UserVar.GeometryInterpolant=="create the name of inverse restart file from User.RunType"
+if ~isfield(UserVar,"GeometryInterpolant")
+    UserVar.GeometryInterpolant="";
+else
 
-    % Note: Here I'm only defining the name the file with the GeometryInterpolant, the file is then found or created in
-    % 'FindAndCreateInterpolants.m'
+    if UserVar.GeometryInterpolant=="create the name of inverse restart file from User.RunType"
 
-    if isnan(UserVar.from) || (contains(UserVar.RunType,"-FR") && UserVar.from == UserVar.Assimilation.tStart)
+        % Note: Here I'm only defining the name the file with the GeometryInterpolant, the file is then found or created in
+        % 'FindAndCreateInterpolants.m'
 
-        fprintf("Parsing: This is either the very first inversion, which does not contain the from variable in the RunType, or this is the first forward run during the assimilation phase\n")
+        if isnan(UserVar.from) || (contains(UserVar.RunType,"-FR") && UserVar.from == UserVar.Assimilation.tStart)
 
-        %
-        %
-        %
-        % Here the interpolants are based on data, ie Bedmachine, and those are located in a separate folder.
-        UserVar.GeometryInterpolant=UserVar.Interpolants+"BedMachineGriddedInterpolants";
-        UserVar.MeshBoundaryCoordinatesFile="../../../Interpolants/MeshBoundaryCoordinatesForAntarcticaBasedOnBedmachine";
+            fprintf("Parsing: This is either the very first inversion, which does not contain the from variable in the RunType, or this is the first forward run during the assimilation phase\n")
 
-        if contains(UserVar.RunType,"-BM3-")
-
-            UserVar.GeometryInterpolant=UserVar.Interpolants+"BedMachineAntarctica-v3-GriddedInterpolants";
-            UserVar.MeshBoundaryCoordinatesFile=UserVar.Interpolants+"BedMachineAntarctica-v3-MeshBoundaryCoordinates";
-
-        end
-
-        fprintf("The file for the geometry interpolant is %s \n ",UserVar.GeometryInterpolant)
-
-    elseif to <= UserVar.Assimilation.tEnd  % within assimilation period
-
-        if CtrlVar.InverseRun
-
-            fprintf("Inverse run within the assimilation period. \n")
-            % This is an inverse run that uses the final geometry from a previous transient run
-            % Apart from the first inversion, those later inversions are always done after a forward run from t=from to t=to.
-            % and the RunType string has the same values for the 'from' and 'to' variables, and only an "IR" instead of a "FR"
             %
-            % Thus, the geometry that should be used for this inverse run is based on the "to" time of that previous forward run.
-            UserVar.GeometryInterpolant=UserVar.InversionFileDirectory+"FsbB-at"+num2str(to)+UserVar.RunType ;
-            UserVar.GeometryInterpolant=replaceBetween(UserVar.GeometryInterpolant,"IR","-","-",Boundaries="inclusive") ;
-            fprintf("The file for the geometry interpolant is %s \n",UserVar.GeometryInterpolant)
+            %
+            %
+            % Here the interpolants are based on data, ie Bedmachine, and those are located in a separate folder.
+            UserVar.GeometryInterpolant=UserVar.Interpolants+"BedMachineGriddedInterpolants";
+            UserVar.MeshBoundaryCoordinatesFile="../../../Interpolants/MeshBoundaryCoordinatesForAntarcticaBasedOnBedmachine";
 
-        else
+            if contains(UserVar.RunType,"-BM3-")
 
-            fprintf("Forward run within the assimilation period. \n")
-            % This is a forward run within the assimilation/relaxation period.
-            UserVar.GeometryInterpolant=UserVar.InversionFileDirectory+"FsbB-at"+num2str(from)+UserVar.RunType ;  % This should already exist, since I must have done a previous inverse run to get here.
+                UserVar.GeometryInterpolant=UserVar.Interpolants+"BedMachineAntarctica-v3-GriddedInterpolants";
+                UserVar.MeshBoundaryCoordinatesFile=UserVar.Interpolants+"BedMachineAntarctica-v3-MeshBoundaryCoordinates";
+
+            end
+
+            fprintf("The file for the geometry interpolant is %s \n ",UserVar.GeometryInterpolant)
+
+        elseif to <= UserVar.Assimilation.tEnd  % within assimilation period
+
+            if CtrlVar.InverseRun
+
+                fprintf("Inverse run within the assimilation period. \n")
+                % This is an inverse run that uses the final geometry from a previous transient run
+                % Apart from the first inversion, those later inversions are always done after a forward run from t=from to t=to.
+                % and the RunType string has the same values for the 'from' and 'to' variables, and only an "IR" instead of a "FR"
+                %
+                % Thus, the geometry that should be used for this inverse run is based on the "to" time of that previous forward run.
+                UserVar.GeometryInterpolant=UserVar.InversionFileDirectory+"FsbB-at"+num2str(to)+UserVar.RunType ;
+                UserVar.GeometryInterpolant=replaceBetween(UserVar.GeometryInterpolant,"IR","-","-",Boundaries="inclusive") ;
+                fprintf("The file for the geometry interpolant is %s \n",UserVar.GeometryInterpolant)
+
+            else
+
+                fprintf("Forward run within the assimilation period. \n")
+                % This is a forward run within the assimilation/relaxation period.
+                UserVar.GeometryInterpolant=UserVar.InversionFileDirectory+"FsbB-at"+num2str(from)+UserVar.RunType ;  % This should already exist, since I must have done a previous inverse run to get here.
+                UserVar.GeometryInterpolant=replaceBetween(UserVar.GeometryInterpolant,"FR","-","-",Boundaries="inclusive") ;
+                fprintf("The file for the geometry interpolant is %s \n",UserVar.GeometryInterpolant)
+
+            end
+
+        elseif from >= UserVar.Assimilation.tEnd  % after assimilation period
+
+            fprintf("After the assimilation period. \n")
+            UserVar.GeometryInterpolant=UserVar.InversionFileDirectory+"FsbB-at"+num2str(UserVar.Assimilation.tEnd)+UserVar.RunType ;  % This should already exist, since I must have done a previous inverse run to get here.
             UserVar.GeometryInterpolant=replaceBetween(UserVar.GeometryInterpolant,"FR","-","-",Boundaries="inclusive") ;
             fprintf("The file for the geometry interpolant is %s \n",UserVar.GeometryInterpolant)
 
         end
-
-    elseif from >= UserVar.Assimilation.tEnd  % after assimilation period
-
-        fprintf("After the assimilation period. \n")
-        UserVar.GeometryInterpolant=UserVar.InversionFileDirectory+"FsbB-at"+num2str(UserVar.Assimilation.tEnd)+UserVar.RunType ;  % This should already exist, since I must have done a previous inverse run to get here.
-        UserVar.GeometryInterpolant=replaceBetween(UserVar.GeometryInterpolant,"FR","-","-",Boundaries="inclusive") ;
-        fprintf("The file for the geometry interpolant is %s \n",UserVar.GeometryInterpolant)
-
+    else
+        UserVar.GeometryInterpolant=UserVar.InversionFileDirectory+UserVar.GeometryInterpolant;
     end
-else
-    UserVar.GeometryInterpolant=UserVar.InversionFileDirectory+UserVar.GeometryInterpolant;
 end
-
 
 if contains(UserVar.RunType,"ITS120")
     UserVar.SurfaceVelocityInterpolant=UserVar.Interpolants+"ITS-LIVE-ANT-G0120-0000-VelocityGriddedInterpolants-nStride2";
@@ -564,24 +529,28 @@ UserVar.CFile=RemoveSomeUnwantedCharactersFromString(UserVar.CFile);
 
 
 % Now add ".mat" to filenames if it is not already a part of the name
+UserVar.GeometryInterpolant=RemoveSomeUnwantedCharactersFromString(UserVar.GeometryInterpolant);
+UserVar.SurfaceVelocityInterpolant=RemoveSomeUnwantedCharactersFromString(UserVar.SurfaceVelocityInterpolant);
+UserVar.InverseRestartFile=RemoveSomeUnwantedCharactersFromString(UserVar.InverseRestartFile);
+CtrlVar.NameOfRestartFiletoRead=RemoveSomeUnwantedCharactersFromString(CtrlVar.NameOfRestartFiletoRead);
+CtrlVar.NameOfRestartFiletoWrite=RemoveSomeUnwantedCharactersFromString(CtrlVar.NameOfRestartFiletoWrite);
+UserVar.FAFile=RemoveSomeUnwantedCharactersFromString(UserVar.FAFile);
+UserVar.FCFile=RemoveSomeUnwantedCharactersFromString(UserVar.FCFile);
+UserVar.AFile=RemoveSomeUnwantedCharactersFromString(UserVar.AFile);
+UserVar.CFile=RemoveSomeUnwantedCharactersFromString(UserVar.CFile);
+
 
 [filepath,fname,fext]=fileparts(UserVar.GeometryInterpolant) ; if fext=="" ;  UserVar.GeometryInterpolant = UserVar.GeometryInterpolant+".mat" ; end
 [filepath,fname,fext]=fileparts(UserVar.SurfaceVelocityInterpolant) ; if fext=="" ;  UserVar.SurfaceVelocityInterpolant = UserVar.SurfaceVelocityInterpolant+".mat" ; end
 [filepath,fname,fext]=fileparts(UserVar.InverseRestartFile) ; if fext=="" ;  UserVar.InverseRestartFile = UserVar.InverseRestartFile+".mat" ; end
 [filepath,fname,fext]=fileparts(CtrlVar.NameOfRestartFiletoRead) ; if fext=="" ;  CtrlVar.NameOfRestartFiletoRead = CtrlVar.NameOfRestartFiletoRead+".mat" ; end
+[filepath,fname,fext]=fileparts(CtrlVar.NameOfRestartFiletoWrite) ; if fext=="" ;  CtrlVar.NameOfRestartFiletoWrite = CtrlVar.NameOfRestartFiletoWrite+".mat" ; end
 [filepath,fname,fext]=fileparts(UserVar.FAFile) ; if fext=="" ;  UserVar.FAFile =UserVar.FAFile+".mat" ; end
 [filepath,fname,fext]=fileparts(UserVar.FCFile) ; if fext=="" ;  UserVar.FCFile =UserVar.FCFile+".mat" ; end
 [filepath,fname,fext]=fileparts(UserVar.AFile) ; if fext=="" ;  UserVar.AFile =UserVar.AFile+".mat" ; end
 [filepath,fname,fext]=fileparts(UserVar.CFile) ; if fext=="" ;  UserVar.CFile =UserVar.CFile+".mat" ; end
 
-UserVar.GeometryInterpolant=RemoveSomeUnwantedCharactersFromString(UserVar.GeometryInterpolant);
-UserVar.SurfaceVelocityInterpolant=RemoveSomeUnwantedCharactersFromString(UserVar.SurfaceVelocityInterpolant);
-UserVar.InverseRestartFile=RemoveSomeUnwantedCharactersFromString(UserVar.InverseRestartFile);
-CtrlVar.NameOfRestartFiletoRead=RemoveSomeUnwantedCharactersFromString(CtrlVar.NameOfRestartFiletoRead);
-UserVar.FAFile=RemoveSomeUnwantedCharactersFromString(UserVar.FAFile);
-UserVar.FCFile=RemoveSomeUnwantedCharactersFromString(UserVar.FCFile);
-UserVar.AFile=RemoveSomeUnwantedCharactersFromString(UserVar.AFile);
-UserVar.CFile=RemoveSomeUnwantedCharactersFromString(UserVar.CFile);
+
 
 
 CtrlVar.Inverse.NameOfRestartInputFile=UserVar.InverseRestartFile;
@@ -594,6 +563,7 @@ fprintf("UserVar.SurfaceVelocityInterpolant: \t %s \n ",UserVar.SurfaceVelocityI
 fprintf("UserVar.FAFile:                     \t %s \n ",UserVar.FAFile)
 fprintf("UserVar.FCFile:                     \t %s \n ",UserVar.FCFile)
 
+
 if CtrlVar.InverseRun
 
     fprintf("CtrlVar.Inverse.NameOfRestartInputFile:         \t %s \n ",CtrlVar.Inverse.NameOfRestartInputFile)
@@ -605,7 +575,9 @@ else
     fprintf("CtrlVar.NameOfRestartFiletoWrite:   \t %s \n \n \n",CtrlVar.NameOfRestartFiletoWrite)
 end
 
+
 %[ isfile(UserVar.GeometryInterpolant) , isfile(UserVar.InverseRestartFile) , isfile(UserVar.FAFile) , isfile(UserVar.FCFile)]
+
 
 if  CtrlVar.InverseRun && ~isnan(UserVar.from)
 
@@ -618,6 +590,17 @@ elseif CtrlVar.TimeDependentRun
     fprintf("This forward run will use geometry interpolants in: %s \n",UserVar.GeometryInterpolant)
 
 end
+
+%% Reversibility experiment?
+%
+% If reversibility experiment, find old results files and create a restart file from those result files.
+%
+% Get rid of the "-R*- part in the names of all other input files, (although these should not be needed anyhow)
+
+%
+%
+%%
+
 
 if ~nargout   % A trick to suppress any function output if no output requested. No need to suppress output using ;
     clearvars CtrlVar

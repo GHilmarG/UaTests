@@ -87,7 +87,7 @@ elseif  contains(options.CalvingFront,"-TWISC")  % Thwaites ice shelf to be (par
         % find the crossovers between calving font [Xc,Yc]  and the calving-front insert (CFI
         % )
 
-        io=inpoly2(Boundary, [MUA.Boundary.x MUA.Boundary.y]);
+        io=UaInpoly2(Boundary, [MUA.Boundary.x MUA.Boundary.y]);
         %            Boundary=Boundary(io,:) ;               % only keep the part of the Boundary (here Bedmachine boundary) which is within the boundary of the computational domain
         Xc=Boundary(io,1) ; Yc=Boundary(io,2);    % starting point for calving front is the current calving front
 
@@ -99,7 +99,7 @@ elseif  contains(options.CalvingFront,"-TWISC")  % Thwaites ice shelf to be (par
         [xcEdges,ycEdges]=polyxpoly(Xc,Yc,XCFI,YCFI);  % crossing points between (Xc,Yc) calving front and 'donwstream' grounding line
         BoxTWIS=[-1.6273   -1.5036   -0.4936   -0.3960]*1e6 ;
         BoxTWIS=[BoxTWIS(1) BoxTWIS(3) ; BoxTWIS(2) BoxTWIS(3) ; BoxTWIS(2) BoxTWIS(4) ; BoxTWIS(1) BoxTWIS(4) ; BoxTWIS(1) BoxTWIS(3) ] ;
-        io=inpoly2([xcEdges(:) ycEdges(:)],BoxTWIS);  % only take those crossing points that cover Thwaites Ice Shelf.
+        io=UaInpoly2([xcEdges(:) ycEdges(:)],BoxTWIS);  % only take those crossing points that cover Thwaites Ice Shelf.
         xcEdges=xcEdges(io) ; ycEdges=ycEdges(io) ;
 
         x1=xcEdges(1) ; y1=ycEdges(1) ;   % this is not robust, I could have many crossing points, I take the first and the last
