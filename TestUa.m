@@ -66,8 +66,18 @@ function testPIGdiagnostic(testCase)
     UserVar.RunType='Forward-Diagnostic'; 
     UserVar=Ua(UserVar) ;
     cd ..
+<<<<<<< HEAD
     actSolution= UserVar.Test.Norm.actValue 
     expSolution = UserVar.Test.Norm.expValue 
+=======
+    actSolution= UserVar.Test.Norm.actValue ;
+    % expSolution = 95982.7181182457;  % this was with the old bedmap2 data
+    % expSolution = 9757675340.83092 ;   % this is with the new Bedmachine data, 10/09/2021
+    % expSolution = 202912           ;     % this is with the new Bedmachine data and a new boundary, 01/11/2021
+    expSolution = UserVar.Test.Norm.expValue ;
+ 
+
+>>>>>>> 9adf3c17344d4f3920374a01c16b0d2557933834
     verifyEqual(testCase,actSolution,expSolution,'RelTol',1e-4)
   
 
