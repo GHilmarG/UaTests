@@ -9,7 +9,7 @@ function [UserVar,CtrlVar,MeshBoundaryCoordinates]=DefineInitialInputs(UserVar,C
 
 if isempty(UserVar) || ~isfield(UserVar,'RunType')
 
-    UserVar.RunType='Inverse-MatOpt';
+     UserVar.RunType='Inverse-MatOpt';
     %  UserVar.RunType='Inverse-UaOpt';
     % UserVar.RunType='Inverse-MatOpt-FixPoint';
     % UserVar.RunType='Inverse-ConjGrad';
@@ -37,15 +37,16 @@ end
 UserVar.ConstantIceShelfMeltRate=0;
 UserVar.n=3; UserVar.m=3;
 
+UserVar.DataRepositoryDirectory="../../Work/Ua/Antarctic Global Data Sets/MatlabInterpolants/" ;  % This is the path to your local data repository directory with respect to the folder where you do your runs
+UserVar.DataRepositoryDirectory="../../Interpolants/" ;  % This is the path to your local data repository directory with respect to the folder where you do your runs
 
-UserVar.DataRepositoryDirectory="../../Work/Ua/Antarctic Global Data Sets/MatlabInterpolants/" ;  % This is the path to your local data repository direcory with respect to the folder where you do your runs
-UserVar.DataRepositoryDirectory="../../Interpolants/" ;  % This is the path to your local data repository direcory with respect to the folder where you do your runs
 
-
-UserVar.GeometryAndDensityInterpolants=UserVar.DataRepositoryDirectory+"BedMachineGriddedInterpolants.mat";
+UserVar.GeometryAndDensityInterpolants=UserVar.DataRepositoryDirectory+"BedMachineAntarctica-v3-GriddedInterpolants.mat";
 UserVar.SurfaceVelocityInterpolant=UserVar.DataRepositoryDirectory+"L8Velocities-2014-AlexGardnerWithoutPolarGap-Spacing2400m";
 UserVar.SurfaceMassBalanceInterpolant=UserVar.DataRepositoryDirectory+"FasRACMO.mat";
-UserVar.BoundaryFile=UserVar.DataRepositoryDirectory+"MeshBoundaryCoordinatesForAntarcticaBasedOnBedmachine.mat";
+%UserVar.BoundaryFile=UserVar.DataRepositoryDirectory+"MeshBoundaryCoordinatesForAntarcticaBasedOnBedmachine.mat";
+UserVar.BoundaryFile=UserVar.DataRepositoryDirectory+"BedMachineAntarctica-v3-MeshBoundaryCoordinates.mat";
+
 UserVar.CFileName=[];
 UserVar.AGlenFileName=[];
 UserVar.Plots="-CreateFiguresInDefineOutputs-";
@@ -56,22 +57,11 @@ UserVar.DataFileWithPriors="";
 
 
 
-Reg=1e5; 
-RegString=num2str(Reg); 
-
-
-UserVar.DataFileWithInverseStartA="A-panAntarctic-m3-n3-Weertman-Nod3-Cga1-Cgs"+RegString+"-Aga1-Ags"+RegString+"-logC-logA-N111k-E218k-.mat";
-UserVar.DataFileWithInverseStartC="C-panAntarctic-m3-n3-Weertman-Nod3-Cga1-Cgs"+RegString+"-Aga1-Ags"+RegString+"-logC-logA-N111k-E218k-.mat";
-
-
-UserVar.DataFileWithInverseStartA="A-panAntarctic-m3-n3-Weertman-Nod3-Cga1-Cgs"+RegString+"-Aga1-Ags"+RegString+"-logC-logA-N1754k-E3494k-.mat";
-UserVar.DataFileWithInverseStartC="C-panAntarctic-m3-n3-Weertman-Nod3-Cga1-Cgs"+RegString+"-Aga1-Ags"+RegString+"-logC-logA-N1754k-E3494k-.mat";
-
-
-
-
-
-
+Reg=1e5;  % This is used below when defining the regularization values in inverse runs.
+CtrlVar.Inverse.Regularize.logC.ga=1;      % These variables are used in inverse runs, and also for creating input file names with inverted A and C fields for forward runs
+CtrlVar.Inverse.Regularize.logC.gs=Reg ;
+CtrlVar.Inverse.Regularize.logAGlen.ga=1;
+CtrlVar.Inverse.Regularize.logAGlen.gs=Reg;
 
 if ~isfield(UserVar,'m')
     UserVar.m=3;
@@ -82,6 +72,15 @@ if ~isfield(UserVar,'n')
 end
 
 %%
+% If   CtrlVar.ReadInitialMesh=1 , then these are some options for meshes that are already available. Comment out as
+% required.  These meshes are only used if the variable CtrlVar.ReadInitialMesh is set to true.
+% 
+CtrlVar.ReadInitialMeshFileName="AntarcticaMUAwith54kElements";                    Nele=54596 ; Nnodes=28278;
+CtrlVar.ReadInitialMeshFileName="AntarcticaMUAwith218kElements111kNodes.mat";      Nele=218383 ; Nnodes=111151;
+% CtrlVar.ReadInitialMeshFileName="AntarcticaMUAwith873kElements440kNodes.mat";      Nele=873000 ; Nnodes=440000;
+% CtrlVar.ReadInitialMeshFileName="AntarcticaMUAwith3494kElements1754kNodes.mat" ;   Nele=3494000 ; Nnodes=1754000;
+
+%%
 
 CtrlVar.Experiment=UserVar.RunType;
 
@@ -90,20 +89,19 @@ CtrlVar.PlotsXaxisLabel='xps (km)' ;  CtrlVar.PlotsYaxisLabel='yps (km)' ; %
 
 switch UserVar.RunType
 
-    case {'Inverse-MatOpt','Inverse-UaOpt',['Inverse-TestAdjoin' ...
-            't']}
+    case {'Inverse-MatOpt','Inverse-UaOpt','Inverse-TestAdjoint'}
 
        
         CtrlVar.InverseRun=1;
 
         CtrlVar.Restart=1;
 
-        CtrlVar.Inverse.Iterations=10;
+        CtrlVar.Inverse.Iterations=1000;
 
         if contains(UserVar.RunType,"MatOpt")
             CtrlVar.Inverse.MinimisationMethod="MatlabOptimization-HessianBased";
             % CtrlVar.Inverse.MinimisationMethod="MatlabOptimization-GradientBased";
-            CtrlVar.Inverse.InvertFor='-logC-logA-' ;
+            CtrlVar.Inverse.InvertFor='-logA-logC-' ;
             CtrlVar.Inverse.Measurements='-uv-dhdt-' ;  % {'-uv-,'-uv-dhdt-','-dhdt-'}
         else
             CtrlVar.Inverse.MinimisationMethod='UaOptimization-HessianBased';
@@ -120,24 +118,11 @@ switch UserVar.RunType
 
         UserVar.ReadSlipperinessFromFile=0;
         UserVar.ReadAGlenEstFromFile=0;
-        CtrlVar.ReadInitialMesh=1; CtrlVar.ReadInitialMeshFileName="AntarcticaMUAwith54kElements";                    Nele=54596 ; Nnodes=28278;
-        CtrlVar.ReadInitialMesh=1; CtrlVar.ReadInitialMeshFileName="AntarcticaMUAwith218kElements111kNodes.mat";      Nele=218383 ; Nnodes=111151;
-        CtrlVar.ReadInitialMesh=1; CtrlVar.ReadInitialMeshFileName="AntarcticaMUAwith873kElements440kNodes.mat";      Nele=873000 ; Nnodes=440000;
-        CtrlVar.ReadInitialMesh=1; CtrlVar.ReadInitialMeshFileName="AntarcticaMUAwith3494kElements1754kNodes.mat" ;   Nele=3494000 ; Nnodes=1754000;
-
-
-        CtrlVar.AdaptMesh=0;       % CtrlVar.ReadInitialMeshFileName
-
-
+        CtrlVar.ReadInitialMesh=1;
+        CtrlVar.AdaptMesh=0;      
 
         CtrlVar.Inverse.Regularize.Field=CtrlVar.Inverse.InvertFor;
-
-   
-
-        CtrlVar.Inverse.Regularize.logC.ga=1;
-        CtrlVar.Inverse.Regularize.logC.gs=Reg ;
-        CtrlVar.Inverse.Regularize.logAGlen.ga=1;
-        CtrlVar.Inverse.Regularize.logAGlen.gs=Reg;
+       
 
 
 
@@ -159,7 +144,7 @@ switch UserVar.RunType
             CtrlVar.Inverse.AdjointGradientPreMultiplier='I'; % {'I','M'}
 
             CtrlVar.Inverse.TestAdjoint.FiniteDifferenceStepSize=0.01 ; % 0.1 reasonable for logA and logC
-
+           
 
             CtrlVar.TestAdjointFiniteDifferenceType="central-second-order" ;
             % CtrlVar.TestAdjointFiniteDifferenceType="forward-second-order" ;
@@ -188,7 +173,7 @@ switch UserVar.RunType
         CtrlVar.AdaptMesh=0;
 
         if ~CtrlVar.Restart
-            CtrlVar.ReadInitialMesh=1; CtrlVar.ReadInitialMeshFileName="AntarcticaMUAwith54kElements";
+            CtrlVar.ReadInitialMesh=1; 
         end
 
         CtrlVar.TotalNumberOfForwardRunSteps=2;
@@ -218,7 +203,7 @@ switch UserVar.RunType
         UserVar.ReadAGlenEstFromFile=1;
         CtrlVar.ReadInitialMesh=1;
         CtrlVar.AdaptMesh=0;
-        CtrlVar.ReadInitialMesh=1; CtrlVar.ReadInitialMeshFileName="AntarcticaMUAwith54kElements";
+        CtrlVar.ReadInitialMesh=1;
 
     case 'TestingMeshOptions'
 
@@ -241,8 +226,8 @@ switch UserVar.RunType
         CtrlVar.MeshRefinementMethod='explicit:global';
 
         % One you have a good initial mesh, switch to local mesh refinement during a transient run, and add here aspects of the run you expect
-        % to change during the run, for example the grounding line position.  Use as an inital mesh, the one obtained using the initial global
-        % remeshing excercise.
+        % to change during the run, for example the grounding line position.  Use as an initial mesh, the one obtained using the initial global
+        % remeshing exercise.
         %CtrlVar.MeshRefinementMethod='explicit:local:newest vertex bisection';
         %CtrlVar.MeshAdapt.GLrange=[40000 10000; 10000 5000 ; 5000 1000];
 end
@@ -253,13 +238,13 @@ CtrlVar.time=0;
 
 
 %% Sliding law
-% CtrlVar.MustBe.SlidingLaw=["Weertman","Budd","Tsai","Coulomb","Cornford","Umbi","W","W-N0","minCW-N0","C","rpCW-N0","rCW-N0"]  ;
+
 
 CtrlVar.SlidingLaw="Cornford" ;  CtrlVar.NRitmax=150;       %  With sliding laws that include Coulomb behaviour, convergence might be slow and more iterations needed
 CtrlVar.SlidingLaw="Weertman" ;  CtrlVar.NRitmax=50;
 
 
-%% Ploting
+%% Plotting
 CtrlVar.doplots=1;
 CtrlVar.PlotMesh=0;
 CtrlVar.PlotBCs=1 ;
@@ -274,7 +259,7 @@ CtrlVar.TriNodes=3 ;
 
 factor=2;
 CtrlVar.MeshSize=factor*50e3;
-CtrlVar.MeshSizeMax=150e3;   % reasonable number for a quick calculation on the labtop is 40e3
+CtrlVar.MeshSizeMax=150e3;   % reasonable number for a quick calculation on the laptop is 40e3
 CtrlVar.MeshSizeMin=factor*1000;
 
 % These are used in the DefineDesiredEleSize
@@ -322,14 +307,37 @@ CtrlVar.Inverse.NameOfRestartInputFile=InverseRestartFile ;
 CtrlVar.NameOfFileForSavingSlipperinessEstimate=InverseCFile ;
 CtrlVar.NameOfFileForSavingAGlenEstimate=InverseAFile ;
 
+sString=which(InverseCFile); 
+if ~isempty(sString)
+    UserVar.CFileName=InverseCFile;
+    UserVar.DataFileWithInverseStartC=InverseCFile;
+else
+    UserVar.CFileName="Cest-AntarcticaMUAwith54kElements-Weertman-n3-m3-Cga0-Cgs1000-Aga0-Ags1000-I.mat";
+end
 
-UserVar.CFileName="NoFile" ; % Cest-AntarcticaMUAwith54kElements-Weertman-n3-m3-Cga0-Cgs1000-Aga0-Ags1000-I";
-UserVar.AGlenFileName="NoFile" ; % Aest-AntarcticaMUAwith54kElements-Weertman-n3-m3-Cga0-Cgs1000-Aga0-Ags1000-I";
+sString=which(InverseAFile); 
+if ~isempty(sString)
+    
+    UserVar.AGlenFileName=InverseAFile;
+    UserVar.DataFileWithInverseStartA=InverseAFile;
+else
+    UserVar.AGlenFileName="Aest-AntarcticaMUAwith54kElements-Weertman-n3-m3-Cga0-Cgs1000-Aga0-Ags1000-I.mat";
+end
 
 
 UserVar.OutputFile="UserOutputFile.mat";
 CtrlVar.SaveAdaptMeshFileName='MeshFileAdaptTest';    %  file name for saving adapt mesh. If left empty, no file is written
 
+if CtrlVar.InverseRun &&  CtrlVar.Restart
 
+sString=which(InverseRestartFile); 
+
+if isempty(sString)
+    
+    fprintf("Restart file for inverse run not found. \n")
+    fprintf("The restart file specified is: %s \n",InverseRestartFile)
+    fprintf("This file is not available.  \n ")
+
+end
 
 end

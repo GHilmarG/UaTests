@@ -6,6 +6,12 @@ function driverForwardAssimilation(RunString)
 
 % Driver for repeated inversions over time. This is done to reduce initial transients
 %
+%                       -side of a perfect square of equal area-
+% 30km = 14km                        9.806 km
+% 20km = 9.3km                       6.559 km
+% 10km = 4.6km                       3.28  km
+%  5km = 2.3km                       1.64  km
+% 2.5km = 1.16km                     0.821 km
 
 
 UserVar.InverseRestartFile="create the name of inverse restart file from User.RunType";
@@ -15,55 +21,42 @@ if nargin==0 | isempty(RunString)
 
     % The RunString defined here is then used in DefineInitialInputs to set various fields of CtrlVar. This is mostly done by
     % calling: [CtrlVar,UserVar]=ParseRunTypeString(CtrlVar,UserVar).
-    %
-    %
+       
 
+    RunString="ES5km-Tri3-SlidWeertman-Duvh-MRlASE3-abMask0-P-BCVel-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-";  % HO Office
+    RunString="ES5km-Tri3-SlidWeertman-Duvh-MRlASE2-abMask0-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-";  % HP Office
+    RunString="ES5km-Tri3-SlidWeertman-Duvh-MRlASE1-abMask0-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-";  % HP Office
 
-    % This is the initial inversion at the start of the experiment, uses Bedmachine geometry
-    RunString="ES30km-Tri3-SlidWeertman-Duvh-MR4-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-GeoBed2-SMB_RACHMO2k3_2km-";
-
-
-    RunString="ES30km-Tri3-SlidWeertman-Duvh-MRlASE1-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-GeoBed2-SMB_RACHMO2k3_2km-";
-    RunString="ES5km-Tri3-SlidWeertman-Duvh-MRlASE1-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-GeoBed2-SMB_RACHMO2k3_2km-";
-
-
-    RunString="ES30km-Tri3-SlidWeertman-Duvh-MRlASE1-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-";
-    RunString="ES20km-Tri3-SlidWeertman-Duvh-MRlASE1-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-";
-    RunString="ES5km-Tri3-SlidWeertman-Duvh-MRlASE1-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-";
-
-
-    RunString="ES30km-Tri3-SlidWeertman-Duvh-MRlASE2-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-";
-
-
-    RunString="ES10km-Tri3-SlidWeertman-Duvh-MRlASE2-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-";  % Dell office
-    RunString="ES10km-Tri3-SlidWeertman-Duvh-MRlASE1-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-";  % Dell office
-
-    RunString="ES10km-Tri3-SlidWeertman-Duvh-MRlASE1-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-";
-    RunString="ES5km-Tri3-SlidWeertman-Duvh-MRlASE2-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-";
-    RunString="ES30km-Tri3-SlidWeertman-Duvh-MRlASE2-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-";
-
-
-
-    RunString="ES30km-Tri3-SlidWeertman-Duvh-MRlASE2-abMask0-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-";
-    RunString="ES5km-Tri3-SlidWeertman-Duvh-MRlASE2-abMask0-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-";  % HP Office
-    RunString="ES5km-Tri3-SlidWeertman-Duvh-MRlASE1-abMask0-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-";  % HP Office
-    RunString="ES5km-Tri3-SlidWeertman-Duvh-MRlASE3-abMask0-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-";  % HP Office
 
     % RunString="ES10km-Tri3-SlidWeertman-Duvh-MRlASE1-abMask0-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; % Dell office
-    % RunString="ES10km-Tri3-SlidWeertman-Duvh-MRlASE2-abMask0-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; % Dell office
 
 
-   % RunString="ES5km-Tri3-SlidWeertman-Duvh-MRlASE3-abMask0-P-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; %
 
+   RunString="ES2.5km-Tri3-SlidWeertman-Duvh-MRlASE3-abMask0-P-BCVel-kH10000-TM0k1-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-";  % HP Office
 
+   RunString="ES20km-uv-h-Tri3-SlidWeertman-Duvh-MRlASE1-abMask0-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; 
+   RunString="ES5km-uv-h-Tri3-SlidWeertman-Duvh-MRlASE1-abMask0-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-";  
+   RunString="ES10km-uv-h-Tri3-SlidWeertman-Duvh-MRlASE1-abMask0-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; 
+   RunString="ES2.5km-uv-h-Tri3-SlidWeertman-Duvh-MRlASE1-abMask0-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; 
+   
+   %RunString="ES30km-uv-h-Tri3-SlidWeertman-Duvh-MRIM6HadGEM2-abMask0-P-BCVel-kH10000-TM0k2-Alim-Clim-Ca1-Cs100000-Aa1-As100000-VelITS120-BM3-SMB_RACHMO2k3_2km-"; 
 
 end
 
-UserVar.Assimilation.tStart=0 ; %
+UserVar.Assimilation.tStart=7 ; %
 UserVar.Assimilation.tEnd=10   ; %  Actually the end is at tEnd+1 once the final forward transient run is done
+UserVar.RunStartYear=0; 
 
 
-if UserVar.Assimilation.tStart==0  % Generally I would start with an inverse run, except if possible I like to continue a previous initialisation at some tStart>0
+if contains(RunString,"-MRIM6")  % this implies the use of ISMIP6 forcing
+    UserVar.Assimilation.tStart=UserVar.Assimilation.tStart+2015;
+    UserVar.Assimilation.tEnd=UserVar.Assimilation.tEnd+2015; 
+end
+
+
+InverseRunAtStart=true ; 
+
+if InverseRunAtStart && (UserVar.Assimilation.tStart==0)  % Generally I would start with an inverse run, except if possible I like to continue a previous initialisation at some tStart>0
     %% First INVERSE run,
     UserVar.RunType="-IR-"+RunString ;
     CtrlVar.Restart=0;  % Here forcing this NOT to be an inverse run. I need this if I have changed data sets such as Bedmachine,
@@ -87,13 +80,16 @@ for itime=UserVar.Assimilation.tStart:UserVar.Assimilation.tEnd-1
     
     Ua(UserVar) ;       % This FORWARD run will go t=from to t=to,
 
+    %CtrlVar.Restart=1; CtrlVar.ForwardTimeIntegration="-uv-h-" ; Ua(UserVar,CtrlVar) ; % if want to force restart
+    
+
     %% This is an INVERSE run using geometry based on the previous forward run that ended at time=to, ie the previous forward run
 
 
     UserVar.RunType=sprintf("-IR%ito%i-",from,to)+RunString ;
     
     Ua(UserVar)
-
+    close all 
 end
 
 

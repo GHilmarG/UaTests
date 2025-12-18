@@ -395,4 +395,12 @@ CtrlVar.Parallel.uvhAssembly.spmd.isOn=true;
 CtrlVar.Parallel.uvAssembly.spmd.isOn=true; 
 CtrlVar.Parallel.Distribute=false;
 CtrlVar.Parallel.isTest=false;
+
+%%
+%
+CtrlVar.Development.Pre2025uvAssembly=false ; % the uv and uvh assembly was changed slightly in the 2025a version. The previous evaluation and be switch on by setting this flag to true.
+CtrlVar.Development.Pre2025uvhAssembly=false ; % the uv and uvh assembly was changed slightly in the 2025a version. The previous evaluation and be switch on by setting this flag to true.
+
+
+
 end

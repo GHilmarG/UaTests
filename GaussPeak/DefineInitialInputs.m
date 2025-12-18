@@ -79,5 +79,8 @@ function [UserVar,CtrlVar,MeshBoundaryCoordinates]=DefineInitialInputs(UserVar,C
     CtrlVar.PlotXYscale=1000;     % used to scale x and y axis of some of the figures, only used for plotting purposes
     CtrlVar.PlotLabels=0 ; CtrlVar.PlotMesh=1; CtrlVar.PlotBCs=00;CtrlVar.PlotNodes=1;
     CtrlVar.InfoLevelNonLinIt=1;
+
+    %% Rhubarb
+    CtrlVar.AdaptMesh=0;
     
 end

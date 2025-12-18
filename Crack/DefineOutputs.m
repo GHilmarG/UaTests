@@ -104,13 +104,13 @@ end
 
 
 if contains(plots,'-e-')
-    % plotting effectiv strain rates
+    % plotting effective strain rates
     
     % first get effective strain rates, e :
     [etaInt,xint,yint,exx,eyy,exy,Eint,e,txx,tyy,txy]=calcStrainRatesEtaInt(CtrlVar,MUA,ub,vb,AGlen,n);
     % all these variables are are element variables defined on integration points
-    % therfore if plotting on nodes, must first project these onto nodes
-    eNod=ProjectFintOntoNodes(MUA,e);
+    % therefore if plotting on nodes, must first project these onto nodes
+    eNod=ProjectFintOntoNodes(CtrlVar,MUA,e);
     
     figure
     [FigHandle,ColorbarHandel,tri]=PlotNodalBasedQuantities(MUA.connectivity,MUA.coordinates,eNod,CtrlVar)    ;

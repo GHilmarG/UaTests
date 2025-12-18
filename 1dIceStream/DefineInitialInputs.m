@@ -9,11 +9,12 @@ MeshBoundaryCoordinates=flipud([xu yr ; xd yr ; xd yl ; xu yl]);
 
 %% Types of runs
 CtrlVar.TimeDependentRun=1;
-CtrlVar.time=0 ;
+CtrlVar.StartTime=0 ;
+CtrlVar.EndTime=1 ;
 CtrlVar.dt=0.01;
-CtrlVar.TotalNumberOfForwardRunSteps=20;
+CtrlVar.TotalNumberOfForwardRunSteps=inf;
 CtrlVar.AdaptiveTimeStepping=1 ;
-CtrlVar.TotalTime=10;
+
 CtrlVar.ThicknessConstraints=0;
 
 
@@ -86,6 +87,7 @@ CtrlVar.PlotXYscale=1000;     % used to scale x and y axis of some of the figure
 CtrlVar.NameOfRestartFiletoWrite=sprintf("Ua2D_Restartfile-%i-%s-%s-.mat",...
     CtrlVar.Implicituvh,CtrlVar.uvhImplicitTimeSteppingMethod,CtrlVar.uvhSemiImplicitTimeSteppingMethod);
 CtrlVar.NameOfRestartFiletoRead='Ua2D_Restartfile.mat';
+
 
 
 end

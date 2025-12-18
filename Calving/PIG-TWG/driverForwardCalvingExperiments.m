@@ -1,9 +1,14 @@
 
-% 30km = 14km
-% 20km = 9.3km
-% 10km = 4.6km
-%  5km = 2.3km
-% 2.5km = 1.16km
+
+
+%                       -side of a perfect square of equal area-
+% 30km = 14km                        9.806 km
+% 20km = 9.3km                       6.559 km
+% 10km = 4.6km                       3.28  km
+%  5km = 2.3km                       1.64  km
+% 2.5km = 1.16km                     0.821 km
+
+
 
 %%  To do:
 %

@@ -1,3 +1,8 @@
+
+
+
+
+
 function  BCs=DefineBoundaryConditions(UserVar,CtrlVar,MUA,F,BCs) 
 
 %%
@@ -52,19 +57,171 @@ function  BCs=DefineBoundaryConditions(UserVar,CtrlVar,MUA,F,BCs)
 % 
 %%
 
-
-tolerance=1;
-
-xmax=max(F.x) ; ymax=max(F.y) ; xmax=min(F.x) ;  ymin=min(F.y) ; 
-
-UpperEdgeNodes= MUA.Boundary.Nodes(abs(F.y(MUA.Boundary.Nodes)-ymax) <tolerance) ; 
-LowerEdgeNodes= MUA.Boundary.Nodes(abs(F.y(MUA.Boundary.Nodes)-ymin) <tolerance) ; 
-
-BCs.ubFixedNode=[UpperEdgeNodes; LowerEdgeNodes] ;  BCs.ubFixedValue=BCs.ubFixedNode*0;
-BCs.vbFixedNode=[UpperEdgeNodes ; LowerEdgeNodes] ; BCs.vbFixedValue=[UpperEdgeNodes*0 ; LowerEdgeNodes*0-5000]; 
-% BCs.ubFixedNode=1 ;  BCs.ubFixedValue=BCs.ubFixedNode*0;
+if isfield(CtrlVar,"BCs")  &&  CtrlVar.BCs=="-phi-" 
 
 
+        switch UserVar.Experiment
+
+            case "single notch"
+
+             
+
+                l=CtrlVar.PhaseFieldFracture.l ;
+                Iy0=find(abs(F.y)<(l/2) & F.x > 50e3 );
+                BCs.hFixedNode=Iy0 ;  
+                BCs.hFixedValue=Iy0*0+1 ;
+   
+
+            case "double notch"
+
+
+                l=CtrlVar.PhaseFieldFracture.l ;
+                
+                yr=20e3;
+                yl=-20e3 ;
+
+                Iy0=(abs(F.y-yr)<(3*l) & F.x <-50e3 )  | (abs(F.y-yl)<(3*l) & F.x >50e3 ) ;
+
+                Iy0=find(Iy0) ;
+
+
+
+                BCs.hFixedNode=Iy0 ;
+                BCs.hFixedValue=Iy0*0+1 ;
+
+            case "ice shelf single notch"
+
+
+                l=CtrlVar.PhaseFieldFracture.l ;
+                Iy0=(abs(F.x-80e3 ) < (l/2) )  & (F.y<-60e3);
+
+                Iy0=find(Iy0) ;
+
+
+
+                BCs.hFixedNode=Iy0 ;
+                BCs.hFixedValue=Iy0*0+1 ;
+
+            case "ice shelf stream flow"
+
+                  BCs.hFixedNode=[];
+                BCs.hFixedValue=[];
+
+            case "ice shelf constricted" 
+
+                  BCs.hFixedNode=[];
+                BCs.hFixedValue=[];
+
+
+            otherwise
+
+                error("case not found")
+
+
+        end
+else  % displacement/velocity boundary conditions
+
+
+        tolerance=1;
+     
+
+
+        xmax=max(F.x) ; ymax=max(F.y) ; xmin=min(F.x) ;  ymin=min(F.y) ;
+
+        UpperEdgeNodes= MUA.Boundary.Nodes(abs(F.y(MUA.Boundary.Nodes)-ymax) <tolerance) ;
+        LowerEdgeNodes= MUA.Boundary.Nodes(abs(F.y(MUA.Boundary.Nodes)-ymin) <tolerance) ;
+        LeftEdgeNodes= MUA.Boundary.Nodes(abs(F.x(MUA.Boundary.Nodes)-xmin) <tolerance) ;
+        RightEdgeNodes= MUA.Boundary.Nodes(abs(F.x(MUA.Boundary.Nodes)-xmax) <tolerance) ;
+
+
+        if   UserVar.Experiment=="ice shelf single notch" || UserVar.Experiment=="damaged/deactivated"
+
+                        
+       %     I=MUA.Boundary.Nodes(F.x(MUA.Boundary.Nodes) < xmax)  ; 
+            I=MUA.Boundary.Nodes(F.x(MUA.Boundary.Nodes) < 80e3)  ; 
+
+            
+            BCs.ubFixedNode=I ; BCs.ubFixedValue=BCs.ubFixedNode*0;
+            BCs.vbFixedNode=I ; BCs.vbFixedValue=BCs.vbFixedNode*0;
+        elseif UserVar.Experiment=="double notch"
+
+                V=1e7 ;  
+
+
+            BCs.ubFixedNode=[UpperEdgeNodes; LowerEdgeNodes ; LeftEdgeNodes  ; RightEdgeNodes] ;  BCs.ubFixedValue=BCs.ubFixedNode*0;
+            BCs.vbFixedNode=[UpperEdgeNodes ; LowerEdgeNodes ] ; BCs.vbFixedValue=[UpperEdgeNodes*0+V; LowerEdgeNodes*0-V];
+
+        elseif UserVar.Experiment=="1D ice shelf"
+
+            BCs.ubFixedNode=[LeftEdgeNodes ; RightEdgeNodes ] ;  BCs.ubFixedValue=BCs.ubFixedNode*0;
+            BCs.vbFixedNode=[LeftEdgeNodes ; UpperEdgeNodes ; LowerEdgeNodes ; RightEdgeNodes ] ; BCs.vbFixedValue= BCs.vbFixedNode*0; 
+
+
+        elseif UserVar.Experiment=="ice shelf stream flow"
+
+
+            
+             
+             % BCs.ubFixedNode=[UpperEdgeNodes; LowerEdgeNodes ; LeftEdgeNodes] ;
+             
+             xU=F.x(MUA.Boundary.Nodes);
+             yU=F.y(MUA.Boundary.Nodes);
+             
+             % Iu=xU < 0 | (xU>=0 & abs(yU)>20e3 ) ;
+             % 
+             % 
+             % BCs.ubFixedNode=MUA.Boundary.Nodes(Iu);
+             % BCs.ubFixedValue=BCs.ubFixedNode*0;
+             % 
+             % 
+             % BCs.vbFixedNode=[UpperEdgeNodes ; LowerEdgeNodes] ; BCs.vbFixedValue=[UpperEdgeNodes*0; LowerEdgeNodes*0];
+
+             Iu=xU < 60e3 & ~(yU<-80e3 & xU> -90e3) ; 
+             BCs.ubFixedNode=MUA.Boundary.Nodes(Iu); BCs.ubFixedValue=BCs.ubFixedNode*0;
+
+              BCs.vbFixedNode=[LeftEdgeNodes ; UpperEdgeNodes ; LowerEdgeNodes ] ; BCs.vbFixedValue= BCs.vbFixedNode*0; 
+
+              %BCs.vbFixedNode=MUA.Boundary.Nodes(Iu); BCs.vbFixedValue=BCs.vbFixedNode*0;
+
+
+
+        elseif UserVar.Experiment=="ice shelf constricted"
+
+            uFixedNodes=setdiff(MUA.Boundary.Nodes,[RightEdgeNodes;LowerEdgeNodes;UpperEdgeNodes]) ;
+            BCs.ubFixedNode=uFixedNodes;  BCs.ubFixedValue=BCs.ubFixedNode*0;
+           
+            vFixedNodes=setdiff(MUA.Boundary.Nodes,RightEdgeNodes) ;
+            BCs.vbFixedNode=vFixedNodes;  BCs.vbFixedValue=BCs.vbFixedNode*0;
+
+
+
+        else
+
+
+
+
+
+            if CtrlVar.PhaseFieldFracture.Formulation=="-elastic-"
+                V=1e7 ;  
+            else
+                V=5000;
+            end
+
+            BCs.ubFixedNode=[UpperEdgeNodes; LowerEdgeNodes ; LeftEdgeNodes] ;  BCs.ubFixedValue=BCs.ubFixedNode*0;
+            BCs.vbFixedNode=[UpperEdgeNodes ; LowerEdgeNodes] ; BCs.vbFixedValue=[UpperEdgeNodes*0+V; LowerEdgeNodes*0-V];
+
+
+            % BCs.ubFixedNode=1 ;  BCs.ubFixedValue=BCs.ubFixedNode*0;
+
+        end
+
+
+
+
+end
+
+
+% BCs.hFixedNode=1:MUA.Nnodes;  BCs.hFixedValue=BCs.hFixedNode*0; 
 
 
 

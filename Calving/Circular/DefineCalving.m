@@ -87,7 +87,7 @@ if ~isInitialized
         B3=CP +  [-SL2 -SL2 ; SL2 -SL2 ; 0 SL2 ; -SL2 -SL2] ;  B3=1000*B3;
         Xc=[Xc(:); NaN ; B3(:,1)]; Yc=[Yc(:); NaN ; B3(:,2)]; 
 
-        % io=inpoly2([F.x F.y],[Xc Yc]);
+        % io=UaInpoly2([F.x F.y],[Xc Yc]);
 
         io=InsideOutside([F.x F.y],[Xc Yc]);  % this deals with several seperated boundaries
 
