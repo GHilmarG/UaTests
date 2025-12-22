@@ -1,13 +1,22 @@
 
 
 
-DataFile="IR-CstartSetToMeanOfTrueC-AstartSetToMeanOfTrueA-MS5km-Tri3-.mat";
-load(DataFile)
-UserVar=[]; 
-CtrlVar=CtrlVarInRestartFile;
+function  ProfilePlots(UserVar,CtrlVar,RunInfo,MUA,BCs,F,l,InvStartValues,InvFinalValues,Priors,Meas,BCsAdjoint)
 
-%%
-FindOrCreateFigure("MESH") ; PlotMuaMesh(CtrlVar,MUA)
+
+
+if nargin==0
+
+    DataFile="IR-CstartSetToMeanOfTrueC-AstartSetToMeanOfTrueA-MS5km-Tri3-.mat";
+    DataFile="IR-CstartSetToMeanOfTrueC-AstartSetToMeanOfTrueA-MS5km-Tri6-.mat";
+    load(DataFile)
+    UserVar=[];
+    CtrlVar=CtrlVarInRestartFile;
+else
+    DataFile="";
+end
+
+%% FindOrCreateFigure("MESH") ; PlotMuaMesh(CtrlVar,MUA)
 
 
 %%  centre line profile, 1/2 channel width
@@ -15,7 +24,6 @@ iProfile=abs(F.y) < 1 ;
 
 FindOrCreateFigure("dJ/dC profile") ; plot(F.x(iProfile),InvFinalValues.dJdC(iProfile),"or") ; title("dJ/dC along centre line") ; xlabel("x (km)") ; ylabel("y (km)")
 FindOrCreateFigure("dJ/dA profile") ; plot(F.x(iProfile),InvFinalValues.dJdAGlen(iProfile),"or")  ; title("dA/dC along centre line") ; xlabel("x (km)") ; ylabel("y (km)")
-
 
 FindOrCreateFigure("A centre-line profile") ; 
 plot(F.x(iProfile)/1000,InvFinalValues.AGlen(iProfile),"or",DisplayName="Retrieved A")  ; 
@@ -74,21 +82,38 @@ xlabel("x (km)") ; ylabel("y (km)")
 
 
 %%
-[~,dhdt]=dhdtExplicit(UserVar,CtrlVar,MUA,F,BCs);  
 
-FindOrCreateFigure("dh/dt profile at y=0")
+% CtrlVar.QuadratureRuleDegree=10; 
+% MUA=UpdateMUA(CtrlVar,MUA);
+[~,dhdt]=dhdtExplicit(UserVar,CtrlVar,MUA,F,BCs);  
+%CtrlVar.Tracer.SUPG.tau="tau2"; CtrlVar.Tracer.SUPG.Use=1;
+[~,dhdtSUPG]=dhdtExplicitSUPG(UserVar,CtrlVar,MUA,F,BCs);  
+
+
+
+Fig0=FindOrCreateFigure("dh/dt profile at y=0") ; clf(Fig0)
 iProfile=abs(F.y) < 1 ; 
 plot(F.x(iProfile)/1000,dhdt(iProfile),"or",DisplayName="Retrieved C")  ; 
 title("dh/dt at y=0$")
 
 
 
-FindOrCreateFigure("dh/dt profile at y=25km")
+Fig25=FindOrCreateFigure("dh/dt profile at y=25km") ; clf(Fig25) 
 iProfile=abs(F.y-25000) < 1 ; 
 plot(F.x(iProfile)/1000,dhdt(iProfile),"or",DisplayName="Retrieved C")  ; 
 title("dh/dt at y=25km")
 
+Fig27=FindOrCreateFigure("dh/dt profile at y=27.5km") ; clf(Fig27) 
+iProfile=abs(F.y-27500) < 1 ; 
+plot(F.x(iProfile)/1000,dhdt(iProfile),"or",DisplayName="dhdt")  ; 
+hold on 
+plot(F.x(iProfile)/1000,dhdtSUPG(iProfile),"*b",DisplayName="dhdtSUPG")  ; 
+title("dh/dt at y=27.5km")
+legend
 
+
+
+end
 
 %%
 
