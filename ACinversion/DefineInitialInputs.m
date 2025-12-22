@@ -13,6 +13,14 @@ function [UserVar,CtrlVar,MeshBoundaryCoordinates]=DefineInitialInputs(UserVar,C
 % this happens, and not sure why this happens for 6-node elements when the same problem with 3-node elements is working fine.
 %
 %
+% Just using dh/dt does not produce good results, stagnates early with retrieved A and C fields clearly being affected by the
+% mesh and element sizes.
+%
+%
+% Testing the ajoint gradient calculation shows the gradient to be very accurate. This is true for all measurement cases:
+% -uv-, -dhdt-, and -uv-dhd- , and for A and C gradients.
+%
+%
 
 
 %% UserVar
@@ -24,11 +32,11 @@ UserVar.RunType="IR-CstartSetToMeanOfTrueC-AstartSetToMeanOfTrueA-MS10km-Tri6-";
 UserVar.RunType="IR-CstartSetToMeanOfTrueC-AstartSetToMeanOfTrueA-MS10km-Tri3-";
 
 
-UserVar.RunType="IR-CstartSetToMeanOfTrueC-AstartSetToMeanOfTrueA-MS5km-Tri3-";
-%UserVar.RunType="IR-CstartSetToMeanOfTrueC-AstartSetToMeanOfTrueA-MS5km-Tri6-";
+% UserVar.RunType="IR-CstartSetToMeanOfTrueC-AstartSetToMeanOfTrueA-MS5km-Tri3-";
+% UserVar.RunType="IR-CstartSetToMeanOfTrueC-AstartSetToMeanOfTrueA-MS5km-Tri6-";
 
 
-CtrlVar.Inverse.Iterations=50;  
+CtrlVar.Inverse.Iterations=1;  
 CtrlVar.Restart=0;  % Set to 1 after the first run so that it reads in restart file   
 
 
@@ -109,7 +117,7 @@ if contains(UserVar.RunType,"IR-")
         CtrlVar.Inverse.InvertFor="-logA-logC-";
         CtrlVar.Inverse.Regularize.Field=CtrlVar.Inverse.InvertFor;
         CtrlVar.Inverse.DataMisfit.GradientCalculation="-adjoint-" ;
-        CtrlVar.Inverse.Measurements="-uv-" ;  % {'-uv-,'-uv-dhdt-','-dhdt-'}
+        CtrlVar.Inverse.Measurements="-uv-dhdt-" ;  % {'-uv-,'-uv-dhdt-','-dhdt-'}
         %CtrlVar.Inverse.MinimisationMethod="MatlabOptimization-HessianBased";  
         CtrlVar.Inverse.MinimisationMethod="MatlabOptimization-GradientBased";  % recommended 
         

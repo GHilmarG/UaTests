@@ -68,28 +68,18 @@ nodesd=setdiff(nodesd,[nodesr;nodesl]);
 BCs.vbFixedNode=[nodesl;nodesr];   BCs.vbFixedValue=BCs.vbFixedNode*0; 
 BCs.vbTiedNodeA=nodesu; BCs.vbTiedNodeB=nodesd;
 BCs.ubTiedNodeA=nodesu; BCs.ubTiedNodeB=nodesd;
-% and thickness
-BCs.hTiedNodeA=nodesu; BCs.hTiedNodeB=nodesd;
 
 %Also set the  u velocity to zero along the lateral margins
-
-%@ y=12000; not zero if the edge of the domain is not at the lateral margin 
-%lat_vel = 909.118; %if uc = 1000 
-% lat_vel = 2238.0; %if uc = 3000.
-
 lat_vel=0.0;  %@y=+/-W
 
 BCs.ubFixedNode=[nodesl;nodesr];   BCs.ubFixedValue=BCs.ubFixedNode*0 + lat_vel; 
 
+
+% Thickness BCs
+BCs.hTiedNodeA=nodesu; BCs.hTiedNodeB=nodesd;
 BCs.hFixedNode=[nodesl;nodesr]; BCs.hFixedValue=BCs.hFixedNode*0+1000; 
+% 
 
-% elseif strcmp(UserVar.configuration, 'ICE_SHELF')
-%     BCs.ubFixedNode=nodesu ; 
-%     BCs.ubFixedValue=BCs.ubFixedNode*0+1000; % Set B.C. ugl=1000 for steady state
-%     BCs.vbFixedNode=[nodesu;nodesl;nodesr] ; 
-%     BCs.vbFixedValue=BCs.vbFixedNode*0;
-
-  
 
 
 

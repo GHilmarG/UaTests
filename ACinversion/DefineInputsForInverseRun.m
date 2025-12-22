@@ -92,7 +92,7 @@ F.n=Priors.Truen;
 F.m=Priors.Truem;
 
 [UserVar,RunInfo,F,l]= uv(UserVar,RunInfo,CtrlVar,MUA,BCs,F,l);
-
+[UserVar,F.dhdt]=dhdtExplicit(UserVar,CtrlVar,MUA,F,BCs) ; 
 
 
 Meas.us=F.ub;
@@ -104,7 +104,7 @@ Meas.usCov=sparse(1:MUA.Nnodes,1:MUA.Nnodes,usError.^2,MUA.Nnodes,MUA.Nnodes);
 Meas.vsCov=sparse(1:MUA.Nnodes,1:MUA.Nnodes,vsError.^2,MUA.Nnodes,MUA.Nnodes);
 
 %Also specify the dhdt to help
-Meas.dhdt = F.s*0.0;
+Meas.dhdt = F.dhdt;
 Meas.dhdtCov = sparse(1:MUA.Nnodes,1:MUA.Nnodes,Err.^2,MUA.Nnodes,MUA.Nnodes);
 
 
