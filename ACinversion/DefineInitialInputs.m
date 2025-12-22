@@ -36,7 +36,7 @@ UserVar.RunType="IR-CstartSetToMeanOfTrueC-AstartSetToMeanOfTrueA-MS10km-Tri3-";
 % UserVar.RunType="IR-CstartSetToMeanOfTrueC-AstartSetToMeanOfTrueA-MS5km-Tri6-";
 
 
-CtrlVar.Inverse.Iterations=2;  
+CtrlVar.Inverse.Iterations=100;  
 CtrlVar.Restart=0;  % Set to 1 after the first run so that it reads in restart file   
 
 
