@@ -20,10 +20,16 @@ end
 
 
 %%  centre line profile, 1/2 channel width
-iProfile=abs(F.y) < 1 ; 
+iProfile=abs(F.y) < 1 ;
 
-FindOrCreateFigure("dJ/dC profile") ; plot(F.x(iProfile),InvFinalValues.dJdC(iProfile),"or") ; title("dJ/dC along centre line") ; xlabel("x (km)") ; ylabel("y (km)")
-FindOrCreateFigure("dJ/dA profile") ; plot(F.x(iProfile),InvFinalValues.dJdAGlen(iProfile),"or")  ; title("dA/dC along centre line") ; xlabel("x (km)") ; ylabel("y (km)")
+if ~isempty(InvFinalValues.dJdC)
+    FindOrCreateFigure("dJ/dC profile") ; plot(F.x(iProfile),InvFinalValues.dJdC(iProfile),"or") ; title("dJ/dC along centre line") ; xlabel("x (km)") ; ylabel("y (km)")
+end
+
+if ~isempty(InvFinalValues.dJdAGlen)
+    FindOrCreateFigure("dJ/dA profile") ; plot(F.x(iProfile),InvFinalValues.dJdAGlen(iProfile),"or")  ; title("dA/dC along centre line") ; xlabel("x (km)") ; ylabel("y (km)")
+end
+
 
 FindOrCreateFigure("A centre-line profile") ; 
 plot(F.x(iProfile)/1000,InvFinalValues.AGlen(iProfile),"or",DisplayName="Retrieved A")  ; 
@@ -83,11 +89,8 @@ xlabel("x (km)") ; ylabel("y (km)")
 
 %%
 
-% CtrlVar.QuadratureRuleDegree=10; 
-% MUA=UpdateMUA(CtrlVar,MUA);
+
 [~,dhdt]=dhdtExplicit(UserVar,CtrlVar,MUA,F,BCs);  
-%CtrlVar.Tracer.SUPG.tau="tau2"; CtrlVar.Tracer.SUPG.Use=1;
-[~,dhdtSUPG]=dhdtExplicitSUPG(UserVar,CtrlVar,MUA,F,BCs);  
 
 
 
@@ -106,9 +109,6 @@ title("dh/dt at y=25km")
 Fig27=FindOrCreateFigure("dh/dt profile at y=27.5km") ; clf(Fig27) 
 iProfile=abs(F.y-27500) < 1 ; 
 plot(F.x(iProfile)/1000,dhdt(iProfile),"or",DisplayName="dhdt")  ; 
-hold on 
-plot(F.x(iProfile)/1000,dhdtSUPG(iProfile),"*b",DisplayName="dhdtSUPG")  ; 
-title("dh/dt at y=27.5km")
 legend
 
 

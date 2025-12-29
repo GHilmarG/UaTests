@@ -20,13 +20,20 @@ function [UserVar,InvStartValues,Priors,Meas,BCsAdjoint,RunInfo]=...
 n=1 ;
 eta0=1/(2*UserVar.AGlen0);
 
-Lx=max(F.x)-min(F.x); Ly=max(F.y)-min(F.y); nx=UserVar.nxA; ny=UserVar.nyA;
+Lx=max(F.x)-min(F.x); Ly=max(F.y)-min(F.y); 
 
-phase = pi;
-deta = UserVar.ampl_eta.*eta0.*sin(2*pi*nx*F.x/Lx + 2*pi*ny*F.y/Ly+phase);
-deta=deta-mean(deta(:));
-eta = eta0 + deta;
 
+if contains(CtrlVar.Inverse.InvertFor,"A") % only add perturbation to A, if inverting for A
+    phase = pi;
+    nx=UserVar.nxA; ny=UserVar.nyA;
+    deta = UserVar.ampl_eta.*eta0.*sin(2*pi*nx*F.x/Lx + 2*pi*ny*F.y/Ly+phase);
+    deta=deta-mean(deta(:));
+    
+else
+    deta=zeros(MUA.Nnodes,1);
+end
+
+eta=eta0+deta;
 
 Priors.TrueAGlen=1./(2.*eta);
 Priors.Truen=n;
@@ -34,14 +41,19 @@ Priors.Truen=n;
 % Sinusoidal perturbation in C
 
 m=1;
-Lx=max(F.x)-min(F.x); Ly=max(F.y)-min(F.y); 
-nxC=UserVar.nxC; nyC=UserVar.nyC;
-phase = 0.0;
-dc = UserVar.ampl_c.*UserVar.C0.*sin(2*pi*nxC*F.x/Lx + 2*pi*nyC*F.y/Ly+phase);
-dc=dc-mean(dc(:));
 
+if contains(CtrlVar.Inverse.InvertFor,"C") % only add perturbation to C, if inverting for C
+    nxC=UserVar.nxC; nyC=UserVar.nyC;
+    phase = 0.0;
+    dc = UserVar.ampl_c.*UserVar.C0.*sin(2*pi*nxC*F.x/Lx + 2*pi*nyC*F.y/Ly+phase);
+    dc=dc-mean(dc(:));
+else
+    dc=zeros(MUA.Nnodes,1);
+end
 
-Priors.TrueC= UserVar.C0 + dc;
+C=UserVar.C0 + dc;
+
+Priors.TrueC= C ;
 Priors.Truem= m ;
 
 

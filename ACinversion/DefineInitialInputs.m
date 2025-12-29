@@ -35,8 +35,13 @@ UserVar.RunType="IR-CstartSetToMeanOfTrueC-AstartSetToMeanOfTrueA-MS10km-Tri3-";
 % UserVar.RunType="IR-CstartSetToMeanOfTrueC-AstartSetToMeanOfTrueA-MS5km-Tri3-";
 % UserVar.RunType="IR-CstartSetToMeanOfTrueC-AstartSetToMeanOfTrueA-MS5km-Tri6-";
 
+UserVar.RunType="IR-CstartSetToMeanOfTrueC-AstartSetToMeanOfTrueA-MS25km-Tri3-MatGrad-";
+UserVar.RunType="IR-CstartSetToMeanOfTrueC-AstartSetToMeanOfTrueA-MS25km-Tri3-UaHess-";
 
-CtrlVar.Inverse.Iterations=10;  
+UserVar.RunType="IR-CstartSetToMeanOfTrueC-AstartSetToMeanOfTrueA-MS10km-Tri3-UaHess-";
+UserVar.RunType="IR-CstartSetToMeanOfTrueC-AstartSetToMeanOfTrueA-MS10km-Tri3-MatGrad-";
+
+CtrlVar.Inverse.Iterations=50;  
 CtrlVar.Restart=0;  % Set to 1 after the first run so that it reads in restart file   
 
 
@@ -108,20 +113,28 @@ if contains(UserVar.RunType,"IR-")
         
         CtrlVar.Inverse.InfoLevel=1;
         CtrlVar.InfoLevel=0;
-        
+
         UserVar.Slipperiness.ReadFromFile=0;
         UserVar.AGlen.ReadFromFile=0;
-                
+
         CtrlVar.InfoLevelNonLinIt=0;
-        
+
         CtrlVar.Inverse.InvertFor="-logA-logC-";
+        CtrlVar.Inverse.InvertFor="-logC-";
         CtrlVar.Inverse.Regularize.Field=CtrlVar.Inverse.InvertFor;
         CtrlVar.Inverse.DataMisfit.GradientCalculation="-adjoint-" ;
-        CtrlVar.Inverse.Measurements="-dhdt-" ;  % {'-uv-,'-uv-dhdt-','-dhdt-'}
-        %CtrlVar.Inverse.MinimisationMethod="MatlabOptimization-HessianBased";  
-        CtrlVar.Inverse.MinimisationMethod="MatlabOptimization-GradientBased";  % recommended 
-        
-      
+        CtrlVar.Inverse.Measurements="-uv-" ;  % {'-uv-,'-uv-dhdt-','-dhdt-'}
+
+        if contains(UserVar.RunType,"-UaHess-")
+            CtrlVar.Inverse.MinimisationMethod="-Ua-BruteForceHessian-";
+            CtrlVar.Inverse.TestAdjoint.FiniteDifferenceStepSize=0.01;
+        elseif contains(UserVar.RunType,"-MatGrad-")
+            CtrlVar.Inverse.MinimisationMethod="MatlabOptimization-GradientBased";
+        else
+            error("What inversion approach? ")
+        end
+
+
         CtrlVar.Inverse.Regularize.logC.ga=0;%1;%1;
         CtrlVar.Inverse.Regularize.logC.gs=0;%1e6;%1e4;  
         CtrlVar.Inverse.Regularize.logAGlen.ga=0;%1;%1;
@@ -139,7 +152,7 @@ if contains(UserVar.RunType,"IR-")
         CtrlVar.Inverse.TestAdjoint.isTrue=false; % If true then perform a brute force calculation
         % of the directional derivative of the objective function.
         CtrlVar.TestAdjointFiniteDifferenceType="central-second-order" ;
-        CtrlVar.Inverse.TestAdjoint.FiniteDifferenceStepSize=0.01 ;
+
         CtrlVar.Inverse.TestAdjoint.iRange=[1:500] ;  % range of nodes/elements over which brute force gradient is to be calculated.
         % if left empty, values are calculated for every node/element within the mesh.
         % If set to for example [1,10,45] values are calculated for these three
@@ -148,12 +161,15 @@ if contains(UserVar.RunType,"IR-")
 
         % remember that when testing adjoint gradient, the pre-multiplier must the I (i.e. identity matrix)
         if  CtrlVar.Inverse.TestAdjoint.isTrue
-            CtrlVar.Inverse.AdjointGradientPreMultiplier="I"; 
+            CtrlVar.Inverse.AdjointGradientPreMultiplier="I";
+            CtrlVar.Inverse.TestAdjoint.FiniteDifferenceStepSize=0.01 ;
         else
-            CtrlVar.Inverse.AdjointGradientPreMultiplier="M"; 
+            CtrlVar.Inverse.AdjointGradientPreMultiplier="M";
         end
 
-
+        if CtrlVar.Inverse.MinimisationMethod=="-Ua-BruteForceHessian-"
+            CtrlVar.Inverse.AdjointGradientPreMultiplier="I";
+        end
 
 elseif contains(UserVar.RunType,"FT-")  % forward time dependent run
 
