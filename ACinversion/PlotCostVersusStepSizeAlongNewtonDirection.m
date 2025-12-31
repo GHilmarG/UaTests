@@ -84,9 +84,26 @@ ylabel("$J$",Interpreter="latex")
 title("Cost function ($J$) along negative grad direction",Interpreter="latex")
 
 %%
-alpha=acos(dot(-g0SD,dp)/(norm(g0)*norm(dp)))*180/pi;
+
+
+
+
+alpha=angleBetweenVector(-g0SD,dp);
 
 fprintf("angle between dp and (-g0) is %f degrees\n",alpha)
 
 %%
+end
+
+
+function theta = angleBetweenVector(x,y)
+
+    if all(x==0) || all(y==0)
+        theta = NaN;
+        return
+    end
+    a = x*norm(y) - y*norm(x);
+    b = x*norm(y) + y*norm(x);
+    theta = 2 * atan2d( norm(a),norm(b) ); % degrees
+    
 end

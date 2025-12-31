@@ -9,6 +9,7 @@ if nargin==0
 
     DataFile="IR-CstartSetToMeanOfTrueC-AstartSetToMeanOfTrueA-MS5km-Tri3-.mat";
     DataFile="IR-CstartSetToMeanOfTrueC-AstartSetToMeanOfTrueA-MS5km-Tri6-.mat";
+    DataFile="IR-CstartSetToMeanOfTrueC-AstartSetToMeanOfTrueA-MS10km-Tri3-UaHess-B-logA-logC-E-.mat";
     load(DataFile)
     UserVar=[];
     CtrlVar=CtrlVarInRestartFile;
@@ -19,16 +20,49 @@ end
 %% FindOrCreateFigure("MESH") ; PlotMuaMesh(CtrlVar,MUA)
 
 
-%%  centre line profile, 1/2 channel width
+%%  center line profile, 1/2 channel width
 iProfile=abs(F.y) < 1 ;
 
+PM=CtrlVar.Inverse.AdjointGradientPreMultiplier;
+
 if ~isempty(InvFinalValues.dJdC)
-    FindOrCreateFigure("dJ/dC profile") ; plot(F.x(iProfile),InvFinalValues.dJdC(iProfile),"or") ; title("dJ/dC along centre line") ; xlabel("x (km)") ; ylabel("y (km)")
+    FindOrCreateFigure("dJ/dC profile") ;
+    plot(F.x(iProfile)/1000,InvFinalValues.dJdC(iProfile),"or") ;
+    title("$dJ/dC$ along centre line, pre-multipiler: "+PM,Interpreter="latex");
+    xlabel("x (km)") ; ylabel("y (km)")
 end
 
 if ~isempty(InvFinalValues.dJdAGlen)
-    FindOrCreateFigure("dJ/dA profile") ; plot(F.x(iProfile),InvFinalValues.dJdAGlen(iProfile),"or")  ; title("dA/dC along centre line") ; xlabel("x (km)") ; ylabel("y (km)")
+    FindOrCreateFigure("dJ/dA profile") ;
+    plot(F.x(iProfile)/1000,InvFinalValues.dJdAGlen(iProfile),"or")  ;
+    title("$dJ/dC$ along centre line, pre-multipiler: "+PM,Interpreter="latex");
+    xlabel("x (km)") ; ylabel("y (km)")
 end
+
+if PM=="I"
+
+    dJdA=MUA.M\InvFinalValues.dJdAGlen;
+    dJdC=MUA.M\InvFinalValues.dJdC;
+
+    if ~isempty(InvFinalValues.dJdC)
+        FindOrCreateFigure("M\dJ/dC profile") ;
+        plot(F.x(iProfile)/1000,dJdC(iProfile),"or") ;
+        title("$M^{-1} dJ/dC$ along centre line, pre-multipiler: "+PM,Interpreter="latex");
+        xlabel("x (km)") ; ylabel("y (km)")
+    end
+
+    if ~isempty(InvFinalValues.dJdAGlen)
+        FindOrCreateFigure("M\dJ/dA profile") ;
+        plot(F.x(iProfile)/1000,dJdA(iProfile),"or")  ;
+        title("$M^{-1} dJ/dA$ along centre line, pre-multipiler: "+PM,Interpreter="latex");
+        xlabel("x (km)") ; ylabel("y (km)")
+    end
+
+end
+
+
+
+ %%
 
 
 FindOrCreateFigure("A centre-line profile") ; 

@@ -12,7 +12,7 @@ function [p,UserVar,RunInfo]=BruteForceHessianInversion(UserVar,CtrlVar,RunInfo,
 
 p=p0;
 
-nNewtonSteps=15;
+nNewtonSteps=1;
 Jvector=nan(nNewtonSteps+1,1);
 SlopeVector=nan(nNewtonSteps+1,1);
 gammaVector=nan(nNewtonSteps+1,1);
@@ -152,8 +152,8 @@ while true
     drawnow
 
     % exit?
-    if iNewton>nNewtonSteps
-        fprintf("maximun number of iterations reached. \n")
+    if iNewton>(nNewtonSteps-1)
+        fprintf("maximum number of iterations reached. \n")
         break
     end
 

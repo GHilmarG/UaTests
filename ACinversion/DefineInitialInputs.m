@@ -38,8 +38,8 @@ UserVar.RunType="IR-CstartSetToMeanOfTrueC-AstartSetToMeanOfTrueA-MS10km-Tri3-";
 UserVar.RunType="IR-CstartSetToMeanOfTrueC-AstartSetToMeanOfTrueA-MS25km-Tri3-MatGrad-";
 UserVar.RunType="IR-CstartSetToMeanOfTrueC-AstartSetToMeanOfTrueA-MS25km-Tri3-UaHess-";
 
-UserVar.RunType="IR-CstartSetToMeanOfTrueC-AstartSetToMeanOfTrueA-MS10km-Tri3-UaHess-";
-UserVar.RunType="IR-CstartSetToMeanOfTrueC-AstartSetToMeanOfTrueA-MS10km-Tri3-MatGrad-";
+UserVar.RunType="IR-CstartSetToMeanOfTrueC-AstartSetToMeanOfTrueA-MS10km-Tri3-UaHess-BI-logA-logC-EI-";
+UserVar.RunType="IR-CstartSetToMeanOfTrueC-AstartSetToMeanOfTrueA-MS10km-Tri3-MatGrad-BI-logA-logC-EI-";
 
 CtrlVar.Inverse.Iterations=50;  
 CtrlVar.Restart=0;  % Set to 1 after the first run so that it reads in restart file   
@@ -119,8 +119,8 @@ if contains(UserVar.RunType,"IR-")
 
         CtrlVar.InfoLevelNonLinIt=0;
 
-        CtrlVar.Inverse.InvertFor="-logA-logC-";
-        CtrlVar.Inverse.InvertFor="-logC-";
+        CtrlVar.Inverse.InvertFor=extractBetween(UserVar.RunType,"-BI","EI-") ;
+        
         CtrlVar.Inverse.Regularize.Field=CtrlVar.Inverse.InvertFor;
         CtrlVar.Inverse.DataMisfit.GradientCalculation="-adjoint-" ;
         CtrlVar.Inverse.Measurements="-uv-" ;  % {'-uv-,'-uv-dhdt-','-dhdt-'}
