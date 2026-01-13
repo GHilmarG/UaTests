@@ -1,27 +1,33 @@
 
 function [UserVar,CtrlVar,MeshBoundaryCoordinates]=DefineInitialInputs(UserVar,CtrlVar)
 
-%% Summary
-%
-% When prescribing start A and C equal to true A and C, the true A and C is returned.  Only one iteration is performed and
-% iteration stagnates at first step. This is of course expected, but nevertheless and important test.
-%
-%
-% When using 6-node elements, the matlab optimisation gradient-based approach sometimes takes step at the beginning of an
-% iteration that result in very large C value (e.g. 10^42), and same can happen with the A values. This, understandably,
-% causes numerical issues in the uv solve.  Manually setting Cmax and Amax to reasonable value, solves this. Not sure why
-% this happens, and not sure why this happens for 6-node elements when the same problem with 3-node elements is working fine.
-%
-%
-% Just using dh/dt does not produce good results, stagnates early with retrieved A and C fields clearly being affected by the
-% mesh and element sizes.
-%
-%
-% Testing the ajoint gradient calculation shows the gradient to be very accurate. This is true for all measurement cases:
-% -uv-, -dhdt-, and -uv-dhd- , and for A and C gradients.
-%
-%
 
+
+%% Summary
+
+%{
+
+When prescribing start A and C equal to true A and C, the true A and C is returned.  Only one iteration is performed and
+iteration stagnates at first step. This is of course expected, but nevertheless and important test.
+
+
+When using 6-node elements, the matlab optimisation gradient-based approach sometimes takes step at the beginning of an
+iteration that result in very large C value (e.g. 10^42), and same can happen with the A values. This, understandably,
+causes numerical issues in the uv solve.  Manually setting Cmax and Amax to reasonable value, solves this. Not sure why
+this happens, and not sure why this happens for 6-node elements when the same problem with 3-node elements is working fine.
+
+
+Just using dh/dt does not produce good results, stagnates early with retrieved A and C fields clearly being affected by the
+mesh and element sizes. This has now been sorted, and now looks really good!
+
+Testing the ajoint gradient calculation shows the directional derivative to be very accurate. This is true for all measurement cases:
+-uv-, -dhdt-, and -uv-dhd- , and for A and C derivatives.
+
+Inversion using -uv- as well as -uv-dhdt-  results in next-to-perfect retrieval of C, but A retrieval at center-line has a freq. doubling,
+while elsewhere it looks good
+
+
+%}
 
 %% UserVar
 
@@ -41,8 +47,10 @@ UserVar.RunType="IR-CstartSetToMeanOfTrueC-AstartSetToMeanOfTrueA-MS25km-Tri3-Ua
 UserVar.RunType="IR-CstartSetToMeanOfTrueC-AstartSetToMeanOfTrueA-MS10km-Tri3-UaHess-BI-logA-logC-EI-";
 UserVar.RunType="IR-CstartSetToMeanOfTrueC-AstartSetToMeanOfTrueA-MS10km-Tri3-MatGrad-BI-logA-logC-EI-";
 
-CtrlVar.Inverse.Iterations=50;  
-CtrlVar.Restart=0;  % Set to 1 after the first run so that it reads in restart file   
+UserVar.RunType="IR-CstartSetToMeanOfTrueC-AstartSetToMeanOfTrueA-MS5km-Tri3-MatGrad-logA-logC-uv-dhdt-";
+
+CtrlVar.Inverse.Iterations=100;  
+CtrlVar.Restart=1;  % Set to 1 after the first run so that it reads in restart file   
 
 
 
@@ -119,11 +127,30 @@ if contains(UserVar.RunType,"IR-")
 
         CtrlVar.InfoLevelNonLinIt=0;
 
-        CtrlVar.Inverse.InvertFor=extractBetween(UserVar.RunType,"-BI","EI-") ;
-        
+
+        CtrlVar.Inverse.InvertFor="";
+        if contains(UserVar.RunType,"-logA-")
+            CtrlVar.Inverse.InvertFor= CtrlVar.Inverse.InvertFor+"-logA-";
+        end
+        if contains(UserVar.RunType,"-logC-")
+            CtrlVar.Inverse.InvertFor= CtrlVar.Inverse.InvertFor+"-logC-";
+        end
+        CtrlVar.Inverse.InvertFor=replace(CtrlVar.Inverse.InvertFor,"--","-");
+
+
         CtrlVar.Inverse.Regularize.Field=CtrlVar.Inverse.InvertFor;
         CtrlVar.Inverse.DataMisfit.GradientCalculation="-adjoint-" ;
-        CtrlVar.Inverse.Measurements="-uv-" ;  % {'-uv-,'-uv-dhdt-','-dhdt-'}
+
+        CtrlVar.Inverse.Measurements="";
+        if contains(UserVar.RunType,"-uv-")
+            CtrlVar.Inverse.Measurements= CtrlVar.Inverse.Measurements+"-uv-";
+        end
+        if contains(UserVar.RunType,"-dhdt-")
+            CtrlVar.Inverse.Measurements= CtrlVar.Inverse.Measurements+"-dhdt-";
+        end
+        CtrlVar.Inverse.Measurements=replace(CtrlVar.Inverse.Measurements,"--","-");
+
+
 
         if contains(UserVar.RunType,"-UaHess-")
             CtrlVar.Inverse.MinimisationMethod="-Ua-BruteForceHessian-";

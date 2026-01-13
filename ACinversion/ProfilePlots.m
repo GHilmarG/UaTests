@@ -5,17 +5,18 @@ function  ProfilePlots(UserVar,CtrlVar,RunInfo,MUA,BCs,F,l,InvStartValues,InvFin
 
 
 
-if nargin==0
+if isstring(UserVar) && (isfile(UserVar)  || isfile(UserVar+".mat")) 
 
-    DataFile="IR-CstartSetToMeanOfTrueC-AstartSetToMeanOfTrueA-MS5km-Tri3-.mat";
-    DataFile="IR-CstartSetToMeanOfTrueC-AstartSetToMeanOfTrueA-MS5km-Tri6-.mat";
-    DataFile="IR-CstartSetToMeanOfTrueC-AstartSetToMeanOfTrueA-MS10km-Tri3-UaHess-B-logA-logC-E-.mat";
-    load(DataFile)
-    UserVar=[];
+    fprintf("loading and plotting results from %s \n",UserVar)
+
+    load(UserVar,"UserVarInRestartFile","CtrlVarInRestartFile","MUA","BCs","F","InvStartValues","InvFinalValues","Priors","Meas","RunInfo") ;
+
     CtrlVar=CtrlVarInRestartFile;
-else
-    DataFile="";
+    UserVar=UserVarInRestartFile;
+
 end
+
+
 
 %% FindOrCreateFigure("MESH") ; PlotMuaMesh(CtrlVar,MUA)
 
@@ -25,18 +26,39 @@ iProfile=abs(F.y) < 1 ;
 
 PM=CtrlVar.Inverse.AdjointGradientPreMultiplier;
 
+
+
+
 if ~isempty(InvFinalValues.dJdC)
-    FindOrCreateFigure("dJ/dC profile") ;
+
+    if PM=="M"
+        T="$\nabla_C J = M^{-1} dJ/dC$";
+    else
+        T="$\nabla_C J=dJ/dC$";
+    end
+
+    FindOrCreateFigure("grad_C profile") ;
     plot(F.x(iProfile)/1000,InvFinalValues.dJdC(iProfile),"or") ;
-    title("$dJ/dC$ along centre line, pre-multipiler: "+PM,Interpreter="latex");
-    xlabel("x (km)") ; ylabel("y (km)")
+    title(T,Interpreter="latex");
+    xlabel("x (km)") ; 
+    ylabel(T,Interpreter="latex")
 end
 
+
+
 if ~isempty(InvFinalValues.dJdAGlen)
-    FindOrCreateFigure("dJ/dA profile") ;
+
+    if PM=="M"
+        T="$\nabla_A J = M^{-1} dJ/dA$";
+    else
+        T="$\nabla_A J=dJ/dA$";
+    end
+
+    FindOrCreateFigure("grad_A profile") ;
     plot(F.x(iProfile)/1000,InvFinalValues.dJdAGlen(iProfile),"or")  ;
-    title("$dJ/dC$ along centre line, pre-multipiler: "+PM,Interpreter="latex");
-    xlabel("x (km)") ; ylabel("y (km)")
+    title(T,Interpreter="latex");
+    xlabel("x (km)") ; 
+    ylabel(T,Interpreter="latex")
 end
 
 if PM=="I"
@@ -62,89 +84,87 @@ end
 
 
 
- %%
-
-
-FindOrCreateFigure("A centre-line profile") ; 
-plot(F.x(iProfile)/1000,InvFinalValues.AGlen(iProfile),"or",DisplayName="Retrieved A")  ; 
-hold on 
-plot(F.x(iProfile)/1000,Priors.TrueAGlen(iProfile),"xk",DisplayName="true A")  ; 
-title("A along centre line") ; subtitle(DataFile)
-legend
-xlabel("x (km)") ; ylabel("y (km)")
-
-
-FindOrCreateFigure("C centre-line profile") ; 
-plot(F.x(iProfile)/1000,InvFinalValues.C(iProfile),"or",DisplayName="Retrieved C")  ; 
-hold on 
-plot(F.x(iProfile)/1000,Priors.TrueC(iProfile),"xk",DisplayName="true C")  ; 
-title("C along centre line") ; subtitle(DataFile)
-legend
-xlabel("x (km)") ; ylabel("y (km)")
-
-%% 25km profile, 1/4 channel width
-iProfile=abs(F.y-25000) < 1 ; 
-FindOrCreateFigure("A 25km profile") ; 
-plot(F.x(iProfile)/1000,InvFinalValues.AGlen(iProfile),"or",DisplayName="Retrieved A")  ; 
-hold on 
-plot(F.x(iProfile)/1000,Priors.TrueAGlen(iProfile),"xk",DisplayName="true A")  ; 
-title("A mid-distance betwee centre and side") ; subtitle(DataFile)
-legend
-xlabel("x (km)") ; ylabel("y (km)")
-
-FindOrCreateFigure("C 25km profile") ; 
-plot(F.x(iProfile)/1000,InvFinalValues.C(iProfile),"or",DisplayName="Retrieved C")  ; 
-hold on 
-plot(F.x(iProfile)/1000,Priors.TrueC(iProfile),"xk",DisplayName="true C")  ; 
-title("C mid-distance between centre and side")
-subtitle(DataFile)
-legend
-xlabel("x (km)") ; ylabel("y (km)")
-
-%%  50m profile, along the channel boundary
-iProfile=abs(F.y-50000) < 1 ; 
-FindOrCreateFigure("A 50km profile") ; 
-plot(F.x(iProfile)/1000,InvFinalValues.AGlen(iProfile),"or",DisplayName="Retrieved A")  ; 
-hold on 
-plot(F.x(iProfile)/1000,Priors.TrueAGlen(iProfile),"xk",DisplayName="true A")  ; 
-title("A along channel wall") ; subtitle(DataFile)
-legend
-xlabel("x (km)") ; ylabel("y (km)")
-
-FindOrCreateFigure("C 50km profile") ; 
-plot(F.x(iProfile)/1000,InvFinalValues.C(iProfile),"or",DisplayName="Retrieved C")  ; 
-hold on 
-plot(F.x(iProfile)/1000,Priors.TrueC(iProfile),"xk",DisplayName="true C")  ; 
-title("C along channel wall line")
-subtitle(DataFile)
-legend
-xlabel("x (km)") ; ylabel("y (km)")
+ 
 
 
 %%
 
 
-[~,dhdt]=dhdtExplicit(UserVar,CtrlVar,MUA,F,BCs);  
 
+Fig0=FindOrCreateFigure("dh/dt profiles ") ; clf(Fig0)
 
-
-Fig0=FindOrCreateFigure("dh/dt profile at y=0") ; clf(Fig0)
 iProfile=abs(F.y) < 1 ; 
-plot(F.x(iProfile)/1000,dhdt(iProfile),"or",DisplayName="Retrieved C")  ; 
-title("dh/dt at y=0$")
+plot(F.x(iProfile)/1000,F.dhdt(iProfile),"or-",DisplayName="$\dot{h}$ at $y=0$")  ; 
+hold on 
 
-
-
-Fig25=FindOrCreateFigure("dh/dt profile at y=25km") ; clf(Fig25) 
 iProfile=abs(F.y-25000) < 1 ; 
-plot(F.x(iProfile)/1000,dhdt(iProfile),"or",DisplayName="Retrieved C")  ; 
-title("dh/dt at y=25km")
+plot(F.x(iProfile)/1000,F.dhdt(iProfile),"og-",DisplayName="$\dot{h}$ at $y=25$ km")  ; 
 
-Fig27=FindOrCreateFigure("dh/dt profile at y=27.5km") ; clf(Fig27) 
-iProfile=abs(F.y-27500) < 1 ; 
-plot(F.x(iProfile)/1000,dhdt(iProfile),"or",DisplayName="dhdt")  ; 
-legend
+iProfile=abs(F.y-50000) < 1 ; 
+plot(F.x(iProfile)/1000,F.dhdt(iProfile),"ob-",DisplayName="$\dot{h}$ at $y=50$ km") 
+xlabel("$x$ (km)",Interpreter="latex") ;  ylabel("$\dot{h}$ (m/yr)",Interpreter="latex")
+legend(Interpreter="latex",Location="best")
 
+title("$\dot{h}$",Interpreter="latex")
+xlabel("$x$ (km)",Interpreter="latex") ;  ylabel("$\dot{h}$ (m/yr)",Interpreter="latex")
+
+%%
+% Note all true C are the same here so only need one profile
+
+FigCP=FindOrCreateFigure("C profiles ") ; clf(FigCP)
+
+iProfile=abs(F.y) < 1 ; 
+plot(F.x(iProfile)/1000,InvFinalValues.C(iProfile),"or-",LineWidth=2,DisplayName="$C$ retrieved at $y=0$ km")  ; 
+hold on 
+%plot(F.x(iProfile)/1000,Priors.TrueC(iProfile),"*r-",DisplayName="$C$ true at $y=0$ km")  ; 
+
+hold on 
+iProfile=abs(F.y-25000) < 1 ; 
+plot(F.x(iProfile)/1000,InvFinalValues.C(iProfile),"og-",LineWidth=2,DisplayName="$C$ retrieved at $y=25$ km")  ; 
+%plot(F.x(iProfile)/1000,Priors.TrueC(iProfile),"sg-",DisplayName="$C$ true at $y=25$ km")  ; 
+
+
+iProfile=abs(F.y-50000) < 1 ; 
+plot(F.x(iProfile)/1000,InvFinalValues.C(iProfile),"ob-",LineWidth=2,DisplayName="$C$ retrieved at $y=50$ km")  ; 
+plot(F.x(iProfile)/1000,Priors.TrueC(iProfile),"*k-",DisplayName="$C$ true")  ; 
+
+xlabel("$x$ (km)",Interpreter="latex") ;  ylabel("$\dot{h}$ (m/yr)",Interpreter="latex")
+lg=legend(Interpreter="latex",Location="best");
+lg.NumColumns=3;
+
+title("$C$ retrieved and true",Interpreter="latex")
+xlabel("$x$ (km)",Interpreter="latex") ;  
+ylabel("$A \; [\mathrm{m} \, (\mathrm{yr}\;\mathrm{kPa})^{-1}]$",Interpreter="latex")
+
+
+%%
+
+%%
+% Note all true C are the same here so only need one profile
+
+FigAP=FindOrCreateFigure("A profiles ") ; clf(FigAP)
+
+iProfile=abs(F.y) < 1 ; 
+plot(F.x(iProfile)/1000,InvFinalValues.AGlen(iProfile),"or-",LineWidth=2,DisplayName="$A$ retrieved at $y=0$ km")  ; 
+hold on 
+
+
+hold on 
+iProfile=abs(F.y-25000) < 1 ; 
+plot(F.x(iProfile)/1000,InvFinalValues.AGlen(iProfile),"og-",LineWidth=2,DisplayName="$A$ retrieved at $y=25$ km")  ; 
+
+
+iProfile=abs(F.y-50000) < 1 ; 
+plot(F.x(iProfile)/1000,InvFinalValues.AGlen(iProfile),"ob-",LineWidth=2,DisplayName="$A$ retrieved at $y=50$ km")  ; 
+plot(F.x(iProfile)/1000,Priors.TrueAGlen(iProfile),"*k-",DisplayName="$A$ true")  ; 
+
+xlabel("$x$ (km)",Interpreter="latex") ;  ylabel("$\dot{h}$ (m/yr)",Interpreter="latex")
+lg=legend(Interpreter="latex",Location="best");
+lg.NumColumns=3;
+
+title("$A$ retrieved and true",Interpreter="latex")
+xlabel("$x$ (km)",Interpreter="latex") ;  
+ylabel("$A \; [(\mathrm{yr}\;\mathrm{kPa})^{-1}]$",Interpreter="latex")
 
 
 end
