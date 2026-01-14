@@ -21,7 +21,7 @@ function [UserVar,CtrlVar,MeshBoundaryCoordinates]=DefineInitialInputs(UserVar,C
 %
 %   PlotForwardComparision.m           % Compares output of two runs, produces velocity plots and velocity differences and sea-level rise over time
 %
-% driverCollectDataOverRuns.m
+%   driverCollectDataOverRuns.m
 %
 %%
 
