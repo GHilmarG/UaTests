@@ -120,10 +120,40 @@ Meas.dhdt = F.dhdt;
 Meas.dhdtCov = sparse(1:MUA.Nnodes,1:MUA.Nnodes,Err.^2,MUA.Nnodes,MUA.Nnodes);
 
 
+%% Adjoint Boundary conditions
+
+xd=max(F.x) ; xu=min(F.x); yl=max(F.y) ; yr=min(F.y);
+
+% find nodes along boundary 
+L=min(sqrt(MUA.EleAreas)/1000); % set a distance tolerance which is a fraction of smallest element size
+nodesd=MUA.Boundary.Nodes(abs(MUA.coordinates(MUA.Boundary.Nodes,1)-xd)<L);
+nodesu=MUA.Boundary.Nodes(abs(MUA.coordinates(MUA.Boundary.Nodes,1)-xu)<L);
+nodesl=MUA.Boundary.Nodes(abs(MUA.coordinates(MUA.Boundary.Nodes,2)-yl)<L);
+nodesr=MUA.Boundary.Nodes(abs(MUA.coordinates(MUA.Boundary.Nodes,2)-yr)<L);
+
+% nodesu=setdiff(nodesu,[nodesr;nodesl]);
+% nodesd=setdiff(nodesd,[nodesr;nodesl]);
 
 
 
-    
-    
+%% set lambda to zero where forward problem uses fixed velocities, and periodic where forward problem uses periodic BCs
+
+BCsAdjoint.ubFixedNode=[nodesl;nodesr];   BCsAdjoint.ubFixedValue=BCsAdjoint.ubFixedNode*0; 
+BCsAdjoint.vbFixedNode=[nodesl;nodesr];   BCsAdjoint.vbFixedValue=BCsAdjoint.vbFixedNode*0; 
+
+BCsAdjoint.vbTiedNodeA=nodesu; BCsAdjoint.vbTiedNodeB=nodesd;
+BCsAdjoint.ubTiedNodeA=nodesu; BCsAdjoint.ubTiedNodeB=nodesd;
+
+% Use periodic BCs for the adjoint problem (wrong approach but did this for testing
+% BCsAdjoint.vbTiedNodeA=[nodesu;nodesl]; BCsAdjoint.vbTiedNodeB=[nodesd;nodesr];
+% BCsAdjoint.ubTiedNodeA=[nodesu;nodesl]; BCsAdjoint.ubTiedNodeB=[nodesd;nodesr];
+
+BCsAdjoint.hTiedNodeA=[nodesu;nodesl]; BCsAdjoint.hTiedNodeB=[nodesd;nodesr];  % gradient BCs.
+
+%
+
+
+
+
     
 end

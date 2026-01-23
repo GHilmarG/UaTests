@@ -37,12 +37,25 @@ if ~isempty(InvFinalValues.dJdC)
         T="$\nabla_C J=dJ/dC$";
     end
 
-    FindOrCreateFigure("grad_C profile") ;
-    plot(F.x(iProfile)/1000,InvFinalValues.dJdC(iProfile),"or") ;
+    FgradC=FindOrCreateFigure("grad_C profile") ; clf(FgradC)
+
+    iProfile=abs(F.y) < 1 ;
+    plot(F.x(iProfile)/1000,InvFinalValues.dJdC(iProfile),"or-",DisplayName="$\nabla_C J$ at $y$=0 km") ;
+    hold on 
+   
+    iProfile=abs(F.y-25000) < 1 ;
+    plot(F.x(iProfile)/1000,InvFinalValues.dJdC(iProfile),"og-",DisplayName="$\nabla_C J$ at $y$=25 km") ;
+    
+    iProfile=abs(F.y-50000) < 1 ;
+    plot(F.x(iProfile)/1000,InvFinalValues.dJdC(iProfile),"ob-",DisplayName="$\nabla_C J$ at $y$=50 km") ;
+
     title(T,Interpreter="latex");
     xlabel("x (km)") ; 
     ylabel(T,Interpreter="latex")
+    lg=legend(Interpreter="latex",Location="best");
 end
+
+
 
 
 
@@ -54,11 +67,24 @@ if ~isempty(InvFinalValues.dJdAGlen)
         T="$\nabla_A J=dJ/dA$";
     end
 
-    FindOrCreateFigure("grad_A profile") ;
-    plot(F.x(iProfile)/1000,InvFinalValues.dJdAGlen(iProfile),"or")  ;
+    FgradA=FindOrCreateFigure("grad_A profile") ; clf(FgradA)
+
+    iProfile=abs(F.y) < 1 ;
+    plot(F.x(iProfile)/1000,InvFinalValues.dJdAGlen(iProfile),"or-",DisplayName="$\nabla_A J$ at $y$=0 km") ;
+    hold on
+
+    iProfile=abs(F.y-25000) < 1 ;
+    plot(F.x(iProfile)/1000,InvFinalValues.dJdAGlen(iProfile),"og-",DisplayName="$\nabla_A J$ at $y$=25 km") ;
+
+    iProfile=abs(F.y-50000) < 1 ;
+    plot(F.x(iProfile)/1000,InvFinalValues.dJdAGlen(iProfile),"ob-",DisplayName="$\nabla_A J$ at $y$=50 km") ;
+
     title(T,Interpreter="latex");
-    xlabel("x (km)") ; 
+    xlabel("x (km)") ;
     ylabel(T,Interpreter="latex")
+    lg=legend(Interpreter="latex",Location="best");
+
+
 end
 
 if PM=="I"
@@ -169,5 +195,6 @@ ylabel("$A \; [(\mathrm{yr}\;\mathrm{kPa})^{-1}]$",Interpreter="latex")
 
 end
 
-%%
+% title("") ; Fig=gca ; exportgraphics(gcf,"ACInversionExampleOfGradAatStart.pdf",Padding="tight")    ;
+%% 
 
