@@ -51,11 +51,13 @@ UserVar.RunType="IR-CstartSetToMeanOfTrueC-AstartSetToMeanOfTrueA-MS25km-Tri3-Ma
 UserVar.RunType="IR-CstartSetToMeanOfTrueC-AstartSetToMeanOfTrueA-MS5km-Tri3-MatGrad-logA-logC-uv-dhdt-";
 % UserVar.RunType="IR-CstartSetToMeanOfTrueC-AstartSetToMeanOfTrueA-MS25km-Tri3-MatGrad-logA-logC-uv-dhdt-";
 
-UserVar.RunType="IR-CstartSetToMeanOfTrueC-AstartSetToMeanOfTrueA-MS5km-Tri3-UaHess-logA-logC-uv-dhdt-";
+UserVar.RunType="IR-CstartSetToMeanOfTrueC-AstartSetToMeanOfTrueA-MS5km-Tri3-UaHess-logA-logC-uv-dhdt-"; % running
+UserVar.RunType="IR-CstartSetToMeanOfTrueC-AstartSetToMeanOfTrueA-MS25km-Tri3-UaDirectAdjointHessian-logA-logC-uv-"; 
 
 
-CtrlVar.Inverse.Iterations=2;  
-CtrlVar.Restart=1;  % Set to 1 after the first run so that it reads in restart file   
+
+CtrlVar.Inverse.Iterations=5;  
+CtrlVar.Restart=0;  % Set to 1 after the first run so that it reads in restart file   
 
 
 
@@ -158,10 +160,18 @@ if contains(UserVar.RunType,"IR-")
 
 
         if contains(UserVar.RunType,"-UaHess-")
+            
             CtrlVar.Inverse.MinimisationMethod="-Ua-BruteForceHessian-";
             CtrlVar.Inverse.TestAdjoint.FiniteDifferenceStepSize=0.01;
+        
+        elseif contains(UserVar.RunType,"-UaDirectAdjointHessian-")
+
+            CtrlVar.Inverse.MinimisationMethod="-Ua-DirectAdjointHessian-";
+
         elseif contains(UserVar.RunType,"-MatGrad-")
+        
             CtrlVar.Inverse.MinimisationMethod="MatlabOptimization-GradientBased";
+        
         else
             error("What inversion approach? ")
         end
@@ -199,7 +209,7 @@ if contains(UserVar.RunType,"IR-")
             CtrlVar.Inverse.AdjointGradientPreMultiplier="M";
         end
 
-        if CtrlVar.Inverse.MinimisationMethod=="-Ua-BruteForceHessian-"
+        if CtrlVar.Inverse.MinimisationMethod=="-Ua-BruteForceHessian-"  || CtrlVar.Inverse.MinimisationMethod=="-Ua-DirectAdjointHessian-"
             CtrlVar.Inverse.AdjointGradientPreMultiplier="I";
         end
 
