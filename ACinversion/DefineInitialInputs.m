@@ -53,10 +53,12 @@ UserVar.RunType="IR-CstartSetToMeanOfTrueC-AstartSetToMeanOfTrueA-MS5km-Tri3-Mat
 
 UserVar.RunType="IR-CstartSetToMeanOfTrueC-AstartSetToMeanOfTrueA-MS5km-Tri3-UaHess-logA-logC-uv-dhdt-"; % running
 UserVar.RunType="IR-CstartSetToMeanOfTrueC-AstartSetToMeanOfTrueA-MS25km-Tri3-UaDirectAdjointHessian-logA-logC-uv-"; 
+UserVar.RunType="IR-CstartSetToMeanOfTrueC-AstartSetToMeanOfTrueA-MS10km-Tri3-UaDirectAdjointHessian-logA-logC-uv-"; 
+UserVar.RunType="IR-CstartSetToMeanOfTrueC-AstartSetToMeanOfTrueA-MS5km-Tri3-UaDirectAdjointHessian-logA-logC-uv-"; 
 
 
 
-CtrlVar.Inverse.Iterations=5;  
+CtrlVar.Inverse.Iterations=10;  
 CtrlVar.Restart=0;  % Set to 1 after the first run so that it reads in restart file   
 
 
