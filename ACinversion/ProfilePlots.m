@@ -160,8 +160,10 @@ lg.NumColumns=3;
 
 title("$C$ retrieved and true",Interpreter="latex")
 xlabel("$x$ (km)",Interpreter="latex") ;  
-ylabel("$A \; [\mathrm{m} \, (\mathrm{yr}\;\mathrm{kPa})^{-1}]$",Interpreter="latex")
+ylabel("$C \; (\mathrm{m} \, (\mathrm{yr}\;\mathrm{kPa})^{-1})$",Interpreter="latex")
+lg.Location="North";
 
+CurrentFigure=gca;  exportgraphics(CurrentFigure,"CProfiles.pdf",Units="centimeters",Width=25,Height=15)    
 
 %%
 
@@ -190,7 +192,11 @@ lg.NumColumns=3;
 
 title("$A$ retrieved and true",Interpreter="latex")
 xlabel("$x$ (km)",Interpreter="latex") ;  
-ylabel("$A \; [(\mathrm{yr}\;\mathrm{kPa})^{-1}]$",Interpreter="latex")
+ylabel("$A \; ((\mathrm{yr}\;\mathrm{kPa})^{-1})$",Interpreter="latex")
+
+lg.Location="North";
+
+CurrentFigure=gca;  exportgraphics(CurrentFigure,"AProfiles.pdf",Units="centimeters",Width=25,Height=15)    
 
 
 end
