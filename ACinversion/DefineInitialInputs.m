@@ -52,13 +52,17 @@ UserVar.RunType="IR-CstartSetToMeanOfTrueC-AstartSetToMeanOfTrueA-MS5km-Tri3-Mat
 % UserVar.RunType="IR-CstartSetToMeanOfTrueC-AstartSetToMeanOfTrueA-MS25km-Tri3-MatGrad-logA-logC-uv-dhdt-";
 
 UserVar.RunType="IR-CstartSetToMeanOfTrueC-AstartSetToMeanOfTrueA-MS5km-Tri3-UaHess-logA-logC-uv-dhdt-"; % running
-UserVar.RunType="IR-CstartSetToMeanOfTrueC-AstartSetToMeanOfTrueA-MS25km-Tri3-UaDirectAdjointHessian-logA-logC-uv-"; 
 UserVar.RunType="IR-CstartSetToMeanOfTrueC-AstartSetToMeanOfTrueA-MS10km-Tri3-UaDirectAdjointHessian-logA-logC-uv-"; 
-UserVar.RunType="IR-CstartSetToMeanOfTrueC-AstartSetToMeanOfTrueA-MS5km-Tri3-UaDirectAdjointHessian-logA-logC-uv-"; 
+%UserVar.RunType="IR-CstartSetToMeanOfTrueC-AstartSetToMeanOfTrueA-MS10km-Tri3-UaDirectAdjointHessian-logA-logC-uv-"; 
+%UserVar.RunType="IR-CstartSetToMeanOfTrueC-AstartSetToMeanOfTrueA-MS5km-Tri3-UaDirectAdjointHessian-logA-logC-uv-"; 
 
+UserVar.RunType="IR-CstartSetToMeanOfTrueC-AstartSetToMeanOfTrueA-MS10km-Tri3-UaDirectAdjointHessian-logC-uv-"; 
+UserVar.RunType="IR-CstartSetToMeanOfTrueC-AstartSetToMeanOfTrueA-MS10km-Tri3-UaDirectAdjointHessian-logA-uv-"; 
+UserVar.RunType="IR-CstartSetToMeanOfTrueC-AstartSetToMeanOfTrueA-MS10km-Tri3-UaDirectAdjointHessian-logA-logC-uv-"; 
 
+UserVar.RunType="IR-CstartSetToMeanOfTrueC-AstartSetToMeanOfTrueA-MS10km-Tri3-MatGrad-logA-logC-uv-"; 
 
-CtrlVar.Inverse.Iterations=10;  
+CtrlVar.Inverse.Iterations=100;  
 CtrlVar.Restart=0;  % Set to 1 after the first run so that it reads in restart file   
 
 
@@ -78,6 +82,8 @@ UserVar.C0 = ub/taud^m;  %i.e. c=22.24 this is equivalent to c0=100 in the dimen
 %%
 
 CtrlVar.alpha=0.05;   % slope of the coordinate system
+
+
 
 %% Mesh
 
@@ -179,10 +185,10 @@ if contains(UserVar.RunType,"IR-")
         end
 
 
-        CtrlVar.Inverse.Regularize.logC.ga=0;%1;%1;
-        CtrlVar.Inverse.Regularize.logC.gs=0;%1e6;%1e4;  
-        CtrlVar.Inverse.Regularize.logAGlen.ga=0;%1;%1;
-        CtrlVar.Inverse.Regularize.logAGlen.gs=0;%1e6;%1e4 ; 
+        CtrlVar.Inverse.Regularize.logC.ga=0.1;%1;%1;
+        CtrlVar.Inverse.Regularize.logC.gs=1000;%1e6;%1e4;  
+        CtrlVar.Inverse.Regularize.logAGlen.ga=0.1;%1;%1;
+        CtrlVar.Inverse.Regularize.logAGlen.gs=1000;%1e6;%1e4 ; 
         
 
         CtrlVar.Cmax=1e20;
