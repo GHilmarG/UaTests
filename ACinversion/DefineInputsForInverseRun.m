@@ -106,12 +106,19 @@ F.m=Priors.Truem;
 [UserVar,RunInfo,F,l]= uv(UserVar,RunInfo,CtrlVar,MUA,BCs,F,l);
 [UserVar,F.dhdt]=dhdtExplicit(UserVar,CtrlVar,MUA,F,BCs) ; 
 
+sigma=mean(abs(F.ub))*UserVar.NoiseAmplitude ; 
 
-Meas.us=F.ub;
-Meas.vs=F.vb;
+Noise=sigma*randn(MUA.Nnodes,1);
+Meas.us=F.ub+Noise;
+
+Noise=sigma*randn(MUA.Nnodes,1);
+Meas.vs=F.vb+Noise; 
+
 Err=zeros(MUA.Nnodes,1)+1; 
 
-usError=Err ; vsError=Err ; 
+usError=zeros(MUA.Nnodes,1)+sigma ; 
+vsError=usError ; 
+
 Meas.usCov=sparse(1:MUA.Nnodes,1:MUA.Nnodes,usError.^2,MUA.Nnodes,MUA.Nnodes);
 Meas.vsCov=sparse(1:MUA.Nnodes,1:MUA.Nnodes,vsError.^2,MUA.Nnodes,MUA.Nnodes);
 

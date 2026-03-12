@@ -61,7 +61,9 @@ UserVar.RunType="IR-CstartSetToMeanOfTrueC-AstartSetToMeanOfTrueA-MS10km-Tri3-Ua
 UserVar.RunType="IR-CstartSetToMeanOfTrueC-AstartSetToMeanOfTrueA-MS10km-Tri3-UaDirectAdjointHessian-logA-logC-uv-"; 
 UserVar.RunType="IR-CstartSetToMeanOfTrueC-AstartSetToMeanOfTrueA-MS10km-Tri3-MatGrad-logA-logC-uv-"; 
 
-UserVar.RunType="IR-CstartSetToMeanOfTrueC-AstartSetToMeanOfTrueA-MS10km-Tri3-UaDirectAdjointHessian-logA-logC-uv-dhdt-"; 
+UserVar.RunType="IR-CstartSetToMeanOfTrueC-AstartSetToMeanOfTrueA-MS10km-Tri3-UaDirectAdjointHessian-logA-logC-uv-"; 
+
+UserVar.RunType="IR-CstartSetToMeanOfTrueC-AstartSetToMeanOfTrueA-MS10km-Tri3-UaDirectAdjointHessian-logA-logC-dhdt-"; 
 
 
 CtrlVar.Inverse.Iterations=5;  
@@ -80,6 +82,7 @@ rho=917 ; h=1000 ; alpha=0.05 ; g=9.81/1000 ; ub=1e4;
 taud=rho*g*sin(alpha)*h ; m=1;
 UserVar.C0 = ub/taud^m;  %i.e. c=22.24 this is equivalent to c0=100 in the dimensionless example
 
+UserVar.NoiseAmplitude=0.00001; 
 
 %%
 
@@ -191,6 +194,12 @@ if contains(UserVar.RunType,"IR-")
         CtrlVar.Inverse.Regularize.logC.gs=1000;%1e6;%1e4;  
         CtrlVar.Inverse.Regularize.logAGlen.ga=0.1;%1;%1;
         CtrlVar.Inverse.Regularize.logAGlen.gs=1000;%1e6;%1e4 ; 
+        
+
+        CtrlVar.Inverse.Regularize.logC.ga=1; %1;%1;
+        CtrlVar.Inverse.Regularize.logC.gs=1e6 ;%1e4;  
+        CtrlVar.Inverse.Regularize.logAGlen.ga=1;%1;%1;
+        CtrlVar.Inverse.Regularize.logAGlen.gs=1e6;%1e4 ; 
         
 
         CtrlVar.Cmax=1e20;
