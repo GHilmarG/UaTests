@@ -7,7 +7,11 @@ function HVP=HessianVectorProduct(p,d,func)
 % Hessian Vector Product
 %
 % $$
-% H x \approx (g(p + \epsilon d) - g(p)) / \epsilon
+% H d \approx (g(p + \epsilon d) - g(p)) / \epsilon
+% $$
+%
+% $$
+% H d \approx (\nabla J(p + \epsilon d) - \nabla J(p)) / \epsilon
 % $$
 %
 % For the trust-region-reflective, the input contains the vector/direction $d$ but not the current point $x$.  But the Hinfo
