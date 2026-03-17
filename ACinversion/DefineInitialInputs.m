@@ -67,12 +67,12 @@ UserVar.RunType="IR-CstartSetToMeanOfTrueC-AstartSetToMeanOfTrueA-MS10km-Tri3-Ma
 UserVar.RunType="IR-CstartSetToMeanOfTrueC-AstartSetToMeanOfTrueA-MS10km-Tri3-UaDirectAdjointHessian-logA-logC-uv-";
 
 UserVar.RunType="IR-CstartSetToMeanOfTrueC-AstartSetToMeanOfTrueA-MS10km-Tri3-UaDirectAdjointHessian-logA-logC-uv-dhdt-";
-UserVar.RunType="IR-CstartSetToMeanOfTrueC-AstartSetToMeanOfTrueA-MS10km-Tri3-MatlabDirectAdjointHessian-logA-logC-uv-dhdt-";
-UserVar.RunType="IR-CstartSetToMeanOfTrueC-AstartSetToMeanOfTrueA-MS10km-Tri3-MatlabHessianVectorProduct-logA-logC-uv-dhdt-";
+% UserVar.RunType="IR-CstartSetToMeanOfTrueC-AstartSetToMeanOfTrueA-MS10km-Tri3-MatlabDirectAdjointHessian-logA-logC-uv-dhdt-";
+% UserVar.RunType="IR-CstartSetToMeanOfTrueC-AstartSetToMeanOfTrueA-MS10km-Tri3-MatlabHessianVectorProduct-logA-logC-uv-dhdt-";
 
 
-CtrlVar.Inverse.Iterations=5;
-CtrlVar.Restart=0;  % Set to 1 after the first run so that it reads in restart file
+CtrlVar.Inverse.Iterations=2;
+CtrlVar.Restart=0;  % Set 10o 1 after the first run so that it reads in restart file
 
 
 
