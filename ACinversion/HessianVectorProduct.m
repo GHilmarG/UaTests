@@ -1,7 +1,8 @@
 
 
 
-function HVP=HessianVectorProduct(p,d,func)
+function
+
 
 %%
 % Hessian Vector Product
