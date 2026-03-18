@@ -20,6 +20,9 @@ afun=@(x) HVP(x,Hfull) ;
 FigHVP=FindOrCreateFigure("minres HVP") ; plot(0:length(rv1)-1,rv1/norm(g0),"-or") ; ax=gca ; ax.YScale="log";
 
 
+afun=@(x) HessianVectorProduct
+HVP=HessianVectorProduct(p,d,func)
+
 
     function y=HVP(x,Hfull)
         y=Hfull*x;
