@@ -12,23 +12,27 @@ iteration stagnates at first step. This is of course expected, but nevertheless 
 
 
 When using 6-node elements, the matlab optimisation gradient-based approach sometimes takes step at the beginning of an
-iteration that result in very large C value (e.g. 10^42), and same can happen with the A values. This, understandably,
-causes numerical issues in the uv solve.  Manually setting Cmax and Amax to reasonable value, solves this. Not sure why
-this happens, and not sure why this happens for 6-node elements when the same problem with 3-node elements is working fine.
+iteration that result in very large C value (e.g. 10^42), and same can happen with the A values. This, understandably, causes
+numerical issues in the uv solve.  Manually setting Cmax and Amax to reasonable value, solves this. Not sure why this
+happens, and not sure why this happens for 6-node elements when the same problem with 3-node elements is working fine.
 
 
 Just using dh/dt does not produce good results, stagnates early with retrieved A and C fields clearly being affected by the
 mesh and element sizes. This has now been sorted, and now looks really good!
 
-Testing the ajoint gradient calculation shows the directional derivative to be very accurate. This is true for all measurement cases:
--uv-, -dhdt-, and -uv-dhd- , and for A and C derivatives.
+Testing the ajoint gradient calculation shows the directional derivative to be very accurate. This is true for all
+measurement cases: -uv-, -dhdt-, and -uv-dhd- , and for A and C derivatives.
 
-Inversion using -uv- as well as -uv-dhdt-  results in next-to-perfect retrieval of C, but A retrieval at center-line has a freq. doubling,
-while elsewhere it looks good
+Inversion using -uv- as well as -uv-dhdt-  results in next-to-perfect retrieval of C, but A retrieval at center-line has a
+freq. doubling, while elsewhere it looks good
 
 DirectAdjoint Hessian estimate can be done using both uv and dhdt measurements and works fine. With the Ua optimisation
 toolbox the reduction is typically greater per iteration, but using the MATLAB optimisation toolbox with
 -trust-region-reflective works fine.
+
+The DirectAdjoint approach is remarkably effective, reducing the cost-function by 10 to 15 order of magnitudes in 2 to 3
+iterations when used with the Ua optimization toolbox!  This is possibly a problem dependent and may not be equally effective
+for different cases, as currently only some of the Hessian terms are included.
 
 %}
 
@@ -70,9 +74,11 @@ UserVar.RunType="IR-CstartSetToMeanOfTrueC-AstartSetToMeanOfTrueA-MS10km-Tri3-Ua
 % UserVar.RunType="IR-CstartSetToMeanOfTrueC-AstartSetToMeanOfTrueA-MS10km-Tri3-MatlabDirectAdjointHessian-logA-logC-uv-dhdt-";
 % UserVar.RunType="IR-CstartSetToMeanOfTrueC-AstartSetToMeanOfTrueA-MS10km-Tri3-MatlabHessianVectorProduct-logA-logC-uv-dhdt-";
 
+UserVar.RunType="IR-CstartSetToMeanOfTrueC-AstartSetToMeanOfTrueA-MS10km-Tri3-MatlabHessianFiniteDifferences-logA-logC-uv-dhdt-";
 
-CtrlVar.Inverse.Iterations=2;
-CtrlVar.Restart=0;  % Set 10o 1 after the first run so that it reads in restart file
+
+CtrlVar.Inverse.Iterations=250;
+CtrlVar.Restart=1;  % 
 
 
 
@@ -196,7 +202,11 @@ if contains(UserVar.RunType,"IR-")
     elseif contains(UserVar.RunType,"-MatlabHessianVectorProduct-")
 
         CtrlVar.Inverse.MinimisationMethod="-MatlabOptimization-HessianVectorProduct-";
-        
+
+    elseif contains(UserVar.RunType,"-MatlabHessianFiniteDifferences-")
+
+        CtrlVar.Inverse.MinimisationMethod="-MatlabOptimization-HessianFiniteDifferences-";
+
     else
         error("What inversion approach? ")
     end
@@ -329,6 +339,37 @@ elseif contains(UserVar.RunType,"MatlabDirectAdjointHessian")
         'SpecifyConstraintGradient',false,...
         'SpecifyObjectiveGradient',true,...
         'SubproblemAlgorithm','cg');  % here the options are 'gc' and 'factorization', unclear which is better.
+
+
+elseif contains(UserVar.RunType,"MatlabHessianFiniteDifferences")
+
+    CtrlVar.Inverse.MatlabOptimisationHessianParameters = optimoptions('fmincon',...
+        'Algorithm','trust-region-reflective',...
+        'CheckGradients',false,...
+        'ConstraintTolerance',1e-10,...
+        'HonorBounds',true,...
+        'Diagnostics','on',...
+        'DiffMaxChange',Inf,...
+        'DiffMinChange',0,...
+        'Display','iter-detailed',...
+        'FunValCheck','off',...
+        'MaxFunctionEvaluations',1e6,...
+        'MaxIterations',CtrlVar.Inverse.Iterations,...,...
+        'OptimalityTolerance',CtrlVar.Inverse.OptimalityTolerance,...
+        'OutputFcn',@fminuncOutfun,...
+        'PlotFcn',{@optimplotlogfval,@optimplotstepsize},...
+        'StepTolerance',CtrlVar.Inverse.StepTolerance,...
+        'FunctionTolerance',CtrlVar.Inverse.FunctionTolerance,...
+        'UseParallel',true,...
+        'HessianFcn',[],...     % uses finite differences, provided HessianMultiplyFcn is also empty 
+        'HessianMultiplyFcn',[],...
+        'SpecifyConstraintGradient',false,...
+        'SpecifyObjectiveGradient',true,...
+        'InitBarrierParam',1e-7,...           % On a restart this might have to be reduced if objective function starts to increase
+        'ScaleProblem','none',...
+        'InitTrustRegionRadius',1,...         % set to smaller value if the forward problem is not converging
+        'SubproblemAlgorithm','cg');  % here the options are 'gc' and 'factorization', unclear which is better.
+
 
 end
 %%
