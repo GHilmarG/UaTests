@@ -77,7 +77,7 @@ UserVar.RunType="IR-CstartSetToMeanOfTrueC-AstartSetToMeanOfTrueA-MS10km-Tri3-Ua
 UserVar.RunType="IR-CstartSetToMeanOfTrueC-AstartSetToMeanOfTrueA-MS10km-Tri3-MatlabHessianFiniteDifferences-logA-logC-uv-dhdt-";
 
 
-CtrlVar.Inverse.Iterations=250;
+CtrlVar.Inverse.Iterations=20;
 CtrlVar.Restart=1;  % 
 
 
