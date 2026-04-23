@@ -15,11 +15,11 @@ if isempty(UserVar) || ~isfield(UserVar,'RunType')
     % UserVar.RunType='Inverse-MatOpt-FixPoint';
     UserVar.RunType='Forward-Diagnostic';
     UserVar.RunType='Forward-Transient';
-    UserVar.RunType='Forward-Transient-group-';
-    UserVar.RunType='Forward-Transient-group-dt0.1-';
-    UserVar.RunType='Forward-Transient-dt0.1-';
-    UserVar.RunType='Forward-Transient-uv-h-group-';
-    UserVar.RunType='Inverse-MatOpt';
+    %UserVar.RunType='Forward-Transient-group-';
+    %UserVar.RunType='Forward-Transient-group-dt0.1-';
+    %UserVar.RunType='Forward-Transient-dt0.1-';
+    %UserVar.RunType='Forward-Transient-uv-h-group-';
+    %UserVar.RunType='Inverse-MatOpt';
     
     % UserVar.RunType='TestingMeshOptions';
 end
