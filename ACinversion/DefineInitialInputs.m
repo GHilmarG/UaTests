@@ -20,7 +20,7 @@ happens, and not sure why this happens for 6-node elements when the same problem
 Just using dh/dt does not produce good results, stagnates early with retrieved A and C fields clearly being affected by the
 mesh and element sizes. This has now been sorted, and now looks really good!
 
-Testing the ajoint gradient calculation shows the directional derivative to be very accurate. This is true for all
+Testing the adjoint gradient calculation shows the directional derivative to be very accurate. This is true for all
 measurement cases: -uv-, -dhdt-, and -uv-dhd- , and for A and C derivatives.
 
 Inversion using -uv- as well as -uv-dhdt-  results in next-to-perfect retrieval of C, but A retrieval at center-line has a
