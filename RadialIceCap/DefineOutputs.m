@@ -126,7 +126,7 @@ if contains(plots,'-plot-')
     xlabel("x (km)")
     ylabel("h (m)")
 
-
+    UaPlots(CtrlVar,MUA,F,"-speed-",FigurePosition="=speed")
 
 end
 
