@@ -57,7 +57,7 @@ CtrlVar.DefineOutputsDt=1; % interval between calling DefineOutputs. 0 implies c
 
 CtrlVar.AdaptiveTimeStepping=1 ;  % Adaptive time stepping. Almost always a good idea to 
                                   % use adaptive time stepping in transient runs.
-CtrlVar.ATSdtMax=1; % max allowed time step when using ATS (Adaptive Time Stepping)
+CtrlVar.ATSdtMax=0.1; % max allowed time step when using ATS (Adaptive Time Stepping)
 
 %%
 CtrlVar.WriteRestartFile=1;
