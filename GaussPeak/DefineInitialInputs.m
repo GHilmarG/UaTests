@@ -4,19 +4,21 @@ function [UserVar,CtrlVar,MeshBoundaryCoordinates]=DefineInitialInputs(UserVar,C
   
     CtrlVar.Experiment='TestGaussPeak';
      %%
-    
-    CtrlVar.TimeDependentRun=0 ;
-    CtrlVar.doInverseStep=0;
-    CtrlVar.Restart=0;  
-    
-    CtrlVar.InitialDiagnosticStep=1; CtrlVar.Implicituvh=1;
-    
-    CtrlVar.time=0 ; 
-    CtrlVar.dt=1;
-    CtrlVar.TotalNumberOfForwardRunSteps=1;
-    
-    CtrlVar.FlowApproximation='SSTREAM';   % 'hybrid'
-    %CtrlVar.ALSpower=6;
+
+     CtrlVar.ForwardTimeIntegration="-uv-";
+     CtrlVar.ForwardTimeIntegration="-uvh-";
+     CtrlVar.ForwardTimeIntegration="-uv-h-";
+
+     CtrlVar.Restart=0;
+
+     CtrlVar.StartTime=0;
+     CtrlVar.EndTime=1;
+
+     CtrlVar.dt=1;
+     CtrlVar.TotalNumberOfForwardRunSteps=1;
+
+     CtrlVar.FlowApproximation='SSTREAM';   % 'hybrid'
+     %CtrlVar.ALSpower=6;
     %%
     xd=300e3; xu=-300e3 ; yl=300e3 ; yr=-300e3;
     MeshBoundaryCoordinates=flipud([xu yr ; xd yr ; xd yl ; xu yl]);
@@ -67,6 +69,13 @@ function [UserVar,CtrlVar,MeshBoundaryCoordinates]=DefineInitialInputs(UserVar,C
     CtrlVar.ExplicitMeshRefinementCriteria(I).InfoLevel=1;
     CtrlVar.ExplicitMeshRefinementCriteria(I).Use=true;
     
+   
+
+    %% BCs
+
+    CtrlVar.BCsRowSubsetSelection=true; 
+
+
     %%
     CtrlVar.LineSeachAllowedToUseExtrapolation=1;
     
