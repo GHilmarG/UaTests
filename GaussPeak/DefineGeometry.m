@@ -13,7 +13,7 @@ function [UserVar,s,b,S,B,alpha]=DefineGeometry(UserVar,CtrlVar,MUA,time,FieldsT
     B=zeros(MUA.Nnodes,1) + Deltab;
     S=B*0-1e10;
     b=B;
-    s=B*0+hmean;
+    s=B*0+hmean+0.1*Deltab; 
     
     
 end

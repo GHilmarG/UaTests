@@ -8,7 +8,7 @@ time=CtrlVar.time;
 
 
 plots='-ubvb-e-save-';
-plots='-sbB-udvd-ubvb-ub-';
+plots='-sbB-udvd-ubvb-speed-';
 %plots='-mesh-';
 
 UserVar.CreateVideo=1;
@@ -94,37 +94,31 @@ end
 
 
 if contains(plots,'-ubvb-')
+
+    figubvb=FindOrCreateFigure("-ubvb-") ; clf(figubvb)
     % plotting horizontal velocities
-    figure
-    N=1;
-    %speed=sqrt(ub.*ub+vb.*vb);
-    %CtrlVar.MinSpeedWhenPlottingVelArrows=0; CtrlVar.MaxPlottedSpeed=max(speed); %CtrlVar.VelPlotIntervalSpacing='log10';
-    %CtrlVar.VelColorMap='hot';
-    %CtrlVar.RelativeVelArrowSize=10;
-    QuiverColorGHG(x(1:N:end),y(1:N:end),ub(1:N:end),vb(1:N:end),CtrlVar);
-    hold on
+    UaPlots(CtrlVar,MUA,F,"-ubvb-",CreateNewFigure=false);
+ 
     title(sprintf('(ub,vb) t=%-g ',time)) ; xlabel('xps (km)') ; ylabel('yps (km)')
     axis equal tight
     
 end
 
+
 if contains(plots,'-udvd-')
+
+    figudvd=FindOrCreateFigure("-udvd-") ; clf(figudvd)
     % plotting horizontal velocities
-    figure
-    N=1;
-    %speed=sqrt(ud.*ud+vd.*vd);
-    %CtrlVar.VelPlotIntervalSpacing='log10';
-    %CtrlVar.RelativeVelArrowSize=10;
-    %CtrlVar.VelColorMap='hot';
-    QuiverColorGHG(x(1:N:end),y(1:N:end),ud(1:N:end),vd(1:N:end),CtrlVar);
-    hold on
+    UaPlots(CtrlVar,MUA,F,"-udvd-",CreateNewFigure=false);
+
     title(sprintf('(ud,vd) t=%-g ',time)) ; xlabel('xps (km)') ; ylabel('yps (km)')
     axis equal tight
-    
+
 end
 
+
 if contains(plots,'-e-')
-    % plotting effectiv strain rates
+    % plotting effective strain rates
     
     % first get effective strain rates, e :
     [etaInt,xint,yint,exx,eyy,exy,Eint,e,txx,tyy,txy]=calcStrainRatesEtaInt(CtrlVar,MUA,u,v,AGlen,n);
@@ -138,11 +132,14 @@ if contains(plots,'-e-')
     
 end
 
-if contains(plots,'-ub-')
+if contains(plots,'-speed-')
     
-    figure
-    [FigHandle,ColorbarHandel,tri]=PlotNodalBasedQuantities(MUA.connectivity,MUA.coordinates,ub,CtrlVar)    ;
-    title(sprintf('ub t=%-g ',time)) ; xlabel('x (km)') ; ylabel('y (km)')
+    figspeed=FindOrCreateFigure("-speed-") ; clf(figspeed)
+    % plotting horizontal velocities
+    UaPlots(CtrlVar,MUA,F,"-speed-",CreateNewFigure=false,logColorbar=true);
+
+    title(sprintf('speed t=%-g ',time)) ; xlabel('xps (km)') ; ylabel('yps (km)')
+    axis equal tight
     
 end
 

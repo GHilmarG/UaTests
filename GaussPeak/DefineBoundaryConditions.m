@@ -51,6 +51,16 @@ function  BCs=DefineBoundaryConditions(UserVar,CtrlVar,MUA,BCs,time,s,b,h,S,B,ub
 % 
 %%
 
+%% Note:
+% There is a duplicatoin in the BCs. So set
+% 
+%   CtrlVar.BCsRowSubsetSelection=true; 
+%
+% in 
+% 
+%   DefineInitialInputs.m 
+% to automatically get rid of duplication.
+%
 x=MUA.coordinates(:,1); y=MUA.coordinates(:,2);
 
 % find nodes along boundary 
@@ -61,8 +71,6 @@ nodesl=find(abs(y-yl)<1e-5); [~,ind]=sort(MUA.coordinates(nodesl,1)); nodesl=nod
 nodesr=find(abs(y-yr)<1e-5); [~,ind]=sort(MUA.coordinates(nodesr,1)); nodesr=nodesr(ind);
 
 
-%I=abs(MUA.coordinates(MUA.Boundary.Nodes,2))<1;
-%BCs.vbFixedNode=MUA.Boundary.Nodes(I); BCs.vbFixedValue=BCs.vbFixedNode*0;
 
 BCs.ubTiedNodeA=[nodesu;nodesl];
 BCs.vbTiedNodeA=[nodesu;nodesl];
@@ -70,12 +78,13 @@ BCs.vbTiedNodeA=[nodesu;nodesl];
 BCs.ubTiedNodeB=[nodesd;nodesr];
 BCs.vbTiedNodeB=[nodesd;nodesr];
 
-%BCs.ubFixedNode=[nodesu;nodesd]; BCs.ubFixedValue=BCs.ubFixedNode*0;
-%BCs.vbFixedNode=[nodesl;nodesr]; BCs.vbFixedValue=BCs.vbFixedNode*0;
 
 
+BCs.udTiedNodeA=[nodesu;nodesl];
+BCs.vdTiedNodeA=[nodesu;nodesl];
 
-
+BCs.udTiedNodeB=[nodesd;nodesr];
+BCs.vdTiedNodeB=[nodesd;nodesr];
 
 
 
