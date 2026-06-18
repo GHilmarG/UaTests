@@ -7,21 +7,27 @@ function [UserVar,CtrlVar,MeshBoundaryCoordinates]=DefineInitialInputs(UserVar,C
 
      CtrlVar.ForwardTimeIntegration="-uv-";
      CtrlVar.ForwardTimeIntegration="-uvh-";
-     CtrlVar.ForwardTimeIntegration="-uv-h-";
+     %CtrlVar.ForwardTimeIntegration="-uv-h-"; CtrlVar.uv2h.MaxIterations=1; CtrlVar.uv2h.uvTolerance=0; CtrlVar.hTheta=0; 
 
      CtrlVar.alpha=0.0;
 
      CtrlVar.Restart=0;
 
      CtrlVar.StartTime=0;
-     CtrlVar.EndTime=1;
+     CtrlVar.EndTime=100;
 
-     CtrlVar.dt=1;
-     CtrlVar.TotalNumberOfForwardRunSteps=10;
+     CtrlVar.dt=10;
+     CtrlVar.AdaptiveTimeStepping=0 ; 
+     CtrlVar.TotalNumberOfForwardRunSteps=inf;
 
      CtrlVar.FlowApproximation='SSTREAM';   % 'hybrid'
     % CtrlVar.FlowApproximation='SSHEET';
      %CtrlVar.ALSpower=6;
+
+     %%
+
+      CtrlVar.AsymmSolver="NullSpace";   
+
     %%
     xd=300e3; xu=-300e3 ; yl=300e3 ; yr=-300e3;
     MeshBoundaryCoordinates=flipud([xu yr ; xd yr ; xd yl ; xu yl]);

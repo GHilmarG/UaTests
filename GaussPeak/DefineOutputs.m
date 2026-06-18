@@ -2,9 +2,37 @@
 function  UserVar=DefineOutputs(UserVar,CtrlVar,MUA,BCs,F,l,GF,InvStartValues,InvFinalValues,Priors,Meas,BCsAdjoint,RunInfo);
 
 
+persistent t sMax sMin s0 iCounter
 
 
-time=CtrlVar.time;
+if isempty(t)
+    iCounter=0;
+    t=nan(1000,1);
+    sMax=nan(1000,1);
+    sMin=nan(1000,1);
+    s0=nan(1000,1);
+end
+
+if F.time==0
+   
+    % Make sure to reset if there is a new run
+    iCounter=0; 
+    t=nan(1000,1);
+    sMax=nan(1000,1);
+    sMin=nan(1000,1);
+    s0=nan(1000,1);
+
+end
+
+iCounter=iCounter+1;
+t(iCounter)=F.time;
+
+r=sqrt(F.x.*F.x+F.y.*F.y);
+[rMin,iR]=min(r);
+
+s0(iCounter)=F.s(iR);
+sMax(iCounter)=max(F.s);
+sMin(iCounter)=min(F.s);
 
 
 plots='-ubvb-e-save-';
@@ -20,17 +48,17 @@ if contains(plots,'-save-')
     % save data in files with running names
     % check if folder 'ResultsFiles' exists, if not create
 
-    if strcmp(CtrlVar.DefineOutputsInfostring,'First call ') && exist('ResultsFiles','dir')~=7 ;
+    if strcmp(CtrlVar.DefineOutputsInfostring,'First call ') && exist('ResultsFiles','dir')~=7 
         mkdir('ResultsFiles') ;
     end
 
     if strcmp(CtrlVar.DefineOutputsInfostring,'Last call')==0
-        %FileName=['ResultsFiles/',sprintf('%07i',round(100*time)),'-TransPlots-',CtrlVar.Experiment]; good for transient runs
+        %FileName=['ResultsFiles/',sprintf('%07i',round(100*F.time)),'-TransPlots-',CtrlVar.Experiment]; good for transient runs
 
         FileName=['ResultsFiles/',sprintf('%07i',CtrlVar.DefineOutputsCounter),'-TransPlots-',CtrlVar.Experiment];
 
         fprintf(' Saving data in %s \n',FileName)
-        save(FileName,'CtrlVar','MUA','time','s','b','S','B','h','u','v','dhdt','dsdt','dbdt','C','AGlen','m','n','rho','rhow','as','ab','GF')
+        save(FileName,'CtrlVar','MUA','F')
 
     end
 end
@@ -39,9 +67,38 @@ end
 
 
 % only do plots at end of run
-%if ~strcmp(CtrlVar.DefineOutputsInfostring,'Last call') ; return ; end
+
+if strcmp(CtrlVar.DefineOutputsInfostring,'Last call') 
+    
+    sFig=FindOrCreateFigure("s(t)") ; clf(sFig) 
+    yyaxis left
+    plot(t,sMin,"o-",DisplayName="min(s)")
+    ylabel("$\min(s)$ (m)",Interpreter="latex")
+    yyaxis right
+    plot(t,sMax,"s-",DisplayName="max(s)")
+    lg=legend;
+    xlabel("time (yr)")
+    ylabel("$\max(s)$ (m)",Interpreter="latex")
+
+    if CtrlVar.ForwardTimeIntegration=="-uvh-"
+        FileName="SurfaceTime"+CtrlVar.ForwardTimeIntegration+"Theta"+num2str(CtrlVar.theta)+"_dt"+num2str(F.dt);
+    else
+        FileName="SurfaceTime"+CtrlVar.ForwardTimeIntegration+"uv_h_MaxIt"+num2str(CtrlVar.uv2h.MaxIterations)+"_Theta"+num2str(CtrlVar.hTheta)+"_dt"+num2str(F.dt);
+    end
 
 
+    
+    FileName=replace(FileName,".","k")+".mat" ;
+    fprintf("Saving s(t) data in the file:  %s \n",FileName)
+
+    save(FileName,"CtrlVar","t","sMax","sMin","s0")
+end
+
+if ~strcmp(CtrlVar.DefineOutputsInfostring,'Last call') 
+
+  return
+
+end
 
 %% perturbations
 cbar=UaPlots(CtrlVar,MUA,F,F.s,FigureTitle="Upper Surface")  ;
@@ -69,7 +126,7 @@ if contains(plots,'-sbB-')
     colorbar ; title(colorbar,'(m)')
     hold on
 
-    title(sprintf('sbB at t=%#5.1g ',time))
+    title(sprintf('sbB at t=%#5.1g ',F.time))
     axis equal ; tt=daspect ; daspect([mean(tt(1)+tt(2)) mean(tt(1)+tt(2)) tt(3)*CtrlVar.PlotXYscale]); axis tight
     hold off
 end
@@ -81,7 +138,7 @@ if contains(plots,'-ubvb-')
     % plotting horizontal velocities
     UaPlots(CtrlVar,MUA,F,"-ubvb-",CreateNewFigure=false);
 
-    title(sprintf('(ub,vb) t=%-g ',time)) ; xlabel('xps (km)') ; ylabel('yps (km)')
+    title(sprintf('(ub,vb) t=%-g ',F.time)) ; xlabel('xps (km)') ; ylabel('yps (km)')
     axis equal tight
 
 end
@@ -93,7 +150,7 @@ if contains(plots,'-udvd-')
     % plotting horizontal velocities
     UaPlots(CtrlVar,MUA,F,"-udvd-",CreateNewFigure=false);
 
-    title(sprintf('(ud,vd) t=%-g ',time)) ; xlabel('xps (km)') ; ylabel('yps (km)')
+    title(sprintf('(ud,vd) t=%-g ',F.time)) ; xlabel('xps (km)') ; ylabel('yps (km)')
     axis equal tight
 
 end
@@ -110,7 +167,7 @@ if contains(plots,'-e-')
 
     figure
     [FigHandle,ColorbarHandel,tri]=PlotNodalBasedQuantities(MUA.connectivity,MUA.coordinates,eNod,CtrlVar)    ;
-    title(sprintf('e t=%-g ',time)) ; xlabel('x (km)') ; ylabel('y (km)')
+    title(sprintf('e t=%-g ',F.time)) ; xlabel('x (km)') ; ylabel('y (km)')
 
 end
 
