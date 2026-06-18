@@ -21,7 +21,7 @@ function [UserVar,CtrlVar,MeshBoundaryCoordinates]=DefineInitialInputs(UserVar,C
      CtrlVar.TotalNumberOfForwardRunSteps=inf;
 
      CtrlVar.FlowApproximation='SSTREAM';   % 'hybrid'
-    % CtrlVar.FlowApproximation='SSHEET';
+     CtrlVar.FlowApproximation='SSHEET';
      %CtrlVar.ALSpower=6;
 
      %%
