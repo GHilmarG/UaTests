@@ -4,7 +4,7 @@ function  UserVar=DefineOutputs(UserVar,CtrlVar,MUA,BCs,F,l,GF,InvStartValues,In
 
 v2struct(F);
 
-time=CtrlVar.time; 
+time=CtrlVar.time;
 
 
 plots='-ubvb-e-save-';
@@ -23,27 +23,27 @@ if contains(plots,'-save-')
     if strcmp(CtrlVar.DefineOutputsInfostring,'First call ') && exist('ResultsFiles','dir')~=7 ;
         mkdir('ResultsFiles') ;
     end
-    
+
     if strcmp(CtrlVar.DefineOutputsInfostring,'Last call')==0
         %FileName=['ResultsFiles/',sprintf('%07i',round(100*time)),'-TransPlots-',CtrlVar.Experiment]; good for transient runs
-        
+
         FileName=['ResultsFiles/',sprintf('%07i',CtrlVar.DefineOutputsCounter),'-TransPlots-',CtrlVar.Experiment];
-        
+
         fprintf(' Saving data in %s \n',FileName)
         save(FileName,'CtrlVar','MUA','time','s','b','S','B','h','u','v','dhdt','dsdt','dbdt','C','AGlen','m','n','rho','rhow','as','ab','GF')
-        
+
     end
 end
 
-% 
+%
 % if contains(plots,'-mesh-')
-%     
-%     
+%
+%
 %     if isempty(fig100)
 %         fig100=figure(100) ;
 %         %fig100.Position=[0 0 figsWidth 3*figHeights];
 %         fig100.Position=[1 1 2190 1160];% full laptop window
-%         
+%
 %         if UserVar.CreateVideo
 %             Video100=VideoWriter('Video100.avi');
 %             open(Video100);
@@ -52,28 +52,38 @@ end
 %         fig100=figure(100) ;
 %         hold off
 %     end
-%     
-%     
-%     
+%
+%
+%
 %     PlotMuaMesh(CtrlVar,MUA)
 %     title('')
-%     
+%
 %     if UserVar.CreateVideo
 %         frame = getframe(gcf);
 %         writeVideo(Video100,frame);
-%         
+%
 %         if strcmp(CtrlVar.DefineOutputsInfostring,'Last call')
 %             close(Video100)
 %         end
 %     end
-%     
+%
 % end
-% 
+%
 
 
 % only do plots at end of run
 if ~strcmp(CtrlVar.DefineOutputsInfostring,'Last call') ; return ; end
 
+
+
+%% perturbations
+UaPlots(CtrlVar,MUA,F,F.s,FigureTitle="Upper Surface")  ;
+CM=cmocean('balanced',25,'pivot',mean(F.s)) ; colormap(CM);
+
+FindOrCreateFigure("vel pert")
+QuiverColorGHG(F.x,F.y,F.ub-mean(F.ub),F.vb,CtrlVar)  ;
+title("Velocity pertubations (ub,vb)")
+axis equal
 
 if contains(plots,'-sbB-')
     figure(5)
@@ -86,7 +96,7 @@ if contains(plots,'-sbB-')
     xlabel('y') ; ylabel('x') ;
     colorbar ; title(colorbar,'(m)')
     hold on
-    
+
     title(sprintf('sbB at t=%#5.1g ',time))
     axis equal ; tt=daspect ; daspect([mean(tt(1)+tt(2)) mean(tt(1)+tt(2)) tt(3)*CtrlVar.PlotXYscale]); axis tight
     hold off
@@ -98,10 +108,10 @@ if contains(plots,'-ubvb-')
     figubvb=FindOrCreateFigure("-ubvb-") ; clf(figubvb)
     % plotting horizontal velocities
     UaPlots(CtrlVar,MUA,F,"-ubvb-",CreateNewFigure=false);
- 
+
     title(sprintf('(ub,vb) t=%-g ',time)) ; xlabel('xps (km)') ; ylabel('yps (km)')
     axis equal tight
-    
+
 end
 
 
@@ -119,28 +129,28 @@ end
 
 if contains(plots,'-e-')
     % plotting effective strain rates
-    
+
     % first get effective strain rates, e :
     [etaInt,xint,yint,exx,eyy,exy,Eint,e,txx,tyy,txy]=calcStrainRatesEtaInt(CtrlVar,MUA,u,v,AGlen,n);
     % all these variables are are element variables defined on integration points
     % therfore if plotting on nodes, must first project these onto nodes
     eNod=ProjectFintOntoNodes(MUA,e);
-    
+
     figure
     [FigHandle,ColorbarHandel,tri]=PlotNodalBasedQuantities(MUA.connectivity,MUA.coordinates,eNod,CtrlVar)    ;
     title(sprintf('e t=%-g ',time)) ; xlabel('x (km)') ; ylabel('y (km)')
-    
+
 end
 
 if contains(plots,'-speed-')
-    
+
     figspeed=FindOrCreateFigure("-speed-") ; clf(figspeed)
     % plotting horizontal velocities
     UaPlots(CtrlVar,MUA,F,"-speed-",CreateNewFigure=false,logColorbar=true);
-
+    CM=cmocean('balanced',25,'pivot',mean(F.ub)) ; colormap(CM);
     title(sprintf('speed t=%-g ',time)) ; xlabel('xps (km)') ; ylabel('yps (km)')
     axis equal tight
-    
+
 end
 
 
