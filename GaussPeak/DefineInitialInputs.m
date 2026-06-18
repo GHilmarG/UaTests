@@ -17,7 +17,7 @@ function [UserVar,CtrlVar,MeshBoundaryCoordinates]=DefineInitialInputs(UserVar,C
      CtrlVar.EndTime=1;
 
      CtrlVar.dt=1;
-     CtrlVar.TotalNumberOfForwardRunSteps=1;
+     CtrlVar.TotalNumberOfForwardRunSteps=10;
 
      CtrlVar.FlowApproximation='SSTREAM';   % 'hybrid'
     % CtrlVar.FlowApproximation='SSHEET';
@@ -34,8 +34,8 @@ function [UserVar,CtrlVar,MeshBoundaryCoordinates]=DefineInitialInputs(UserVar,C
     CtrlVar.UaSquareMesh.ymin=yr;
     CtrlVar.UaSquareMesh.ymax=yl;
 
-    CtrlVar.UaSquareMesh.nx=10;
-    CtrlVar.UaSquareMesh.ny=10; 
+    CtrlVar.UaSquareMesh.nx=20;
+    CtrlVar.UaSquareMesh.ny=20; 
 
     CtrlVar.TriNodes=6;   % [3,6,10]
     CtrlVar.MeshSize=25e3;  % Not used initially when using UaSquareMesh, but will be used in later mesh refinements

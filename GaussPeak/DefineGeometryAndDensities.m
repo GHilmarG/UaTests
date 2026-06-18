@@ -48,7 +48,10 @@ function  [UserVar,s,b,S,B,rho,rhow,g]=DefineGeometryAndDensities(UserVar,CtrlVa
 
 
 hmean=1000;
-ampl_b=0.5*hmean; sigma_bx=5000 ; sigma_by=5000;
+ampl_b=0.5*hmean; 
+sigma_bx=50e3 ; 
+sigma_by=50e3;
+
 Deltab=ampl_b*exp(-((F.x/sigma_bx).^2+(F.y/sigma_by).^2));
 Deltab=Deltab-mean(Deltab);
 

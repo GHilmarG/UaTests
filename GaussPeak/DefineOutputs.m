@@ -2,13 +2,13 @@
 function  UserVar=DefineOutputs(UserVar,CtrlVar,MUA,BCs,F,l,GF,InvStartValues,InvFinalValues,Priors,Meas,BCsAdjoint,RunInfo);
 
 
-v2struct(F);
+
 
 time=CtrlVar.time;
 
 
 plots='-ubvb-e-save-';
-plots='-sbB-udvd-ubvb-speed-';
+plots='-udvd-ubvb-speed-';
 %plots='-mesh-';
 
 UserVar.CreateVideo=1;
@@ -35,50 +35,22 @@ if contains(plots,'-save-')
     end
 end
 
-%
-% if contains(plots,'-mesh-')
-%
-%
-%     if isempty(fig100)
-%         fig100=figure(100) ;
-%         %fig100.Position=[0 0 figsWidth 3*figHeights];
-%         fig100.Position=[1 1 2190 1160];% full laptop window
-%
-%         if UserVar.CreateVideo
-%             Video100=VideoWriter('Video100.avi');
-%             open(Video100);
-%         end
-%     else
-%         fig100=figure(100) ;
-%         hold off
-%     end
-%
-%
-%
-%     PlotMuaMesh(CtrlVar,MUA)
-%     title('')
-%
-%     if UserVar.CreateVideo
-%         frame = getframe(gcf);
-%         writeVideo(Video100,frame);
-%
-%         if strcmp(CtrlVar.DefineOutputsInfostring,'Last call')
-%             close(Video100)
-%         end
-%     end
-%
-% end
-%
+
 
 
 % only do plots at end of run
-if ~strcmp(CtrlVar.DefineOutputsInfostring,'Last call') ; return ; end
+%if ~strcmp(CtrlVar.DefineOutputsInfostring,'Last call') ; return ; end
 
 
 
 %% perturbations
-UaPlots(CtrlVar,MUA,F,F.s,FigureTitle="Upper Surface")  ;
+cbar=UaPlots(CtrlVar,MUA,F,F.s,FigureTitle="Upper Surface")  ;
 CM=cmocean('balanced',25,'pivot',mean(F.s)) ; colormap(CM);
+title(cbar,"(m)")
+
+cbar=UaPlots(CtrlVar,MUA,F,F.b,FigureTitle="Lower Surface")  ;
+CM=cmocean('balanced',25,'pivot',mean(F.b)) ; colormap(CM);
+title(cbar,"(m)")
 
 FindOrCreateFigure("vel pert")
 QuiverColorGHG(F.x,F.y,F.ub-mean(F.ub),F.vb,CtrlVar)  ;
@@ -86,12 +58,12 @@ title("Velocity pertubations (ub,vb)")
 axis equal
 
 if contains(plots,'-sbB-')
-    figure(5)
+    FindOrCreateFigure("-sbB-")
     hold off
     if isempty(TRI) ;  TRI = delaunay(x,y); end
-    trisurf(TRI,x/CtrlVar.PlotXYscale,y/CtrlVar.PlotXYscale,s,'EdgeColor','none') ; hold on
-    trisurf(TRI,x/CtrlVar.PlotXYscale,y/CtrlVar.PlotXYscale,b,'EdgeColor','none') ;
-    trisurf(TRI,x/CtrlVar.PlotXYscale,y/CtrlVar.PlotXYscale,B,'EdgeColor','none') ;
+    trisurf(TRI,F.x/CtrlVar.PlotXYscale,F.y/CtrlVar.PlotXYscale,s,'EdgeColor','none') ; hold on
+    trisurf(TRI,F.x/CtrlVar.PlotXYscale,F.y/CtrlVar.PlotXYscale,b,'EdgeColor','none') ;
+    trisurf(TRI,F.x/CtrlVar.PlotXYscale,F.y/CtrlVar.PlotXYscale,B,'EdgeColor','none') ;
     view(50,20); lightangle(-45,30) ; lighting phong ;
     xlabel('y') ; ylabel('x') ;
     colorbar ; title(colorbar,'(m)')
@@ -148,7 +120,7 @@ if contains(plots,'-speed-')
     % plotting horizontal velocities
     UaPlots(CtrlVar,MUA,F,"-speed-",CreateNewFigure=false,logColorbar=true);
     CM=cmocean('balanced',25,'pivot',mean(F.ub)) ; colormap(CM);
-    title(sprintf('speed t=%-g ',time)) ; xlabel('xps (km)') ; ylabel('yps (km)')
+    xlabel('x (km)') ; ylabel('y (km)')
     axis equal tight
 
 end
