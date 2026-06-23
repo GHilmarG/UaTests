@@ -20,9 +20,9 @@ function [UserVar,CtrlVar,MeshBoundaryCoordinates]=DefineInitialInputs(UserVar,C
      CtrlVar.AdaptiveTimeStepping=0 ; 
      CtrlVar.TotalNumberOfForwardRunSteps=inf;
 
-     CtrlVar.FlowApproximation='SSTREAM';   % 'hybrid'
-     CtrlVar.FlowApproximation='SSHEET';
-     %CtrlVar.ALSpower=6;
+     CtrlVar.FlowApproximation='SSTREAM';   
+   %  CtrlVar.FlowApproximation='SSHEET';
+ 
 
      %%
 
@@ -88,7 +88,9 @@ function [UserVar,CtrlVar,MeshBoundaryCoordinates]=DefineInitialInputs(UserVar,C
 
     %% BCs
 
-    CtrlVar.BCsRowSubsetSelection=true; 
+ 
+    CtrlVar.BCsRowSubsetSelection=true;  % The boundary conditions as defined in DefineBoundaryConditions.m may not be linearly independent,
+    % By setting this to true, the BCs are modified internally to create an independent subset. 
 
 
     %%
