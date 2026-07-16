@@ -78,7 +78,7 @@ UserVar.RunType="IR-CstartSetToMeanOfTrueC-AstartSetToMeanOfTrueA-MS10km-Tri3-Ma
 
 
 CtrlVar.Inverse.Iterations=20;
-CtrlVar.Restart=1;  % 
+CtrlVar.Restart=0;  %
 
 
 
@@ -100,7 +100,7 @@ UserVar.NoiseAmplitude=0.00001;
 CtrlVar.alpha=0.05;   % slope of the coordinate system
 
 %%
- CtrlVar.BCsRowSubsetSelection=true; 
+CtrlVar.BCsRowSubsetSelection=true;
 
 %% Mesh
 
@@ -214,7 +214,10 @@ if contains(UserVar.RunType,"IR-")
 
 
 
+    %%
+    CtrlVar.Inverse.Methodology="-Tikhonov-" ; % either "-Tikhonov-" or "-Matern-"
 
+    % Tikhonov regularization parameters:
     CtrlVar.Inverse.Regularize.logC.ga=0.1;%1;%1;
     CtrlVar.Inverse.Regularize.logC.gs=1000;%1e6;%1e4;
     CtrlVar.Inverse.Regularize.logAGlen.ga=0.1;%1;%1;
@@ -226,6 +229,36 @@ if contains(UserVar.RunType,"IR-")
     CtrlVar.Inverse.Regularize.logAGlen.ga=1;%1;%1;
     CtrlVar.Inverse.Regularize.logAGlen.gs=1e6;%1e4 ;
 
+
+    %$ Matern covariance parameters:
+    CtrlVar.Inverse.Methodology="-Matern-" ;
+    Area=(xd-xu)*(yl-yr) ;
+
+
+    % [alphaMatern,tauMatern,kappaMatern,sigma2Matern,rhoMatern]=Tikhonov2MaternParameters(CtrlVar.Inverse.Regularize.logAGlen.ga, CtrlVar.Inverse.Regularize.logAGlen.gs,Area);
+
+
+    CtrlVar.Inverse.Matern.logAGlen.alpha=2;
+    CtrlVar.Inverse.Matern.logAGlen.kappa=1/100;
+    CtrlVar.Inverse.Matern.logAGlen.tau=100;
+
+    % [alphaMatern,tauMatern,kappaMatern,sigma2Matern,rhoMatern]=Tikhonov2MaternParameters(CtrlVar.Inverse.Regularize.logC.ga, CtrlVar.Inverse.Regularize.logC.gs,Area);
+
+    % [rhoMatern,sigmaMatern,nuMatern]=Matern_alpha_kappa_tau(CtrlVar.Inverse.Matern.logAGlen.alpha, CtrlVar.Inverse.Matern.logAGlen.kappa, CtrlVar.Inverse.Matern.logAGlen.tau);
+    % r=linspace(0,5*rhoMatern,30); DoPlots=true; CreateRealisations=true;
+    % sigma2Matern=sigmaMatern^2;
+    % [C,nu,kappa,sigma2,tau,Cov,Realisation,coords]=Matern(sigma2Matern,CtrlVar.Inverse.Matern.logAGlen.alpha,rhoMatern,r,DoPlots,CreateRealisations);
+
+
+
+    CtrlVar.Inverse.Matern.logC.alpha=2;
+    CtrlVar.Inverse.Matern.logC.kappa=1/100;
+    CtrlVar.Inverse.Matern.logC.tau=100;
+
+    CtrlVar.Inverse.Matern.B.alpha=[];
+    CtrlVar.Inverse.Matern.B.kappa=[];
+    CtrlVar.Inverse.Matern.B.tau=[];
+    %%
 
     CtrlVar.Cmax=1e20;
     CtrlVar.Cmin=1e-7;
@@ -360,7 +393,7 @@ elseif contains(UserVar.RunType,"MatlabHessianFiniteDifferences")
         'StepTolerance',CtrlVar.Inverse.StepTolerance,...
         'FunctionTolerance',CtrlVar.Inverse.FunctionTolerance,...
         'UseParallel',true,...
-        'HessianFcn',[],...     % uses finite differences, provided HessianMultiplyFcn is also empty 
+        'HessianFcn',[],...     % uses finite differences, provided HessianMultiplyFcn is also empty
         'HessianMultiplyFcn',[],...
         'SpecifyConstraintGradient',false,...
         'SpecifyObjectiveGradient',true,...
