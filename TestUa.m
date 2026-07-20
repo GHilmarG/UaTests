@@ -4,7 +4,7 @@
 %%
 %
 % (alpha)   26/06/2023 , 16/03/2024  , 01/08/2024 , 29/12/2024, 02/03/2025, 06/05/2025, 19/07/2025, 3/11,2025, 19/12/2025,
-% 22/12/2035, 
+% 22/12/2025, 20/07/2026
 %
 % To run the test do:
 %
@@ -203,7 +203,7 @@ function testGaussPeak(testCase)
     cd ..
     actSolution= UserVar.Test.Norm.actValue ;
     expSolution = UserVar.Test.Norm.expValue ;
-    verifyEqual(testCase,actSolution,expSolution,'RelTol',1e-6)
+    verifyEqual(testCase,actSolution,expSolution,'AbsTol',1e-6)
     
 end
 
