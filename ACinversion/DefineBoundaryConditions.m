@@ -60,8 +60,7 @@ nodesu=MUA.Boundary.Nodes(abs(MUA.coordinates(MUA.Boundary.Nodes,1)-xu)<L);
 nodesl=MUA.Boundary.Nodes(abs(MUA.coordinates(MUA.Boundary.Nodes,2)-yl)<L);
 nodesr=MUA.Boundary.Nodes(abs(MUA.coordinates(MUA.Boundary.Nodes,2)-yr)<L);
 
-nodesu=setdiff(nodesu,[nodesr;nodesl]);
-nodesd=setdiff(nodesd,[nodesr;nodesl]);
+% nodesu=setdiff(nodesu,[nodesr;nodesl]); nodesd=setdiff(nodesd,[nodesr;nodesl]);
 
 
 % Set the boundary conditions for basal velocities

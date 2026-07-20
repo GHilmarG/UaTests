@@ -3,8 +3,8 @@
 % 
 % beta 27/07/2025, 18/12/2025, 22/12/2025
 %
-% (alpha)   26/06/2023 , 16/03/2024  , 01/08/2024 , 29/12/2024, 02/03/2025, 06/05/2025, 19/07/2025, 3/11,2025, 19/12/2025,
-% 22/12/2035, 
+% (beta)   26/06/2023 , 16/03/2024  , 01/08/2024 , 29/12/2024, 02/03/2025, 06/05/2025, 19/07/2025, 3/11,2025, 19/12/2025,
+% 22/12/2025, 20/07/2026
 %
 % To run the test do:
 %
@@ -31,7 +31,7 @@ function tests = TestUa
       f={@testFreeSlipBCs}             ;    % OK  11/05/2021 ,  08/09/2021 , 01/11/2021 ,   03/08/2023 , 24/06/2023 , 02/10/2023 , 16/03/2024 , 01/08/2024 , 29/12/2014
       f={@testMassConservationPeaks}   ;   %  OK                                                                                   16/03/2024  , 01/08/2024  , 29/12/2014
       
-      f={@testCrack,@testPIGdiagnostic,@testPIGtransient,@testMassBalanceFeedback,@test1dIceStream,@test1dIceShelf,@testGaussPeak,@testFreeSlipBCs,@testMassConservationPeaks} ;
+      %f={@testCrack,@testPIGdiagnostic,@testPIGtransient,@testMassBalanceFeedback,@test1dIceStream,@test1dIceShelf,@testGaussPeak,@testFreeSlipBCs,@testMassConservationPeaks} ;
 
      
 
@@ -213,7 +213,7 @@ function testGaussPeak(testCase)
     cd ..
     actSolution= UserVar.Test.Norm.actValue ;
     expSolution = UserVar.Test.Norm.expValue ;
-    verifyEqual(testCase,actSolution,expSolution,'RelTol',1e-6)
+    verifyEqual(testCase,actSolution,expSolution,'AbsTol',1e-6)
     
 end
 

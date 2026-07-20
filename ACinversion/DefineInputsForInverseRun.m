@@ -20,13 +20,20 @@ function [UserVar,InvStartValues,Priors,Meas,BCsAdjoint,RunInfo]=...
 n=1 ;
 eta0=1/(2*UserVar.AGlen0);
 
-Lx=max(F.x)-min(F.x); Ly=max(F.y)-min(F.y); nx=UserVar.nxA; ny=UserVar.nyA;
+Lx=max(F.x)-min(F.x); Ly=max(F.y)-min(F.y); 
 
-phase = pi;
-deta = UserVar.ampl_eta.*eta0.*sin(2*pi*nx*F.x/Lx + 2*pi*ny*F.y/Ly+phase);
-deta=deta-mean(deta(:));
-eta = eta0 + deta;
 
+if contains(CtrlVar.Inverse.InvertFor,"A") % only add perturbation to A, if inverting for A
+    phase = pi;
+    nx=UserVar.nxA; ny=UserVar.nyA;
+    deta = UserVar.ampl_eta.*eta0.*sin(2*pi*nx*F.x/Lx + 2*pi*ny*F.y/Ly+phase);
+    deta=deta-mean(deta(:));
+    
+else
+    deta=zeros(MUA.Nnodes,1);
+end
+
+eta=eta0+deta;
 
 Priors.TrueAGlen=1./(2.*eta);
 Priors.Truen=n;
@@ -34,14 +41,19 @@ Priors.Truen=n;
 % Sinusoidal perturbation in C
 
 m=1;
-Lx=max(F.x)-min(F.x); Ly=max(F.y)-min(F.y); 
-nxC=UserVar.nxC; nyC=UserVar.nyC;
-phase = 0.0;
-dc = UserVar.ampl_c.*UserVar.C0.*sin(2*pi*nxC*F.x/Lx + 2*pi*nyC*F.y/Ly+phase);
-dc=dc-mean(dc(:));
 
+if contains(CtrlVar.Inverse.InvertFor,"C") % only add perturbation to C, if inverting for C
+    nxC=UserVar.nxC; nyC=UserVar.nyC;
+    phase = 0.0;
+    dc = UserVar.ampl_c.*UserVar.C0.*sin(2*pi*nxC*F.x/Lx + 2*pi*nyC*F.y/Ly+phase);
+    dc=dc-mean(dc(:));
+else
+    dc=zeros(MUA.Nnodes,1);
+end
 
-Priors.TrueC= UserVar.C0 + dc;
+C=UserVar.C0 + dc;
+
+Priors.TrueC= C ;
 Priors.Truem= m ;
 
 
@@ -94,12 +106,19 @@ F.m=Priors.Truem;
 [UserVar,RunInfo,F,l]= uv(UserVar,RunInfo,CtrlVar,MUA,BCs,F,l);
 [UserVar,F.dhdt]=dhdtExplicit(UserVar,CtrlVar,MUA,F,BCs) ; 
 
+sigma=mean(abs(F.ub))*UserVar.NoiseAmplitude ; 
 
-Meas.us=F.ub;
-Meas.vs=F.vb;
+Noise=sigma*randn(MUA.Nnodes,1);
+Meas.us=F.ub+Noise;
+
+Noise=sigma*randn(MUA.Nnodes,1);
+Meas.vs=F.vb+Noise; 
+
 Err=zeros(MUA.Nnodes,1)+1; 
 
-usError=Err ; vsError=Err ; 
+usError=zeros(MUA.Nnodes,1)+sigma ; 
+vsError=usError ; 
+
 Meas.usCov=sparse(1:MUA.Nnodes,1:MUA.Nnodes,usError.^2,MUA.Nnodes,MUA.Nnodes);
 Meas.vsCov=sparse(1:MUA.Nnodes,1:MUA.Nnodes,vsError.^2,MUA.Nnodes,MUA.Nnodes);
 
@@ -108,10 +127,40 @@ Meas.dhdt = F.dhdt;
 Meas.dhdtCov = sparse(1:MUA.Nnodes,1:MUA.Nnodes,Err.^2,MUA.Nnodes,MUA.Nnodes);
 
 
+%% Adjoint Boundary conditions
+
+xd=max(F.x) ; xu=min(F.x); yl=max(F.y) ; yr=min(F.y);
+
+% find nodes along boundary 
+L=min(sqrt(MUA.EleAreas)/1000); % set a distance tolerance which is a fraction of smallest element size
+nodesd=MUA.Boundary.Nodes(abs(MUA.coordinates(MUA.Boundary.Nodes,1)-xd)<L);
+nodesu=MUA.Boundary.Nodes(abs(MUA.coordinates(MUA.Boundary.Nodes,1)-xu)<L);
+nodesl=MUA.Boundary.Nodes(abs(MUA.coordinates(MUA.Boundary.Nodes,2)-yl)<L);
+nodesr=MUA.Boundary.Nodes(abs(MUA.coordinates(MUA.Boundary.Nodes,2)-yr)<L);
+
+% nodesu=setdiff(nodesu,[nodesr;nodesl]);
+% nodesd=setdiff(nodesd,[nodesr;nodesl]);
 
 
 
-    
-    
+%% set lambda to zero where forward problem uses fixed velocities, and periodic where forward problem uses periodic BCs
+
+BCsAdjoint.ubFixedNode=[nodesl;nodesr];   BCsAdjoint.ubFixedValue=BCsAdjoint.ubFixedNode*0; 
+BCsAdjoint.vbFixedNode=[nodesl;nodesr];   BCsAdjoint.vbFixedValue=BCsAdjoint.vbFixedNode*0; 
+
+BCsAdjoint.vbTiedNodeA=nodesu; BCsAdjoint.vbTiedNodeB=nodesd;
+BCsAdjoint.ubTiedNodeA=nodesu; BCsAdjoint.ubTiedNodeB=nodesd;
+
+% Use periodic BCs for the adjoint problem (wrong approach but did this for testing
+% BCsAdjoint.vbTiedNodeA=[nodesu;nodesl]; BCsAdjoint.vbTiedNodeB=[nodesd;nodesr];
+% BCsAdjoint.ubTiedNodeA=[nodesu;nodesl]; BCsAdjoint.ubTiedNodeB=[nodesd;nodesr];
+
+BCsAdjoint.hTiedNodeA=[nodesu;nodesl]; BCsAdjoint.hTiedNodeB=[nodesd;nodesr];  % gradient BCs.
+
+%
+
+
+
+
     
 end

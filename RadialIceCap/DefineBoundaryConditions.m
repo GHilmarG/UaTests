@@ -55,7 +55,7 @@
 
 
 
-BCs.hFixedNode=MUA.Boundary.Nodes ;  BCs.hFixedValue=MUA.Boundary.Nodes*0 ; 
+% BCs.hFixedNode=MUA.Boundary.Nodes ;  BCs.hFixedValue=MUA.Boundary.Nodes*0 ; 
 
 
 end

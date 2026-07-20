@@ -1,4 +1,6 @@
 
+
+
 function [B,UserVar,CtrlVar,MUA,F]=Bedgeometry(UserVar,CtrlVar,MUA,F,options)
 
 
@@ -54,14 +56,15 @@ B=Bfunc(F.x,F.y,options.BedName) ;
 if options.Plot
 
 
-    FindOrCreateFigure("B Thule") ; 
+    FindOrCreateFigure("B Thule") ;
     [~,cbar]=PlotMeshScalarVariable(CtrlVar,MUA,B);
-    xlabel("x (km)",Interpreter="latex") ; 
+    xlabel("x (km)",Interpreter="latex") ;
     ylabel("y (km)",Interpreter="latex")
-    ModifyColormap
+    colormap(othercolor("Mdarkterrain",25)) 
     axis tight
     title(cbar,"(m a.s.l.)",Interpreter="latex")
-    ax=gca; exportgraphics(ax,'ThuleB.pdf')
+    
+    %ax=gca; exportgraphics(ax,'ThuleB.pdf')
 
     x=linspace(0,1000e3,100) ; y=x*0;
     Bxprofile=Bfunc(x,y,options.BedName);
@@ -80,53 +83,60 @@ if options.Plot
 
 end
 
-
-    function B=Bfunc(x,y,BedName)
-
-
-
-
-
-        %%   new parameter set
-        R=800e3 ;
-        Bc=900;
-        Bl=-2000;
-        Ba=1100;
-        %%
-
-        switch BedName
-
-            case "-Thule-"
-
-                r=sqrt(x.*x+y.*y) ;
-                theta=atan2(y,x);
-
-
-                rc=0;
-                l=R -  cos(2*theta).*R/2 ;            % theta-dependent wavelength
-                a=Bc - (Bc-Bl)*(r-rc).^2./(R-rc).^2;  % quadratic term in r
-                B=Ba*cos(3*pi*r./l)+a ;               %
-
-            case "-ThuleNS-"
-
-                r=sqrt(x.*x+y.*y) ;
-                theta=pi/2 ;
-
-                rc=0;
-                l=R -  cos(2*theta).*R/2 ;            % theta-dependent wavelength
-                a=Bc - (Bc-Bl)*(r-rc).^2./(R-rc).^2;  % quadratic term in r
-                B=Ba*cos(3*pi*r./l)+a ;
-
-            otherwise
-
-                error("Case not found")
-
-        end
-
-    end
-
-
-return
+if ~nargout   % A trick to suppress any function output if no output requested. No need to suppress output using ;
+    clearvars B
+end
 
 end
+
+
+
+%% local function 
+
+function B=Bfunc(x,y,BedName)
+
+
+
+
+
+%%   new parameter set
+R=800e3 ;
+Bc=900;
+Bl=-2000;
+Ba=1100;
+%%
+
+switch BedName
+
+    case "-Thule-"
+
+        r=sqrt(x.*x+y.*y) ;
+        theta=atan2(y,x);
+
+
+        rc=0;
+        l=R -  cos(2*theta).*R/2 ;            % theta-dependent wavelength
+        a=Bc - (Bc-Bl)*(r-rc).^2./(R-rc).^2;  % quadratic term in r
+        B=Ba*cos(3*pi*r./l)+a ;               %
+
+    case "-ThuleNS-"
+
+        r=sqrt(x.*x+y.*y) ;
+        theta=pi/2 ;
+
+        rc=0;
+        l=R -  cos(2*theta).*R/2 ;            % theta-dependent wavelength
+        a=Bc - (Bc-Bl)*(r-rc).^2./(R-rc).^2;  % quadratic term in r
+        B=Ba*cos(3*pi*r./l)+a ;
+
+    otherwise
+
+        error("Case not found")
+
+end
+
+end
+
+
+
 
