@@ -74,7 +74,7 @@ UserVar.RunType="IR-CstartSetToMeanOfTrueC-AstartSetToMeanOfTrueA-MS10km-Tri3-Ua
 % UserVar.RunType="IR-CstartSetToMeanOfTrueC-AstartSetToMeanOfTrueA-MS10km-Tri3-MatlabDirectAdjointHessian-logA-logC-uv-dhdt-";
 % UserVar.RunType="IR-CstartSetToMeanOfTrueC-AstartSetToMeanOfTrueA-MS10km-Tri3-MatlabHessianVectorProduct-logA-logC-uv-dhdt-";
 
-UserVar.RunType="IR-CstartSetToMeanOfTrueC-AstartSetToMeanOfTrueA-MS10km-Tri3-MatlabHessianFiniteDifferences-logA-logC-uv-dhdt-";
+% UserVar.RunType="IR-CstartSetToMeanOfTrueC-AstartSetToMeanOfTrueA-MS10km-Tri3-MatlabHessianFiniteDifferences-logA-logC-uv-dhdt-";
 
 
 CtrlVar.Inverse.Iterations=20;
@@ -231,7 +231,7 @@ if contains(UserVar.RunType,"IR-")
 
 
     %$ Matern covariance parameters:
-    CtrlVar.Inverse.Methodology="-Matern-" ;
+   % CtrlVar.Inverse.Methodology="-Matern-" ;
     Area=(xd-xu)*(yl-yr) ;
 
 
