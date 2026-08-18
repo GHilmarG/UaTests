@@ -89,10 +89,9 @@ end
 
 if PM=="I"
 
-    dJdA=MUA.M\InvFinalValues.dJdAGlen;
-    dJdC=MUA.M\InvFinalValues.dJdC;
 
     if ~isempty(InvFinalValues.dJdC)
+        dJdC=MUA.M\InvFinalValues.dJdC;
         FindOrCreateFigure("M\dJ/dC profile") ;
         plot(F.x(iProfile)/1000,dJdC(iProfile),"or") ;
         title("$M^{-1} dJ/dC$ along centre line, pre-multipiler: "+PM,Interpreter="latex");
@@ -100,6 +99,7 @@ if PM=="I"
     end
 
     if ~isempty(InvFinalValues.dJdAGlen)
+        dJdA=MUA.M\InvFinalValues.dJdAGlen;
         FindOrCreateFigure("M\dJ/dA profile") ;
         plot(F.x(iProfile)/1000,dJdA(iProfile),"or")  ;
         title("$M^{-1} dJ/dA$ along centre line, pre-multipiler: "+PM,Interpreter="latex");
