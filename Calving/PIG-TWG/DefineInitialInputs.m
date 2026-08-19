@@ -17,9 +17,11 @@ function [UserVar,CtrlVar,MeshBoundaryCoordinates]=DefineInitialInputs(UserVar,C
 %
 %   PlotForwardAssimilation.m         % Produces several plots of outputs over time
 %
-%   driverReadPlotSequenceOfResultsFiles2.m   % Creates a plot of elevation changes, sea-level rise, and a longitudinal  profile up Thwaites 
+%   driverReadPlotSequenceOfResultFiles2.m   % Creates a plot of elevation changes, sea-level rise, and a longitudinal  profile up Thwaites 
 %
 %   PlotForwardComparision.m           % Compares output of two runs, produces velocity plots and velocity differences and sea-level rise over time
+%
+%   driverCollectDataOverRuns.m
 %
 %%
 
@@ -85,11 +87,13 @@ end
 %% Times, time steps, output interval
 
 % time and TotalTime already extracted from UserVar.RunType
-CtrlVar.DefineOutputsDt=0.5;
+CtrlVar.DefineOutputsDt=1;
 CtrlVar.dt=1e-3;
 CtrlVar.ATSdtMax=0.1;
 CtrlVar.ATSdtMin=1e-5;
-CtrlVar.ATSTargetIterations=6;
+CtrlVar.ATSTargetIterations=5;
+
+
 
 
 
@@ -121,13 +125,16 @@ CtrlVar.LevelSetMethodSolveOnAStrip=1;
 
 if CtrlVar.InverseRun
 
+
+
+    % CtrlVar.Inverse.MinimisationMethod="MatlabOptimization-GradientBased";     CtrlVar.Inverse.AdjointGradientPreMultiplier="I"; % {'I','M'}
+    CtrlVar.Inverse.MinimisationMethod="MatlabOptimization-GradientBased";     CtrlVar.Inverse.AdjointGradientPreMultiplier="M"; % {'I','M'}
+
     if contains(UserVar.RunType,"Inverse-UaOpt")
         % Testing
         CtrlVar.Inverse.MinimisationMethod='UaOptimization-Hessian'; % {'MatlabOptimization','UaOptimization'}
     end
 
-    % CtrlVar.Inverse.MinimisationMethod="MatlabOptimization-GradientBased";     CtrlVar.Inverse.AdjointGradientPreMultiplier="I"; % {'I','M'}
-    % CtrlVar.Inverse.MinimisationMethod="MatlabOptimization-GradientBased";     CtrlVar.Inverse.AdjointGradientPreMultiplier="M"; % {'I','M'}
 
     UserVar.DefineOutputs="-"; %
 
@@ -147,8 +154,8 @@ if CtrlVar.InverseRun
 
     CtrlVar.Inverse.Iterations=UserVar.Inverse.Iterations;
 
-    CtrlVar.Inverse.OptimalityTolerance=0.01;
-    CtrlVar.Inverse.StepTolerance=0.001;
+    CtrlVar.Inverse.OptimalityTolerance=1e-10;
+    CtrlVar.Inverse.StepTolerance=1e-10;
 
     CtrlVar.Inverse.InvertFor="-logA-logC-" ; % {'C','logC','AGlen','logAGlen'}
     CtrlVar.Inverse.Regularize.Field=CtrlVar.Inverse.InvertFor;
@@ -376,17 +383,11 @@ else
     CtrlVar.ThicknessConstraintsItMax=0;
 end
 CtrlVar.ThicknessPenalty=1;                                         % set to 1 for using thickness penalty term. This creates an
-% additional mass-balance term, ab,  on the form:
-%         ab =  a1*(h-hmin)+a3*(hint-hmin).^3)
-% that is added, and applied at integration points where  h<hmin.
-% The "Thickness Penalty" option can be used in combination with the "Thickness Constraints" option, and this may possibly
-% improve convergence and may reduce the number of active-set updates required.
+
 
 CtrlVar.ThicknessPenaltyMassBalanceFeedbackCoeffLin=0;           
 CtrlVar.ThicknessPenaltyMassBalanceFeedbackCoeffQuad=1e5;        
 CtrlVar.ThicknessPenaltyMassBalanceFeedbackCoeffCubic=0;         
-% The term is only applied at integration points where h < hmin. Therefore if a1<0 and a3<0, the resulting ab is greater than
-% zero, and mass is added.
 CtrlVar.LevelSetMinIceThickness=CtrlVar.ThickMin;
 
 CtrlVar.LevelSetMethodAutomaticallyApplyMassBalanceFeedback=1;

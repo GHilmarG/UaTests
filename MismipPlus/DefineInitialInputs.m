@@ -15,7 +15,7 @@ CtrlVar.Experiment=['MismipPlus-',UserVar.MisExperiment];
 CtrlVar.TimeDependentRun=1; 
 CtrlVar.TotalNumberOfForwardRunSteps=10;
 CtrlVar.StartTime=0;
-CtrlVar.EndTime=1;
+CtrlVar.EndTime=inf;
 CtrlVar.Restart=0;  
 CtrlVar.InfoLevelNonLinIt=1;  CtrlVar.InfoLevelBackTrack=0;
 CtrlVar.NRitmax=500;            % maximum number of NR iteration
@@ -122,7 +122,7 @@ MeshBoundaryCoordinates=[xu yr ; xu yl ; xd yl ; xd yr];
 CtrlVar.AdaptMesh=1; 
 CtrlVar.TotalNumberOfForwardRunSteps=inf;
 CtrlVar.StartTime=0;
-CtrlVar.EndTime=5100;
+CtrlVar.EndTime=5110;
 CtrlVar.Restart=1;          
 CtrlVar.DefineOutputsDt=10;
 CtrlVar.ATSdtMax=10;

@@ -29,7 +29,8 @@ function  [UserVar,C,m,q,muk]=DefineSlipperyDistribution(UserVar,CtrlVar,MUA,F)
     if CtrlVar.FlowApproximation=="SSHEET"
         C0=0;
     elseif CtrlVar.FlowApproximation=="SSTREAM" 
-        C0=1e4;  
+        %C0=1e4;  
+        u=1000; tau=10; m=3 ; C0=u/tau^m;
     end
 
     C=C0+zeros(MUA.Nnodes,1);

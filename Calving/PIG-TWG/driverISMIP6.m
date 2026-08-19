@@ -44,15 +44,18 @@ UserVar.RunStartYear=UserVar.Assimilation.tEnd ;    % I don't really need this R
 UserVar.RunEndYear=2500;
 
 
-
-UserVar.Assimilation.is=true;        % This is a flag to bypass the assimilation/relaxation phase done from tStart to tEnd (i.e. here from year 2015 to 2020)
-% This will only work if the assimilation/relaxation has already been performed previously and all the related files exists.
+UserVar.Assimilation.is=true;        % This is a flag to do (true) or to bypass (false) the assimilation/relaxation phase done from tStart to tEnd (i.e. here from year 2015 to 2020)
+% Bypassing (false) the relaxation phase will only work if the assimilation/relaxation has already been performed previously and all the related files exists.
 %
 % To bypass the (transient) initialization phase, set this flag to false.
 %
-% When starting a new experiment, this should be set to true.
+% When starting a brand new new experiment, this should be set to true, i.e. UserVar.Assimilation.is=true;   
+%
+% Bypassing (false) can be used to restart the run from last available restart file. The restart-run option is automatically set
+% to true if a restart file is found.
+%
 
-UserVar.Inverse.Iterations=500;      % This is the number if inversion iteration in each re-initialization step. (The very first inversion was done using
+UserVar.Inverse.Iterations=200;      % This is the number if inversion iteration in each re-initialization step. (The very first inversion was done using
 % repeatedly and for a larger number of iterations.)
 
 
@@ -60,6 +63,13 @@ InverseRunAtStart=false ;  % This can be set to false, if there is an inverse re
 % (Here this is the typical case, i.e. set to false, as long inversion was done initially for the start time=2015).
 %
 % Must the true if starting a brand new experiment.
+
+% Example:
+%
+%
+%
+
+
 
 if contains(RunString,"-R")  % this is a reversibility experiment
 

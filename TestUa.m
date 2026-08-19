@@ -1,4 +1,6 @@
 
+
+
 %%
 %
 % (master)   26/06/2023 , 16/03/2024  , 01/08/2024, 4/11/2025, 19/09,2026
@@ -205,7 +207,7 @@ function testGaussPeak(testCase)
     cd ..
     actSolution= UserVar.Test.Norm.actValue ;
     expSolution = UserVar.Test.Norm.expValue ;
-    verifyEqual(testCase,actSolution,expSolution,'RelTol',1e-6)
+    verifyEqual(testCase,actSolution,expSolution,'AbsTol',1e-6)
     
 end
 

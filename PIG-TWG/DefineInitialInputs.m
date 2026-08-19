@@ -15,10 +15,10 @@ if isempty(UserVar) || ~isfield(UserVar,'RunType')
     % UserVar.RunType='Inverse-MatOpt-FixPoint';
     UserVar.RunType='Forward-Diagnostic';
     UserVar.RunType='Forward-Transient';
-    UserVar.RunType='Forward-Transient-group-';
-    UserVar.RunType='Forward-Transient-group-dt0.1-';
-    UserVar.RunType='Forward-Transient-dt0.1-';
-    UserVar.RunType='Forward-Transient-uv-h-group-';
+    %UserVar.RunType='Forward-Transient-group-';
+    %UserVar.RunType='Forward-Transient-group-dt0.1-';
+    %UserVar.RunType='Forward-Transient-dt0.1-';
+    %UserVar.RunType='Forward-Transient-uv-h-group-';
     UserVar.RunType='Inverse-MatOpt';
     
     % UserVar.RunType='TestingMeshOptions';
@@ -89,8 +89,11 @@ if contains(UserVar.RunType,'Inverse')
     %switch UserVar.RunType
     %    case {'Inverse-MatOpt','Inverse-ConjGrad','Inverse-MatOpt-FixPoint','Inverse-ConjGrad-FixPoint','Inverse-SteepestDesent'}
 
+  
+
+
     CtrlVar.InverseRun=1;
-    CtrlVar.Restart=0;
+    CtrlVar.Restart=1;
 
     CtrlVar.InfoLevelNonLinIt=0;
     CtrlVar.Inverse.InfoLevel=1;
@@ -101,7 +104,7 @@ if contains(UserVar.RunType,'Inverse')
     CtrlVar.ReadInitialMesh=1;
     CtrlVar.AdaptMesh=0;
 
-    CtrlVar.Inverse.Iterations=100;
+    CtrlVar.Inverse.Iterations=10;
     CtrlVar.Inverse.InvertFor='logA-logC' ; % '-logAGlen-logC-' ; % {'-C-','-logC-','-AGlen-','-logAGlen-'}
     CtrlVar.Inverse.Regularize.Field=CtrlVar.Inverse.InvertFor;
 
@@ -228,45 +231,6 @@ CtrlVar.SaveAdaptMeshFileName='MeshFileAdapt';    %  file name for saving adapt 
 
 
 
-
-I=1;
-CtrlVar.ExplicitMeshRefinementCriteria(I).Name='effective strain rates';
-CtrlVar.ExplicitMeshRefinementCriteria(I).Scale=0.001;
-CtrlVar.ExplicitMeshRefinementCriteria(I).EleMin=[];
-CtrlVar.ExplicitMeshRefinementCriteria(I).EleMax=[];
-CtrlVar.ExplicitMeshRefinementCriteria(I).p=[];
-CtrlVar.ExplicitMeshRefinementCriteria(I).InfoLevel=1;
-CtrlVar.ExplicitMeshRefinementCriteria(I).Use=true;
-
-
-I=I+1;
-CtrlVar.ExplicitMeshRefinementCriteria(I).Name='flotation';
-CtrlVar.ExplicitMeshRefinementCriteria(I).Scale=0.0001;
-CtrlVar.ExplicitMeshRefinementCriteria(I).EleMin=[];
-CtrlVar.ExplicitMeshRefinementCriteria(I).EleMax=[];
-CtrlVar.ExplicitMeshRefinementCriteria(I).p=[];
-CtrlVar.ExplicitMeshRefinementCriteria(I).InfoLevel=1;
-CtrlVar.ExplicitMeshRefinementCriteria(I).Use=false;
-
-I=I+1;
-CtrlVar.ExplicitMeshRefinementCriteria(I).Name='thickness gradient';
-CtrlVar.ExplicitMeshRefinementCriteria(I).Scale=0.01;
-CtrlVar.ExplicitMeshRefinementCriteria(I).EleMin=[];
-CtrlVar.ExplicitMeshRefinementCriteria(I).EleMax=[];
-CtrlVar.ExplicitMeshRefinementCriteria(I).p=[];
-CtrlVar.ExplicitMeshRefinementCriteria(I).InfoLevel=1;
-CtrlVar.ExplicitMeshRefinementCriteria(I).Use=false;
-
-
-I=I+1;
-CtrlVar.ExplicitMeshRefinementCriteria(I).Name='upper surface gradient';
-CtrlVar.ExplicitMeshRefinementCriteria(I).Scale=0.01;
-CtrlVar.ExplicitMeshRefinementCriteria(I).EleMin=[];
-CtrlVar.ExplicitMeshRefinementCriteria(I).EleMax=[];
-CtrlVar.ExplicitMeshRefinementCriteria(I).p=[];
-CtrlVar.ExplicitMeshRefinementCriteria(I).InfoLevel=1;
-CtrlVar.ExplicitMeshRefinementCriteria(I).Use=false;
-
 %%
                                                         
 %%  Bounds on C and AGlen
@@ -292,6 +256,40 @@ CtrlVar.Inverse.TestAdjoint.iRange=[100,121] ;  % range of nodes/elements over w
 
 if contains(UserVar.RunType,'MatOpt')
     CtrlVar.Inverse.MinimisationMethod='MatlabOptimization';
+
+    CtrlVar.Inverse.MinimisationMethod="-MatlabOptimization-HessianFiniteDifferences-BandWidth5-";
+    CtrlVar.Inverse.Hessian="FiniteDifferences";
+
+    if contains(CtrlVar.Inverse.MinimisationMethod,"-HessianFiniteDifferences-")
+        %% Hessian finite differences with trust-region reflective 
+        CtrlVar.Inverse.MatlabOptimisationHessianParameters = optimoptions('fmincon',...
+            'Algorithm','trust-region-reflective',...
+            'ConstraintTolerance',1e-10,...
+            'HonorBounds',true,...
+            'Diagnostics','on',...
+            'DiffMaxChange',Inf,...
+            'DiffMinChange',0,...
+            'Display','iter-detailed',...
+            'FunValCheck','off',...
+            'MaxFunctionEvaluations',1e6,...
+            'MaxIterations',CtrlVar.Inverse.Iterations,...,...
+            'OptimalityTolerance',CtrlVar.Inverse.OptimalityTolerance,...
+            'OutputFcn',@fminuncOutfun,...
+            'PlotFcn',{@optimplotlogfval,@optimplotstepsize},...
+            'StepTolerance',CtrlVar.Inverse.StepTolerance,...
+            'FunctionTolerance',CtrlVar.Inverse.FunctionTolerance,...
+            'UseParallel',true,...
+            'HessianFcn',[],...     % uses finite differences, provided HessianMultiplyFcn is also empty
+            'HessianMultiplyFcn',[],...
+            'SpecifyConstraintGradient',false,...
+            'SpecifyObjectiveGradient',true,...
+            'InitBarrierParam',1e-7,...           % On a restart this might have to be reduced if objective function starts to increase
+            'ScaleProblem','none',...
+            'InitTrustRegionRadius',1,...         % set to smaller value if the forward problem is not converging
+            'SubproblemAlgorithm','cg');  % here the options are 'gc' and 'factorization', unclear which is better.
+    end
+
+
 else
     CtrlVar.Inverse.MinimisationMethod='UaOptimization';
     if contains(UserVar.RunType,'ConjGrad')
@@ -305,19 +303,33 @@ end
                                                     
 UserVar.AddDataErrors=0;
 
-
+CtrlVar.Inverse.Methodology="-Tikhonov-" ; % either "-Tikhonov-" or "-Matern-"
 CtrlVar.Inverse.Regularize.C.gs=1;
 CtrlVar.Inverse.Regularize.C.ga=1;
 CtrlVar.Inverse.Regularize.logC.ga=1;
 CtrlVar.Inverse.Regularize.logC.gs=1e3 ;
 
-CtrlVar.Inverse.Regularize.logC.ga=0;  % testing for Budd
-CtrlVar.Inverse.Regularize.logC.gs=1e3 ; % testing for Budd
 
 CtrlVar.Inverse.Regularize.AGlen.gs=1;
 CtrlVar.Inverse.Regularize.AGlen.ga=1;
 CtrlVar.Inverse.Regularize.logAGlen.ga=1;
 CtrlVar.Inverse.Regularize.logAGlen.gs=1e3 ;
+
+CtrlVar.Inverse.Methodology="-Matern-" ; % either "-Tikhonov-" or "-Matern-"
+
+CtrlVar.Inverse.Matern.logAGlen.alpha=2;
+CtrlVar.Inverse.Matern.logAGlen.kappa=1/1000;
+CtrlVar.Inverse.Matern.logAGlen.tau=1;
+
+CtrlVar.Inverse.Matern.logC.alpha=2;
+CtrlVar.Inverse.Matern.logC.kappa=1/1000;
+CtrlVar.Inverse.Matern.logC.tau=1;
+
+% alphaMatern=CtrlVar.Inverse.Matern.logC.alpha;
+% kappaMatern=CtrlVar.Inverse.Matern.logC.kappa;
+% tauMatern=CtrlVar.Inverse.Matern.logC.tau;
+% 
+% [rhoMatern,sigmaMatern,nuMatern]=Matern_alpha_kappa_tau(alphaMatern,kappaMatern,tauMatern) ;  r=linspace(1,5*rhoMatern,50) ;  Matern(sigmaMatern^2,alphaMatern,rhoMatern,r,true,true)  ;
 
 
 %%

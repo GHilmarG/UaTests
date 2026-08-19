@@ -4,30 +4,47 @@ function [UserVar,CtrlVar,MeshBoundaryCoordinates]=DefineInitialInputs(UserVar,C
   
     CtrlVar.Experiment='TestGaussPeak';
      %%
-    
-    CtrlVar.TimeDependentRun=0 ;
-    CtrlVar.doInverseStep=0;
-    CtrlVar.Restart=0;  
-    
-    CtrlVar.InitialDiagnosticStep=1; CtrlVar.Implicituvh=1;
-    
-    CtrlVar.time=0 ; 
-    CtrlVar.dt=1;
-    CtrlVar.TotalNumberOfForwardRunSteps=1;
-    
-    CtrlVar.FlowApproximation='SSTREAM';   % 'hybrid'
-    %CtrlVar.ALSpower=6;
+
+     CtrlVar.ForwardTimeIntegration="-uv-";
+     CtrlVar.ForwardTimeIntegration="-uvh-";
+     %CtrlVar.ForwardTimeIntegration="-uv-h-"; CtrlVar.uv2h.MaxIterations=1; CtrlVar.uv2h.uvTolerance=0; CtrlVar.hTheta=0; 
+
+     CtrlVar.alpha=0.0;
+
+     CtrlVar.Restart=0;
+
+     CtrlVar.StartTime=0;
+     CtrlVar.EndTime=100;
+
+     CtrlVar.dt=10;
+     CtrlVar.AdaptiveTimeStepping=0 ; 
+     CtrlVar.TotalNumberOfForwardRunSteps=inf;
+
+     CtrlVar.FlowApproximation='SSTREAM';   
+   %  CtrlVar.FlowApproximation='SSHEET';
+ 
+
+     %%
+
+      CtrlVar.AsymmSolver="NullSpace";   
+
     %%
     xd=300e3; xu=-300e3 ; yl=300e3 ; yr=-300e3;
     MeshBoundaryCoordinates=flipud([xu yr ; xd yr ; xd yl ; xu yl]);
-    CtrlVar.MeshGenerator='gmsh'; % mesh2d does not allow for periodic BCs
-    % CtrlVar.MeshGenerator='mesh2d'; % mesh2d does not allow for periodic BCs
-    CtrlVar.GmshGeoFileAdditionalInputLines{1}='Periodic Line {1,2} = {3,4};';  % these lines are added to the gmsh .geo input file each time such a file is created
-    CtrlVar.GmshMeshingAlgorithm=8;  % see gmsh manual
+  
     CtrlVar.OnlyMeshDomainAndThenStop=0;
     
+    CtrlVar.MeshGenerator="UaSquareMesh";
+    CtrlVar.UaSquareMesh.xmin=xu ; 
+    CtrlVar.UaSquareMesh.xmax=xd;
+    CtrlVar.UaSquareMesh.ymin=yr;
+    CtrlVar.UaSquareMesh.ymax=yl;
+
+    CtrlVar.UaSquareMesh.nx=20;
+    CtrlVar.UaSquareMesh.ny=20; 
+
     CtrlVar.TriNodes=6;   % [3,6,10]
-    CtrlVar.MeshSize=25e3;
+    CtrlVar.MeshSize=25e3;  % Not used initially when using UaSquareMesh, but will be used in later mesh refinements
     CtrlVar.MeshSizeMin=0.0001*CtrlVar.MeshSize;
     CtrlVar.MeshSizeMax=CtrlVar.MeshSize;
     
@@ -67,6 +84,15 @@ function [UserVar,CtrlVar,MeshBoundaryCoordinates]=DefineInitialInputs(UserVar,C
     CtrlVar.ExplicitMeshRefinementCriteria(I).InfoLevel=1;
     CtrlVar.ExplicitMeshRefinementCriteria(I).Use=true;
     
+   
+
+    %% BCs
+
+ 
+    CtrlVar.BCsRowSubsetSelection=true;  % The boundary conditions as defined in DefineBoundaryConditions.m may not be linearly independent,
+    % By setting this to true, the BCs are modified internally to create an independent subset. 
+
+
     %%
     CtrlVar.LineSeachAllowedToUseExtrapolation=1;
     

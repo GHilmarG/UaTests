@@ -18,7 +18,7 @@
 NewRuns=true ;
 UseDefineRunString=true;  % use DefineRunString.m to define the UserVar.RunString
 
-TimeStep=10;
+TimeStep=50;
 TimeInterval=[0 inf] ;
 xyBoundary=nan;
 
@@ -105,12 +105,30 @@ end
 CtrlVar.Parallel.uvAssembly.spmd.isOn=false ;
 CtrlVar.Parallel.uvhAssembly.spmd.isOn=false ;
 
+MeltSquareString=extractBetween(UserVar.RunString,"-MS","-",Boundaries="inclusive");
 
+UserVar.MeltSquareWidth=str2double(extractBetween(MeltSquareString,"W","L",Boundaries="exclusive"));
+UserVar.MeltSquareLength=str2double(extractBetween(MeltSquareString,"L","a",Boundaries="exclusive"));
+UserVar.MeltSquareMelt=str2double(extractBetween(MeltSquareString,"a","-",Boundaries="exclusive"));
 
-ReadPlotSequenceOfResultFiles2(FileNameSubstring=SearchString,...
+Origin=nan;
+Direction=nan;
+Width=UserVar.MeltSquareWidth*1000;
+Length=UserVar.MeltSquareLength*1000;
+Square=CreateSquare(Origin,Direction,Width,Length) ;
+
+% load("ase_basin_masks.mat","x_crosson_dotson","y_crosson_dotson","x_thwaites","y_thwaites","x_pig","y_pig") ;
+% xyBoundary=[x_thwaites(:) y_thwaites(:)] ;
+PlotTypeString="-s-VAF-dSLRdt-";
+PlotTypeString="-dhdt-VAF-dSLRdt-";
+% PlotTypeString="-collect-";
+
+DataCollect=ReadPlotSequenceOfResultFiles2(FileNameSubstring=SearchString,...
     DataFileDirectory=DFD,...
-    PlotTimestep=TimeStep,PlotType="-ds-VAF-dSLRdt-",...
+    PlotTimestep=TimeStep,...
+    PlotType=PlotTypeString,...
     VAFBoundary=xyBoundary,...
+    PlotPolygon=Square,...
     PlotTimeInterval=TimeInterval) ;
 
 cd(OriginalDirectory)

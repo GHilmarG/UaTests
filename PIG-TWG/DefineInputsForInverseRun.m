@@ -7,7 +7,7 @@ function [UserVar,InvStartValues,Priors,Meas,BCsAdjoint,RunInfo]=...
 % What you need to define are:
 %
 %
-% # Measurments and data errors (data errors are specified as diagonal covariance matrices.)
+% # Measurements and data errors (data errors are specified as diagonal covariance matrices.)
 % # Start values for inversion. (These are some values for the model parameters that you want to invert for.)
 % # Priors for the inverted fields. (Currently the only priors that are used the the priors for C and AGlen.)
 %
@@ -50,7 +50,7 @@ Meas.vsCov=sparse(1:MUA.Nnodes,1:MUA.Nnodes,vsError.^2,MUA.Nnodes,MUA.Nnodes);
 
 Priors.AGlen=AGlenVersusTemp(-10);
 Priors.n=F.n; 
-Priors.V0=UserVar.V0 ;
+%Priors.V0=UserVar.V0 ;
 
 switch CtrlVar.SlidingLaw
     

@@ -35,7 +35,7 @@ CtrlVar.InfoLevelAdaptiveMeshing=1; % for 5=> some plots are generated as well (
 % The run stops once either forward run steps or (model) time has reached prescribed
 % values. 
 CtrlVar.TotalNumberOfForwardRunSteps=inf;
-CtrlVar.TotalTime=100;
+CtrlVar.TotalTime=1000;
 CtrlVar.UseUserDefinedRunStopCriterion=false; % one can also introduce UserDefined run stop criterion
                                               % through DefineRunStopCriterion.m
 
@@ -71,7 +71,7 @@ CtrlVar.SaveInitialMeshFileName='NewMeshFile.mat';
 % Some plots can be generated automatically. However, once model is running, these plots
 % are typically disabled. 
 CtrlVar.doplots=1;  % set to 0 to suppress all plots. 
-CtrlVar.PlotMesh=1; 
+CtrlVar.PlotMesh=0; 
 CtrlVar.PlotBCs=0;
 CtrlVar.WhenPlottingMesh_PlotMeshBoundaryCoordinatesToo=1;
 CtrlVar.doRemeshPlots=1;
@@ -88,7 +88,7 @@ CtrlVar.NameOfRestartFiletoRead=CtrlVar.NameOfRestartFiletoWrite;
 
 %% mesh generation
 CtrlVar.MeshGenerator="mesh2d";  % this is the default option 
-CtrlVar.AdaptMesh=1;         %
+CtrlVar.AdaptMesh=0;         %
 
 
 
@@ -98,8 +98,9 @@ CtrlVar.MeshSizeMin=2e3;   % min ele size (coarse resolution)
 
 % reasonably fine mesh resolution
 %
-%CtrlVar.MeshSizeMax=8e3;    % max element size
-%CtrlVar.MeshSizeMin=200;    % min element size
+% CtrlVar.MeshSizeMax=2.5e3;    % max element size
+% CtrlVar.MeshSize=2.5e3; 
+% CtrlVar.MeshSizeMin=200;    % min element size
 
 CtrlVar.MaxNumberOfElements=250e3;           % max number of elements. If #elements larger then CtrlMeshSize/min/max are changed
 
