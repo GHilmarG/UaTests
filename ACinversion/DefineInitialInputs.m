@@ -38,6 +38,9 @@ for different cases, as currently only some of the Hessian terms are included.
 
 %% UserVar
 
+CtrlVar.log10Derivatives=true;
+
+
 UserVar.RunType="IR-CstartSetToMeanOfTrueC-AstartSetToTrueA-MS10km-Tri3-";
 UserVar.RunType="IR-CstartSetToTrueC-AstartSetToMeanOfTrueA-MS10km-Tri3-";
 UserVar.RunType="IR-CstartSetToMeanOfTrueC-AstartSetToMeanOfTrueA-MS10km-Tri10-";
@@ -72,7 +75,7 @@ UserVar.RunType="IR-CstartSetToMeanOfTrueC-AstartSetToMeanOfTrueA-MS10km-Tri3-Ua
 
 UserVar.RunType="IR-CstartSetToMeanOfTrueC-AstartSetToMeanOfTrueA-MS10km-Tri3-UaDirectAdjointHessian-logA-logC-uv-dhdt-";
 UserVar.RunType="IR-CstartSetToMeanOfTrueC-AstartSetToMeanOfTrueA-MS10km-Tri3-UaDirectAdjointHessian-logA-logC-uv-";
-UserVar.RunType="IR-CstartSetToMeanOfTrueC-AstartSetToMeanOfTrueA-MS10km-Tri3-UaDirectAdjointHessian-logC-uv-";
+UserVar.RunType="IR-CstartSetToMeanOfTrueC-AstartSetToMeanOfTrueA-MS10km-Tri3-UaDirectAdjointHessian-logC-logA-uv-";
 
 % UserVar.RunType="IR-CstartSetToMeanOfTrueC-AstartSetToMeanOfTrueA-MS10km-Tri3-MatlabDirectAdjointHessian-logA-logC-uv-dhdt-";
 % UserVar.RunType="IR-CstartSetToMeanOfTrueC-AstartSetToMeanOfTrueA-MS10km-Tri3-MatlabHessianVectorProduct-logA-logC-uv-dhdt-";
@@ -281,6 +284,7 @@ if contains(UserVar.RunType,"IR-")
     % nodes/elements.
     % ----------------------- ]end, testing adjoint parameters.
 
+    CtrlVar.Inverse.TestDirectAdjoint.isTrue=true;
     % remember that when testing adjoint gradient, the pre-multiplier must the I (i.e. identity matrix)
     if  CtrlVar.Inverse.TestAdjoint.isTrue
         CtrlVar.Inverse.AdjointGradientPreMultiplier="I";
