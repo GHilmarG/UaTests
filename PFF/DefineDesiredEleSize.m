@@ -1,9 +1,4 @@
 
-
-
-
-
-
 function [UserVar,RunInfo,F,l,EleSizeDesired,ElementsToBeRefined,ElementsToBeCoarsened]=...
     DefineDesiredEleSize(UserVar,RunInfo,CtrlVar,MUA,BCs,F,l,x,y,EleSizeDesired,ElementsToBeRefined,ElementsToBeCoarsened,NodalErrorIndicators)
 

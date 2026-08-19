@@ -1,3 +1,4 @@
+
 function  [UserVar,s,b,S,B,rho,rhow,g]=DefineGeometryAndDensities(UserVar,CtrlVar,MUA,F,FieldsToBeDefined)
 
 % Units are m, kPa, yr. (1Pa = 1kg/ms^2)
@@ -25,5 +26,4 @@ s=hmean ;
 % end
 
 
-
-
+end
