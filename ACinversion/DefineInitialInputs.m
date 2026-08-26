@@ -38,6 +38,9 @@ for different cases, as currently only some of the Hessian terms are included.
 
 %% UserVar
 
+
+
+
 UserVar.RunType="IR-CstartSetToMeanOfTrueC-AstartSetToTrueA-MS10km-Tri3-";
 UserVar.RunType="IR-CstartSetToTrueC-AstartSetToMeanOfTrueA-MS10km-Tri3-";
 UserVar.RunType="IR-CstartSetToMeanOfTrueC-AstartSetToMeanOfTrueA-MS10km-Tri10-";
@@ -72,7 +75,7 @@ UserVar.RunType="IR-CstartSetToMeanOfTrueC-AstartSetToMeanOfTrueA-MS10km-Tri3-Ua
 
 UserVar.RunType="IR-CstartSetToMeanOfTrueC-AstartSetToMeanOfTrueA-MS10km-Tri3-UaDirectAdjointHessian-logA-logC-uv-dhdt-";
 UserVar.RunType="IR-CstartSetToMeanOfTrueC-AstartSetToMeanOfTrueA-MS10km-Tri3-UaDirectAdjointHessian-logA-logC-uv-";
-UserVar.RunType="IR-CstartSetToMeanOfTrueC-AstartSetToMeanOfTrueA-MS10km-Tri3-UaDirectAdjointHessian-logC-uv-";
+UserVar.RunType="IR-CstartSetToMeanOfTrueC-AstartSetToMeanOfTrueA-MS10km-Tri3-UaDirectAdjointHessian-logA-logC-uv-";
 
 % UserVar.RunType="IR-CstartSetToMeanOfTrueC-AstartSetToMeanOfTrueA-MS10km-Tri3-MatlabDirectAdjointHessian-logA-logC-uv-dhdt-";
 % UserVar.RunType="IR-CstartSetToMeanOfTrueC-AstartSetToMeanOfTrueA-MS10km-Tri3-MatlabHessianVectorProduct-logA-logC-uv-dhdt-";
@@ -80,7 +83,7 @@ UserVar.RunType="IR-CstartSetToMeanOfTrueC-AstartSetToMeanOfTrueA-MS10km-Tri3-Ua
 % UserVar.RunType="IR-CstartSetToMeanOfTrueC-AstartSetToMeanOfTrueA-MS10km-Tri3-MatlabHessianFiniteDifferences-logA-logC-uv-dhdt-";
 
 
-CtrlVar.Inverse.Iterations=5;
+CtrlVar.Inverse.Iterations=15;
 CtrlVar.Restart=0;  %
 
 
@@ -154,6 +157,9 @@ if contains(UserVar.RunType,"IR-")
 
     CtrlVar.InverseRun=1;
 
+
+    CtrlVar.Inverse.Regularize.Multiplier=1;
+    CtrlVar.Inverse.DataMisfit.Multiplier=1;
     CtrlVar.Inverse.InfoLevel=1;
     CtrlVar.InfoLevel=0;
 
@@ -224,7 +230,7 @@ if contains(UserVar.RunType,"IR-")
     CtrlVar.Inverse.Regularize.logC.ga=0.1;%1;%1;
     CtrlVar.Inverse.Regularize.logC.gs=1000;%1e6;%1e4;
     CtrlVar.Inverse.Regularize.logAGlen.ga=0.1;%1;%1;
-    CtrlVar.Inverse.Regularize.logAGlen.gs=1000;%1e6;%1e4 ;
+    CtrlVar.Inverse.Regularize.logAGlen.gs=1e6;%1e6;%1e4 ;
 
 
     CtrlVar.Inverse.Regularize.logC.ga=1; %1;%1;
@@ -235,7 +241,7 @@ if contains(UserVar.RunType,"IR-")
 
     %$ Matern covariance parameters:
     %CtrlVar.Inverse.Methodology="-Matern-" ;
-    Area=(xd-xu)*(yl-yr) ;
+  
 
 
     % [alphaMatern,tauMatern,kappaMatern,sigma2Matern,rhoMatern]=Tikhonov2MaternParameters(CtrlVar.Inverse.Regularize.logAGlen.ga, CtrlVar.Inverse.Regularize.logAGlen.gs,Area);
@@ -281,6 +287,7 @@ if contains(UserVar.RunType,"IR-")
     % nodes/elements.
     % ----------------------- ]end, testing adjoint parameters.
 
+    CtrlVar.Inverse.TestDirectAdjoint.isTrue=false;
     % remember that when testing adjoint gradient, the pre-multiplier must the I (i.e. identity matrix)
     if  CtrlVar.Inverse.TestAdjoint.isTrue
         CtrlVar.Inverse.AdjointGradientPreMultiplier="I";
