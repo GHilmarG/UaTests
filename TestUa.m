@@ -3,7 +3,6 @@
 % 
 %
 % (beta)   26/06/2023 , 16/03/2024  , 01/08/2024 , 29/12/2024, 02/03/2025, 06/05/2025, 19/07/2025, 3/11,2025, 19/12/2025,
-% 22/12/2025, 20/07/2026, 21/09/2026
 %
 % To run the test do:
 %
@@ -30,9 +29,10 @@ function tests = TestUa
       f={@testFreeSlipBCs}             ;    % OK  11/05/2021 ,  08/09/2021 , 01/11/2021 ,   03/08/2023 , 24/06/2023 , 02/10/2023 , 16/03/2024 , 01/08/2024 , 29/12/2014
       f={@testMassConservationPeaks}   ;   %  OK                                                                                   16/03/2024  , 01/08/2024  , 29/12/2014
       
-      %f={@testCrack,@testPIGdiagnostic,@testPIGtransient,@testMassBalanceFeedback,@test1dIceStream,@test1dIceShelf,@testGaussPeak,@testFreeSlipBCs,@testMassConservationPeaks} ;
+      f={@testCrack,@testPIGdiagnostic,@testPIGtransient,@testMassBalanceFeedback,@test1dIceStream,@test1dIceShelf,@testGaussPeak,@testFreeSlipBCs,@testMassConservationPeaks} ;
 
-     
+       f={@testPIGtransient}    
+      % f={@testPIGdiagnostic}    
 
     tests = functiontests(f);
 
@@ -67,6 +67,7 @@ function testPIGdiagnostic(testCase)
     UserVar=Ua(UserVar) ;
     cd ..
 <<<<<<< HEAD
+<<<<<<< HEAD
     actSolution= UserVar.Test.Norm.actValue 
     expSolution = UserVar.Test.Norm.expValue 
 =======
@@ -78,6 +79,10 @@ function testPIGdiagnostic(testCase)
  
 
 >>>>>>> 9adf3c17344d4f3920374a01c16b0d2557933834
+=======
+    actSolution= UserVar.Test.Norm.actValue ;
+    expSolution = UserVar.Test.Norm.expValue ;
+>>>>>>> ce92ce6c73697172ada4f8b36b6958b313b0dd23
     verifyEqual(testCase,actSolution,expSolution,'RelTol',1e-4)
   
 
