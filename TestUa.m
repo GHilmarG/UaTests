@@ -4,7 +4,7 @@
 %%
 %
 % (beta)   26/06/2023 , 16/03/2024  , 01/08/2024 , 29/12/2024, 02/03/2025, 06/05/2025, 19/07/2025, 3/11,2025, 19/12/2025,
-% 22/12/2025, 20/07/2026, 02/09/2026
+% 22/12/2025, 20/07/2026, 02/09/2026, 21/09/2026
 %
 % To run the test do:
 %
@@ -33,7 +33,8 @@ function tests = TestUa
       
       f={@testCrack,@testPIGdiagnostic,@testPIGtransient,@testMassBalanceFeedback,@test1dIceStream,@test1dIceShelf,@testGaussPeak,@testFreeSlipBCs,@testMassConservationPeaks} ;
 
-      f={@testPIGtransient}    
+       f={@testPIGtransient}    
+      % f={@testPIGdiagnostic}    
 
     tests = functiontests(f);
 
