@@ -60,6 +60,19 @@ else
     rhow=NaN;
 end
 
+
+if contains(FieldsToBeDefined,"-S-") && contains(FieldsToBeDefined,"-s-")
+
+    if any((s-S)<CtrlVar.ThickMin)
+
+        ind=(s-S)< CtrlVar.ThickMin;
+        s(ind)=S(ind)+CtrlVar.ThickMin;
+    end
+
+end
+
+
+
 end
 
 

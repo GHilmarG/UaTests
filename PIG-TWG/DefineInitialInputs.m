@@ -413,6 +413,16 @@ CtrlVar.Parallel.isTest=false;
 CtrlVar.Development.Pre2025uvAssembly=false ; % the uv and uvh assembly was changed slightly in the 2025a version. The previous evaluation and be switch on by setting this flag to true.
 CtrlVar.Development.Pre2025uvhAssembly=false ; % the uv and uvh assembly was changed slightly in the 2025a version. The previous evaluation and be switch on by setting this flag to true.
 
-
-
+%% Testing new options 
+% 
+% CtrlVar.uvhSolver="Root-Finding Newton";
+% CtrlVar.uvhSolver="uvh_GaussNewton_fsolve";
+% 
+% CtrlVar.uvhFsolve.CheckGradients=false; 
+% CtrlVar.uvhFsolve.Display="iter";
+% 
+% CtrlVar.uvhFsolve.MaxIterations=150;
+% CtrlVar.uvhFsolve.StepTolerance=1e-12 ;
+% CtrlVar.uvhFsolve.OptimalityTolerance=1e-20;          % fsolve's first-order optimality is absolute and depends on the scaling of J, so it is not used as the main stopping criterion
+% CtrlVar.uvhFsolve.ForceTolerance=1e-8;                % [] : set to CtrlVar.uvhDesiredWorkAndForceTolerances(2). Convergence if norm(f)^2 is below this value
 end
