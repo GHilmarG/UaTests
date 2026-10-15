@@ -33,7 +33,7 @@ CtrlVar.dt=0.1;
 CtrlVar.TotalNumberOfForwardRunSteps=1;
 
 CtrlVar.FlowApproximation='SSTREAM' ;  % 'SSTREAM'|'SSHEET'|'Hybrid'
-CtrlVar.ThicknessConstraints=0;
+CtrlVar.ThicknessConstraints=1;
 
 %% Solver
 CtrlVar.NLtol=1e-15; % this is the square of the error, i.e. not root-mean-square error

@@ -12,18 +12,14 @@ xd=100e3; xu=-100e3 ; yl=100e3 ; yr=-100e3;
 MeshBoundaryCoordinates=flipud([xu yr ; xd yr ; xd yl ; xu yl]);
 
 %% Types of runs
-CtrlVar.doPrognostic=0 ;
-CtrlVar.doDiagnostic=1 ;
-CtrlVar.doInverseStep=0;
-CtrlVar.time=0 ;
+CtrlVar.ForwardTimeIntegration="-uvh-" ;
+CtrlVar.StartTime=0 ;
+CtrlVar.EndTime=1 ;
 CtrlVar.dt=0.1;
 CtrlVar.TotalNumberOfForwardRunSteps=1;
 
 
-%% Solver
-CtrlVar.NLtol=1e-15; % this is the square of the error, i.e. not root-mean-square error
-CtrlVar.InfoLevelNonLinIt=1;
-CtrlVar.LineSeachAllowedToUseExtrapolation=1;
+
 
 %% Restart
 CtrlVar.Restart=0;  CtrlVar.WriteRestartFile=1;
