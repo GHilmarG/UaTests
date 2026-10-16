@@ -15,7 +15,7 @@ CtrlVar.dt=0.01;
 CtrlVar.TotalNumberOfForwardRunSteps=inf;
 CtrlVar.AdaptiveTimeStepping=1 ;
 
-CtrlVar.ThicknessConstraints=0;
+CtrlVar.ThicknessConstraints=1;
 
 CtrlVar.DefineOutputsDt=0.1;
 

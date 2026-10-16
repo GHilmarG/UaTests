@@ -9,16 +9,9 @@ function [UserVar,CtrlVar,MeshBoundaryCoordinates]=DefineInitialInputs(UserVar,C
 if isempty(UserVar) || ~isfield(UserVar,'RunType')
     
     
-    % UserVar.RunType='Inverse-ConjGrad';
-    % UserVar.RunType='Inverse-SteepestDesent';
-    % UserVar.RunType='Inverse-ConjGrad-FixPoint';
-    % UserVar.RunType='Inverse-MatOpt-FixPoint';
+  
     UserVar.RunType='Forward-Diagnostic';
     UserVar.RunType='Forward-Transient';
-    %UserVar.RunType='Forward-Transient-group-';
-    %UserVar.RunType='Forward-Transient-group-dt0.1-';
-    %UserVar.RunType='Forward-Transient-dt0.1-';
-    %UserVar.RunType='Forward-Transient-uv-h-group-';
     UserVar.RunType='Inverse-MatOpt';
     
     % UserVar.RunType='TestingMeshOptions';
@@ -26,14 +19,6 @@ end
 
 if isempty(UserVar) || ~isfield(UserVar,'m')
     UserVar.m=3;
-end
-
-if contains(UserVar.RunType,"-group-")
-    CtrlVar.uvGroupAssembly=true;
-    CtrlVar.uvhGroupAssembly=true;
-else
-    CtrlVar.uvGroupAssembly=false;
-    CtrlVar.uvhGroupAssembly=false;
 end
 
  
@@ -112,19 +97,7 @@ if contains(UserVar.RunType,'Inverse')
 
 
 
-    if contains(UserVar.RunType,'FixPoint')
-
-        % FixPoint inversion is an ad-hoc method of estimating the gradient of the cost function with respect to C.
-        % It can produce quite good estimates for C using just one or two inversion iterations, but then typically stagnates.
-        % The FixPoint method can often be used right at the start of an inversion to get a reasonably good C estimate,
-        % after which in a restart step one can switch to gradient calculation using the adjoint method
-        CtrlVar.Inverse.DataMisfit.GradientCalculation='FixPoint' ;
-        CtrlVar.Inverse.InvertFor='logC' ;
-        CtrlVar.Inverse.Iterations=1;
-        CtrlVar.Inverse.Regularize.Field=CtrlVar.Inverse.InvertFor;
-
-    end
-
+  
 elseif contains(UserVar.RunType,'Forward-Transient')   %case {'Forward-Transient','Forward-Transient-uv-h'}
 
     CtrlVar.InverseRun=0;
@@ -139,13 +112,7 @@ elseif contains(UserVar.RunType,'Forward-Transient')   %case {'Forward-Transient
     if contains(UserVar.RunType,'-uv-h')
         CtrlVar.Implicituvh=0;           % 0: prognostic run is semi-implicit (implicit with respect to h only)
         CtrlVar.TotalNumberOfForwardRunSteps=inf;
-        CtrlVar.etaZero=100 ;  % it turned out that setting this lower value to the effective viscosity, had almost no impact on the calculate viscosity distrbution
-        % but greatly improved numerical
-        % convergence. With etaZero=0, there
-        % were a few localized nodes with very high
-        % velocities, resulting in high strain
-        % rates, and very small effective
-        % viscosity over this area
+      
 
     else
         CtrlVar.Implicituvh=1;                 % 1: prognostic run is fully-implicit (implicit with respect to uvh)
@@ -231,17 +198,7 @@ CtrlVar.SaveAdaptMeshFileName='MeshFileAdapt';    %  file name for saving adapt 
 
 
 
-%%
-                                                        
-%%  Bounds on C and AGlen
-%CtrlVar.AGlenmin=1e-10; CtrlVar.AGlenmax=1e-5;
-
-CtrlVar.Cmin=1e-20;  CtrlVar.Cmax=1e20;        
-
-%CtrlVar.CisElementBased=0;   
-%CtrlVar.AGlenisElementBased=0;   
-
-
+                                                   
 %% Testing adjoint parameters, start:
 CtrlVar.Inverse.TestAdjoint.isTrue=0; % If true then perform a brute force calculation 
                                       % of the directional derivative of the objective function.  
@@ -333,8 +290,8 @@ CtrlVar.Inverse.Matern.logC.tau=1;
 
 
 %%
-CtrlVar.ThicknessConstraints=0;
-CtrlVar.ResetThicknessToMinThickness=1;  % change this later on
+CtrlVar.ThicknessConstraints=1;
+CtrlVar.ResetThicknessToMinThickness=0; 
 CtrlVar.ThickMin=1;
 
 %%

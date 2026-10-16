@@ -16,19 +16,21 @@ function [UserVar,CtrlVar,MeshBoundaryCoordinates]=DefineInitialInputs(UserVar,C
 %%
 
 CtrlVar.UaRunType="-uvh-" ; 
-CtrlVar.UaRunType="-uv-h-" ;  CtrlVar.MassBalance.Evaluation="-node-"; 
+
 
 CtrlVar.FlowApproximation='SSTREAM' ;  % any off ['SSTREAM'|'SSHEET'|'Hybrid']  
 CtrlVar.Experiment='MB';
-CtrlVar.TimeDependentRun=1 ;  % any of [0|1].  
-CtrlVar.time=0 ; 
+CtrlVar.ForwardTimeIntegration="-uvh-" ;
+
+CtrlVar.StartTime=0;
+CtrlVar.EndTime=1;
+
 CtrlVar.dt=0.1; 
 CtrlVar.TotalNumberOfForwardRunSteps=10; 
-CtrlVar.TotalTime=1 ; 
 CtrlVar.AdaptiveTimeStepping=0 ; CtrlVar.ATSdtMax=0.1;   % maximum time step allowed
 CtrlVar.Restart=0;  CtrlVar.WriteRestartFile=1;
 
-CtrlVar.theta=0.5;    
+
 
 xd=50e3; xu=-50e3; yl=50e3 ; yr=-50e3;
 MeshBoundaryCoordinates=flipud([xu yr ; xd yr ; xd yl ; xu yl]);
@@ -38,11 +40,7 @@ CtrlVar.MeshSize=10e3;
 CtrlVar.MeshSizeMin=0.01*CtrlVar.MeshSize;
 CtrlVar.MeshSizeMax=CtrlVar.MeshSize;
 
-%%
-CtrlVar.NLtol=1e-15; % this is the square of the error, i.e. not root-mean-square error
-CtrlVar.du=1e10;     % tolerance for change in (normalised) speed
-CtrlVar.dh=1e10;     % tolerance for change in (normalised) thickness
-CtrlVar.dl=100;   
+
 %%
 
 
@@ -52,7 +50,6 @@ CtrlVar.UaOutputs='-saveAcc-';
 
 %%
 CtrlVar.MassBalanceGeometryFeedback=3; 
-%CtrlVar.MassBalanceGeometryFeedback=0; 
-CtrlVar.MassBalanceGeometryFeedbackDamping=0;
+
 
 end

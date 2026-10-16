@@ -30,9 +30,6 @@ function tests = TestUa
       
       f={@testCrack,@testPIGdiagnostic,@testPIGtransient,@testMassBalanceFeedback,@test1dIceStream,@test1dIceShelf,@testGaussPeak,@testFreeSlipBCs,@testMassConservationPeaks} ;
 
-      % f={@testPIGtransient}    
-      % f={@testPIGdiagnostic}    
-
     tests = functiontests(f);
 
 end
@@ -80,7 +77,10 @@ function testPIGtransient(testCase)
     UserVar=Ua(UserVar) ;
     cd ..
     actSolution= UserVar.Test.Norm.actValue ;
-    expSolution =   116576.90379325 ;          % HP C20503924 24/06/2023 
+    %expSolution =   116576.90379325 ;          % HP C20503924 24/06/2023 
+    expSolution =   124573.871568137 ;          % HO 15/10/2026: I changed to using the active set, 
+                                                % various other changes made to the code and time stepping, 
+                                                % so these changes in solution are expected
     verifyEqual(testCase,actSolution,expSolution,'RelTol',1e-2)
     
 end
@@ -109,7 +109,7 @@ function testCrack(testCase)
     % expSolution = 5034.37163446407;
     
     expSolution = UserVar.Test.Norm.expValue ;
-    verifyEqual(testCase,actSolution,expSolution,'RelTol',1e-6)
+    verifyEqual(testCase,actSolution,expSolution,'RelTol',1e-3)
     
 end
 

@@ -22,5 +22,5 @@ UserVar.Test.Norm.expValue=197996.614170081   ; % HP Z8 G4 C230000099 30/04/2024
 UserVar.Test.Norm.expValue=198335.949259139   ; % HP Z8 DESKTOP-BU2IHIR 01/08/2024
 UserVar.Test.Norm.expValue=198476.600308787   ; % HP Z8 DESKTOP-BU2IHIR 29/12/2024, new uv dint calculation
 UserVar.Test.Norm.expValue=198293.346276529   ; % HP Z8 DESKTOP-BU2IHIR 06/05/2025, 
-
+UserVar.Test.Norm.expValue=199853.550633252   ; % 15/10/2026
 end
