@@ -17,5 +17,6 @@ UserVar.Test.Norm.actValue=mean(F.h);
 
 UserVar.Test.Norm.expValue=27.263211599137975  ; % C20503924 - 24/06/2023
 UserVar.Test.Norm.expValue=27.2055141419781    ; % C17777347 - Office HP 02/10/2023
+UserVar.Test.Norm.expValue=26.1547270897549    ; % 15/10/2026, this was once the the feedback was defined at nodes 
                            
 end

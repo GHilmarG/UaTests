@@ -13,5 +13,6 @@ function UserVar=DefineFinalReturnedValueOfUserVar(UserVar,CtrlVar,MUA,BCs,F,l,I
 UserVar.Test.Norm.actValue=mean(F.ub+F.vb);
 UserVar.Test.Norm.expValue=1551.02724753795  ; % HP HO, 06/05/2025
 UserVar.Test.Norm.expValue=1539.3           ; % HP HO, 20/07/2026
+UserVar.Test.Norm.expValue=144.369440358775    ; % 15/10/2026, active set turned on, and different time stepping
 
 end

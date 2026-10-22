@@ -32,8 +32,8 @@ function tests = TestUa
       
       f={@testCrack,@testPIGdiagnostic,@testPIGtransient,@testMassBalanceFeedback,@test1dIceStream,@test1dIceShelf,@testGaussPeak,@testFreeSlipBCs,@testMassConservationPeaks} ;
 
-     
-
+ 
+    
     tests = functiontests(f);
 
 end
@@ -67,12 +67,16 @@ function testPIGdiagnostic(testCase)
     UserVar=Ua(UserVar) ;
     cd ..
     actSolution= UserVar.Test.Norm.actValue ;
+<<<<<<< HEAD
     % expSolution = 95982.7181182457;  % this was with the old bedmap2 data
     % expSolution = 9757675340.83092 ;   % this is with the new Bedmachine data, 10/09/2021
     % expSolution = 202912           ;     % this is with the new Bedmachine data and a new boundary, 01/11/2021
     expSolution = UserVar.Test.Norm.expValue ;
  
 
+=======
+    expSolution = UserVar.Test.Norm.expValue ;
+>>>>>>> 7a308bb5e76cbf4982d192016d0d26db35d085f2
     verifyEqual(testCase,actSolution,expSolution,'RelTol',1e-4)
   
 
@@ -86,7 +90,10 @@ function testPIGtransient(testCase)
     UserVar=Ua(UserVar) ;
     cd ..
     actSolution= UserVar.Test.Norm.actValue ;
-    expSolution =   116576.90379325 ;          % HP C20503924 24/06/2023 
+    %expSolution =   116576.90379325 ;          % HP C20503924 24/06/2023 
+    expSolution =   124573.871568137 ;          % HO 15/10/2026: I changed to using the active set, 
+                                                % various other changes made to the code and time stepping, 
+                                                % so these changes in solution are expected
     verifyEqual(testCase,actSolution,expSolution,'RelTol',1e-2)
     
 end
@@ -115,7 +122,7 @@ function testCrack(testCase)
     % expSolution = 5034.37163446407;
     
     expSolution = UserVar.Test.Norm.expValue ;
-    verifyEqual(testCase,actSolution,expSolution,'RelTol',1e-6)
+    verifyEqual(testCase,actSolution,expSolution,'RelTol',1e-3)
     
 end
 

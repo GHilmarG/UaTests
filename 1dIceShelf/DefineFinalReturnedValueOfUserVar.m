@@ -14,4 +14,5 @@ UserVar.Test.Norm.actValue=norm(F.ub+F.vb);
 UserVar.Test.Norm.expValue=277651.184637976;
 UserVar.Test.Norm.expValue=273611.001313039 ; % HP C20503924 24/06/2023
 UserVar.Test.Norm.expValue=263908.779961379 ;  % HP WO 06/05/2025 
+UserVar.Test.Norm.expValue=  274401.4915514 ; % 15/10/2026, different target iterations etc
 end

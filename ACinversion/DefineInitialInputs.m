@@ -39,7 +39,7 @@ for different cases, as currently only some of the Hessian terms are included.
 
 %% UserVar
 
-CtrlVar.log10Derivatives=true;
+
 
 
 UserVar.RunType="IR-CstartSetToMeanOfTrueC-AstartSetToTrueA-MS10km-Tri3-";
@@ -76,15 +76,15 @@ UserVar.RunType="IR-CstartSetToMeanOfTrueC-AstartSetToMeanOfTrueA-MS10km-Tri3-Ua
 
 UserVar.RunType="IR-CstartSetToMeanOfTrueC-AstartSetToMeanOfTrueA-MS10km-Tri3-UaDirectAdjointHessian-logA-logC-uv-dhdt-";
 UserVar.RunType="IR-CstartSetToMeanOfTrueC-AstartSetToMeanOfTrueA-MS10km-Tri3-UaDirectAdjointHessian-logA-logC-uv-";
-UserVar.RunType="IR-CstartSetToMeanOfTrueC-AstartSetToMeanOfTrueA-MS10km-Tri3-UaDirectAdjointHessian-logC-logA-uv-";
+UserVar.RunType="IR-CstartSetToMeanOfTrueC-AstartSetToMeanOfTrueA-MS10km-Tri3-UaDirectAdjointHessian-logA-logC-uv-dhdt-";
 
 % UserVar.RunType="IR-CstartSetToMeanOfTrueC-AstartSetToMeanOfTrueA-MS10km-Tri3-MatlabDirectAdjointHessian-logA-logC-uv-dhdt-";
 % UserVar.RunType="IR-CstartSetToMeanOfTrueC-AstartSetToMeanOfTrueA-MS10km-Tri3-MatlabHessianVectorProduct-logA-logC-uv-dhdt-";
 
-% UserVar.RunType="IR-CstartSetToMeanOfTrueC-AstartSetToMeanOfTrueA-MS10km-Tri3-MatlabHessianFiniteDifferences-logA-logC-uv-dhdt-";
+% UserVar.RunType="IR-CstartSetToMeanOfTrueC-AstartSetToMeanOfTrueA-MS10km-Tri3-MatlabHessianFiniteDifferences-logA-logC-dhdt-";
 
 
-CtrlVar.Inverse.Iterations=5;
+CtrlVar.Inverse.Iterations=1;
 CtrlVar.Restart=0;  %
 
 
@@ -158,6 +158,9 @@ if contains(UserVar.RunType,"IR-")
 
     CtrlVar.InverseRun=1;
 
+
+    CtrlVar.Inverse.Regularize.Multiplier=1;
+    CtrlVar.Inverse.DataMisfit.Multiplier=1;
     CtrlVar.Inverse.InfoLevel=1;
     CtrlVar.InfoLevel=0;
 
@@ -223,12 +226,13 @@ if contains(UserVar.RunType,"IR-")
 
     %%
     CtrlVar.Inverse.Methodology="-Tikhonov-" ; % either "-Tikhonov-" or "-Matern-"
+    CtrlVar.Inverse.Methodology="-Matern-" ; % either "-Tikhonov-" or "-Matern-"
 
     % Tikhonov regularization parameters:
     CtrlVar.Inverse.Regularize.logC.ga=0.1;%1;%1;
     CtrlVar.Inverse.Regularize.logC.gs=1000;%1e6;%1e4;
     CtrlVar.Inverse.Regularize.logAGlen.ga=0.1;%1;%1;
-    CtrlVar.Inverse.Regularize.logAGlen.gs=1000;%1e6;%1e4 ;
+    CtrlVar.Inverse.Regularize.logAGlen.gs=1e6;%1e6;%1e4 ;
 
 
     CtrlVar.Inverse.Regularize.logC.ga=1; %1;%1;
@@ -239,7 +243,7 @@ if contains(UserVar.RunType,"IR-")
 
     %$ Matern covariance parameters:
     %CtrlVar.Inverse.Methodology="-Matern-" ;
-    Area=(xd-xu)*(yl-yr) ;
+  
 
 
     % [alphaMatern,tauMatern,kappaMatern,sigma2Matern,rhoMatern]=Tikhonov2MaternParameters(CtrlVar.Inverse.Regularize.logAGlen.ga, CtrlVar.Inverse.Regularize.logAGlen.gs,Area);
@@ -275,17 +279,12 @@ if contains(UserVar.RunType,"IR-")
 
 
     % [----------- Testing adjoint gradients
-    CtrlVar.Inverse.TestAdjoint.isTrue=false; % If true then perform a brute force calculation
-    % of the directional derivative of the objective function.
+ 
+   
     CtrlVar.TestAdjointFiniteDifferenceType="central-second-order" ;
-
-    CtrlVar.Inverse.TestAdjoint.iRange=[1:500] ;  % range of nodes/elements over which brute force gradient is to be calculated.
-    % if left empty, values are calculated for every node/element within the mesh.
-    % If set to for example [1,10,45] values are calculated for these three
-    % nodes/elements.
-    % ----------------------- ]end, testing adjoint parameters.
-
-    CtrlVar.Inverse.TestDirectAdjoint.isTrue=true;
+    CtrlVar.Inverse.TestDirectAdjoint.isTrue=false;
+    CtrlVar.Inverse.TestAdjoint.isTrue=false; 
+   
     % remember that when testing adjoint gradient, the pre-multiplier must the I (i.e. identity matrix)
     if  CtrlVar.Inverse.TestAdjoint.isTrue
         CtrlVar.Inverse.AdjointGradientPreMultiplier="I";
@@ -320,7 +319,7 @@ elseif contains(UserVar.RunType,"FD-") % forward diagnostic run
 end
 %% MATLAB optimisation toolboox
 
-UserVar.RunType="IR-CstartSetToMeanOfTrueC-AstartSetToMeanOfTrueA-MS10km-Tri3-MatlabHessianVectorProduct-logA-logC-uv-dhdt-";
+
 
 if contains(UserVar.RunType,"HessianVectorProduct")
 
@@ -440,5 +439,18 @@ CtrlVar.NameOfRestartFiletoRead=CtrlVar.NameOfRestartFiletoWrite; %Set to be ide
 CtrlVar.Inverse.NameOfRestartOutputFile=UserVar.RunType;
 CtrlVar.Inverse.NameOfRestartInputFile=CtrlVar.Inverse.NameOfRestartOutputFile;
 
+
+%% testing adjoint calculations and the direct-adjoint Hessian
+
+CtrlVar.TestAdjointFiniteDifferenceType="central-second-order" ;
+
+CtrlVar.Inverse.TestDirectAdjoint.isTrue=false;   % this flag is there to test the second-order Direct-Adjoint Hessian. It does various tests
+CtrlVar.Inverse.TestAdjoint.isTrue=false;         % This flag is there to test the first-order Adjoint gradient. 
+
+% Make sure to use the l^2 gradient when testing, This implies that the gradient is 'naked', nothing is done to the gradient
+% as returned by the first-order adjoint
+if  CtrlVar.Inverse.TestAdjoint.isTrue || CtrlVar.Inverse.TestDirectAdjoint.isTrue
+    CtrlVar.Inverse.AdjointGradientPreMultiplier="I";
+end
 
 end
