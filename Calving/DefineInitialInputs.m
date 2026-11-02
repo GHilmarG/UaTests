@@ -77,7 +77,7 @@ CtrlVar.doplots=1;
 
 
 
-CtrlVar.LevelSetMethod=1; CtrlVar.DevelopmentVersion=1;
+CtrlVar.LevelSetMethod=1; 
 
 
 CtrlVar.LevelSetInitialisationInterval=str2double(replace(extractBetween(UserVar.RunType,"-RT","-"),"k","."));
