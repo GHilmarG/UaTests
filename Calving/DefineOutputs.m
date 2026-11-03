@@ -165,7 +165,7 @@ function UserVar=DefineOutputs(UserVar,CtrlVar,MUA,BCs,F,l,GF,InvStartValues,Inv
         bProfile=F.b(Iy);
         BProfile=F.B(Iy);
         uProfile=F.ub(Iy) ;
-        if isfield(F,'c') && ~isempty(F.c)
+        if isfield(F,'c') && ~isempty(F.c) && ~isnan(F.c)
             cProfile=F.c(Iy);
             cProfile=cProfile(Ix);
         else
